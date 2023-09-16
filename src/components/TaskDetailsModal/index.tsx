@@ -92,7 +92,7 @@ export function TaskDetailsModal({ task }: TaskDetailsModalProps) {
             })}
           </SubtasksContainer>
           <CurrentStatusTitle>Current Status</CurrentStatusTitle>
-          <CurrentStatusBar currentStatus={task.status} task={task} />
+          <CurrentStatusBar task={task} />
         </Description>
       </Content>
     </Dialog.Portal>

@@ -1,9 +1,9 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { TaskDetailsModal } from '../TaskDetailsModal'
-import { ColumnDTO } from '../../dtos/columnDTO'
+import { ColumnDTO } from '@/dtos/columnDTO'
 
 import { Container, TagContainer, TaskItem, TasksContainer } from './styles'
-import { theme } from '../../styles/index'
+import { theme } from '@/styles/index'
 
 type ColumnProps = ColumnDTO & {
   index: number

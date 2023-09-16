@@ -1,6 +1,6 @@
 import { useContext } from 'react'
-import { BoardsContext } from '../../contexts/BoardsContext'
-import Logo from '../../../public/icon.svg'
+import { BoardsContext } from '@/contexts/BoardsContext'
+import Logo from '@/../public/icon.svg'
 
 import {
   faAngleDown,

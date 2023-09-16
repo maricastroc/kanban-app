@@ -1,9 +1,9 @@
 import { useContext, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
-import { BoardsContext } from '../../contexts/BoardsContext'
-import { getStorageBoards, saveStorageBoards } from '../../storage/boardsConfig'
-import { ColumnDTO } from '../../dtos/columnDTO'
-import { SubtaskDTO } from '../../dtos/subtaskDTO'
+import { BoardsContext } from '@/contexts/BoardsContext'
+import { getStorageBoards, saveStorageBoards } from '@/storage/boardsConfig'
+import { ColumnDTO } from '@/dtos/columnDTO'
+import { SubtaskDTO } from '@/dtos/subtaskDTO'
 import { TaskDTO } from '@/dtos/taskDTO'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -66,8 +66,12 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
     resolver: zodResolver(formSchema),
   })
 
-  const { activeBoard, handleSetActiveBoard, handleSetAllBoards } =
-    useContext(BoardsContext)
+  const {
+    activeBoard,
+    handleSetActiveBoard,
+    handleSetAllBoards,
+    transferTaskToColumn,
+  } = useContext(BoardsContext)
 
   const [isOptionsContainerOpen, setIsOptionsContainerOpen] = useState(false)
   const [status, setStatus] = useState(task.status)
@@ -111,6 +115,8 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
           handleSetActiveBoard(updatedBoard)
 
           handleSetAllBoards(boardsCopy)
+
+          transferTaskToColumn(task, status, task.status)
 
           saveStorageBoards(boardsCopy)
         }

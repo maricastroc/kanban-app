@@ -1,5 +1,5 @@
-import { Header } from '../../components/Header'
-import { Column } from '../../components/Column'
+import { Header } from '@/components/Header'
+import { Column } from '@/components/Column'
 import {
   Container,
   ColumnsContainer,
@@ -7,8 +7,8 @@ import {
   NewColumnButton,
 } from './styles'
 import { useContext } from 'react'
-import { BoardsContext } from '../../contexts/BoardsContext'
-import { ColumnDTO } from '../../dtos/columnDTO'
+import { BoardsContext } from '@/contexts/BoardsContext'
+import { ColumnDTO } from '@/dtos/columnDTO'
 
 export default function Home() {
   const { activeBoard } = useContext(BoardsContext)
