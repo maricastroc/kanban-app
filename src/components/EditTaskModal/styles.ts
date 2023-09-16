@@ -1,14 +1,6 @@
 import { styled } from '@/styles'
 
-import {
-  Overlay as RadixOverlay,
-  Content as RadixContent,
-  Title as RadixTitle,
-  Description as RadixDescription,
-  Close as RadixClose,
-} from '@radix-ui/react-dialog'
-
-export const Overlay = styled(RadixOverlay, {
+export const Overlay = styled('div', {
   position: 'fixed',
   width: '100vw',
   height: '100vh',
@@ -18,7 +10,7 @@ export const Overlay = styled(RadixOverlay, {
   overflow: 'auto',
 })
 
-export const Content = styled(RadixContent, {
+export const Content = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
@@ -40,7 +32,7 @@ export const Content = styled(RadixContent, {
   },
 })
 
-export const Title = styled(RadixTitle, {
+export const Title = styled('div', {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
@@ -58,7 +50,7 @@ export const Title = styled(RadixTitle, {
   },
 })
 
-export const Description = styled(RadixDescription, {
+export const Description = styled('div', {
   display: 'flex',
   marginTop: '1.5rem',
   flexDirection: 'column',
@@ -104,7 +96,7 @@ export const InputContainer = styled('div', {
   },
 })
 
-export const CloseButton = styled(RadixClose, {
+export const CloseButton = styled('div', {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -206,6 +198,7 @@ export const SubtasksContent = styled('p', {
   display: 'flex',
   flexDirection: 'column',
   gap: '0.75rem',
+  marginBottom: '1rem',
 })
 
 export const SubtaskInputContainer = styled('div', {
@@ -233,57 +226,6 @@ export const SubtaskInputContainer = styled('div', {
       color: '$gray400',
       fontSize: '1.3rem',
     },
-  },
-})
-
-export const AddSubtaskButton = styled('button', {
-  cursor: 'pointer',
-  width: '100%',
-  backgroundColor: '$white',
-  color: '$purple500',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderRadius: 12,
-  padding: '0.7rem',
-  fontSize: '0.8125rem',
-  fontWeight: 700,
-  marginTop: '0.8125rem',
-  marginBottom: '0.65rem',
-  border: 'none',
-
-  '&:focus': {
-    boxShadow: 'none',
-  },
-
-  '&:hover': {
-    filter: 'brightness(0.8)',
-    transition: '200ms',
-  },
-})
-
-export const EditTaskButton = styled('button', {
-  cursor: 'pointer',
-  width: '100%',
-  backgroundColor: '$purple500',
-  color: '$white',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderRadius: 12,
-  padding: '0.7rem',
-  fontSize: '0.8125rem',
-  fontWeight: 700,
-  marginTop: '0.8125rem',
-  border: 'none',
-
-  '&:focus': {
-    boxShadow: 'none',
-  },
-
-  '&:hover': {
-    filter: 'brightness(1.2)',
-    transition: '200ms',
   },
 })
 

@@ -1,14 +1,6 @@
 import { styled } from '../../styles'
 
-import {
-  Overlay as RadixOverlay,
-  Content as RadixContent,
-  Title as RadixTitle,
-  Description as RadixDescription,
-  Close as RadixClose,
-} from '@radix-ui/react-dialog'
-
-export const Overlay = styled(RadixOverlay, {
+export const Overlay = styled('div', {
   position: 'fixed',
   width: '100vw',
   height: '100vh',
@@ -17,7 +9,7 @@ export const Overlay = styled(RadixOverlay, {
   backgroundColor: 'rgba(10, 10, 10, 0.7)',
 })
 
-export const Content = styled(RadixContent, {
+export const Content = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
@@ -40,7 +32,7 @@ export const Content = styled(RadixContent, {
   },
 })
 
-export const Title = styled(RadixTitle, {
+export const Title = styled('div', {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
@@ -59,7 +51,7 @@ export const Title = styled(RadixTitle, {
   },
 })
 
-export const Description = styled(RadixDescription, {
+export const Description = styled('div', {
   display: 'flex',
   marginTop: '1.5rem',
   flexDirection: 'column',
@@ -93,7 +85,7 @@ export const CurrentStatusTitle = styled('strong', {
   marginTop: '1.5rem',
 })
 
-export const CloseButton = styled(RadixClose, {
+export const CloseButton = styled('div', {
   display: 'flex',
   marginBottom: '1rem',
   alignItems: 'flex-end',
@@ -148,7 +140,7 @@ export const OptionsModal = styled('div', {
   },
 })
 
-export const OptionsButton = styled(RadixClose, {
+export const OptionsButton = styled('div', {
   display: 'flex',
   flexDirection: 'column',
 })

@@ -1,5 +1,4 @@
 import { useContext, useState } from 'react'
-import * as Dialog from '@radix-ui/react-dialog'
 import { BoardsContext } from '@/contexts/BoardsContext'
 import { getStorageBoards, saveStorageBoards } from '@/storage/boardsConfig'
 import { ColumnDTO } from '@/dtos/columnDTO'
@@ -33,10 +32,9 @@ import {
   SubtasksTitle,
   SubtasksContent,
   SubtaskInputContainer,
-  AddSubtaskButton,
-  EditTaskButton,
   FormError,
 } from './styles'
+import { Button } from '../Button'
 
 interface EditTaskModalProps {
   task: TaskDTO
@@ -156,10 +154,10 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
   }
 
   return (
-    <Dialog.Portal>
-      <Overlay className="DialogOverlay" />
-      <Content className="DialogContent">
-        <Title className="DialogTitle">
+    <>
+      <Overlay onClick={() => onClose()} />
+      <Content>
+        <Title>
           <h3>Edit Task</h3>
           <CloseButton onClick={() => onClose()}>
             <FontAwesomeIcon icon={faXmark} />
@@ -208,9 +206,11 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
                   )
                 })}
               </SubtasksContent>
-              <AddSubtaskButton type="button" onClick={addSubtask}>
-                + Add New Subtask
-              </AddSubtaskButton>
+              <Button
+                type="button"
+                title="+ Add New Subtask"
+                onClick={addSubtask}
+              />
               {showSubtaskError && (
                 <FormError>
                   You&apos;ve got to keep at least one subtask
@@ -250,12 +250,15 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
               )}
             </StatusBarContainer>
 
-            <EditTaskButton type="submit" disabled={isSubmitting}>
-              Edit Task
-            </EditTaskButton>
+            <Button
+              title="Edit Task"
+              type="submit"
+              variant="secondary"
+              disabled={isSubmitting}
+            />
           </FormContainer>
         </Description>
       </Content>
-    </Dialog.Portal>
+    </>
   )
 }
