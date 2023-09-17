@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisVertical, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { TaskDTO } from '../../dtos/taskDTO'
 
-import { SubtaskItem } from '../SubtaskItem'
-import { CurrentStatusBar } from '../CurrentStatusBar'
+import { SubtaskItem } from '../../components/SubtaskItem'
+import { CurrentStatusBar } from '../../components/CurrentStatusBar'
 
 import {
   Overlay,
@@ -32,10 +32,15 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
   )
 
   const [openOptionsModal, setOpenOptionsModal] = useState(false)
-
   const [openEditTaskModal, setOpenEditTaskModal] = useState(false)
-
   const [openDeleteTaskModal, setOpenDeleteTaskModal] = useState(false)
+
+  const handleCloseModals = () => {
+    setOpenEditTaskModal(false)
+    setOpenDeleteTaskModal(false)
+    setOpenOptionsModal(false)
+    onClose()
+  }
 
   return (
     <>
@@ -57,9 +62,7 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
                   <OptionsModal>
                     <button
                       className="edit"
-                      onClick={() => {
-                        setOpenEditTaskModal(true)
-                      }}
+                      onClick={() => setOpenEditTaskModal(true)}
                     >
                       Edit Task
                     </button>
@@ -100,23 +103,11 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
       ) : (
         <>
           {openEditTaskModal && (
-            <EditTaskModal
-              task={task}
-              onClose={() => {
-                setOpenEditTaskModal(false)
-                setOpenOptionsModal(false)
-              }}
-            />
+            <EditTaskModal task={task} onClose={handleCloseModals} />
           )}
 
           {openDeleteTaskModal && (
-            <DeleteTaskModal
-              task={task}
-              onClose={() => {
-                setOpenDeleteTaskModal(false)
-                setOpenOptionsModal(false)
-              }}
-            />
+            <DeleteTaskModal task={task} onClose={handleCloseModals} />
           )}
         </>
       )}

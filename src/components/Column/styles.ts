@@ -35,6 +35,17 @@ export const TasksContainer = styled('div', {
   flexDirection: 'column',
   gap: '1.25rem',
   width: '100%',
+  paddingBottom: '2rem',
+})
+
+export const EmptyTasksContainer = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1.25rem',
+  width: '100%',
+  border: 'dashed 2px $gray500',
+  height: '100%',
+  borderRadius: 8,
 })
 
 export const TaskItem = styled('div', {

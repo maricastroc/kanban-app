@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { BoardsContext } from '@/contexts/BoardsContext'
 import Logo from '@/../public/icon.svg'
 
@@ -17,12 +17,18 @@ import {
   TextContainer,
   ViewMoreButton,
 } from './styles'
+import { AddTaskModal } from '@/modals/AddTaskModal'
 
 export function Header() {
   const { activeBoard } = useContext(BoardsContext)
 
+  const [showAddTaskModal, setShowAddTaskModal] = useState(false)
+
   return (
     <Container>
+      {showAddTaskModal && (
+        <AddTaskModal onClose={() => setShowAddTaskModal(false)} />
+      )}
       <TextContainer>
         <img src={Logo} width={24} height={24} alt="" />
         {activeBoard?.name && (
@@ -33,7 +39,7 @@ export function Header() {
         )}
       </TextContainer>
       <OptionsContainer>
-        <AddButton>
+        <AddButton onClick={() => setShowAddTaskModal(true)}>
           <FontAwesomeIcon icon={faPlus} />
         </AddButton>
         <ViewMoreButton>

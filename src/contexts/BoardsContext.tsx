@@ -1,18 +1,21 @@
-import { BoardDTO } from '../dtos/boardDTO'
 import { createContext, ReactNode, useState } from 'react'
 import {
   getFirstStorageBoard,
   getStorageBoards,
   saveStorageBoards,
 } from '../storage/boardsConfig'
-import { ColumnDTO } from '@/dtos/columnDTO'
+import { BoardDTO } from '../dtos/boardDTO'
 import { TaskDTO } from '@/dtos/taskDTO'
+import { ColumnDTO } from '@/dtos/columnDTO'
 
 interface BoardsContextData {
   activeBoard: BoardDTO
   allBoards: BoardDTO[]
   handleSetActiveBoard: (board: BoardDTO) => void
   handleSetAllBoards: (boards: BoardDTO[]) => void
+  deleteTask: (task: TaskDTO) => void
+  addTaskToColumn: (task: TaskDTO, columnName: string) => void
+  updateColumnsInBoard: (columns: ColumnDTO[]) => void
   transferTaskToColumn: (
     selectedTask: TaskDTO,
     destinationColumn: string,
@@ -45,61 +48,135 @@ export function BoardsContextProvider({
     setAllBoards(boards)
   }
 
+  function updateBoard(updatedBoards: BoardDTO[]) {
+    handleSetAllBoards(updatedBoards)
+    saveStorageBoards(updatedBoards)
+  }
+
+  function findActiveBoardIndex() {
+    return allBoards.findIndex((board) => board.name === activeBoard.name)
+  }
+
   function transferTaskToColumn(
     selectedTask: TaskDTO,
     destinationColumnName: string,
     status: string,
   ) {
+    const activeBoardIndex = findActiveBoardIndex()
+    if (activeBoardIndex === -1) return
+
     const updatedBoards = [...allBoards]
-    const activeBoardIndex = updatedBoards.findIndex(
-      (board) => board.name === activeBoard.name,
+    const activeBoardCopy = { ...updatedBoards[activeBoardIndex] }
+
+    const sourceColumn = activeBoardCopy.columns.find(
+      (column) => column.name === status,
     )
 
-    if (activeBoardIndex !== -1) {
-      const activeBoardCopy = { ...updatedBoards[activeBoardIndex] }
+    if (!sourceColumn) return
 
-      const sourceColumnIndex = activeBoardCopy.columns.findIndex(
-        (column: ColumnDTO) => column.name === status,
+    const taskIndex = sourceColumn.tasks.findIndex(
+      (task) => task.title === selectedTask.title,
+    )
+
+    if (taskIndex === -1) return
+
+    const sourceTask = sourceColumn.tasks[taskIndex]
+    sourceTask.status = destinationColumnName
+    sourceColumn.tasks.splice(taskIndex, 1)
+
+    const destinationColumn = activeBoardCopy.columns.find(
+      (column) => column.name === destinationColumnName,
+    )
+
+    if (!destinationColumn) return
+
+    destinationColumn.tasks.push(sourceTask)
+    updatedBoards[activeBoardIndex] = activeBoardCopy
+    updateBoard(updatedBoards)
+    handleSetActiveBoard(activeBoardCopy)
+  }
+
+  function deleteTask(task: TaskDTO) {
+    const activeBoardIndex = findActiveBoardIndex()
+    if (activeBoardIndex === -1) return
+
+    const updatedBoards = [...allBoards]
+    const activeBoardCopy = { ...updatedBoards[activeBoardIndex] }
+
+    activeBoardCopy.columns.forEach((column) => {
+      const taskIndex = column.tasks.findIndex((t) => t.title === task.title)
+      if (taskIndex !== -1) {
+        column.tasks.splice(taskIndex, 1)
+      }
+    })
+
+    updatedBoards[activeBoardIndex] = activeBoardCopy
+    updateBoard(updatedBoards)
+    handleSetActiveBoard(activeBoardCopy)
+  }
+
+  function addTaskToColumn(task: TaskDTO, columnName: string) {
+    const activeBoardIndex = findActiveBoardIndex()
+    if (activeBoardIndex === -1) return
+
+    const updatedBoards = [...allBoards]
+    const activeBoardCopy = { ...updatedBoards[activeBoardIndex] }
+
+    const destinationColumn = activeBoardCopy.columns.find(
+      (column) => column.name === columnName,
+    )
+
+    if (!destinationColumn) return
+
+    destinationColumn.tasks.push(task)
+    updatedBoards[activeBoardIndex] = activeBoardCopy
+    updateBoard(updatedBoards)
+    handleSetActiveBoard(activeBoardCopy)
+  }
+
+  function updateColumnsInBoard(columnsToUpdate: ColumnDTO[]) {
+    const activeBoardIndex = findActiveBoardIndex()
+    if (activeBoardIndex === -1) return
+
+    const updatedBoards = [...allBoards]
+    const activeBoardCopy = { ...updatedBoards[activeBoardIndex] }
+
+    columnsToUpdate.forEach((columnToUpdate) => {
+      const existingColumnIndex = activeBoardCopy.columns.findIndex(
+        (column) => column.name === columnToUpdate.name,
       )
 
-      if (sourceColumnIndex !== -1) {
-        const sourceColumn = activeBoardCopy.columns[sourceColumnIndex]
-        const taskIndex = sourceColumn.tasks.findIndex(
-          (task: TaskDTO) => task.title === selectedTask.title,
-        )
-
-        if (taskIndex !== -1) {
-          const sourceTask = sourceColumn.tasks[taskIndex]
-
-          sourceTask.status = destinationColumnName
-
-          sourceColumn.tasks.splice(taskIndex, 1)
-
-          const destinationColumnIndex = activeBoardCopy.columns.findIndex(
-            (column: ColumnDTO) => column.name === destinationColumnName,
-          )
-
-          if (destinationColumnIndex !== -1) {
-            const destinationColumn =
-              activeBoardCopy.columns[destinationColumnIndex]
-            destinationColumn.tasks.push(selectedTask)
-            updatedBoards[activeBoardIndex] = activeBoardCopy
-
-            handleSetAllBoards(updatedBoards)
-            handleSetActiveBoard(activeBoardCopy)
-            saveStorageBoards(updatedBoards)
-          }
-        }
+      if (existingColumnIndex !== -1) {
+        activeBoardCopy.columns[existingColumnIndex].tasks =
+          columnToUpdate.tasks || []
+      } else {
+        activeBoardCopy.columns.push({
+          name: columnToUpdate.name,
+          tasks: columnToUpdate.tasks || [],
+        })
       }
-    }
+    })
+
+    activeBoardCopy.columns = activeBoardCopy.columns.filter((column) =>
+      columnsToUpdate.some(
+        (columnToUpdate) => columnToUpdate.name === column.name,
+      ),
+    )
+
+    updatedBoards[activeBoardIndex] = activeBoardCopy
+    updateBoard(updatedBoards)
+    handleSetActiveBoard(activeBoardCopy)
   }
 
   const BoardsContextValue: BoardsContextData = {
     allBoards,
     activeBoard,
     handleSetActiveBoard,
+    addTaskToColumn,
     handleSetAllBoards,
     transferTaskToColumn,
+    deleteTask,
+    updateColumnsInBoard,
   }
 
   return (

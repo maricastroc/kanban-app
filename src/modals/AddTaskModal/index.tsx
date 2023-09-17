@@ -1,9 +1,6 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { BoardsContext } from '@/contexts/BoardsContext'
-import { getStorageBoards, saveStorageBoards } from '@/storage/boardsConfig'
-import { ColumnDTO } from '@/dtos/columnDTO'
 import { SubtaskDTO } from '@/dtos/subtaskDTO'
-import { TaskDTO } from '@/dtos/taskDTO'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -34,92 +31,69 @@ import {
   SubtaskInputContainer,
   FormError,
 } from './styles'
-import { Button } from '../Button'
+import { Button } from '@/components/Button'
 
-interface EditTaskModalProps {
-  task: TaskDTO
+interface AddTaskModalProps {
   onClose: () => void
 }
 
 const formSchema = z.object({
   title: z.string().min(3, { message: 'Title is required' }),
   description: z.string().optional(),
-  status: z.string().min(3, { message: 'Status is required' }),
 })
 
 export type FormData = z.infer<typeof formSchema>
 
-export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
+const initialSubtasks = [
+  {
+    title: '',
+    isCompleted: false,
+  },
+  {
+    title: '',
+    isCompleted: false,
+  },
+]
+
+export function AddTaskModal({ onClose }: AddTaskModalProps) {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { isSubmitting, errors },
   } = useForm<FormData>({
-    defaultValues: {
-      title: task.title,
-      description: task.description,
-      status: task.status,
-    },
     resolver: zodResolver(formSchema),
   })
 
-  const {
-    activeBoard,
-    handleSetActiveBoard,
-    handleSetAllBoards,
-    transferTaskToColumn,
-  } = useContext(BoardsContext)
+  const { activeBoard, addTaskToColumn } = useContext(BoardsContext)
 
   const [isOptionsContainerOpen, setIsOptionsContainerOpen] = useState(false)
-  const [status, setStatus] = useState(task.status)
+  const [status, setStatus] = useState(activeBoard.columns[0].name)
 
-  const [formSubtasks, setFormSubtasks] = useState<SubtaskDTO[]>(task.subtasks)
+  const [formSubtasks, setFormSubtasks] =
+    useState<SubtaskDTO[]>(initialSubtasks)
 
-  const [showSubtaskError, setShowSubtaskError] = useState(false)
+  const [showBlankSubtaskError, setShowBlankSubtaskError] = useState(false)
 
   function handleStatusChange(newStatus: string) {
     setStatus(newStatus)
-    setValue('status', newStatus)
-    setIsOptionsContainerOpen(false)
   }
 
-  function handleEditTask(data: FormData) {
-    const boardsCopy = [...getStorageBoards()]
-    const boardIndex = boardsCopy.findIndex(
-      (board) => board.name === activeBoard.name,
-    )
+  function handleAddTask(data: FormData) {
+    const blankSubtasks = formSubtasks.filter((subtask) => subtask.title === '')
 
-    if (boardIndex !== -1) {
-      const updatedBoard = { ...boardsCopy[boardIndex] }
-
-      const targetTaskIndex = updatedBoard.columns.findIndex(
-        (column: ColumnDTO) => column.tasks.some((t) => t.title === task.title),
-      )
-
-      if (targetTaskIndex !== -1) {
-        const targetTask = updatedBoard.columns[targetTaskIndex].tasks.find(
-          (t: TaskDTO) => t.title === task.title,
-        )
-
-        if (targetTask) {
-          targetTask.title = data.title
-          targetTask.description = data.description
-          targetTask.status = data.status
-          targetTask.subtasks = formSubtasks
-
-          boardsCopy[boardIndex] = updatedBoard
-
-          handleSetActiveBoard(updatedBoard)
-
-          handleSetAllBoards(boardsCopy)
-
-          transferTaskToColumn(task, status, task.status)
-
-          saveStorageBoards(boardsCopy)
-        }
-      }
+    if (blankSubtasks.length > 0) {
+      setShowBlankSubtaskError(true)
+      return
     }
+
+    const newTask = {
+      title: data.title,
+      description: data?.description || '',
+      status,
+      subtasks: formSubtasks,
+    }
+
+    addTaskToColumn(newTask, status)
 
     onClose()
   }
@@ -130,17 +104,9 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
       isCompleted: false,
     }
     setFormSubtasks([...formSubtasks, newSubtask])
-    setShowSubtaskError(false)
   }
 
   function removeSubtask(indexToRemove: number) {
-    if (formSubtasks.length === 1) {
-      setShowSubtaskError(true)
-      return
-    }
-
-    setShowSubtaskError(false)
-
     const updatedSubtasks = formSubtasks.filter(
       (_, index) => index !== indexToRemove,
     )
@@ -151,20 +117,28 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
     const updatedSubtasks = [...formSubtasks]
     updatedSubtasks[index].title = newValue
     setFormSubtasks(updatedSubtasks)
+
+    if (newValue.length > 0) {
+      setShowBlankSubtaskError(false)
+    }
   }
+
+  useEffect(() => {
+    setFormSubtasks(initialSubtasks)
+  }, [])
 
   return (
     <>
       <Overlay onClick={() => onClose()} />
       <Content>
         <Title>
-          <h3>Edit Task</h3>
+          <h3>Add Task</h3>
           <CloseButton onClick={() => onClose()}>
             <FontAwesomeIcon icon={faXmark} />
           </CloseButton>
         </Title>
         <Description className="DialogDescription">
-          <FormContainer onSubmit={handleSubmit(handleEditTask)}>
+          <FormContainer onSubmit={handleSubmit(handleAddTask)}>
             <InputContainer>
               <label htmlFor="title">Title</label>
               <input
@@ -177,9 +151,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
             <InputContainer>
               <label htmlFor="description">Description</label>
               <textarea
-                placeholder="e.g. It’s always good to take a break. This 
-                15 minute break will  recharge the batteries 
-                a little."
+                placeholder="e.g. It’s always good to take a break. This 15 minute break will  recharge the batteries a little."
                 {...register('description')}
               />
             </InputContainer>
@@ -187,15 +159,18 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
             <SubtasksContainer>
               <SubtasksTitle>Subtasks</SubtasksTitle>
               <SubtasksContent>
-                {formSubtasks.map((subtask, index) => {
+                {formSubtasks.map((_, index) => {
                   return (
                     <SubtaskInputContainer key={index}>
                       <input
-                        defaultValue={subtask.title}
+                        defaultValue={''}
+                        className={showBlankSubtaskError ? 'error' : ''}
+                        placeholder="e.g. Make coffee"
                         onChange={(e) =>
                           handleSubtaskChange(index, e.target.value)
                         }
                       />
+                      {showBlankSubtaskError && <span>Required</span>}
                       <button
                         type="button"
                         onClick={() => removeSubtask(index)}
@@ -211,11 +186,6 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
                 title="+ Add New Subtask"
                 onClick={addSubtask}
               />
-              {showSubtaskError && (
-                <FormError>
-                  You&apos;ve got to keep at least one subtask
-                </FormError>
-              )}
             </SubtasksContainer>
 
             <StatusBarContainer>
@@ -251,7 +221,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
             </StatusBarContainer>
 
             <Button
-              title="Edit Task"
+              title="Create Task"
               type="submit"
               variant="secondary"
               disabled={isSubmitting}

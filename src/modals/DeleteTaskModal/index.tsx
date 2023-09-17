@@ -1,5 +1,6 @@
+import { useContext } from 'react'
 import { TaskDTO } from '../../dtos/taskDTO'
-import { Button } from '../Button'
+import { Button } from '@/components/Button'
 
 import {
   Overlay,
@@ -8,6 +9,7 @@ import {
   Content,
   ButtonsContainer,
 } from './styles'
+import { BoardsContext } from '@/contexts/BoardsContext'
 
 interface TaskDetailsModalProps {
   task: TaskDTO
@@ -15,6 +17,8 @@ interface TaskDetailsModalProps {
 }
 
 export function DeleteTaskModal({ task, onClose }: TaskDetailsModalProps) {
+  const { deleteTask } = useContext(BoardsContext)
+
   return (
     <>
       <Overlay onClick={() => onClose()} />
@@ -30,7 +34,14 @@ export function DeleteTaskModal({ task, onClose }: TaskDetailsModalProps) {
         </Description>
 
         <ButtonsContainer>
-          <Button title="Delete" variant="tertiary" />
+          <Button
+            title="Delete"
+            variant="tertiary"
+            onClick={() => {
+              deleteTask(task)
+              onClose()
+            }}
+          />
           <Button title="Cancel" variant="primary" onClick={() => onClose()} />
         </ButtonsContainer>
       </Content>

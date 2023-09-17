@@ -1,7 +1,13 @@
-import { Container, TagContainer, TaskItem, TasksContainer } from './styles'
+import {
+  Container,
+  EmptyTasksContainer,
+  TagContainer,
+  TaskItem,
+  TasksContainer,
+} from './styles'
 import { theme } from '@/styles/index'
 import { useState } from 'react'
-import { TaskDetailsModal } from '../TaskDetailsModal'
+import { TaskDetailsModal } from '../../modals/TaskDetailsModal'
 import { TaskDTO } from '@/dtos/taskDTO'
 import { SubtaskDTO } from '@/dtos/subtaskDTO'
 import { ColumnDTO } from '@/dtos/columnDTO'
@@ -38,22 +44,26 @@ export function Column({ name, tasks, index }: ColumnProps) {
         <strong>{`${name} (${tasks.length})`}</strong>
       </TagContainer>
 
-      <TasksContainer>
-        {tasks.map((task: TaskDTO) => {
-          const completedSubtasks = task.subtasks.filter(
-            (subtask: SubtaskDTO) => subtask.isCompleted,
-          )
-          return (
-            <TaskItem
-              key={task.title}
-              onClick={() => handleOpenTaskDetails(task)}
-            >
-              <strong>{task.title}</strong>
-              <p>{`${completedSubtasks.length} of ${task.subtasks.length} subtasks`}</p>
-            </TaskItem>
-          )
-        })}
-      </TasksContainer>
+      {tasks.length > 0 ? (
+        <TasksContainer>
+          {tasks.map((task: TaskDTO) => {
+            const completedSubtasks = task.subtasks.filter(
+              (subtask: SubtaskDTO) => subtask.isCompleted,
+            )
+            return (
+              <TaskItem
+                key={task.title}
+                onClick={() => handleOpenTaskDetails(task)}
+              >
+                <strong>{task.title}</strong>
+                <p>{`${completedSubtasks.length} of ${task.subtasks.length} subtasks`}</p>
+              </TaskItem>
+            )
+          })}
+        </TasksContainer>
+      ) : (
+        <EmptyTasksContainer />
+      )}
     </Container>
   )
 }

@@ -5,6 +5,7 @@ export const Container = styled('div', {
   flexDirection: 'column',
   width: '100%',
   height: '100vh',
+  overflowX: 'scroll',
 })
 
 export const ColumnsContainer = styled('div', {
@@ -18,6 +19,7 @@ export const ColumnsContainer = styled('div', {
 })
 
 export const NewColumnContainer = styled('div', {
+  cursor: 'pointer',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -27,6 +29,13 @@ export const NewColumnContainer = styled('div', {
   borderRadius: 8,
   background:
     'linear-gradient(to bottom,rgba(121,132,147,.2),rgba(130,143,163,.1),rgba(130,143,163,0))',
+
+  '&:hover': {
+    h2: {
+      color: '$purple500',
+      transition: '200ms',
+    },
+  },
 })
 
 export const NewColumnButton = styled('button', {
