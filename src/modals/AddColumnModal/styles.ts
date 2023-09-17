@@ -99,17 +99,23 @@ export const InputNameContainer = styled('div', {
 
 export const InputColumnsContainer = styled('div', {
   display: 'flex',
-  alignItems: 'center',
-  gap: '1rem',
-  width: '100%',
+  flexDirection: 'column',
 
   span: {
-    position: 'absolute',
+    marginTop: '0.3rem',
+    display: 'block',
     color: '$red500',
-    fontSize: '0.8rem',
+    fontSize: '0.75rem',
     fontWeight: 700,
     left: '75%',
   },
+})
+
+export const InputColumnContent = styled('div', {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '1rem',
+  width: '100%',
 })
 
 export const InputColumn = styled('input', {

@@ -17,6 +17,7 @@ import {
   InputColumn,
   InputColumnsContainer,
   InputNameContainer,
+  InputColumnContent,
 } from './styles'
 import { Button } from '@/components/Button'
 import { ColumnDTO } from '@/dtos/columnDTO'
@@ -86,23 +87,25 @@ export function AddColumnModal({ onClose }: AddColumnModalProps) {
                 {columns.map((column, index) => {
                   return (
                     <InputColumnsContainer key={column.name}>
-                      <InputColumn
-                        type="text"
-                        defaultValue={column.name}
-                        className={showColumnError ? 'error' : ''}
-                        onChange={(e) =>
-                          handleColumnChange(index, e.target.value)
-                        }
-                      />
+                      <InputColumnContent>
+                        <InputColumn
+                          type="text"
+                          defaultValue={column.name}
+                          className={showColumnError ? 'error' : ''}
+                          onChange={(e) =>
+                            handleColumnChange(index, e.target.value)
+                          }
+                        />
+                        <RemoveColumnButton
+                          className={column.tasks.length > 0 ? 'disabled' : ''}
+                          onClick={() => {
+                            handleRemoveColumn(index)
+                          }}
+                        >
+                          <FontAwesomeIcon icon={faXmark} />
+                        </RemoveColumnButton>
+                      </InputColumnContent>
                       {showColumnError && <span>Required</span>}
-                      <RemoveColumnButton
-                        className={column.tasks.length > 0 ? 'disabled' : ''}
-                        onClick={() => {
-                          handleRemoveColumn(index)
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faXmark} />
-                      </RemoveColumnButton>
                     </InputColumnsContainer>
                   )
                 })}
