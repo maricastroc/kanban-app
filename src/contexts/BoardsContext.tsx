@@ -1,7 +1,8 @@
 import { createContext, ReactNode, useState } from 'react'
 import {
-  getFirstStorageBoard,
+  getActiveStorageBoard,
   getStorageBoards,
+  saveStorageActiveBoard,
   saveStorageBoards,
 } from '../storage/boardsConfig'
 import { BoardDTO } from '../dtos/boardDTO'
@@ -35,13 +36,14 @@ export function BoardsContextProvider({
   children,
 }: BoardsContextProviderProps) {
   const [activeBoard, setActiveBoard] = useState<BoardDTO>(
-    getFirstStorageBoard(),
+    getActiveStorageBoard(),
   )
 
   const [allBoards, setAllBoards] = useState<BoardDTO[]>(getStorageBoards())
 
   function handleSetActiveBoard(board: BoardDTO) {
     setActiveBoard(board)
+    saveStorageActiveBoard(board)
   }
 
   function handleSetAllBoards(boards: BoardDTO[]) {

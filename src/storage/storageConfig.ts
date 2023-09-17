@@ -1,3 +1,5 @@
 const BOARDS_STORAGE = '@kanban:boards'
 
-export { BOARDS_STORAGE }
+const BOARD_ACTIVE_STORAGE = '@kanban:board_active'
+
+export { BOARDS_STORAGE, BOARD_ACTIVE_STORAGE }

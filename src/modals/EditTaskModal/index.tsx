@@ -1,6 +1,10 @@
 import { useContext, useState } from 'react'
 import { BoardsContext } from '@/contexts/BoardsContext'
-import { getStorageBoards, saveStorageBoards } from '@/storage/boardsConfig'
+import {
+  getStorageBoards,
+  saveStorageActiveBoard,
+  saveStorageBoards,
+} from '@/storage/boardsConfig'
 import { ColumnDTO } from '@/dtos/columnDTO'
 import { SubtaskDTO } from '@/dtos/subtaskDTO'
 import { TaskDTO } from '@/dtos/taskDTO'
@@ -117,6 +121,8 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
           transferTaskToColumn(task, status, task.status)
 
           saveStorageBoards(boardsCopy)
+
+          saveStorageActiveBoard(updatedBoard)
         }
       }
     }

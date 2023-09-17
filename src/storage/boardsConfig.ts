@@ -1,9 +1,13 @@
 import { BoardDTO } from '../dtos/boardDTO'
-import { BOARDS_STORAGE } from './storageConfig'
+import { BOARDS_STORAGE, BOARD_ACTIVE_STORAGE } from './storageConfig'
 import { boards } from '../data/data'
 
 export function saveStorageBoards(boards: BoardDTO[]) {
   localStorage.setItem(BOARDS_STORAGE, JSON.stringify(boards))
+}
+
+export function saveStorageActiveBoard(board: BoardDTO) {
+  localStorage.setItem(BOARD_ACTIVE_STORAGE, JSON.stringify(board))
 }
 
 export function getStorageBoards() {
@@ -14,6 +18,12 @@ export function getStorageBoards() {
   } else {
     return boards
   }
+}
+
+export function getActiveStorageBoard() {
+  const savedData = localStorage.getItem(BOARD_ACTIVE_STORAGE)
+  const savedBoard = savedData ? JSON.parse(savedData) : boards[0]
+  return savedBoard
 }
 
 export function getFirstStorageBoard() {

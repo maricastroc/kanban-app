@@ -333,7 +333,7 @@ export const boards = [
           {
             title: 'Share on Show HN',
             description: '',
-            status: '',
+            status: 'Todo',
             subtasks: [
               {
                 title: 'Draft out HN post',
@@ -352,7 +352,7 @@ export const boards = [
           {
             title: 'Write launch article to publish on multiple channels',
             description: '',
-            status: '',
+            status: 'Todo',
             subtasks: [
               {
                 title: 'Write article',
@@ -393,7 +393,7 @@ export const boards = [
           {
             title: 'Launch version one',
             description: '',
-            status: '',
+            status: 'Todo',
             subtasks: [
               {
                 title: 'Launch privately to our waitlist',
@@ -409,7 +409,7 @@ export const boards = [
             title: 'Review early feedback and plan next steps for roadmap',
             description:
               "Beyond the initial launch, we're keeping the initial roadmap completely empty. This meeting will help us plan out our next steps based on actual customer feedback.",
-            status: '',
+            status: 'Todo',
             subtasks: [
               {
                 title: 'Interview 10 customers',

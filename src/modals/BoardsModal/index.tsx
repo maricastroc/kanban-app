@@ -22,7 +22,8 @@ interface AddColumnModalProps {
 }
 
 export function BoardsModal({ onClose }: AddColumnModalProps) {
-  const { activeBoard, allBoards } = useContext(BoardsContext)
+  const { activeBoard, allBoards, handleSetActiveBoard } =
+    useContext(BoardsContext)
 
   return (
     <>
@@ -37,6 +38,10 @@ export function BoardsModal({ onClose }: AddColumnModalProps) {
               <Board
                 key={board.name}
                 className={board.name === activeBoard.name ? 'active' : ''}
+                onClick={() => {
+                  handleSetActiveBoard(board)
+                  onClose()
+                }}
               >
                 <img src={IconBoard} alt="" />
                 <p>{board.name}</p>

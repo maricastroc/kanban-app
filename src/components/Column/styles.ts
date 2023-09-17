@@ -44,7 +44,7 @@ export const EmptyTasksContainer = styled('div', {
   gap: '1.25rem',
   width: '100%',
   border: 'dashed 2px $gray500',
-  height: '100%',
+  height: '100vh',
   borderRadius: 8,
 })
 

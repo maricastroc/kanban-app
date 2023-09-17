@@ -10,7 +10,7 @@ import { useContext, useEffect, useState } from 'react'
 import { BoardsContext } from '@/contexts/BoardsContext'
 import { ColumnDTO } from '@/dtos/columnDTO'
 import { BoardDTO } from '@/dtos/boardDTO'
-import { getFirstStorageBoard } from '@/storage/boardsConfig'
+import { getActiveStorageBoard } from '@/storage/boardsConfig'
 import { AddColumnModal } from '@/modals/AddColumnModal'
 
 export default function Home() {
@@ -21,7 +21,7 @@ export default function Home() {
   const [openAddColumnModal, setOpenAddColumnModal] = useState(false)
 
   useEffect(() => {
-    setUpdatedBoard(getFirstStorageBoard())
+    setUpdatedBoard(getActiveStorageBoard())
   }, [activeBoard])
 
   return (
