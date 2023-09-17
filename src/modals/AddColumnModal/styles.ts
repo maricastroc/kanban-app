@@ -149,9 +149,3 @@ export const RemoveColumnButton = styled('button', {
     },
   },
 })
-
-export const FormError = styled('p', {
-  fontSize: '0.75rem',
-  color: '$red500',
-  fontWeight: 700,
-})

@@ -18,18 +18,24 @@ import {
   ViewMoreButton,
 } from './styles'
 import { AddTaskModal } from '@/modals/AddTaskModal'
+import { BoardsModal } from '@/modals/BoardsModal'
 
 export function Header() {
   const { activeBoard } = useContext(BoardsContext)
 
   const [showAddTaskModal, setShowAddTaskModal] = useState(false)
 
+  const [showBoardsModal, setShowBoardsModal] = useState(false)
+
   return (
     <Container>
       {showAddTaskModal && (
         <AddTaskModal onClose={() => setShowAddTaskModal(false)} />
       )}
-      <TextContainer>
+      {showBoardsModal && (
+        <BoardsModal onClose={() => setShowBoardsModal(false)} />
+      )}
+      <TextContainer onClick={() => setShowBoardsModal(!showBoardsModal)}>
         <img src={Logo} width={24} height={24} alt="" />
         {activeBoard?.name && (
           <LaunchButton>

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEllipsisVertical, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
 import { TaskDTO } from '../../dtos/taskDTO'
 
 import { SubtaskItem } from '../../components/SubtaskItem'
@@ -11,12 +11,12 @@ import {
   Description,
   Title,
   Content,
-  CloseButton,
   SubtasksContainer,
   SubtasksTitle,
   CurrentStatusTitle,
   OptionsModal,
   OptionsContainer,
+  OptionsButton,
 } from './styles'
 import { DeleteTaskModal } from '../DeleteTaskModal'
 import { EditTaskModal } from '../EditTaskModal'
@@ -48,16 +48,14 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
         <>
           <Overlay className="DialogOverlay" onClick={() => onClose()} />
           <Content className="DialogContent">
-            <CloseButton onClick={() => onClose()}>
-              <FontAwesomeIcon icon={faXmark} />
-            </CloseButton>
             <Title className="DialogTitle">
               <h3>{task.title}</h3>
               <OptionsContainer>
-                <FontAwesomeIcon
+                <OptionsButton
                   onClick={() => setOpenOptionsModal(!openOptionsModal)}
-                  icon={faEllipsisVertical}
-                />
+                >
+                  <FontAwesomeIcon icon={faEllipsisVertical} />
+                </OptionsButton>
                 {openOptionsModal && (
                   <OptionsModal>
                     <button

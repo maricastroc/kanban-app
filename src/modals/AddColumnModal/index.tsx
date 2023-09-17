@@ -76,7 +76,7 @@ export function AddColumnModal({ onClose }: AddColumnModalProps) {
         <Title>
           <h3>Add New Column</h3>
         </Title>
-        <Description className="DialogDescription">
+        <Description>
           <FormContainer>
             <InputNameContainer>
               <Label>Name</Label>

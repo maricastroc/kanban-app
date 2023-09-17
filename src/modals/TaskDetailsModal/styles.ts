@@ -41,13 +41,7 @@ export const Title = styled('div', {
   h3: {
     fontSize: '1.125rem',
     fontWeight: 700,
-    maxWidth: '80%',
-  },
-
-  svg: {
-    cursor: 'pointer',
-    color: '$gray400',
-    fontSize: '1.5rem',
+    maxWidth: '85%',
   },
 })
 
@@ -85,30 +79,32 @@ export const CurrentStatusTitle = styled('strong', {
   marginTop: '1.5rem',
 })
 
-export const CloseButton = styled('div', {
-  display: 'flex',
-  marginBottom: '1rem',
-  alignItems: 'flex-end',
-  justifyContent: 'flex-end',
-  border: 'none',
-  backgroundColor: 'transparent',
-  cursor: 'pointer',
-  width: '101%',
-
-  '&:focus': {
-    boxShadow: 'none',
-  },
-
-  svg: {
-    color: '$gray400',
-    fontSize: '1.5rem',
-  },
-})
-
 export const OptionsContainer = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   position: 'relative',
+})
+
+export const OptionsButton = styled('button', {
+  cursor: 'pointer',
+  display: 'flex',
+  backgroundColor: 'transparent',
+  border: 'none',
+  padding: '0.5rem',
+  borderRadius: 8,
+  alignItems: 'center',
+  justifyContent: 'center',
+
+  svg: {
+    cursor: 'pointer',
+    color: '$gray400',
+    fontSize: '1.5rem',
+  },
+
+  '&:hover': {
+    backgroundColor: '$gray700',
+    transition: '200ms',
+  },
 })
 
 export const OptionsModal = styled('div', {
@@ -138,9 +134,4 @@ export const OptionsModal = styled('div', {
       color: '$gray400',
     },
   },
-})
-
-export const OptionsButton = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
 })

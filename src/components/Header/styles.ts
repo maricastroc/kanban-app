@@ -42,6 +42,10 @@ export const LaunchButton = styled('button', {
     marginTop: '0.3rem',
     marginLeft: '-0.4rem',
   },
+
+  '&:focus': {
+    boxShadow: 'none',
+  },
 })
 
 export const OptionsContainer = styled('div', {

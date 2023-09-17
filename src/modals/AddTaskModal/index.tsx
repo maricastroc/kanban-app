@@ -137,7 +137,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
             <FontAwesomeIcon icon={faXmark} />
           </CloseButton>
         </Title>
-        <Description className="DialogDescription">
+        <Description>
           <FormContainer onSubmit={handleSubmit(handleAddTask)}>
             <InputContainer>
               <label htmlFor="title">Title</label>
