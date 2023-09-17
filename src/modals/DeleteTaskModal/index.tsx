@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { TaskDTO } from '../../dtos/taskDTO'
+import { TaskDTO } from '@/dtos/taskDTO'
 import { Button } from '@/components/Button'
 
 import {

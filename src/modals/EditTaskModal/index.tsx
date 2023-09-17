@@ -1,4 +1,6 @@
 import { useContext, useState } from 'react'
+
+import { Button } from '@/components/Button'
 import { BoardsContext } from '@/contexts/BoardsContext'
 import {
   getStorageBoards,
@@ -38,7 +40,6 @@ import {
   SubtaskInputContainer,
   FormError,
 } from './styles'
-import { Button } from '@/components/Button'
 
 interface EditTaskModalProps {
   task: TaskDTO
@@ -55,6 +56,13 @@ export type FormData = z.infer<typeof formSchema>
 
 export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
   const {
+    activeBoard,
+    handleSetActiveBoard,
+    handleSetAllBoards,
+    transferTaskToColumn,
+  } = useContext(BoardsContext)
+
+  const {
     register,
     handleSubmit,
     setValue,
@@ -68,18 +76,10 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
     resolver: zodResolver(formSchema),
   })
 
-  const {
-    activeBoard,
-    handleSetActiveBoard,
-    handleSetAllBoards,
-    transferTaskToColumn,
-  } = useContext(BoardsContext)
-
   const [isOptionsContainerOpen, setIsOptionsContainerOpen] = useState(false)
   const [status, setStatus] = useState(task.status)
 
   const [formSubtasks, setFormSubtasks] = useState<SubtaskDTO[]>(task.subtasks)
-
   const [showSubtaskError, setShowSubtaskError] = useState(false)
 
   function handleStatusChange(newStatus: string) {
@@ -184,8 +184,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
               <label htmlFor="description">Description</label>
               <textarea
                 placeholder="e.g. It’s always good to take a break. This 
-                15 minute break will  recharge the batteries 
-                a little."
+                15-minute break will recharge the batteries a little."
                 {...register('description')}
               />
             </InputContainer>
@@ -193,24 +192,19 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
             <SubtasksContainer>
               <SubtasksTitle>Subtasks</SubtasksTitle>
               <SubtasksContent>
-                {formSubtasks.map((subtask, index) => {
-                  return (
-                    <SubtaskInputContainer key={index}>
-                      <input
-                        defaultValue={subtask.title}
-                        onChange={(e) =>
-                          handleSubtaskChange(index, e.target.value)
-                        }
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeSubtask(index)}
-                      >
-                        <FontAwesomeIcon icon={faXmark} />
-                      </button>
-                    </SubtaskInputContainer>
-                  )
-                })}
+                {formSubtasks.map((subtask, index) => (
+                  <SubtaskInputContainer key={index}>
+                    <input
+                      defaultValue={subtask.title}
+                      onChange={(e) =>
+                        handleSubtaskChange(index, e.target.value)
+                      }
+                    />
+                    <button type="button" onClick={() => removeSubtask(index)}>
+                      <FontAwesomeIcon icon={faXmark} />
+                    </button>
+                  </SubtaskInputContainer>
+                ))}
               </SubtasksContent>
               <Button
                 type="button"
@@ -219,7 +213,7 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
               />
               {showSubtaskError && (
                 <FormError>
-                  You&apos;ve got to keep at least one subtask
+                  You&aposve got to keep at least one subtask
                 </FormError>
               )}
             </SubtasksContainer>
@@ -241,17 +235,15 @@ export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
               </StatusBarContent>
               {isOptionsContainerOpen && (
                 <OptionsContainer>
-                  {activeBoard.columns.map((column) => {
-                    return (
-                      <button
-                        type="button"
-                        key={column.name}
-                        onClick={() => handleStatusChange(column.name)}
-                      >
-                        {column.name}
-                      </button>
-                    )
-                  })}
+                  {activeBoard.columns.map((column) => (
+                    <button
+                      type="button"
+                      key={column.name}
+                      onClick={() => handleStatusChange(column.name)}
+                    >
+                      {column.name}
+                    </button>
+                  ))}
                 </OptionsContainer>
               )}
             </StatusBarContainer>

@@ -58,8 +58,6 @@ export function AddColumnModal({ onClose }: AddColumnModalProps) {
   function handleAddColumnsToBoard() {
     const blankedColumns = columns.filter((column) => column.name === '')
 
-    console.log(columns)
-
     if (blankedColumns.length > 0) {
       setShowColumnError(true)
       return

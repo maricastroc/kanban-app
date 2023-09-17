@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { TaskDTO } from '@/dtos/taskDTO'
+import { SubtaskItem } from '@/components/SubtaskItem'
+import { CurrentStatusBar } from '@/components/CurrentStatusBar'
+import { DeleteTaskModal } from '@/modals/DeleteTaskModal'
+import { EditTaskModal } from '@/modals/EditTaskModal'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
-import { TaskDTO } from '../../dtos/taskDTO'
-
-import { SubtaskItem } from '../../components/SubtaskItem'
-import { CurrentStatusBar } from '../../components/CurrentStatusBar'
 
 import {
   Overlay,
@@ -18,8 +20,6 @@ import {
   OptionsContainer,
   OptionsButton,
 } from './styles'
-import { DeleteTaskModal } from '../DeleteTaskModal'
-import { EditTaskModal } from '../EditTaskModal'
 
 interface TaskDetailsModalProps {
   task: TaskDTO
@@ -44,7 +44,7 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
 
   return (
     <>
-      {!openEditTaskModal && !openDeleteTaskModal ? (
+      {!openEditTaskModal && !openDeleteTaskModal && (
         <>
           <Overlay className="DialogOverlay" onClick={() => onClose()} />
           <Content className="DialogContent">
@@ -82,23 +82,23 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
               )}
               <SubtasksTitle>{`Subtasks (${subtasksCompleted.length} of ${task.subtasks.length})`}</SubtasksTitle>
               <SubtasksContainer suppressHydrationWarning>
-                {task.subtasks.map((subtask) => {
-                  return (
-                    <SubtaskItem
-                      key={subtask.title}
-                      task={task}
-                      title={subtask.title}
-                      isCompleted={subtask.isCompleted}
-                    />
-                  )
-                })}
+                {task.subtasks.map((subtask) => (
+                  <SubtaskItem
+                    key={subtask.title}
+                    task={task}
+                    title={subtask.title}
+                    isCompleted={subtask.isCompleted}
+                  />
+                ))}
               </SubtasksContainer>
               <CurrentStatusTitle>Current Status</CurrentStatusTitle>
               <CurrentStatusBar task={task} />
             </Description>
           </Content>
         </>
-      ) : (
+      )}
+
+      {(openEditTaskModal || openDeleteTaskModal) && (
         <>
           {openEditTaskModal && (
             <EditTaskModal task={task} onClose={handleCloseModals} />

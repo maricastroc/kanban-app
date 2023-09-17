@@ -7,7 +7,7 @@ import {
 } from './styles'
 import { theme } from '@/styles/index'
 import { useState } from 'react'
-import { TaskDetailsModal } from '../../modals/TaskDetailsModal'
+import { TaskDetailsModal } from '@/modals/TaskDetailsModal'
 import { TaskDTO } from '@/dtos/taskDTO'
 import { SubtaskDTO } from '@/dtos/subtaskDTO'
 import { ColumnDTO } from '@/dtos/columnDTO'

@@ -5,7 +5,7 @@ export const Container = styled('div', {
   flexDirection: 'column',
   width: '100%',
   height: '100vh',
-  overflowX: 'scroll',
+  overflow: 'auto',
 })
 
 export const ColumnsContainer = styled('div', {
@@ -16,6 +16,10 @@ export const ColumnsContainer = styled('div', {
   overflowX: 'scroll',
   gap: '1.5rem',
   paddingBottom: '1.5rem',
+
+  '&.hand-cursor': {
+    cursor: 'grab',
+  },
 })
 
 export const NewColumnContainer = styled('div', {

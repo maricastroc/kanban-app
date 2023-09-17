@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { BoardsContext } from '@/contexts/BoardsContext'
 
 import {
@@ -16,6 +16,7 @@ import IconBoard from '../../../public/icon-board.svg'
 
 import LightThemeSvg from '../../../public/icon-light-theme.svg'
 import DarkThemeSvg from '../../../public/icon-dark-theme.svg'
+import { AddBoardModal } from '../AddBoardModal'
 
 interface AddColumnModalProps {
   onClose: () => void
@@ -25,7 +26,9 @@ export function BoardsModal({ onClose }: AddColumnModalProps) {
   const { activeBoard, allBoards, handleSetActiveBoard } =
     useContext(BoardsContext)
 
-  return (
+  const [openAddBoardModal, setOpenAddBoardModal] = useState(false)
+
+  return !openAddBoardModal ? (
     <>
       <Overlay onClick={() => onClose()} />
       <Content>
@@ -48,7 +51,12 @@ export function BoardsModal({ onClose }: AddColumnModalProps) {
               </Board>
             )
           })}
-          <Board className="create">
+          <Board
+            className="create"
+            onClick={() => {
+              setOpenAddBoardModal(true)
+            }}
+          >
             <img src={IconBoard} alt="" />
             <p>+ Create New Board</p>
           </Board>
@@ -62,5 +70,12 @@ export function BoardsModal({ onClose }: AddColumnModalProps) {
         </ThemeSwitcherContainer>
       </Content>
     </>
+  ) : (
+    <AddBoardModal
+      onClose={() => {
+        setOpenAddBoardModal(false)
+        onClose()
+      }}
+    />
   )
 }

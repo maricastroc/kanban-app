@@ -17,6 +17,7 @@ interface BoardsContextData {
   deleteTask: (task: TaskDTO) => void
   addTaskToColumn: (task: TaskDTO, columnName: string) => void
   updateColumnsInBoard: (columns: ColumnDTO[]) => void
+  createNewBoard: (name: string, columns: ColumnDTO[]) => void
   transferTaskToColumn: (
     selectedTask: TaskDTO,
     destinationColumn: string,
@@ -50,7 +51,7 @@ export function BoardsContextProvider({
     setAllBoards(boards)
   }
 
-  function updateBoard(updatedBoards: BoardDTO[]) {
+  function updateBoards(updatedBoards: BoardDTO[]) {
     handleSetAllBoards(updatedBoards)
     saveStorageBoards(updatedBoards)
   }
@@ -94,7 +95,7 @@ export function BoardsContextProvider({
 
     destinationColumn.tasks.push(sourceTask)
     updatedBoards[activeBoardIndex] = activeBoardCopy
-    updateBoard(updatedBoards)
+    updateBoards(updatedBoards)
     handleSetActiveBoard(activeBoardCopy)
   }
 
@@ -113,7 +114,7 @@ export function BoardsContextProvider({
     })
 
     updatedBoards[activeBoardIndex] = activeBoardCopy
-    updateBoard(updatedBoards)
+    updateBoards(updatedBoards)
     handleSetActiveBoard(activeBoardCopy)
   }
 
@@ -132,7 +133,7 @@ export function BoardsContextProvider({
 
     destinationColumn.tasks.push(task)
     updatedBoards[activeBoardIndex] = activeBoardCopy
-    updateBoard(updatedBoards)
+    updateBoards(updatedBoards)
     handleSetActiveBoard(activeBoardCopy)
   }
 
@@ -166,8 +167,20 @@ export function BoardsContextProvider({
     )
 
     updatedBoards[activeBoardIndex] = activeBoardCopy
-    updateBoard(updatedBoards)
+    updateBoards(updatedBoards)
     handleSetActiveBoard(activeBoardCopy)
+  }
+
+  function createNewBoard(name: string, columns: ColumnDTO[]) {
+    const newBoard: BoardDTO = {
+      name,
+      columns,
+    }
+
+    const updatedBoards = [...allBoards, newBoard]
+    updateBoards(updatedBoards)
+
+    handleSetActiveBoard(newBoard)
   }
 
   const BoardsContextValue: BoardsContextData = {
@@ -179,6 +192,7 @@ export function BoardsContextProvider({
     transferTaskToColumn,
     deleteTask,
     updateColumnsInBoard,
+    createNewBoard,
   }
 
   return (
