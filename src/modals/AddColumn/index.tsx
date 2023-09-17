@@ -1,9 +1,6 @@
 import { useContext, useState } from 'react'
-import { BoardsContext } from '@/contexts/BoardsContext'
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
-
 import {
   Overlay,
   Description,
@@ -20,20 +17,19 @@ import {
   InputColumnContent,
 } from './styles'
 import { Button } from '@/components/Button'
+import { BoardsContext } from '@/contexts/BoardsContext'
 import { ColumnDTO } from '@/dtos/columnDTO'
 
-interface AddColumnModalProps {
+interface AddColumnProps {
   onClose: () => void
 }
 
-export function AddColumnModal({ onClose }: AddColumnModalProps) {
+export function AddColumn({ onClose }: AddColumnProps) {
   const { activeBoard, updateColumnsInBoard } = useContext(BoardsContext)
-
   const [columns, setColumns] = useState<ColumnDTO[]>(activeBoard.columns)
-
   const [showColumnError, setShowColumnError] = useState(false)
 
-  function handleAddColumn() {
+  const handleAddColumn = () => {
     const newColumn = {
       name: '',
       tasks: [],
@@ -41,22 +37,21 @@ export function AddColumnModal({ onClose }: AddColumnModalProps) {
     setColumns([...columns, newColumn])
   }
 
-  function handleRemoveColumn(indexToRemove: number) {
+  const handleRemoveColumn = (indexToRemove: number) => {
     const updatedColumns = columns.filter((_, index) => index !== indexToRemove)
     setColumns(updatedColumns)
   }
 
-  function handleColumnChange(index: number, newValue: string) {
+  const handleColumnChange = (index: number, newValue: string) => {
     const updatedColumns = [...columns]
-
     updatedColumns[index].name = newValue
-
     if (newValue.length > 0) {
       setShowColumnError(false)
     }
+    setColumns(updatedColumns)
   }
 
-  function handleAddColumnsToBoard() {
+  const handleAddColumnsToBoard = () => {
     const blankedColumns = columns.filter((column) => column.name === '')
 
     if (blankedColumns.length > 0) {
@@ -66,6 +61,28 @@ export function AddColumnModal({ onClose }: AddColumnModalProps) {
 
     updateColumnsInBoard(columns)
     onClose()
+  }
+
+  const renderColumnInput = (column: ColumnDTO, index: number) => {
+    return (
+      <InputColumnsContainer key={column.name}>
+        <InputColumnContent>
+          <InputColumn
+            type="text"
+            defaultValue={column.name}
+            className={showColumnError ? 'error' : ''}
+            onChange={(e) => handleColumnChange(index, e.target.value)}
+          />
+          <RemoveColumnButton
+            className={column.tasks.length > 0 ? 'disabled' : ''}
+            onClick={() => handleRemoveColumn(index)}
+          >
+            <FontAwesomeIcon icon={faXmark} />
+          </RemoveColumnButton>
+        </InputColumnContent>
+        {showColumnError && <span>Required</span>}
+      </InputColumnsContainer>
+    )
   }
 
   return (
@@ -84,41 +101,18 @@ export function AddColumnModal({ onClose }: AddColumnModalProps) {
             <ColumnsContainer>
               <Label>Columns</Label>
               <ColumnsContent>
-                {columns.map((column, index) => {
-                  return (
-                    <InputColumnsContainer key={column.name}>
-                      <InputColumnContent>
-                        <InputColumn
-                          type="text"
-                          defaultValue={column.name}
-                          className={showColumnError ? 'error' : ''}
-                          onChange={(e) =>
-                            handleColumnChange(index, e.target.value)
-                          }
-                        />
-                        <RemoveColumnButton
-                          className={column.tasks.length > 0 ? 'disabled' : ''}
-                          onClick={() => {
-                            handleRemoveColumn(index)
-                          }}
-                        >
-                          <FontAwesomeIcon icon={faXmark} />
-                        </RemoveColumnButton>
-                      </InputColumnContent>
-                      {showColumnError && <span>Required</span>}
-                    </InputColumnsContainer>
-                  )
-                })}
+                {columns.map((column, index) =>
+                  renderColumnInput(column, index),
+                )}
               </ColumnsContent>
               {columns.length !== 6 && (
                 <Button
                   type="button"
                   title="+ Add New Column"
-                  onClick={() => handleAddColumn()}
+                  onClick={handleAddColumn}
                 />
               )}
             </ColumnsContainer>
-
             <Button
               title="Save Changes"
               variant="secondary"

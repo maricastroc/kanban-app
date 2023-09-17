@@ -1,5 +1,4 @@
 import { useContext, useState } from 'react'
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 
@@ -28,7 +27,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 
-interface AddBoardModalProps {
+interface AddBoardProps {
   onClose: () => void
 }
 
@@ -49,7 +48,7 @@ const initialBoardColumns = [
   },
 ]
 
-export function AddBoardModal({ onClose }: AddBoardModalProps) {
+export function AddBoard({ onClose }: AddBoardProps) {
   const {
     register,
     handleSubmit,
@@ -82,18 +81,54 @@ export function AddBoardModal({ onClose }: AddBoardModalProps) {
 
   function handleColumnChange(index: number, newValue: string) {
     const updatedColumns = [...boardColumns]
-
     updatedColumns[index].name = newValue
-
     if (newValue.length > 0) {
       setShowColumnError(false)
     }
   }
 
+  function renderColumnInput(index: number) {
+    return (
+      <InputColumnsContainer key={boardColumns[index].name}>
+        {boardColumns.length !== 1 ? (
+          <>
+            <InputColumnContent>
+              <InputColumn
+                type="text"
+                placeholder="e.g. Todo"
+                defaultValue={boardColumns[index].name}
+                className={showColumnError ? 'error' : ''}
+                onChange={(e) => handleColumnChange(index, e.target.value)}
+              />
+              <RemoveColumnButton
+                className={
+                  boardColumns[index].tasks.length > 0 ? 'disabled' : ''
+                }
+                onClick={() => handleRemoveColumn(index)}
+              >
+                <FontAwesomeIcon icon={faXmark} />
+              </RemoveColumnButton>
+            </InputColumnContent>
+            {showColumnError && <span>Required</span>}
+          </>
+        ) : (
+          <>
+            <Input
+              type="text"
+              defaultValue={boardColumns[index].name}
+              placeholder="e.g. Todo"
+              className={showColumnError ? 'error' : ''}
+              onChange={(e) => handleColumnChange(index, e.target.value)}
+            />
+            {showColumnError && <span>Required</span>}
+          </>
+        )}
+      </InputColumnsContainer>
+    )
+  }
+
   function handleCreateNewBoard(data: FormData) {
     const blankedColumns = boardColumns.filter((column) => column.name === '')
-
-    console.log('hey')
 
     if (blankedColumns.length > 0) {
       setShowColumnError(true)
@@ -122,51 +157,7 @@ export function AddBoardModal({ onClose }: AddBoardModalProps) {
             <ColumnsContainer>
               <Label>Board Columns</Label>
               <ColumnsContent>
-                {boardColumns.map((column, index) => {
-                  return (
-                    <InputColumnsContainer key={column.name}>
-                      {boardColumns.length !== 1 ? (
-                        <>
-                          <InputColumnContent>
-                            <InputColumn
-                              type="text"
-                              placeholder="e.g. Todo"
-                              defaultValue={column.name}
-                              className={showColumnError ? 'error' : ''}
-                              onChange={(e) =>
-                                handleColumnChange(index, e.target.value)
-                              }
-                            />
-                            <RemoveColumnButton
-                              className={
-                                column.tasks.length > 0 ? 'disabled' : ''
-                              }
-                              onClick={() => {
-                                handleRemoveColumn(index)
-                              }}
-                            >
-                              <FontAwesomeIcon icon={faXmark} />
-                            </RemoveColumnButton>
-                          </InputColumnContent>
-                          {showColumnError && <span>Required</span>}
-                        </>
-                      ) : (
-                        <>
-                          <Input
-                            type="text"
-                            defaultValue={column.name}
-                            placeholder="e.g. Todo"
-                            className={showColumnError ? 'error' : ''}
-                            onChange={(e) =>
-                              handleColumnChange(index, e.target.value)
-                            }
-                          />
-                          {showColumnError && <span>Required</span>}
-                        </>
-                      )}
-                    </InputColumnsContainer>
-                  )
-                })}
+                {boardColumns.map((_, index) => renderColumnInput(index))}
               </ColumnsContent>
               {boardColumns.length !== 6 && (
                 <Button

@@ -41,7 +41,7 @@ import {
   FormError,
 } from './styles'
 
-interface EditTaskModalProps {
+interface EditTaskProps {
   task: TaskDTO
   onClose: () => void
 }
@@ -54,7 +54,7 @@ const formSchema = z.object({
 
 export type FormData = z.infer<typeof formSchema>
 
-export function EditTaskModal({ task, onClose }: EditTaskModalProps) {
+export function EditTask({ task, onClose }: EditTaskProps) {
   const {
     activeBoard,
     handleSetActiveBoard,

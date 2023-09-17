@@ -201,42 +201,62 @@ export const SubtasksContent = styled('p', {
   marginBottom: '1rem',
 })
 
-export const SubtaskInputContainer = styled('div', {
+export const SubtaskInputsContainer = styled('div', {
   display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  width: '100%',
-  gap: '1rem',
-
-  input: {
-    width: '100%',
-    backgroundColor: '$gray600',
-    border: 'solid 1px $gray500',
-    padding: '0.7rem 1rem',
-    color: '$white',
-    fontSize: '0.8125rem',
-    borderRadius: 4,
-
-    '&.error': {
-      border: 'solid 2px $red500',
-    },
-  },
+  flexDirection: 'column',
 
   span: {
-    position: 'absolute',
+    marginTop: '0.3rem',
+    display: 'block',
     color: '$red500',
-    fontSize: '0.8rem',
+    fontSize: '0.75rem',
     fontWeight: 700,
     left: '75%',
   },
+})
 
-  button: {
-    backgroundColor: 'transparent',
-    border: 'none',
+export const SubtaskInputContent = styled('div', {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '1rem',
+  width: '100%',
+})
+
+export const SubtaskInput = styled('input', {
+  position: 'relative',
+  width: '100%',
+  backgroundColor: '$gray600',
+  border: 'solid 1px $gray500',
+  padding: '0.7rem 1rem',
+  color: '$white',
+  fontSize: '0.8125rem',
+  borderRadius: 4,
+
+  '&.error': {
+    border: 'solid 2px $red500',
+  },
+})
+
+export const RemoveSubtaskButton = styled('button', {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+  backgroundColor: 'transparent',
+  border: 'none',
+  pointerEvents: 'initial',
+
+  svg: {
+    fontSize: '1.5rem',
+    color: '$gray400',
+  },
+
+  '&.disabled': {
+    cursor: 'not-allowed',
+    pointerEvents: 'none',
 
     svg: {
-      color: '$gray400',
-      fontSize: '1.3rem',
+      opacity: 0.2,
     },
   },
 })

@@ -51,7 +51,7 @@ export const LaunchButton = styled('button', {
 export const OptionsContainer = styled('div', {
   display: 'flex',
   alignItems: 'center',
-  gap: '1rem',
+  gap: '0.3rem',
 })
 
 export const AddButton = styled('button', {
@@ -71,16 +71,63 @@ export const AddButton = styled('button', {
   },
 })
 
+export const ViewMoreContainer = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  position: 'relative',
+})
+
 export const ViewMoreButton = styled('button', {
   cursor: 'pointer',
   display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
   backgroundColor: 'transparent',
   border: 'none',
+  padding: '0.5rem',
+  borderRadius: 8,
+  alignItems: 'center',
+  justifyContent: 'center',
 
   svg: {
+    cursor: 'pointer',
+    color: '$gray400',
+    fontSize: '1.5rem',
+  },
+
+  '&:hover': {
+    backgroundColor: '$gray700',
+    transition: '200ms',
+  },
+
+  '&:focus': {
+    boxShadow: 'none',
+  },
+})
+
+export const ViewMoreModal = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  padding: '1.2rem',
+  borderRadius: 8,
+  position: 'absolute',
+  gap: '0.7rem',
+  top: '2.8rem',
+  right: 0,
+  width: '10rem',
+  backgroundColor: '$gray700',
+
+  button: {
+    cursor: 'pointer',
+    backgroundColor: 'transparent',
+    border: 'none',
     fontSize: '1rem',
-    color: '$white',
+
+    '&.edit': {
+      color: '$gray400',
+    },
+
+    '&.delete': {
+      color: '$red500',
+    },
   },
 })

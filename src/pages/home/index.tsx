@@ -11,12 +11,12 @@ import { BoardsContext } from '@/contexts/BoardsContext'
 import { ColumnDTO } from '@/dtos/columnDTO'
 import { BoardDTO } from '@/dtos/boardDTO'
 import { getActiveStorageBoard } from '@/storage/boardsConfig'
-import { AddColumnModal } from '@/modals/AddColumnModal'
+import { AddColumn } from '@/modals/AddColumn'
 
 export default function Home() {
   const { activeBoard } = useContext(BoardsContext)
   const [updatedBoard, setUpdatedBoard] = useState<BoardDTO>(activeBoard)
-  const [openAddColumnModal, setOpenAddColumnModal] = useState(false)
+  const [openAddColumn, setOpenAddColumn] = useState(false)
 
   const columnsContainerRef = useRef<HTMLDivElement | null>(null)
 
@@ -57,9 +57,7 @@ export default function Home() {
   return (
     <Container>
       <Header />
-      {openAddColumnModal && (
-        <AddColumnModal onClose={() => setOpenAddColumnModal(false)} />
-      )}
+      {openAddColumn && <AddColumn onClose={() => setOpenAddColumn(false)} />}
       <ColumnsContainer
         ref={columnsContainerRef}
         className="hand-cursor"
@@ -76,7 +74,7 @@ export default function Home() {
             index={index}
           />
         ))}
-        <NewColumnContainer onClick={() => setOpenAddColumnModal(true)}>
+        <NewColumnContainer onClick={() => setOpenAddColumn(true)}>
           <NewColumnButton>
             <h2>+ New Column</h2>
           </NewColumnButton>

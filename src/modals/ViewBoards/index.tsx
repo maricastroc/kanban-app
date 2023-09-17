@@ -16,19 +16,19 @@ import IconBoard from '../../../public/icon-board.svg'
 
 import LightThemeSvg from '../../../public/icon-light-theme.svg'
 import DarkThemeSvg from '../../../public/icon-dark-theme.svg'
-import { AddBoardModal } from '../AddBoardModal'
+import { AddBoard } from '../AddBoard'
 
-interface AddColumnModalProps {
+interface ViewBoardsProps {
   onClose: () => void
 }
 
-export function BoardsModal({ onClose }: AddColumnModalProps) {
+export function ViewBoards({ onClose }: ViewBoardsProps) {
   const { activeBoard, allBoards, handleSetActiveBoard } =
     useContext(BoardsContext)
 
-  const [openAddBoardModal, setOpenAddBoardModal] = useState(false)
+  const [openAddBoard, setOpenAddBoard] = useState(false)
 
-  return !openAddBoardModal ? (
+  return !openAddBoard ? (
     <>
       <Overlay onClick={() => onClose()} />
       <Content>
@@ -54,7 +54,7 @@ export function BoardsModal({ onClose }: AddColumnModalProps) {
           <Board
             className="create"
             onClick={() => {
-              setOpenAddBoardModal(true)
+              setOpenAddBoard(true)
             }}
           >
             <img src={IconBoard} alt="" />
@@ -71,9 +71,9 @@ export function BoardsModal({ onClose }: AddColumnModalProps) {
       </Content>
     </>
   ) : (
-    <AddBoardModal
+    <AddBoard
       onClose={() => {
-        setOpenAddBoardModal(false)
+        setOpenAddBoard(false)
         onClose()
       }}
     />

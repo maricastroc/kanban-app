@@ -115,7 +115,7 @@ export const OptionsModal = styled('div', {
   borderRadius: 8,
   position: 'absolute',
   gap: '0.7rem',
-  top: '2.2rem',
+  top: '2.5rem',
   right: 0,
   width: '10rem',
   backgroundColor: '$gray700',
@@ -127,11 +127,11 @@ export const OptionsModal = styled('div', {
     fontSize: '1rem',
 
     '&.edit': {
-      color: '$red500',
+      color: '$gray400',
     },
 
     '&.delete': {
-      color: '$gray400',
+      color: '$red500',
     },
   },
 })

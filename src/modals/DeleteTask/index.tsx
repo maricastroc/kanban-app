@@ -11,12 +11,12 @@ import {
 } from './styles'
 import { BoardsContext } from '@/contexts/BoardsContext'
 
-interface TaskDetailsModalProps {
+interface DeleteTaskProps {
   task: TaskDTO
   onClose: () => void
 }
 
-export function DeleteTaskModal({ task, onClose }: TaskDetailsModalProps) {
+export function DeleteTask({ task, onClose }: DeleteTaskProps) {
   const { deleteTask } = useContext(BoardsContext)
 
   return (

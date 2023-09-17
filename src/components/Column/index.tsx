@@ -7,7 +7,7 @@ import {
 } from './styles'
 import { theme } from '@/styles/index'
 import { useState } from 'react'
-import { TaskDetailsModal } from '@/modals/TaskDetailsModal'
+import { ViewTask } from '@/modals/ViewTask'
 import { TaskDTO } from '@/dtos/taskDTO'
 import { SubtaskDTO } from '@/dtos/subtaskDTO'
 import { ColumnDTO } from '@/dtos/columnDTO'
@@ -19,25 +19,22 @@ type ColumnProps = ColumnDTO & {
 export function Column({ name, tasks, index }: ColumnProps) {
   const colorKey = `tagColor${index + 1}` as keyof typeof theme.colors
 
-  const [openTaskDetailsModal, setOpenTaskDetailsModal] = useState(false)
+  const [openViewTask, setOpenViewTask] = useState(false)
   const [selectedTask, setSelectedTask] = useState<TaskDTO | null>(null)
 
   const handleOpenTaskDetails = (task: TaskDTO) => {
     setSelectedTask(task)
-    setOpenTaskDetailsModal(true)
+    setOpenViewTask(true)
   }
 
   const handleCloseTaskDetails = () => {
-    setOpenTaskDetailsModal(false)
+    setOpenViewTask(false)
   }
 
   return (
     <Container>
-      {openTaskDetailsModal && selectedTask && (
-        <TaskDetailsModal
-          task={selectedTask}
-          onClose={handleCloseTaskDetails}
-        />
+      {openViewTask && selectedTask && (
+        <ViewTask task={selectedTask} onClose={handleCloseTaskDetails} />
       )}
       <TagContainer>
         <span style={{ backgroundColor: theme.colors[colorKey].toString() }} />

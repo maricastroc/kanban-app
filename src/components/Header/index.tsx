@@ -16,26 +16,28 @@ import {
   OptionsContainer,
   TextContainer,
   ViewMoreButton,
+  ViewMoreContainer,
+  ViewMoreModal,
 } from './styles'
-import { AddTaskModal } from '@/modals/AddTaskModal'
-import { BoardsModal } from '@/modals/BoardsModal'
+import { AddTask } from '@/modals/AddTask'
+import { ViewBoards } from '@/modals/ViewBoards'
 
 export function Header() {
   const { activeBoard } = useContext(BoardsContext)
 
-  const [showAddTaskModal, setShowAddTaskModal] = useState(false)
+  const [showAddTask, setShowAddTask] = useState(false)
 
-  const [showBoardsModal, setShowBoardsModal] = useState(false)
+  const [showViewBoards, setShowViewBoards] = useState(false)
+
+  const [showViewMoreModal, setShowViewMoreModal] = useState(false)
 
   return (
     <Container>
-      {showAddTaskModal && (
-        <AddTaskModal onClose={() => setShowAddTaskModal(false)} />
+      {showAddTask && <AddTask onClose={() => setShowAddTask(false)} />}
+      {showViewBoards && (
+        <ViewBoards onClose={() => setShowViewBoards(false)} />
       )}
-      {showBoardsModal && (
-        <BoardsModal onClose={() => setShowBoardsModal(false)} />
-      )}
-      <TextContainer onClick={() => setShowBoardsModal(!showBoardsModal)}>
+      <TextContainer onClick={() => setShowViewBoards(!showViewBoards)}>
         <img src={Logo} width={24} height={24} alt="" />
         {activeBoard?.name && (
           <LaunchButton>
@@ -45,12 +47,22 @@ export function Header() {
         )}
       </TextContainer>
       <OptionsContainer>
-        <AddButton onClick={() => setShowAddTaskModal(true)}>
+        <AddButton onClick={() => setShowAddTask(true)}>
           <FontAwesomeIcon icon={faPlus} />
         </AddButton>
-        <ViewMoreButton>
-          <FontAwesomeIcon icon={faEllipsisVertical} />
-        </ViewMoreButton>
+        <ViewMoreContainer>
+          <ViewMoreButton
+            onClick={() => setShowViewMoreModal(!showViewMoreModal)}
+          >
+            <FontAwesomeIcon icon={faEllipsisVertical} />
+          </ViewMoreButton>
+          {showViewMoreModal && (
+            <ViewMoreModal>
+              <button className="edit">Edit Board</button>
+              <button className="delete">Delete Board</button>
+            </ViewMoreModal>
+          )}
+        </ViewMoreContainer>
       </OptionsContainer>
     </Container>
   )

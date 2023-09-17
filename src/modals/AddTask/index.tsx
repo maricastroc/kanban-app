@@ -1,18 +1,10 @@
 import { useContext, useEffect, useState } from 'react'
-import { BoardsContext } from '@/contexts/BoardsContext'
-import { SubtaskDTO } from '@/dtos/subtaskDTO'
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faAngleDown,
   faAngleUp,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons'
-
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-
 import {
   Overlay,
   Description,
@@ -24,16 +16,24 @@ import {
   StatusBarContainer,
   StatusBarContent,
   OptionsContainer,
+  RemoveSubtaskButton,
   StatusBarTitle,
   SubtasksContainer,
   SubtasksTitle,
   SubtasksContent,
-  SubtaskInputContainer,
   FormError,
+  SubtaskInputsContainer,
+  SubtaskInput,
+  SubtaskInputContent,
 } from './styles'
 import { Button } from '@/components/Button'
+import { BoardsContext } from '@/contexts/BoardsContext'
+import { SubtaskDTO } from '@/dtos/subtaskDTO'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 
-interface AddTaskModalProps {
+interface AddTaskProps {
   onClose: () => void
 }
 
@@ -55,7 +55,7 @@ const initialSubtasks = [
   },
 ]
 
-export function AddTaskModal({ onClose }: AddTaskModalProps) {
+export function AddTask({ onClose }: AddTaskProps) {
   const {
     register,
     handleSubmit,
@@ -65,24 +65,52 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
   })
 
   const { activeBoard, addTaskToColumn } = useContext(BoardsContext)
-
   const [isOptionsContainerOpen, setIsOptionsContainerOpen] = useState(false)
   const [status, setStatus] = useState(activeBoard.columns[0].name)
 
-  const [formSubtasks, setFormSubtasks] =
-    useState<SubtaskDTO[]>(initialSubtasks)
-
+  const [subtasks, setSubtasks] = useState<SubtaskDTO[]>(initialSubtasks)
   const [showBlankSubtaskError, setShowBlankSubtaskError] = useState(false)
 
-  function handleStatusChange(newStatus: string) {
+  const handleStatusChange = (newStatus: string) => {
     setStatus(newStatus)
   }
 
-  function handleAddTask(data: FormData) {
-    const blankSubtasks = formSubtasks.filter((subtask) => subtask.title === '')
+  const handleAddSubtask = () => {
+    const newSubtask = {
+      title: '',
+      isCompleted: false,
+    }
+    setSubtasks([...subtasks, newSubtask])
+  }
 
+  const handleRemoveSubtask = (indexToRemove: number) => {
+    const updatedSubtasks = subtasks.filter(
+      (_, index) => index !== indexToRemove,
+    )
+    setSubtasks(updatedSubtasks)
+  }
+
+  const handleSubtaskChange = (index: number, newValue: string) => {
+    const updatedSubtasks = [...subtasks]
+    updatedSubtasks[index].title = newValue
+    setSubtasks(updatedSubtasks)
+
+    if (newValue.length > 0) {
+      setShowBlankSubtaskError(false)
+    }
+  }
+
+  const validateSubtasks = (): boolean => {
+    const blankSubtasks = subtasks.filter((subtask) => subtask.title === '')
     if (blankSubtasks.length > 0) {
       setShowBlankSubtaskError(true)
+      return false
+    }
+    return true
+  }
+
+  const handleAddTask = (data: FormData) => {
+    if (!validateSubtasks()) {
       return
     }
 
@@ -90,7 +118,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
       title: data.title,
       description: data?.description || '',
       status,
-      subtasks: formSubtasks,
+      subtasks,
     }
 
     addTaskToColumn(newTask, status)
@@ -98,34 +126,31 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
     onClose()
   }
 
-  function addSubtask() {
-    const newSubtask = {
-      title: '',
-      isCompleted: false,
-    }
-    setFormSubtasks([...formSubtasks, newSubtask])
-  }
-
-  function removeSubtask(indexToRemove: number) {
-    const updatedSubtasks = formSubtasks.filter(
-      (_, index) => index !== indexToRemove,
-    )
-    setFormSubtasks(updatedSubtasks)
-  }
-
-  function handleSubtaskChange(index: number, newValue: string) {
-    const updatedSubtasks = [...formSubtasks]
-    updatedSubtasks[index].title = newValue
-    setFormSubtasks(updatedSubtasks)
-
-    if (newValue.length > 0) {
-      setShowBlankSubtaskError(false)
-    }
-  }
-
   useEffect(() => {
-    setFormSubtasks(initialSubtasks)
+    setSubtasks(initialSubtasks)
   }, [])
+
+  const renderSubtaskInput = (subtask: SubtaskDTO, index: number) => {
+    return (
+      <SubtaskInputsContainer key={index}>
+        <SubtaskInputContent>
+          <SubtaskInput
+            defaultValue={subtask.title}
+            className={showBlankSubtaskError ? 'error' : ''}
+            placeholder="e.g. Make coffee"
+            onChange={(e) => handleSubtaskChange(index, e.target.value)}
+          />
+          <RemoveSubtaskButton
+            type="button"
+            onClick={() => handleRemoveSubtask(index)}
+          >
+            <FontAwesomeIcon icon={faXmark} />
+          </RemoveSubtaskButton>
+        </SubtaskInputContent>
+        {showBlankSubtaskError && <span>Required</span>}
+      </SubtaskInputsContainer>
+    )
+  }
 
   return (
     <>
@@ -151,7 +176,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
             <InputContainer>
               <label htmlFor="description">Description</label>
               <textarea
-                placeholder="e.g. It’s always good to take a break. This 15 minute break will  recharge the batteries a little."
+                placeholder="e.g. It’s always good to take a break. This 15 minute break will recharge the batteries a little."
                 {...register('description')}
               />
             </InputContainer>
@@ -159,32 +184,14 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
             <SubtasksContainer>
               <SubtasksTitle>Subtasks</SubtasksTitle>
               <SubtasksContent>
-                {formSubtasks.map((_, index) => {
-                  return (
-                    <SubtaskInputContainer key={index}>
-                      <input
-                        defaultValue={''}
-                        className={showBlankSubtaskError ? 'error' : ''}
-                        placeholder="e.g. Make coffee"
-                        onChange={(e) =>
-                          handleSubtaskChange(index, e.target.value)
-                        }
-                      />
-                      {showBlankSubtaskError && <span>Required</span>}
-                      <button
-                        type="button"
-                        onClick={() => removeSubtask(index)}
-                      >
-                        <FontAwesomeIcon icon={faXmark} />
-                      </button>
-                    </SubtaskInputContainer>
-                  )
-                })}
+                {subtasks.map((subtask, index) =>
+                  renderSubtaskInput(subtask, index),
+                )}
               </SubtasksContent>
               <Button
                 type="button"
                 title="+ Add New Subtask"
-                onClick={addSubtask}
+                onClick={handleAddSubtask}
               />
             </SubtasksContainer>
 
@@ -205,17 +212,15 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
               </StatusBarContent>
               {isOptionsContainerOpen && (
                 <OptionsContainer>
-                  {activeBoard.columns.map((column) => {
-                    return (
-                      <button
-                        type="button"
-                        key={column.name}
-                        onClick={() => handleStatusChange(column.name)}
-                      >
-                        {column.name}
-                      </button>
-                    )
-                  })}
+                  {activeBoard.columns.map((column) => (
+                    <button
+                      type="button"
+                      key={column.name}
+                      onClick={() => handleStatusChange(column.name)}
+                    >
+                      {column.name}
+                    </button>
+                  ))}
                 </OptionsContainer>
               )}
             </StatusBarContainer>

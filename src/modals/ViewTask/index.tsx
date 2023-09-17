@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { TaskDTO } from '@/dtos/taskDTO'
 import { SubtaskItem } from '@/components/SubtaskItem'
 import { CurrentStatusBar } from '@/components/CurrentStatusBar'
-import { DeleteTaskModal } from '@/modals/DeleteTaskModal'
-import { EditTaskModal } from '@/modals/EditTaskModal'
+import { DeleteTask } from '@/modals/DeleteTask'
+import { EditTask } from '@/modals/EditTask'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
@@ -21,30 +21,30 @@ import {
   OptionsButton,
 } from './styles'
 
-interface TaskDetailsModalProps {
+interface ViewTaskModalProps {
   task: TaskDTO
   onClose: () => void
 }
 
-export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
+export function ViewTask({ task, onClose }: ViewTaskModalProps) {
   const subtasksCompleted = task.subtasks.filter(
     (subtask) => subtask.isCompleted,
   )
 
   const [openOptionsModal, setOpenOptionsModal] = useState(false)
   const [openEditTaskModal, setOpenEditTaskModal] = useState(false)
-  const [openDeleteTaskModal, setOpenDeleteTaskModal] = useState(false)
+  const [openDeleteTask, setOpenDeleteTask] = useState(false)
 
   const handleCloseModals = () => {
     setOpenEditTaskModal(false)
-    setOpenDeleteTaskModal(false)
+    setOpenDeleteTask(false)
     setOpenOptionsModal(false)
     onClose()
   }
 
   return (
     <>
-      {!openEditTaskModal && !openDeleteTaskModal && (
+      {!openEditTaskModal && !openDeleteTask && (
         <>
           <Overlay className="DialogOverlay" onClick={() => onClose()} />
           <Content className="DialogContent">
@@ -66,7 +66,7 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
                     </button>
                     <button
                       className="delete"
-                      onClick={() => setOpenDeleteTaskModal(true)}
+                      onClick={() => setOpenDeleteTask(true)}
                     >
                       Delete Task
                     </button>
@@ -98,14 +98,14 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
         </>
       )}
 
-      {(openEditTaskModal || openDeleteTaskModal) && (
+      {(openEditTaskModal || openDeleteTask) && (
         <>
           {openEditTaskModal && (
-            <EditTaskModal task={task} onClose={handleCloseModals} />
+            <EditTask task={task} onClose={handleCloseModals} />
           )}
 
-          {openDeleteTaskModal && (
-            <DeleteTaskModal task={task} onClose={handleCloseModals} />
+          {openDeleteTask && (
+            <DeleteTask task={task} onClose={handleCloseModals} />
           )}
         </>
       )}
