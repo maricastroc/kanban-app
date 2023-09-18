@@ -49,7 +49,8 @@ const formSchema = z.object({
 export type FormData = z.infer<typeof formSchema>
 
 export function EditTask({ task, onClose }: EditTaskProps) {
-  const { activeBoard, editTask } = useContext(BoardsContext)
+  const { activeBoard, editTask, transferTaskToColumn } =
+    useContext(BoardsContext)
 
   const {
     register,
@@ -85,7 +86,9 @@ export function EditTask({ task, onClose }: EditTaskProps) {
       subtasks: formSubtasks,
     }
 
-    editTask(updatedTask, task, task.status)
+    transferTaskToColumn(task, updatedTask.status, task.status)
+
+    editTask(updatedTask, task)
 
     onClose()
   }

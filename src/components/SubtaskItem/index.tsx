@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react'
 import { BoardsContext } from '@/contexts/BoardsContext'
-import { getStorageBoards, saveStorageBoards } from '@/storage/boardsConfig'
+import { getStorageBoards } from '@/storage/boardsConfig'
 import { ColumnDTO } from '@/dtos/columnDTO'
 import { TaskDTO } from '@/dtos/taskDTO'
 import { SubtaskDTO } from '@/dtos/subtaskDTO'
@@ -17,7 +17,7 @@ interface SubtaskItemProps {
 }
 
 export function SubtaskItem({ task, title, isCompleted }: SubtaskItemProps) {
-  const { activeBoard, handleSetActiveBoard, handleSetAllBoards } =
+  const { activeBoard, updateActiveBoard, updateBoards } =
     useContext(BoardsContext)
   const [isChecked, setIsChecked] = useState(isCompleted)
 
@@ -51,11 +51,8 @@ export function SubtaskItem({ task, title, isCompleted }: SubtaskItemProps) {
 
             setIsChecked(!isChecked)
 
-            handleSetActiveBoard(updatedBoard)
-
-            handleSetAllBoards(boardsCopy)
-
-            saveStorageBoards(boardsCopy)
+            updateActiveBoard(updatedBoard)
+            updateBoards(boardsCopy)
           }
         }
       }

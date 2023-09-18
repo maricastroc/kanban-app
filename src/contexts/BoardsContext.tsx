@@ -13,11 +13,12 @@ import { toast } from 'react-toastify'
 interface BoardsContextData {
   activeBoard: BoardDTO
   allBoards: BoardDTO[]
-  handleSetActiveBoard: (board: BoardDTO) => void
-  handleSetAllBoards: (boards: BoardDTO[]) => void
+
+  updateBoards: (boards: BoardDTO[]) => void
+  updateActiveBoard: (board: BoardDTO) => void
 
   deleteTask: (task: TaskDTO) => void
-  editTask: (updatedTask: TaskDTO, taskToEdit: TaskDTO, status: string) => void
+  editTask: (updatedTask: TaskDTO, taskToEdit: TaskDTO) => void
   addTaskToColumn: (task: TaskDTO, columnName: string) => void
   updateColumnsInBoard: (columns: ColumnDTO[]) => void
 
@@ -49,17 +50,21 @@ export function BoardsContextProvider({
 
   const [allBoards, setAllBoards] = useState<BoardDTO[]>(getStorageBoards())
 
-  function handleSetActiveBoard(board: BoardDTO) {
-    setActiveBoard(board)
-    saveStorageActiveBoard(board)
-  }
+  function updateActiveBoard(board: BoardDTO) {
+    saveStorageActiveBoard({
+      name: board.name,
+      columns: [...board.columns],
+    })
 
-  function handleSetAllBoards(boards: BoardDTO[]) {
-    setAllBoards(boards)
+    console.log(board)
+    setActiveBoard({
+      name: board.name,
+      columns: [...board.columns],
+    })
   }
 
   function updateBoards(updatedBoards: BoardDTO[]) {
-    handleSetAllBoards(updatedBoards)
+    setAllBoards(updatedBoards)
     saveStorageBoards(updatedBoards)
   }
 
@@ -71,12 +76,14 @@ export function BoardsContextProvider({
     selectedTask: TaskDTO,
     destinationColumnName: string,
     previousStatus: string,
+    updatedAllBoards: BoardDTO[] = allBoards,
+    updatedBoard = activeBoard,
   ) {
     const activeBoardIndex = findActiveBoardIndex()
     if (activeBoardIndex === -1) return
 
-    const updatedBoards = [...allBoards]
-    const activeBoardCopy = { ...updatedBoards[activeBoardIndex] }
+    const updatedBoards = [...updatedAllBoards]
+    const activeBoardCopy = { ...updatedBoard }
 
     const sourceColumn = activeBoardCopy.columns.find(
       (column) => column.name === previousStatus,
@@ -109,12 +116,10 @@ export function BoardsContextProvider({
       return
     }
 
-    console.log('heyt')
-
     destinationColumn.tasks.push(sourceTask)
     updatedBoards[activeBoardIndex] = activeBoardCopy
     updateBoards(updatedBoards)
-    handleSetActiveBoard(activeBoardCopy)
+    updateActiveBoard(activeBoardCopy)
   }
 
   function deleteTask(task: TaskDTO) {
@@ -133,14 +138,10 @@ export function BoardsContextProvider({
 
     updatedBoards[activeBoardIndex] = activeBoardCopy
     updateBoards(updatedBoards)
-    handleSetActiveBoard(activeBoardCopy)
+    updateActiveBoard(activeBoardCopy)
   }
 
-  function editTask(
-    updatedTask: TaskDTO,
-    taskToEdit: TaskDTO,
-    previousStatus: string,
-  ) {
+  function editTask(updatedTask: TaskDTO, taskToEdit: TaskDTO) {
     const boardsCopy = [...getStorageBoards()]
     const boardIndex = boardsCopy.findIndex(
       (board) => board.name === activeBoard.name,
@@ -162,20 +163,12 @@ export function BoardsContextProvider({
         if (targetTask) {
           targetTask.title = updatedTask.title
           targetTask.description = updatedTask.description
-          targetTask.status = updatedTask.status
           targetTask.subtasks = updatedTask.subtasks
 
           boardsCopy[boardIndex] = updatedBoard
 
-          handleSetActiveBoard(updatedBoard)
-
-          handleSetAllBoards(boardsCopy)
-
-          saveStorageBoards(boardsCopy)
-
-          saveStorageActiveBoard(updatedBoard)
-
-          transferTaskToColumn(taskToEdit, updatedTask.status, previousStatus)
+          updateBoards(boardsCopy)
+          updateActiveBoard(boardsCopy[boardIndex])
         }
       }
     }
@@ -205,7 +198,7 @@ export function BoardsContextProvider({
       destinationColumn.tasks.push(task)
       updatedBoards[activeBoardIndex] = activeBoardCopy
       updateBoards(updatedBoards)
-      handleSetActiveBoard(activeBoardCopy)
+      updateActiveBoard(activeBoardCopy)
     }
   }
 
@@ -252,7 +245,7 @@ export function BoardsContextProvider({
 
     updatedBoards[activeBoardIndex] = activeBoardCopy
     updateBoards(updatedBoards)
-    handleSetActiveBoard(activeBoardCopy)
+    updateActiveBoard(activeBoardCopy)
   }
 
   function createNewBoard(name: string, columns: ColumnDTO[]) {
@@ -274,14 +267,14 @@ export function BoardsContextProvider({
     const updatedBoards = [...allBoards, newBoard]
     updateBoards(updatedBoards)
 
-    handleSetActiveBoard(newBoard)
+    updateActiveBoard(newBoard)
   }
 
   function deleteBoard(board: BoardDTO) {
     const updatedBoards = allBoards.filter((b) => b.name !== board.name)
 
     if (activeBoard && activeBoard.name === board.name) {
-      handleSetActiveBoard(allBoards[0])
+      updateActiveBoard(allBoards[0])
     }
 
     updateBoards(updatedBoards)
@@ -323,17 +316,15 @@ export function BoardsContextProvider({
 
     updateBoards(updatedBoards)
 
-    if (activeBoard && activeBoard.name === editedBoard.name) {
-      handleSetActiveBoard(editedBoard)
-    }
+    updateActiveBoard(editedBoard)
   }
 
   const BoardsContextValue: BoardsContextData = {
     allBoards,
     activeBoard,
-    handleSetActiveBoard,
+    updateBoards,
+    updateActiveBoard,
     addTaskToColumn,
-    handleSetAllBoards,
     transferTaskToColumn,
     deleteTask,
     editTask,
