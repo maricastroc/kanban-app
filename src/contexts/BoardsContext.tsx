@@ -8,6 +8,7 @@ import {
 import { BoardDTO } from '../dtos/boardDTO'
 import { TaskDTO } from '@/dtos/taskDTO'
 import { ColumnDTO } from '@/dtos/columnDTO'
+import { toast } from 'react-toastify'
 
 interface BoardsContextData {
   activeBoard: BoardDTO
@@ -18,6 +19,7 @@ interface BoardsContextData {
   addTaskToColumn: (task: TaskDTO, columnName: string) => void
   updateColumnsInBoard: (columns: ColumnDTO[]) => void
   createNewBoard: (name: string, columns: ColumnDTO[]) => void
+  deleteBoard: (board: BoardDTO) => void
   transferTaskToColumn: (
     selectedTask: TaskDTO,
     destinationColumn: string,
@@ -131,10 +133,18 @@ export function BoardsContextProvider({
 
     if (!destinationColumn) return
 
-    destinationColumn.tasks.push(task)
-    updatedBoards[activeBoardIndex] = activeBoardCopy
-    updateBoards(updatedBoards)
-    handleSetActiveBoard(activeBoardCopy)
+    const existingTask = destinationColumn.tasks.find(
+      (existingTask) => existingTask.title === task.title,
+    )
+
+    if (existingTask) {
+      toast.error('This column already contains a task with this name.')
+    } else {
+      destinationColumn.tasks.push(task)
+      updatedBoards[activeBoardIndex] = activeBoardCopy
+      updateBoards(updatedBoards)
+      handleSetActiveBoard(activeBoardCopy)
+    }
   }
 
   function updateColumnsInBoard(columnsToUpdate: ColumnDTO[]) {
@@ -183,6 +193,16 @@ export function BoardsContextProvider({
     handleSetActiveBoard(newBoard)
   }
 
+  function deleteBoard(board: BoardDTO) {
+    const updatedBoards = allBoards.filter((b) => b.name !== board.name)
+
+    if (activeBoard && activeBoard.name === board.name) {
+      handleSetActiveBoard(allBoards[0])
+    }
+
+    updateBoards(updatedBoards)
+  }
+
   const BoardsContextValue: BoardsContextData = {
     allBoards,
     activeBoard,
@@ -193,6 +213,7 @@ export function BoardsContextProvider({
     deleteTask,
     updateColumnsInBoard,
     createNewBoard,
+    deleteBoard,
   }
 
   return (

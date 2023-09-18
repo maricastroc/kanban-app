@@ -1,4 +1,5 @@
 import { styled } from '@/styles'
+import { ToastContainer } from 'react-toastify'
 
 export const Container = styled('div', {
   display: 'flex',
@@ -53,5 +54,29 @@ export const NewColumnButton = styled('button', {
   h2: {
     fontSize: 'clamp(1.2rem,3vw,1.5rem)',
     color: '$gray400',
+  },
+})
+
+export const StyledToastContainer = styled(ToastContainer, {
+  '& .Toastify__toast': {
+    backgroundColor: '$gray700',
+    color: '$gray300',
+    borderRadius: 4,
+    fontFamily: 'Plus Jakarta Sans',
+    fontSize: '0.85rem',
+    lineHeight: 1.5,
+  },
+
+  '& .Toastify__close-button': {
+    color: '$white',
+  },
+
+  '& .Toastify__toast-body svg': {
+    fill: '$purple500',
+    fontSize: '0.5rem',
+  },
+
+  '& .Toastify__progress-bar': {
+    backgroundColor: '$purple500',
   },
 })

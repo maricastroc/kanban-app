@@ -123,19 +123,23 @@ export function AddTask({ onClose }: AddTaskProps) {
 
     addTaskToColumn(newTask, status)
 
+    setSubtasks(initialSubtasks)
+
     onClose()
   }
+
+  console.log(initialSubtasks)
 
   useEffect(() => {
     setSubtasks(initialSubtasks)
   }, [])
 
-  const renderSubtaskInput = (subtask: SubtaskDTO, index: number) => {
+  const renderSubtaskInput = (index: number) => {
     return (
       <SubtaskInputsContainer key={index}>
         <SubtaskInputContent>
           <SubtaskInput
-            defaultValue={subtask.title}
+            defaultValue={''}
             className={showBlankSubtaskError ? 'error' : ''}
             placeholder="e.g. Make coffee"
             onChange={(e) => handleSubtaskChange(index, e.target.value)}
@@ -184,9 +188,7 @@ export function AddTask({ onClose }: AddTaskProps) {
             <SubtasksContainer>
               <SubtasksTitle>Subtasks</SubtasksTitle>
               <SubtasksContent>
-                {subtasks.map((subtask, index) =>
-                  renderSubtaskInput(subtask, index),
-                )}
+                {subtasks.map((_, index) => renderSubtaskInput(index))}
               </SubtasksContent>
               <Button
                 type="button"

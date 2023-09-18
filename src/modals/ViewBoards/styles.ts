@@ -110,6 +110,10 @@ export const Board = styled('button', {
         'invert(39%) sepia(47%) saturate(748%) hue-rotate(203deg) brightness(94%) contrast(93%)',
     },
   },
+
+  '&:focus': {
+    boxShadow: 'none',
+  },
 })
 
 export const ThemeSwitcherContainer = styled('div', {
