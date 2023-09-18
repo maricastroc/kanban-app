@@ -39,7 +39,7 @@ export function CurrentStatusBar({ task }: CurrentStatusBarProps) {
                 key={column.name}
                 onClick={() => {
                   setStatus(column.name)
-                  transferTaskToColumn(task, column.name, task.status)
+                  transferTaskToColumn(task, column.name, status)
                   setIsOptionsContainerOpen(false)
                 }}
               >

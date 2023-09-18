@@ -109,7 +109,7 @@ export function BoardsContextProvider({
       return
     }
 
-    console.log('hey')
+    console.log('heyt')
 
     destinationColumn.tasks.push(sourceTask)
     updatedBoards[activeBoardIndex] = activeBoardCopy

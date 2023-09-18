@@ -2,12 +2,6 @@ import { useContext, useState } from 'react'
 
 import { Button } from '@/components/Button'
 import { BoardsContext } from '@/contexts/BoardsContext'
-import {
-  getStorageBoards,
-  saveStorageActiveBoard,
-  saveStorageBoards,
-} from '@/storage/boardsConfig'
-import { ColumnDTO } from '@/dtos/columnDTO'
 import { SubtaskDTO } from '@/dtos/subtaskDTO'
 import { TaskDTO } from '@/dtos/taskDTO'
 
@@ -55,10 +49,7 @@ const formSchema = z.object({
 export type FormData = z.infer<typeof formSchema>
 
 export function EditTask({ task, onClose }: EditTaskProps) {
-  const {
-    activeBoard,
-    editTask,
-  } = useContext(BoardsContext)
+  const { activeBoard, editTask } = useContext(BoardsContext)
 
   const {
     register,
