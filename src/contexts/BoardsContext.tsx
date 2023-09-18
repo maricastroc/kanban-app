@@ -15,11 +15,16 @@ interface BoardsContextData {
   allBoards: BoardDTO[]
   handleSetActiveBoard: (board: BoardDTO) => void
   handleSetAllBoards: (boards: BoardDTO[]) => void
+
   deleteTask: (task: TaskDTO) => void
+  editTask: (updatedTask: TaskDTO, taskToEdit: TaskDTO, status: string) => void
   addTaskToColumn: (task: TaskDTO, columnName: string) => void
   updateColumnsInBoard: (columns: ColumnDTO[]) => void
+
   createNewBoard: (name: string, columns: ColumnDTO[]) => void
   deleteBoard: (board: BoardDTO) => void
+  editBoard: (board: BoardDTO, newName: string, newColumns: ColumnDTO[]) => void
+
   transferTaskToColumn: (
     selectedTask: TaskDTO,
     destinationColumn: string,
@@ -65,7 +70,7 @@ export function BoardsContextProvider({
   function transferTaskToColumn(
     selectedTask: TaskDTO,
     destinationColumnName: string,
-    status: string,
+    previousStatus: string,
   ) {
     const activeBoardIndex = findActiveBoardIndex()
     if (activeBoardIndex === -1) return
@@ -74,7 +79,7 @@ export function BoardsContextProvider({
     const activeBoardCopy = { ...updatedBoards[activeBoardIndex] }
 
     const sourceColumn = activeBoardCopy.columns.find(
-      (column) => column.name === status,
+      (column) => column.name === previousStatus,
     )
 
     if (!sourceColumn) return
@@ -94,6 +99,17 @@ export function BoardsContextProvider({
     )
 
     if (!destinationColumn) return
+
+    const existingTask = destinationColumn.tasks.find(
+      (task) => task.title.toLowerCase() === sourceTask.title.toLowerCase(),
+    )
+
+    if (existingTask) {
+      toast.error('This column already contains a task with this name.')
+      return
+    }
+
+    console.log('hey')
 
     destinationColumn.tasks.push(sourceTask)
     updatedBoards[activeBoardIndex] = activeBoardCopy
@@ -120,6 +136,51 @@ export function BoardsContextProvider({
     handleSetActiveBoard(activeBoardCopy)
   }
 
+  function editTask(
+    updatedTask: TaskDTO,
+    taskToEdit: TaskDTO,
+    previousStatus: string,
+  ) {
+    const boardsCopy = [...getStorageBoards()]
+    const boardIndex = boardsCopy.findIndex(
+      (board) => board.name === activeBoard.name,
+    )
+
+    if (boardIndex !== -1) {
+      const updatedBoard = { ...boardsCopy[boardIndex] }
+
+      const targetTaskIndex = updatedBoard.columns.findIndex(
+        (column: ColumnDTO) =>
+          column.tasks.some((t) => t.title === taskToEdit.title),
+      )
+
+      if (targetTaskIndex !== -1) {
+        const targetTask = updatedBoard.columns[targetTaskIndex].tasks.find(
+          (t: TaskDTO) => t.title === taskToEdit.title,
+        )
+
+        if (targetTask) {
+          targetTask.title = updatedTask.title
+          targetTask.description = updatedTask.description
+          targetTask.status = updatedTask.status
+          targetTask.subtasks = updatedTask.subtasks
+
+          boardsCopy[boardIndex] = updatedBoard
+
+          handleSetActiveBoard(updatedBoard)
+
+          handleSetAllBoards(boardsCopy)
+
+          saveStorageBoards(boardsCopy)
+
+          saveStorageActiveBoard(updatedBoard)
+
+          transferTaskToColumn(taskToEdit, updatedTask.status, previousStatus)
+        }
+      }
+    }
+  }
+
   function addTaskToColumn(task: TaskDTO, columnName: string) {
     const activeBoardIndex = findActiveBoardIndex()
     if (activeBoardIndex === -1) return
@@ -134,7 +195,8 @@ export function BoardsContextProvider({
     if (!destinationColumn) return
 
     const existingTask = destinationColumn.tasks.find(
-      (existingTask) => existingTask.title === task.title,
+      (existingTask) =>
+        existingTask.title.toLowerCase() === task.title.toLowerCase(),
     )
 
     if (existingTask) {
@@ -153,6 +215,18 @@ export function BoardsContextProvider({
 
     const updatedBoards = [...allBoards]
     const activeBoardCopy = { ...updatedBoards[activeBoardIndex] }
+
+    const lowerCaseColumnNames = columnsToUpdate.map((column) =>
+      column.name.toLowerCase(),
+    )
+
+    const hasDuplicateNames =
+      new Set(lowerCaseColumnNames).size !== columnsToUpdate.length
+
+    if (hasDuplicateNames) {
+      toast.error('This board already contains a column with this name.')
+      return
+    }
 
     columnsToUpdate.forEach((columnToUpdate) => {
       const existingColumnIndex = activeBoardCopy.columns.findIndex(
@@ -187,6 +261,16 @@ export function BoardsContextProvider({
       columns,
     }
 
+    const existingBoard = allBoards.find(
+      (existingBoard) =>
+        existingBoard.name.toLowerCase() === name.toLowerCase(),
+    )
+
+    if (existingBoard) {
+      toast.error('A board with this name already exists.')
+      return
+    }
+
     const updatedBoards = [...allBoards, newBoard]
     updateBoards(updatedBoards)
 
@@ -203,6 +287,47 @@ export function BoardsContextProvider({
     updateBoards(updatedBoards)
   }
 
+  function editBoard(
+    boardToEdit: BoardDTO,
+    newName: string,
+    newColumns: ColumnDTO[],
+  ) {
+    const boardIndex = allBoards.findIndex(
+      (board) => board.name === boardToEdit.name,
+    )
+
+    if (boardIndex === -1) {
+      toast.error('Board not found.')
+      return
+    }
+
+    const lowerCaseColumnNames = newColumns.map((column) =>
+      column.name.toLowerCase(),
+    )
+
+    const hasDuplicateNames =
+      new Set(lowerCaseColumnNames).size !== newColumns.length
+
+    if (hasDuplicateNames) {
+      toast.error('This board already contains a column with this name.')
+      return
+    }
+
+    const updatedBoards = [...allBoards]
+    const editedBoard = updatedBoards[boardIndex]
+
+    editedBoard.name = newName
+    editedBoard.columns = newColumns
+
+    updatedBoards[boardIndex] = editedBoard
+
+    updateBoards(updatedBoards)
+
+    if (activeBoard && activeBoard.name === editedBoard.name) {
+      handleSetActiveBoard(editedBoard)
+    }
+  }
+
   const BoardsContextValue: BoardsContextData = {
     allBoards,
     activeBoard,
@@ -211,9 +336,11 @@ export function BoardsContextProvider({
     handleSetAllBoards,
     transferTaskToColumn,
     deleteTask,
+    editTask,
     updateColumnsInBoard,
     createNewBoard,
     deleteBoard,
+    editBoard,
   }
 
   return (

@@ -128,9 +128,9 @@ export function AddBoard({ onClose }: AddBoardProps) {
   }
 
   function handleCreateNewBoard(data: FormData) {
-    const blankedColumns = boardColumns.filter((column) => column.name === '')
+    const blankColumns = boardColumns.filter((column) => column.name === '')
 
-    if (blankedColumns.length > 0) {
+    if (blankColumns.length > 0) {
       setShowColumnError(true)
       return
     }

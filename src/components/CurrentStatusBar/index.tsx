@@ -18,8 +18,6 @@ export function CurrentStatusBar({ task }: CurrentStatusBarProps) {
 
   const [status, setStatus] = useState(task.status)
 
-  console.log(task)
-
   return (
     <Container>
       <StatusBarContainer

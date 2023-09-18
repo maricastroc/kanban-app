@@ -122,6 +122,10 @@ export const ViewMoreModal = styled('div', {
     border: 'none',
     fontSize: '1rem',
 
+    '&:focus': {
+      boxShadow: 'none',
+    },
+
     '&.edit': {
       color: '$gray400',
     },

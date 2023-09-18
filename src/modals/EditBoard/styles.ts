@@ -25,21 +25,10 @@ export const Content = styled('div', {
   width: 'clamp(300px, 90vw, 33rem)',
   borderRadius: 8,
   zIndex: 9999,
+  height: '90vh',
 
   '&:focus': {
     boxShadow: 'none',
-  },
-})
-
-export const Title = styled('div', {
-  display: 'flex',
-  justifyContent: 'flex-start',
-  width: '100%',
-
-  h3: {
-    fontSize: '1.125rem',
-    fontWeight: 700,
-    maxWidth: '80%',
   },
 })
 
@@ -50,16 +39,28 @@ export const Description = styled('div', {
   width: '100%',
 })
 
-export const FormContainer = styled('div', {
+export const Title = styled('div', {
   display: 'flex',
-  flexDirection: 'column',
-  gap: '1rem',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  width: '100%',
+
+  h3: {
+    fontSize: '1.125rem',
+    fontWeight: 700,
+    maxWidth: '80%',
+  },
+
+  svg: {
+    color: '$gray400',
+    fontSize: '1.5rem',
+  },
 })
 
-export const ColumnsContainer = styled('div', {
+export const FormContainer = styled('form', {
   display: 'flex',
   flexDirection: 'column',
-  gap: '0.5rem',
+  gap: '1.5rem',
 })
 
 export const Label = styled('label', {
@@ -67,13 +68,6 @@ export const Label = styled('label', {
   fontWeight: 700,
   color: '$white',
   marginBottom: '0.3rem',
-})
-
-export const ColumnsContent = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '0.5rem',
-  marginBottom: '0.5rem',
 })
 
 export const InputNameContainer = styled('div', {
@@ -95,6 +89,25 @@ export const InputNameContainer = styled('div', {
     fontSize: '0.8125rem',
     borderRadius: 4,
   },
+})
+
+export const ColumnsContainer = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+})
+
+export const ColumnsTitle = styled('p', {
+  fontSize: '0.75rem',
+  fontWeight: 700,
+  color: '$white',
+  marginBottom: '0.5rem',
+})
+
+export const ColumnsContent = styled('p', {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.75rem',
+  marginBottom: '1rem',
 })
 
 export const InputColumnsContainer = styled('div', {
@@ -159,4 +172,10 @@ export const RemoveColumnButton = styled('button', {
       opacity: 0.2,
     },
   },
+})
+
+export const FormError = styled('p', {
+  fontSize: '0.75rem',
+  color: '$red500',
+  fontWeight: 700,
 })

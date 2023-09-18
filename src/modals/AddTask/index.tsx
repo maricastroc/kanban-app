@@ -128,8 +128,6 @@ export function AddTask({ onClose }: AddTaskProps) {
     onClose()
   }
 
-  console.log(initialSubtasks)
-
   useEffect(() => {
     setSubtasks(initialSubtasks)
   }, [])

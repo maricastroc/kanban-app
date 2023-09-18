@@ -57,9 +57,7 @@ export type FormData = z.infer<typeof formSchema>
 export function EditTask({ task, onClose }: EditTaskProps) {
   const {
     activeBoard,
-    handleSetActiveBoard,
-    handleSetAllBoards,
-    transferTaskToColumn,
+    editTask,
   } = useContext(BoardsContext)
 
   const {
@@ -89,43 +87,14 @@ export function EditTask({ task, onClose }: EditTaskProps) {
   }
 
   function handleEditTask(data: FormData) {
-    const boardsCopy = [...getStorageBoards()]
-    const boardIndex = boardsCopy.findIndex(
-      (board) => board.name === activeBoard.name,
-    )
-
-    if (boardIndex !== -1) {
-      const updatedBoard = { ...boardsCopy[boardIndex] }
-
-      const targetTaskIndex = updatedBoard.columns.findIndex(
-        (column: ColumnDTO) => column.tasks.some((t) => t.title === task.title),
-      )
-
-      if (targetTaskIndex !== -1) {
-        const targetTask = updatedBoard.columns[targetTaskIndex].tasks.find(
-          (t: TaskDTO) => t.title === task.title,
-        )
-
-        if (targetTask) {
-          targetTask.title = data.title
-          targetTask.description = data.description
-          targetTask.status = data.status
-          targetTask.subtasks = formSubtasks
-
-          boardsCopy[boardIndex] = updatedBoard
-
-          handleSetActiveBoard(updatedBoard)
-
-          handleSetAllBoards(boardsCopy)
-
-          transferTaskToColumn(task, status, task.status)
-
-          saveStorageBoards(boardsCopy)
-
-          saveStorageActiveBoard(updatedBoard)
-        }
-      }
+    const updatedTask = {
+      title: data.title,
+      description: data.description || '',
+      status: data.status,
+      subtasks: formSubtasks,
     }
+
+    editTask(updatedTask, task, task.status)
 
     onClose()
   }

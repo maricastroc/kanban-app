@@ -22,6 +22,7 @@ import {
 import { AddTask } from '@/modals/AddTask'
 import { ViewBoards } from '@/modals/ViewBoards'
 import { DeleteBoard } from '@/modals/DeleteBoard'
+import { EditBoard } from '@/modals/EditBoard'
 
 export function Header() {
   const { activeBoard } = useContext(BoardsContext)
@@ -33,6 +34,8 @@ export function Header() {
   const [showViewMoreModal, setShowViewMoreModal] = useState(false)
 
   const [showDeleteBoard, setShowDeleteBoard] = useState(false)
+
+  const [showEditBoard, setShowEditBoard] = useState(false)
 
   return (
     <Container>
@@ -46,6 +49,13 @@ export function Header() {
         <DeleteBoard
           board={activeBoard}
           onClose={() => setShowDeleteBoard(false)}
+        />
+      )}
+
+      {showEditBoard && (
+        <EditBoard
+          board={activeBoard}
+          onClose={() => setShowEditBoard(false)}
         />
       )}
 
@@ -72,7 +82,15 @@ export function Header() {
           </ViewMoreButton>
           {showViewMoreModal && (
             <ViewMoreModal>
-              <button className="edit">Edit Board</button>
+              <button
+                className="edit"
+                onClick={() => {
+                  setShowEditBoard(true)
+                  setShowViewMoreModal(false)
+                }}
+              >
+                Edit Board
+              </button>
               <button
                 className="delete"
                 onClick={() => {

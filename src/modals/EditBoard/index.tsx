@@ -1,33 +1,60 @@
 import { useContext, useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faXmark } from '@fortawesome/free-solid-svg-icons'
-import {
-  Overlay,
-  Description,
-  Title,
-  Content,
-  FormContainer,
-  RemoveColumnButton,
-  ColumnsContainer,
-  ColumnsContent,
-  Label,
-  InputColumn,
-  InputColumnsContainer,
-  InputNameContainer,
-  InputColumnContent,
-} from './styles'
+
 import { Button } from '@/components/Button'
 import { BoardsContext } from '@/contexts/BoardsContext'
 import { ColumnDTO } from '@/dtos/columnDTO'
 
-interface AddColumnProps {
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faXmark } from '@fortawesome/free-solid-svg-icons'
+
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+
+import {
+  Overlay,
+  Title,
+  Content,
+  FormContainer,
+  ColumnsContainer,
+  RemoveColumnButton,
+  InputNameContainer,
+  Label,
+  Description,
+  ColumnsContent,
+  InputColumnsContainer,
+  InputColumnContent,
+  InputColumn,
+  FormError,
+} from './styles'
+import { BoardDTO } from '@/dtos/boardDTO'
+
+interface EditBoardProps {
+  board: BoardDTO
   onClose: () => void
 }
 
-export function AddColumn({ onClose }: AddColumnProps) {
-  const { activeBoard, updateColumnsInBoard } = useContext(BoardsContext)
+const formSchema = z.object({
+  name: z.string().min(3, { message: 'Name is required' }),
+})
 
-  const [columns, setColumns] = useState<ColumnDTO[]>(activeBoard.columns)
+export type FormData = z.infer<typeof formSchema>
+
+export function EditBoard({ board, onClose }: EditBoardProps) {
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting, errors },
+  } = useForm<FormData>({
+    defaultValues: {
+      name: board.name,
+    },
+    resolver: zodResolver(formSchema),
+  })
+
+  const { editBoard } = useContext(BoardsContext)
+
+  const [boardColumns, setBoardColumns] = useState<ColumnDTO[]>(board.columns)
 
   const [columnErrors, setColumnErrors] = useState<string[]>([])
 
@@ -36,16 +63,18 @@ export function AddColumn({ onClose }: AddColumnProps) {
       name: '',
       tasks: [],
     }
-    setColumns([...columns, newColumn])
+    setBoardColumns([...boardColumns, newColumn])
   }
 
   const handleRemoveColumn = (indexToRemove: number) => {
-    const updatedColumns = columns.filter((_, index) => index !== indexToRemove)
-    setColumns(updatedColumns)
+    const updatedColumns = boardColumns.filter(
+      (_, index) => index !== indexToRemove,
+    )
+    setBoardColumns(updatedColumns)
   }
 
   const handleColumnChange = (index: number, newValue: string) => {
-    const updatedColumns = [...columns]
+    const updatedColumns = [...boardColumns]
     updatedColumns[index].name = newValue
 
     const newColumnErrors = [...columnErrors]
@@ -55,11 +84,11 @@ export function AddColumn({ onClose }: AddColumnProps) {
       newColumnErrors[index] = ''
     }
 
-    setColumns(updatedColumns)
+    setBoardColumns(updatedColumns)
   }
 
-  const handleAddColumnsToBoard = () => {
-    const columnErrors = columns.map((column) =>
+  function handleEditBoard(data: FormData) {
+    const columnErrors = boardColumns.map((column) =>
       column.name === '' ? 'Required' : '',
     )
 
@@ -70,7 +99,7 @@ export function AddColumn({ onClose }: AddColumnProps) {
       return
     }
 
-    updateColumnsInBoard(columns)
+    editBoard(board, data.name, boardColumns)
     onClose()
   }
 
@@ -105,22 +134,24 @@ export function AddColumn({ onClose }: AddColumnProps) {
       <Overlay onClick={() => onClose()} />
       <Content>
         <Title>
-          <h3>Add New Column</h3>
+          <h3>Edit Board</h3>
         </Title>
         <Description>
-          <FormContainer>
+          <FormContainer onSubmit={handleSubmit(handleEditBoard)}>
             <InputNameContainer>
               <Label>Name</Label>
-              <input type="text" value={activeBoard.name} />
+              <input type="text" {...register('name')} />
+              {errors?.name && <FormError>{errors.name.message}</FormError>}
             </InputNameContainer>
+
             <ColumnsContainer>
               <Label>Columns</Label>
               <ColumnsContent>
-                {columns.map((column, index) =>
+                {boardColumns.map((column, index) =>
                   renderColumnInput(column, index),
                 )}
               </ColumnsContent>
-              {columns.length !== 6 && (
+              {boardColumns.length !== 6 && (
                 <Button
                   type="button"
                   title="+ Add New Column"
@@ -128,10 +159,12 @@ export function AddColumn({ onClose }: AddColumnProps) {
                 />
               )}
             </ColumnsContainer>
+
             <Button
               title="Save Changes"
+              type="submit"
               variant="secondary"
-              onClick={handleAddColumnsToBoard}
+              disabled={isSubmitting}
             />
           </FormContainer>
         </Description>
