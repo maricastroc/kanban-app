@@ -107,9 +107,9 @@ export function BoardsContextProvider({
 
     if (!destinationColumn) return
 
-    const existingTask = destinationColumn.tasks.find(
-      (task) => task.title.toLowerCase() === sourceTask.title.toLowerCase(),
-    )
+    const existingTask = destinationColumn.tasks.find((task) => {
+      return task?.title === sourceTask?.title
+    })
 
     if (existingTask) {
       toast.error('This column already contains a task with this name.')
@@ -156,7 +156,21 @@ export function BoardsContextProvider({
       )
 
       if (targetTaskIndex !== -1) {
-        const targetTask = updatedBoard.columns[targetTaskIndex].tasks.find(
+        const targetColumn = updatedBoard.columns[targetTaskIndex]
+
+        const existingTaskWithSameName = targetColumn.tasks.find(
+          (t: TaskDTO) => t?.title === updatedTask?.title,
+        )
+
+        if (
+          existingTaskWithSameName &&
+          updatedTask.title !== taskToEdit.title
+        ) {
+          toast.error('This column already contains a task with this name.')
+          return
+        }
+
+        const targetTask = targetColumn.tasks.find(
           (t: TaskDTO) => t.title === taskToEdit.title,
         )
 

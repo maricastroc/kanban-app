@@ -62,7 +62,7 @@ export function AddBoard({ onClose }: AddBoardProps) {
   const [boardColumns, setBoardColumns] =
     useState<ColumnDTO[]>(initialBoardColumns)
 
-  const [showColumnError, setShowColumnError] = useState(false)
+  const [columnErrors, setColumnErrors] = useState<string[]>([])
 
   function handleAddColumn() {
     const newColumn = {
@@ -82,14 +82,22 @@ export function AddBoard({ onClose }: AddBoardProps) {
   function handleColumnChange(index: number, newValue: string) {
     const updatedColumns = [...boardColumns]
     updatedColumns[index].name = newValue
-    if (newValue.length > 0) {
-      setShowColumnError(false)
+
+    const newColumnErrors = [...columnErrors]
+    if (newValue.length === 0) {
+      newColumnErrors[index] = 'Required'
+    } else {
+      newColumnErrors[index] = ''
     }
+
+    setBoardColumns(updatedColumns)
   }
 
-  function renderColumnInput(index: number) {
+  function renderColumnInput(column: ColumnDTO, index: number) {
+    const columnKey = `column-${index}`
+
     return (
-      <InputColumnsContainer key={boardColumns[index].name}>
+      <InputColumnsContainer key={columnKey}>
         {boardColumns.length !== 1 ? (
           <>
             <InputColumnContent>
@@ -97,7 +105,9 @@ export function AddBoard({ onClose }: AddBoardProps) {
                 type="text"
                 placeholder="e.g. Todo"
                 defaultValue={boardColumns[index].name}
-                className={showColumnError ? 'error' : ''}
+                className={`${column.tasks.length > 0 ? 'disabled' : ''} ${
+                  columnErrors[index] ? 'error' : ''
+                }`}
                 onChange={(e) => handleColumnChange(index, e.target.value)}
               />
               <RemoveColumnButton
@@ -109,7 +119,7 @@ export function AddBoard({ onClose }: AddBoardProps) {
                 <FontAwesomeIcon icon={faXmark} />
               </RemoveColumnButton>
             </InputColumnContent>
-            {showColumnError && <span>Required</span>}
+            {columnErrors[index] && <span>{columnErrors[index]}</span>}
           </>
         ) : (
           <>
@@ -117,10 +127,12 @@ export function AddBoard({ onClose }: AddBoardProps) {
               type="text"
               defaultValue={boardColumns[index].name}
               placeholder="e.g. Todo"
-              className={showColumnError ? 'error' : ''}
+              className={`${column.tasks.length > 0 ? 'disabled' : ''} ${
+                columnErrors[index] ? 'error' : ''
+              }`}
               onChange={(e) => handleColumnChange(index, e.target.value)}
             />
-            {showColumnError && <span>Required</span>}
+            {columnErrors[index] && <span>{columnErrors[index]}</span>}
           </>
         )}
       </InputColumnsContainer>
@@ -128,10 +140,14 @@ export function AddBoard({ onClose }: AddBoardProps) {
   }
 
   function handleCreateNewBoard(data: FormData) {
-    const blankColumns = boardColumns.filter((column) => column.name === '')
+    const columnErrors = boardColumns.map((column) =>
+      column.name === '' ? 'Required' : '',
+    )
 
-    if (blankColumns.length > 0) {
-      setShowColumnError(true)
+    const hasErrors = columnErrors.some((error) => error !== '')
+
+    if (hasErrors) {
+      setColumnErrors(columnErrors)
       return
     }
 
@@ -157,7 +173,9 @@ export function AddBoard({ onClose }: AddBoardProps) {
             <ColumnsContainer>
               <Label>Board Columns</Label>
               <ColumnsContent>
-                {boardColumns.map((_, index) => renderColumnInput(index))}
+                {boardColumns.map((column, index) =>
+                  renderColumnInput(column, index),
+                )}
               </ColumnsContent>
               {boardColumns.length !== 6 && (
                 <Button

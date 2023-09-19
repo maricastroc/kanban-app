@@ -31,6 +31,7 @@ import {
   SubtasksContainer,
   SubtasksTitle,
   SubtasksContent,
+  SubtaskInputContent,
   SubtaskInputContainer,
   FormError,
 } from './styles'
@@ -70,7 +71,7 @@ export function EditTask({ task, onClose }: EditTaskProps) {
   const [status, setStatus] = useState(task.status)
 
   const [formSubtasks, setFormSubtasks] = useState<SubtaskDTO[]>(task.subtasks)
-  const [showSubtaskError, setShowSubtaskError] = useState(false)
+  const [subtaskErrors, setSubtaskErrors] = useState<string[]>([])
 
   function handleStatusChange(newStatus: string) {
     setStatus(newStatus)
@@ -86,6 +87,19 @@ export function EditTask({ task, onClose }: EditTaskProps) {
       subtasks: formSubtasks,
     }
 
+    const subtaskErrors = formSubtasks.map((subtask) =>
+      subtask.title === '' ? 'Required' : '',
+    )
+
+    const hasErrors = subtaskErrors.some((error) => error !== '')
+
+    console.log(hasErrors)
+
+    if (hasErrors) {
+      setSubtaskErrors(subtaskErrors)
+      return
+    }
+
     transferTaskToColumn(task, updatedTask.status, task.status)
 
     editTask(updatedTask, task)
@@ -99,17 +113,9 @@ export function EditTask({ task, onClose }: EditTaskProps) {
       isCompleted: false,
     }
     setFormSubtasks([...formSubtasks, newSubtask])
-    setShowSubtaskError(false)
   }
 
   function removeSubtask(indexToRemove: number) {
-    if (formSubtasks.length === 1) {
-      setShowSubtaskError(true)
-      return
-    }
-
-    setShowSubtaskError(false)
-
     const updatedSubtasks = formSubtasks.filter(
       (_, index) => index !== indexToRemove,
     )
@@ -119,6 +125,15 @@ export function EditTask({ task, onClose }: EditTaskProps) {
   function handleSubtaskChange(index: number, newValue: string) {
     const updatedSubtasks = [...formSubtasks]
     updatedSubtasks[index].title = newValue
+
+    const newSubtaskErrors = [...subtaskErrors]
+
+    if (newValue.length === 0) {
+      newSubtaskErrors[index] = 'Required'
+    } else {
+      newSubtaskErrors[index] = ''
+    }
+
     setFormSubtasks(updatedSubtasks)
   }
 
@@ -157,15 +172,26 @@ export function EditTask({ task, onClose }: EditTaskProps) {
               <SubtasksContent>
                 {formSubtasks.map((subtask, index) => (
                   <SubtaskInputContainer key={index}>
-                    <input
-                      defaultValue={subtask.title}
-                      onChange={(e) =>
-                        handleSubtaskChange(index, e.target.value)
-                      }
-                    />
-                    <button type="button" onClick={() => removeSubtask(index)}>
-                      <FontAwesomeIcon icon={faXmark} />
-                    </button>
+                    <SubtaskInputContent>
+                      <input
+                        defaultValue={subtask.title}
+                        className={`${subtaskErrors[index] ? 'error' : ''}`}
+                        onChange={(e) =>
+                          handleSubtaskChange(index, e.target.value)
+                        }
+                      />
+                      {formSubtasks.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeSubtask(index)}
+                        >
+                          <FontAwesomeIcon icon={faXmark} />
+                        </button>
+                      )}
+                    </SubtaskInputContent>
+                    {subtaskErrors[index] && (
+                      <span>{subtaskErrors[index]}</span>
+                    )}
                   </SubtaskInputContainer>
                 ))}
               </SubtasksContent>
@@ -174,11 +200,6 @@ export function EditTask({ task, onClose }: EditTaskProps) {
                 title="+ Add New Subtask"
                 onClick={addSubtask}
               />
-              {showSubtaskError && (
-                <FormError>
-                  You&aposve got to keep at least one subtask
-                </FormError>
-              )}
             </SubtasksContainer>
 
             <StatusBarContainer>

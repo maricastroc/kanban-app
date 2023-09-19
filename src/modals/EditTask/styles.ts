@@ -203,6 +203,21 @@ export const SubtasksContent = styled('p', {
 
 export const SubtaskInputContainer = styled('div', {
   display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+
+  span: {
+    marginTop: '0.3rem',
+    display: 'block',
+    color: '$red500',
+    fontSize: '0.75rem',
+    fontWeight: 700,
+    left: '75%',
+  },
+})
+
+export const SubtaskInputContent = styled('div', {
+  display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
   width: '100%',
@@ -216,6 +231,10 @@ export const SubtaskInputContainer = styled('div', {
     color: '$white',
     fontSize: '0.8125rem',
     borderRadius: 4,
+
+    '&.error': {
+      border: 'solid 2px $red500',
+    },
   },
 
   button: {
