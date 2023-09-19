@@ -1,7 +1,7 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 
 import { Button } from '@/components/Button'
-import { BoardsContext } from '@/contexts/BoardsContext'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 import { SubtaskDTO } from '@/dtos/subtaskDTO'
 import { TaskDTO } from '@/dtos/taskDTO'
 
@@ -35,6 +35,7 @@ import {
   SubtaskInputContainer,
   FormError,
 } from './styles'
+import { useTaskContext } from '@/contexts/TaskContext'
 
 interface EditTaskProps {
   task: TaskDTO
@@ -50,8 +51,9 @@ const formSchema = z.object({
 export type FormData = z.infer<typeof formSchema>
 
 export function EditTask({ task, onClose }: EditTaskProps) {
-  const { activeBoard, editTask, transferTaskToColumn } =
-    useContext(BoardsContext)
+  const { activeBoard } = useBoardsContext()
+
+  const { editTask, transferTaskToColumn } = useTaskContext()
 
   const {
     register,

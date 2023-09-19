@@ -1,10 +1,12 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faAngleDown,
   faAngleUp,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons'
+
 import {
   Overlay,
   Description,
@@ -27,8 +29,11 @@ import {
   SubtaskInputContent,
 } from './styles'
 import { Button } from '@/components/Button'
-import { BoardsContext } from '@/contexts/BoardsContext'
+
+import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useTaskContext } from '@/contexts/TaskContext'
 import { SubtaskDTO } from '@/dtos/subtaskDTO'
+
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -64,11 +69,16 @@ export function AddTask({ onClose }: AddTaskProps) {
     resolver: zodResolver(formSchema),
   })
 
-  const { activeBoard, addTaskToColumn } = useContext(BoardsContext)
+  const { activeBoard } = useBoardsContext()
+
+  const { addTaskToColumn } = useTaskContext()
+
   const [isOptionsContainerOpen, setIsOptionsContainerOpen] = useState(false)
+
   const [status, setStatus] = useState(activeBoard.columns[0].name)
 
   const [subtasks, setSubtasks] = useState<SubtaskDTO[]>(initialSubtasks)
+
   const [showBlankSubtaskError, setShowBlankSubtaskError] = useState(false)
 
   const handleStatusChange = (newStatus: string) => {

@@ -6,15 +6,15 @@ import {
   NewColumnContainer,
   NewColumnButton,
 } from './styles'
-import { useContext, useEffect, useState, useRef } from 'react'
-import { BoardsContext } from '@/contexts/BoardsContext'
+import { useEffect, useState, useRef } from 'react'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 import { ColumnDTO } from '@/dtos/columnDTO'
 import { BoardDTO } from '@/dtos/boardDTO'
 import { getActiveStorageBoard } from '@/storage/boardsConfig'
 import { AddColumn } from '@/modals/AddColumn'
 
 export default function Home() {
-  const { activeBoard } = useContext(BoardsContext)
+  const { activeBoard } = useBoardsContext()
   const [updatedBoard, setUpdatedBoard] = useState<BoardDTO>(activeBoard)
   const [openAddColumn, setOpenAddColumn] = useState(false)
 

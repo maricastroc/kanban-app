@@ -1,6 +1,8 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
+
 import {
   Overlay,
   Description,
@@ -16,8 +18,10 @@ import {
   InputNameContainer,
   InputColumnContent,
 } from './styles'
+
 import { Button } from '@/components/Button'
-import { BoardsContext } from '@/contexts/BoardsContext'
+import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useTaskContext } from '@/contexts/TaskContext'
 import { ColumnDTO } from '@/dtos/columnDTO'
 
 interface AddColumnProps {
@@ -25,7 +29,9 @@ interface AddColumnProps {
 }
 
 export function AddColumn({ onClose }: AddColumnProps) {
-  const { activeBoard, updateColumnsInBoard } = useContext(BoardsContext)
+  const { activeBoard } = useBoardsContext()
+
+  const { updateColumnsInBoard } = useTaskContext()
 
   const [columns, setColumns] = useState<ColumnDTO[]>(activeBoard.columns)
 

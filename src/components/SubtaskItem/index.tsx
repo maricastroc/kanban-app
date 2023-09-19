@@ -1,5 +1,5 @@
-import { useContext, useState } from 'react'
-import { BoardsContext } from '@/contexts/BoardsContext'
+import { useState } from 'react'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 import { getStorageBoards } from '@/storage/boardsConfig'
 import { ColumnDTO } from '@/dtos/columnDTO'
 import { TaskDTO } from '@/dtos/taskDTO'
@@ -17,8 +17,8 @@ interface SubtaskItemProps {
 }
 
 export function SubtaskItem({ task, title, isCompleted }: SubtaskItemProps) {
-  const { activeBoard, updateActiveBoard, updateBoards } =
-    useContext(BoardsContext)
+  const { activeBoard, updateActiveBoard, updateBoards } = useBoardsContext()
+
   const [isChecked, setIsChecked] = useState(isCompleted)
 
   const toggleSubtaskCompletion = (task: TaskDTO, subtaskTitle: string) => {

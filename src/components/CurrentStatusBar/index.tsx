@@ -1,18 +1,20 @@
-import { useContext, useState } from 'react'
-import { BoardsContext } from '@/contexts/BoardsContext'
+import { useState } from 'react'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 import { TaskDTO } from '@/dtos/taskDTO'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
 
 import { Container, OptionsContainer, StatusBarContainer } from './styles'
+import { useTaskContext } from '@/contexts/TaskContext'
 
 interface CurrentStatusBarProps {
   task: TaskDTO
 }
 
 export function CurrentStatusBar({ task }: CurrentStatusBarProps) {
-  const { activeBoard, transferTaskToColumn } = useContext(BoardsContext)
+  const { activeBoard } = useBoardsContext()
+  const { transferTaskToColumn } = useTaskContext()
 
   const [isOptionsContainerOpen, setIsOptionsContainerOpen] = useState(false)
 

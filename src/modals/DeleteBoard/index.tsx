@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import { Button } from '@/components/Button'
 
 import {
@@ -8,7 +7,8 @@ import {
   Content,
   ButtonsContainer,
 } from './styles'
-import { BoardsContext } from '@/contexts/BoardsContext'
+
+import { useBoardsContext } from '@/contexts/BoardsContext'
 import { BoardDTO } from '@/dtos/boardDTO'
 
 interface DeleteBoardProps {
@@ -17,7 +17,7 @@ interface DeleteBoardProps {
 }
 
 export function DeleteBoard({ board, onClose }: DeleteBoardProps) {
-  const { deleteBoard } = useContext(BoardsContext)
+  const { deleteBoard } = useBoardsContext()
 
   return (
     <>

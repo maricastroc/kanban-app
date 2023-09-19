@@ -1,5 +1,5 @@
-import { useContext, useState } from 'react'
-import { BoardsContext } from '@/contexts/BoardsContext'
+import { useState } from 'react'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 import Logo from '@/../public/icon.svg'
 
 import {
@@ -25,7 +25,7 @@ import { DeleteBoard } from '@/modals/DeleteBoard'
 import { EditBoard } from '@/modals/EditBoard'
 
 export function Header() {
-  const { activeBoard } = useContext(BoardsContext)
+  const { activeBoard } = useBoardsContext()
 
   const [showAddTask, setShowAddTask] = useState(false)
 

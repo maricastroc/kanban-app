@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import { TaskDTO } from '@/dtos/taskDTO'
 import { Button } from '@/components/Button'
 
@@ -9,7 +8,7 @@ import {
   Content,
   ButtonsContainer,
 } from './styles'
-import { BoardsContext } from '@/contexts/BoardsContext'
+import { useTaskContext } from '@/contexts/TaskContext'
 
 interface DeleteTaskProps {
   task: TaskDTO
@@ -17,7 +16,7 @@ interface DeleteTaskProps {
 }
 
 export function DeleteTask({ task, onClose }: DeleteTaskProps) {
-  const { deleteTask } = useContext(BoardsContext)
+  const { deleteTask } = useTaskContext()
 
   return (
     <>

@@ -1,7 +1,7 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 
 import { Button } from '@/components/Button'
-import { BoardsContext } from '@/contexts/BoardsContext'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 import { ColumnDTO } from '@/dtos/columnDTO'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -52,7 +52,7 @@ export function EditBoard({ board, onClose }: EditBoardProps) {
     resolver: zodResolver(formSchema),
   })
 
-  const { editBoard } = useContext(BoardsContext)
+  const { editBoard } = useBoardsContext()
 
   const [boardColumns, setBoardColumns] = useState<ColumnDTO[]>(board.columns)
 

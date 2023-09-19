@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 
@@ -21,7 +21,7 @@ import {
 } from './styles'
 import { Button } from '@/components/Button'
 import { ColumnDTO } from '@/dtos/columnDTO'
-import { BoardsContext } from '@/contexts/BoardsContext'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -57,7 +57,7 @@ export function AddBoard({ onClose }: AddBoardProps) {
     resolver: zodResolver(formSchema),
   })
 
-  const { createNewBoard } = useContext(BoardsContext)
+  const { createNewBoard } = useBoardsContext()
 
   const [boardColumns, setBoardColumns] =
     useState<ColumnDTO[]>(initialBoardColumns)

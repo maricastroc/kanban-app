@@ -1,5 +1,5 @@
-import { useContext, useState } from 'react'
-import { BoardsContext } from '@/contexts/BoardsContext'
+import { useState } from 'react'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 
 import {
   Overlay,
@@ -23,8 +23,7 @@ interface ViewBoardsProps {
 }
 
 export function ViewBoards({ onClose }: ViewBoardsProps) {
-  const { activeBoard, allBoards, handleSetActiveBoard } =
-    useContext(BoardsContext)
+  const { activeBoard, allBoards, handleSetActiveBoard } = useBoardsContext()
 
   const [openAddBoard, setOpenAddBoard] = useState(false)
 
