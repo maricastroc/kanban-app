@@ -36,6 +36,10 @@ export const TasksContainer = styled('div', {
   gap: '1.25rem',
   width: '100%',
   paddingBottom: '2rem',
+
+  '@media(min-width: 1024px)': {
+    gap: '1.5rem',
+  },
 })
 
 export const EmptyTasksContainer = styled('div', {
@@ -73,15 +77,10 @@ export const TaskItem = styled('div', {
   },
 
   '&:hover': {
-    filter: 'brightness(0.9)',
     transition: '200ms',
 
     strong: {
-      filter: 'brightness(0.7)',
-    },
-
-    p: {
-      filter: 'brightness(0.7)',
+      color: '$purple500',
     },
   },
 })

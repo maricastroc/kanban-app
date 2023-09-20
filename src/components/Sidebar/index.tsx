@@ -1,42 +1,44 @@
-import { useState } from 'react'
 import { useBoardsContext } from '@/contexts/BoardsContext'
-
 import {
-  Title,
-  Content,
-  BoardsContainer,
   Board,
-  ThemeSwitcherContainer,
-  SwitchThumb,
+  BoardsContainer,
+  Container,
+  HideButton,
+  OptionsContainer,
   SwitchRoot,
+  SwitchThumb,
+  ThemeSwitcherContainer,
+  Title,
+  Wrapper,
 } from './styles'
-
-import { Overlay } from '../sharedStyles'
-import { AddBoard } from '../AddBoard'
 
 import IconBoard from '../../../public/icon-board.svg'
 import LightThemeSvg from '../../../public/icon-light-theme.svg'
 import DarkThemeSvg from '../../../public/icon-dark-theme.svg'
-import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
+import { useState } from 'react'
+import { AddBoard } from '@/modals/AddBoard'
+import { EyeSlash } from 'phosphor-react'
 
-interface ViewBoardsProps {
+interface SidebarProps {
   onClose: () => void
 }
 
-export function ViewBoards({ onClose }: ViewBoardsProps) {
-  useEscapeKeyHandler(onClose)
-
-  const { activeBoard, allBoards, handleSetActiveBoard } = useBoardsContext()
+export function Sidebar({ onClose }: SidebarProps) {
+  const { allBoards, activeBoard, handleSetActiveBoard } = useBoardsContext()
 
   const [openAddBoard, setOpenAddBoard] = useState(false)
 
-  return !openAddBoard ? (
-    <>
-      <Overlay onClick={() => onClose()} />
-      <Content>
-        <Title>
-          <h3>{`All Boards (${allBoards.length})`}</h3>
-        </Title>
+  return (
+    <Container>
+      {openAddBoard && (
+        <AddBoard
+          onClose={() => {
+            setOpenAddBoard(false)
+          }}
+        />
+      )}
+      <Wrapper>
+        <Title>{`All Boards (${allBoards.length})`}</Title>
         <BoardsContainer>
           {allBoards.map((board) => {
             return (
@@ -45,7 +47,6 @@ export function ViewBoards({ onClose }: ViewBoardsProps) {
                 className={board.name === activeBoard.name ? 'active' : ''}
                 onClick={() => {
                   handleSetActiveBoard(board)
-                  onClose()
                 }}
               >
                 <img src={IconBoard} alt="" />
@@ -63,6 +64,8 @@ export function ViewBoards({ onClose }: ViewBoardsProps) {
             <p>+ Create New Board</p>
           </Board>
         </BoardsContainer>
+      </Wrapper>
+      <OptionsContainer>
         <ThemeSwitcherContainer>
           <img src={DarkThemeSvg} alt="" />
           <SwitchRoot className="SwitchRoot" id="airplane-mode">
@@ -70,14 +73,11 @@ export function ViewBoards({ onClose }: ViewBoardsProps) {
           </SwitchRoot>
           <img src={LightThemeSvg} alt="" />
         </ThemeSwitcherContainer>
-      </Content>
-    </>
-  ) : (
-    <AddBoard
-      onClose={() => {
-        setOpenAddBoard(false)
-        onClose()
-      }}
-    />
+        <HideButton onClick={onClose}>
+          <EyeSlash />
+          <p>Hide Sidebar</p>
+        </HideButton>
+      </OptionsContainer>
+    </Container>
   )
 }

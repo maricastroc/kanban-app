@@ -2,15 +2,6 @@ import { styled } from '@/styles'
 
 import { Root as RadixRoot, Thumb as RadixThumb } from '@radix-ui/react-switch'
 
-export const Overlay = styled('div', {
-  position: 'fixed',
-  width: '100vw',
-  height: '100vh',
-  inset: 0,
-  zIndex: 9998,
-  backgroundColor: 'rgba(10, 10, 10, 0.7)',
-})
-
 export const Content = styled('div', {
   display: 'flex',
   flexDirection: 'column',
@@ -142,6 +133,11 @@ export const SwitchRoot = styled(RadixRoot, {
   position: 'relative',
   boxShadow: 'none',
   border: 'none',
+
+  '&:hover': {
+    backgroundColor: '$purple300',
+    transition: '200ms',
+  },
 })
 
 export const SwitchThumb = styled(RadixThumb, {
@@ -151,10 +147,10 @@ export const SwitchThumb = styled(RadixThumb, {
   borderRadius: '50%',
   backgroundColor: '$white',
   top: 3,
-  transform: 'translateX(2px)',
+  transform: 'translateX(-16px)',
   transition: 'transform 0.2s ease',
 
   '&[data-state="checked"]': {
-    transform: 'translateX(-16px)',
+    transform: 'translateX(2px)',
   },
 })

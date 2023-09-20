@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import Logo from '@/../public/icon.svg'
+import LogoText from '@/../public/kanban.svg'
 
 import {
   faAngleDown,
@@ -11,13 +12,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import {
   AddButton,
+  BoardName,
   Container,
   LaunchButton,
+  LogoContainer,
+  LogoWrapper,
   OptionsContainer,
-  TextContainer,
+  TextMobileContainer,
   ViewMoreButton,
   ViewMoreContainer,
   ViewMoreModal,
+  Wrapper,
 } from './styles'
 import { AddTask } from '@/modals/AddTask'
 import { ViewBoards } from '@/modals/ViewBoards'
@@ -26,6 +31,8 @@ import { EditBoard } from '@/modals/EditBoard'
 
 export function Header() {
   const { activeBoard } = useBoardsContext()
+
+  const [isMobile, setIsMobile] = useState(false)
 
   const [showAddTask, setShowAddTask] = useState(false)
 
@@ -36,6 +43,15 @@ export function Header() {
   const [showDeleteBoard, setShowDeleteBoard] = useState(false)
 
   const [showEditBoard, setShowEditBoard] = useState(false)
+
+  useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth <= 768)
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   return (
     <Container>
@@ -59,51 +75,67 @@ export function Header() {
         />
       )}
 
-      <TextContainer onClick={() => setShowViewBoards(!showViewBoards)}>
-        <img src={Logo} width={24} height={24} alt="" />
-        {activeBoard?.name && (
-          <LaunchButton>
-            <h2>{activeBoard.name}</h2>
-            <FontAwesomeIcon icon={faAngleDown} />
-          </LaunchButton>
-        )}
-      </TextContainer>
+      {!isMobile && (
+        <LogoContainer>
+          <LogoWrapper>
+            <img src={Logo} width={24} height={24} alt="" />
+            <img src={LogoText} width={112} height={24} alt="" />
+          </LogoWrapper>
+        </LogoContainer>
+      )}
 
-      <OptionsContainer>
-        <AddButton onClick={() => setShowAddTask(true)}>
-          <FontAwesomeIcon icon={faPlus} />
-        </AddButton>
-
-        <ViewMoreContainer>
-          <ViewMoreButton
-            onClick={() => setShowViewMoreModal(!showViewMoreModal)}
-          >
-            <FontAwesomeIcon icon={faEllipsisVertical} />
-          </ViewMoreButton>
-          {showViewMoreModal && (
-            <ViewMoreModal>
-              <button
-                className="edit"
-                onClick={() => {
-                  setShowEditBoard(true)
-                  setShowViewMoreModal(false)
-                }}
-              >
-                Edit Board
-              </button>
-              <button
-                className="delete"
-                onClick={() => {
-                  setShowDeleteBoard(true)
-                  setShowViewMoreModal(false)
-                }}
-              >
-                Delete Board
-              </button>
-            </ViewMoreModal>
+      {isMobile && (
+        <TextMobileContainer onClick={() => setShowViewBoards(!showViewBoards)}>
+          <img src={Logo} width={24} height={24} alt="" />
+          {activeBoard?.name && (
+            <LaunchButton>
+              <h2>{activeBoard.name}</h2>
+              <FontAwesomeIcon icon={faAngleDown} />
+            </LaunchButton>
           )}
-        </ViewMoreContainer>
-      </OptionsContainer>
+        </TextMobileContainer>
+      )}
+
+      <Wrapper>
+        {!isMobile && <BoardName>{activeBoard.name}</BoardName>}
+
+        <OptionsContainer>
+          <AddButton onClick={() => setShowAddTask(true)}>
+            <FontAwesomeIcon icon={faPlus} />
+            <p>+ Add New Task</p>
+          </AddButton>
+
+          <ViewMoreContainer>
+            <ViewMoreButton
+              onClick={() => setShowViewMoreModal(!showViewMoreModal)}
+            >
+              <FontAwesomeIcon icon={faEllipsisVertical} />
+            </ViewMoreButton>
+            {showViewMoreModal && (
+              <ViewMoreModal>
+                <button
+                  className="edit"
+                  onClick={() => {
+                    setShowEditBoard(true)
+                    setShowViewMoreModal(false)
+                  }}
+                >
+                  Edit Board
+                </button>
+                <button
+                  className="delete"
+                  onClick={() => {
+                    setShowDeleteBoard(true)
+                    setShowViewMoreModal(false)
+                  }}
+                >
+                  Delete Board
+                </button>
+              </ViewMoreModal>
+            )}
+          </ViewMoreContainer>
+        </OptionsContainer>
+      </Wrapper>
     </Container>
   )
 }

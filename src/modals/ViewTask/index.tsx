@@ -9,17 +9,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
 
 import {
-  Overlay,
   Description,
   Title,
-  Content,
   SubtasksContainer,
   SubtasksTitle,
   CurrentStatusTitle,
   OptionsModal,
   OptionsContainer,
   OptionsButton,
+  EmptySubtask,
 } from './styles'
+
+import { Content, Overlay } from '../sharedStyles'
+import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 
 interface ViewTaskModalProps {
   task: TaskDTO
@@ -27,6 +29,8 @@ interface ViewTaskModalProps {
 }
 
 export function ViewTask({ task, onClose }: ViewTaskModalProps) {
+  useEscapeKeyHandler(onClose)
+
   const subtasksCompleted = task.subtasks.filter(
     (subtask) => subtask.isCompleted,
   )
@@ -46,9 +50,9 @@ export function ViewTask({ task, onClose }: ViewTaskModalProps) {
     <>
       {!openEditTaskModal && !openDeleteTask && (
         <>
-          <Overlay className="DialogOverlay" onClick={() => onClose()} />
-          <Content className="DialogContent">
-            <Title className="DialogTitle">
+          <Overlay onClick={() => onClose()} />
+          <Content className="bigger">
+            <Title>
               <h3>{task.title}</h3>
               <OptionsContainer>
                 <OptionsButton
@@ -74,23 +78,27 @@ export function ViewTask({ task, onClose }: ViewTaskModalProps) {
                 )}
               </OptionsContainer>
             </Title>
-            <Description className="DialogDescription">
+            <Description>
               {task.description.length > 0 ? (
                 <p>{task.description}</p>
               ) : (
                 <p>No description</p>
               )}
               <SubtasksTitle>{`Subtasks (${subtasksCompleted.length} of ${task.subtasks.length})`}</SubtasksTitle>
-              <SubtasksContainer suppressHydrationWarning>
-                {task.subtasks.map((subtask) => (
-                  <SubtaskItem
-                    key={subtask.title}
-                    task={task}
-                    title={subtask.title}
-                    isCompleted={subtask.isCompleted}
-                  />
-                ))}
-              </SubtasksContainer>
+              {task.subtasks.length > 0 ? (
+                <SubtasksContainer>
+                  {task.subtasks.map((subtask) => (
+                    <SubtaskItem
+                      key={subtask.title}
+                      task={task}
+                      title={subtask.title}
+                      isCompleted={subtask.isCompleted}
+                    />
+                  ))}
+                </SubtasksContainer>
+              ) : (
+                <EmptySubtask>No subtasks.</EmptySubtask>
+              )}
               <CurrentStatusTitle>Current Status</CurrentStatusTitle>
               <CurrentStatusBar task={task} />
             </Description>

@@ -6,6 +6,12 @@ export const Container = styled('div', {
   flexDirection: 'column',
   width: '100%',
   height: '100vh',
+  overflow: 'hidden',
+})
+
+export const Wrapper = styled('div', {
+  display: 'flex',
+  width: '100%',
   overflow: 'auto',
 })
 
@@ -20,6 +26,17 @@ export const ColumnsContainer = styled('div', {
 
   '&.hand-cursor': {
     cursor: 'grab',
+  },
+
+  '@media(min-width: 768px)': {
+    padding: '1.5rem',
+    height: '100%',
+  },
+
+  '@media(min-width: 1024px)': {
+    padding: '2rem',
+    gap: '2rem',
+    height: '100%',
   },
 })
 
@@ -78,5 +95,31 @@ export const StyledToastContainer = styled(ToastContainer, {
 
   '& .Toastify__progress-bar': {
     backgroundColor: '$purple500',
+  },
+})
+
+export const ShowSidebarButton = styled('button', {
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  border: 'none',
+  borderTopRightRadius: 22,
+  borderBottomRightRadius: 22,
+  position: 'absolute',
+  zIndex: 9999,
+  backgroundColor: '$purple500',
+  width: 56,
+  height: 48,
+  top: '87%',
+
+  svg: {
+    fontSize: '1.5rem',
+    color: '$white',
+  },
+
+  '&:hover': {
+    backgroundColor: '$purple300',
+    transition: '200ms',
   },
 })

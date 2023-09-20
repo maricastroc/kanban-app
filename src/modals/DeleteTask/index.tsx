@@ -1,14 +1,10 @@
 import { TaskDTO } from '@/dtos/taskDTO'
 import { Button } from '@/components/Button'
 
-import {
-  Overlay,
-  Description,
-  Title,
-  Content,
-  ButtonsContainer,
-} from './styles'
+import { Description, ButtonsContainer } from './styles'
 import { useTaskContext } from '@/contexts/TaskContext'
+import { Content, Overlay, Title } from '../sharedStyles'
+import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 
 interface DeleteTaskProps {
   task: TaskDTO
@@ -16,18 +12,17 @@ interface DeleteTaskProps {
 }
 
 export function DeleteTask({ task, onClose }: DeleteTaskProps) {
+  useEscapeKeyHandler(onClose)
   const { deleteTask } = useTaskContext()
 
   return (
     <>
       <Overlay onClick={() => onClose()} />
       <Content>
-        <Title>
-          <h3>Delete this board?</h3>
-        </Title>
-        <Description className="DialogDescription">
+        <Title className="delete">Delete this task?</Title>
+        <Description>
           <p>
-            {`Are you sure you want to delete the ‘${task.title}’ board? task
+            {`Are you sure you want to delete the ‘${task.title}’ task
           and its subtasks? This action cannot be reversed.`}
           </p>
         </Description>

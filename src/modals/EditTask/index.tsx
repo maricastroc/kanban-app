@@ -1,41 +1,40 @@
 import { useState } from 'react'
+import { useTaskContext } from '@/contexts/TaskContext'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 
 import { Button } from '@/components/Button'
-import { useBoardsContext } from '@/contexts/BoardsContext'
+import { InputVariant } from '@/components/InputVariant'
 import { SubtaskDTO } from '@/dtos/subtaskDTO'
 import { TaskDTO } from '@/dtos/taskDTO'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faAngleDown,
-  faAngleUp,
-  faXmark,
-} from '@fortawesome/free-solid-svg-icons'
+import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 
 import {
-  Overlay,
-  Description,
-  Title,
-  Content,
-  CloseButton,
-  InputContainer,
-  FormContainer,
   StatusBarContainer,
   StatusBarContent,
   OptionsContainer,
-  StatusBarTitle,
   SubtasksContainer,
-  SubtasksTitle,
   SubtasksContent,
-  SubtaskInputContent,
-  SubtaskInputContainer,
-  FormError,
 } from './styles'
-import { useTaskContext } from '@/contexts/TaskContext'
+
+import {
+  Content,
+  Input,
+  InputContainer,
+  Label,
+  TextArea,
+  Title,
+  InputVariantsContainer,
+  Overlay,
+  FormContainer,
+  FormError,
+} from '../sharedStyles'
+import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 
 interface EditTaskProps {
   task: TaskDTO
@@ -51,6 +50,8 @@ const formSchema = z.object({
 export type FormData = z.infer<typeof formSchema>
 
 export function EditTask({ task, onClose }: EditTaskProps) {
+  useEscapeKeyHandler(onClose)
+
   const { activeBoard } = useBoardsContext()
 
   const { editTask, transferTaskToColumn } = useTaskContext()
@@ -95,8 +96,6 @@ export function EditTask({ task, onClose }: EditTaskProps) {
 
     const hasErrors = subtaskErrors.some((error) => error !== '')
 
-    console.log(hasErrors)
-
     if (hasErrors) {
       setSubtaskErrors(subtaskErrors)
       return
@@ -139,109 +138,94 @@ export function EditTask({ task, onClose }: EditTaskProps) {
     setFormSubtasks(updatedSubtasks)
   }
 
+  const renderSubtaskInput = (subtask: SubtaskDTO, index: number) => {
+    return (
+      <InputVariantsContainer key={index}>
+        <InputVariant
+          defaultValue={subtask.title}
+          inputClassName={`${subtaskErrors[index] ? 'error' : ''}`}
+          onChange={(e) => handleSubtaskChange(index, e.target.value)}
+          placeholder="e.g. Make coffee"
+          onClick={() => removeSubtask(index)}
+        />
+        {subtaskErrors[index] && <span>{subtaskErrors[index]}</span>}
+      </InputVariantsContainer>
+    )
+  }
+
   return (
     <>
       <Overlay onClick={() => onClose()} />
-      <Content>
-        <Title>
-          <h3>Edit Task</h3>
-          <CloseButton onClick={() => onClose()}>
-            <FontAwesomeIcon icon={faXmark} />
-          </CloseButton>
-        </Title>
-        <Description className="DialogDescription">
-          <FormContainer onSubmit={handleSubmit(handleEditTask)}>
-            <InputContainer>
-              <label htmlFor="title">Title</label>
-              <input
-                placeholder="e.g. Take coffee break"
-                {...register('title')}
-              />
-              {errors?.title && <FormError>{errors.title.message}</FormError>}
-            </InputContainer>
-
-            <InputContainer>
-              <label htmlFor="description">Description</label>
-              <textarea
-                placeholder="e.g. It’s always good to take a break. This 
-                15-minute break will recharge the batteries a little."
-                {...register('description')}
-              />
-            </InputContainer>
-
-            <SubtasksContainer>
-              <SubtasksTitle>Subtasks</SubtasksTitle>
-              <SubtasksContent>
-                {formSubtasks.map((subtask, index) => (
-                  <SubtaskInputContainer key={index}>
-                    <SubtaskInputContent>
-                      <input
-                        defaultValue={subtask.title}
-                        className={`${subtaskErrors[index] ? 'error' : ''}`}
-                        onChange={(e) =>
-                          handleSubtaskChange(index, e.target.value)
-                        }
-                      />
-                      {formSubtasks.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeSubtask(index)}
-                        >
-                          <FontAwesomeIcon icon={faXmark} />
-                        </button>
-                      )}
-                    </SubtaskInputContent>
-                    {subtaskErrors[index] && (
-                      <span>{subtaskErrors[index]}</span>
-                    )}
-                  </SubtaskInputContainer>
-                ))}
-              </SubtasksContent>
-              <Button
-                type="button"
-                title="+ Add New Subtask"
-                onClick={addSubtask}
-              />
-            </SubtasksContainer>
-
-            <StatusBarContainer>
-              <StatusBarTitle>Status</StatusBarTitle>
-              <StatusBarContent
-                className={isOptionsContainerOpen ? 'active' : ''}
-                onClick={() =>
-                  setIsOptionsContainerOpen(!isOptionsContainerOpen)
-                }
-              >
-                <p>{status}</p>
-                {isOptionsContainerOpen ? (
-                  <FontAwesomeIcon icon={faAngleUp} />
-                ) : (
-                  <FontAwesomeIcon icon={faAngleDown} />
-                )}
-              </StatusBarContent>
-              {isOptionsContainerOpen && (
-                <OptionsContainer>
-                  {activeBoard.columns.map((column) => (
-                    <button
-                      type="button"
-                      key={column.name}
-                      onClick={() => handleStatusChange(column.name)}
-                    >
-                      {column.name}
-                    </button>
-                  ))}
-                </OptionsContainer>
-              )}
-            </StatusBarContainer>
-
-            <Button
-              title="Edit Task"
-              type="submit"
-              variant="secondary"
-              disabled={isSubmitting}
+      <Content className="bigger">
+        <Title>Edit Task</Title>
+        <FormContainer onSubmit={handleSubmit(handleEditTask)}>
+          <InputContainer>
+            <Label htmlFor="title">Title</Label>
+            <Input
+              placeholder="e.g. Take coffee break"
+              {...register('title')}
             />
-          </FormContainer>
-        </Description>
+            {errors?.title && <FormError>{errors.title.message}</FormError>}
+          </InputContainer>
+
+          <InputContainer>
+            <Label htmlFor="description">Description</Label>
+            <TextArea
+              placeholder="e.g. It’s always good to take a break. This 
+              15-minute break will recharge the batteries a little."
+              {...register('description')}
+            />
+          </InputContainer>
+
+          <SubtasksContainer>
+            <Label>Subtasks</Label>
+            <SubtasksContent>
+              {formSubtasks.map((subtask, index) =>
+                renderSubtaskInput(subtask, index),
+              )}
+            </SubtasksContent>
+            <Button
+              type="button"
+              title="+ Add New Subtask"
+              onClick={addSubtask}
+            />
+          </SubtasksContainer>
+
+          <StatusBarContainer>
+            <Label>Status</Label>
+            <StatusBarContent
+              className={isOptionsContainerOpen ? 'active' : ''}
+              onClick={() => setIsOptionsContainerOpen(!isOptionsContainerOpen)}
+            >
+              <p>{status}</p>
+              {isOptionsContainerOpen ? (
+                <FontAwesomeIcon icon={faAngleUp} />
+              ) : (
+                <FontAwesomeIcon icon={faAngleDown} />
+              )}
+            </StatusBarContent>
+            {isOptionsContainerOpen && (
+              <OptionsContainer>
+                {activeBoard.columns.map((column) => (
+                  <button
+                    type="button"
+                    key={column.name}
+                    onClick={() => handleStatusChange(column.name)}
+                  >
+                    {column.name}
+                  </button>
+                ))}
+              </OptionsContainer>
+            )}
+          </StatusBarContainer>
+
+          <Button
+            title="Edit Task"
+            type="submit"
+            variant="secondary"
+            disabled={isSubmitting}
+          />
+        </FormContainer>
       </Content>
     </>
   )

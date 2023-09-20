@@ -1,33 +1,29 @@
 import { useState } from 'react'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 
 import { Button } from '@/components/Button'
-import { useBoardsContext } from '@/contexts/BoardsContext'
+import { InputVariant } from '@/components/InputVariant'
 import { ColumnDTO } from '@/dtos/columnDTO'
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faXmark } from '@fortawesome/free-solid-svg-icons'
+import { BoardDTO } from '@/dtos/boardDTO'
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 
+import { ColumnsContainer, ColumnsContent } from './styles'
+
 import {
-  Overlay,
-  Title,
   Content,
   FormContainer,
-  ColumnsContainer,
-  RemoveColumnButton,
-  InputNameContainer,
-  Label,
-  Description,
-  ColumnsContent,
-  InputColumnsContainer,
-  InputColumnContent,
-  InputColumn,
   FormError,
-} from './styles'
-import { BoardDTO } from '@/dtos/boardDTO'
+  Input,
+  InputContainer,
+  InputVariantsContainer,
+  Label,
+  Overlay,
+  Title,
+} from '../sharedStyles'
+import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 
 interface EditBoardProps {
   board: BoardDTO
@@ -41,6 +37,8 @@ const formSchema = z.object({
 export type FormData = z.infer<typeof formSchema>
 
 export function EditBoard({ board, onClose }: EditBoardProps) {
+  useEscapeKeyHandler(onClose)
+
   const {
     register,
     handleSubmit,
@@ -107,67 +105,56 @@ export function EditBoard({ board, onClose }: EditBoardProps) {
     const columnKey = `column-${index}`
 
     return (
-      <InputColumnsContainer key={columnKey}>
-        <InputColumnContent>
-          <InputColumn
-            type="text"
-            defaultValue={column.name}
-            className={`${column.tasks.length > 0 ? 'disabled' : ''} ${
-              columnErrors[index] ? 'error' : ''
-            }`}
-            onChange={(e) => handleColumnChange(index, e.target.value)}
-          />
-          <RemoveColumnButton
-            className={column.tasks.length > 0 ? 'disabled' : ''}
-            onClick={() => handleRemoveColumn(index)}
-          >
-            <FontAwesomeIcon icon={faXmark} />
-          </RemoveColumnButton>
-        </InputColumnContent>
+      <InputVariantsContainer key={columnKey}>
+        <InputVariant
+          inputClassName={`${column.tasks.length > 0 ? 'disabled' : ''} ${
+            columnErrors[index] ? 'error' : ''
+          }`}
+          btnClassName={column.tasks.length > 0 ? 'disabled' : ''}
+          defaultValue={column.name}
+          onChange={(e) => handleColumnChange(index, e.target.value)}
+          onClick={() => handleRemoveColumn(index)}
+        />
         {columnErrors[index] && <span>{columnErrors[index]}</span>}
-      </InputColumnsContainer>
+      </InputVariantsContainer>
     )
   }
 
   return (
     <>
       <Overlay onClick={() => onClose()} />
-      <Content>
-        <Title>
-          <h3>Edit Board</h3>
-        </Title>
-        <Description>
-          <FormContainer onSubmit={handleSubmit(handleEditBoard)}>
-            <InputNameContainer>
-              <Label>Name</Label>
-              <input type="text" {...register('name')} />
-              {errors?.name && <FormError>{errors.name.message}</FormError>}
-            </InputNameContainer>
+      <Content className="bigger">
+        <Title>Edit Board</Title>
+        <FormContainer onSubmit={handleSubmit(handleEditBoard)}>
+          <InputContainer>
+            <Label>Name</Label>
+            <Input type="text" {...register('name')} className="disabled" />
+            {errors?.name && <FormError>{errors.name.message}</FormError>}
+          </InputContainer>
 
-            <ColumnsContainer>
-              <Label>Columns</Label>
-              <ColumnsContent>
-                {boardColumns.map((column, index) =>
-                  renderColumnInput(column, index),
-                )}
-              </ColumnsContent>
-              {boardColumns.length !== 6 && (
-                <Button
-                  type="button"
-                  title="+ Add New Column"
-                  onClick={handleAddColumn}
-                />
+          <ColumnsContainer>
+            <Label>Columns</Label>
+            <ColumnsContent>
+              {boardColumns.map((column, index) =>
+                renderColumnInput(column, index),
               )}
-            </ColumnsContainer>
+            </ColumnsContent>
+            {boardColumns.length !== 6 && (
+              <Button
+                type="button"
+                title="+ Add New Column"
+                onClick={handleAddColumn}
+              />
+            )}
+          </ColumnsContainer>
 
-            <Button
-              title="Save Changes"
-              type="submit"
-              variant="secondary"
-              disabled={isSubmitting}
-            />
-          </FormContainer>
-        </Description>
+          <Button
+            title="Save Changes"
+            type="submit"
+            variant="secondary"
+            disabled={isSubmitting}
+          />
+        </FormContainer>
       </Content>
     </>
   )

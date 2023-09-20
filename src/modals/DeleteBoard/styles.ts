@@ -1,14 +1,5 @@
 import { styled } from '../../styles'
 
-export const Overlay = styled('div', {
-  position: 'fixed',
-  width: '100vw',
-  height: '100vh',
-  inset: 0,
-  zIndex: 9998,
-  backgroundColor: 'rgba(10, 10, 10, 0.7)',
-})
-
 export const Content = styled('div', {
   display: 'flex',
   flexDirection: 'column',
@@ -26,18 +17,6 @@ export const Content = styled('div', {
 
   '&:focus': {
     boxShadow: 'none',
-  },
-})
-
-export const Title = styled('div', {
-  display: 'flex',
-  justifyContent: 'flex-start',
-  width: '100%',
-
-  h3: {
-    fontSize: '1.125rem',
-    fontWeight: 700,
-    color: '$red500',
   },
 })
 

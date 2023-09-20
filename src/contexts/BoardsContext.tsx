@@ -1,10 +1,12 @@
 import { createContext, ReactNode, useContext, useState } from 'react'
+
 import {
   getActiveStorageBoard,
   getStorageBoards,
   saveStorageActiveBoard,
   saveStorageBoards,
 } from '../storage/boardsConfig'
+
 import { BoardDTO } from '../dtos/boardDTO'
 import { toast } from 'react-toastify'
 import { ColumnDTO } from '@/dtos/columnDTO'
@@ -48,7 +50,14 @@ export function BoardsContextProvider({
   const [allBoards, setAllBoards] = useState<BoardDTO[]>(getStorageBoards())
 
   function handleSetActiveBoard(board: BoardDTO) {
-    setActiveBoard(board)
+    saveStorageActiveBoard({
+      name: board.name,
+      columns: [...board.columns],
+    })
+    setActiveBoard({
+      name: board.name,
+      columns: [...board.columns],
+    })
   }
 
   function updateActiveBoard(board: BoardDTO) {

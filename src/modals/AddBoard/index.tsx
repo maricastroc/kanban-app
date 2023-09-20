@@ -1,27 +1,25 @@
 import { useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faXmark } from '@fortawesome/free-solid-svg-icons'
+import { useBoardsContext } from '@/contexts/BoardsContext'
+
+import { ColumnsContainer, ColumnsContent } from './styles'
 
 import {
-  Overlay,
-  Description,
-  Title,
   Content,
   FormContainer,
-  RemoveColumnButton,
-  ColumnsContainer,
-  ColumnsContent,
-  Label,
-  InputColumn,
-  InputColumnsContainer,
+  FormError,
   Input,
   InputContainer,
-  FormError,
-  InputColumnContent,
-} from './styles'
+  InputVariantsContainer,
+  Label,
+  Overlay,
+  Title,
+} from '../sharedStyles'
+
 import { Button } from '@/components/Button'
+import { InputVariant } from '@/components/InputVariant'
 import { ColumnDTO } from '@/dtos/columnDTO'
-import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
+import { initialBoardColumns } from '@/utils/initialValues'
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -37,18 +35,9 @@ const formSchema = z.object({
 
 export type FormData = z.infer<typeof formSchema>
 
-const initialBoardColumns = [
-  {
-    name: 'Todo',
-    tasks: [],
-  },
-  {
-    name: 'Doing',
-    tasks: [],
-  },
-]
-
 export function AddBoard({ onClose }: AddBoardProps) {
+  useEscapeKeyHandler(onClose)
+
   const {
     register,
     handleSubmit,
@@ -97,28 +86,21 @@ export function AddBoard({ onClose }: AddBoardProps) {
     const columnKey = `column-${index}`
 
     return (
-      <InputColumnsContainer key={columnKey}>
+      <InputVariantsContainer key={columnKey}>
         {boardColumns.length !== 1 ? (
           <>
-            <InputColumnContent>
-              <InputColumn
-                type="text"
-                placeholder="e.g. Todo"
-                defaultValue={boardColumns[index].name}
-                className={`${column.tasks.length > 0 ? 'disabled' : ''} ${
-                  columnErrors[index] ? 'error' : ''
-                }`}
-                onChange={(e) => handleColumnChange(index, e.target.value)}
-              />
-              <RemoveColumnButton
-                className={
-                  boardColumns[index].tasks.length > 0 ? 'disabled' : ''
-                }
-                onClick={() => handleRemoveColumn(index)}
-              >
-                <FontAwesomeIcon icon={faXmark} />
-              </RemoveColumnButton>
-            </InputColumnContent>
+            <InputVariant
+              inputClassName={`${column.tasks.length > 0 ? 'disabled' : ''} ${
+                columnErrors[index] ? 'error' : ''
+              }`}
+              btnClassName={
+                boardColumns[index].tasks.length > 0 ? 'disabled' : ''
+              }
+              defaultValue={boardColumns[index].name}
+              placeholder="e.g. Todo"
+              onChange={(e) => handleColumnChange(index, e.target.value)}
+              onClick={() => handleRemoveColumn(index)}
+            />
             {columnErrors[index] && <span>{columnErrors[index]}</span>}
           </>
         ) : (
@@ -135,7 +117,7 @@ export function AddBoard({ onClose }: AddBoardProps) {
             {columnErrors[index] && <span>{columnErrors[index]}</span>}
           </>
         )}
-      </InputColumnsContainer>
+      </InputVariantsContainer>
     )
   }
 
@@ -158,42 +140,38 @@ export function AddBoard({ onClose }: AddBoardProps) {
   return (
     <>
       <Overlay onClick={() => onClose()} />
-      <Content>
-        <Title>
-          <h3>Add New Board</h3>
-        </Title>
-        <Description>
-          <FormContainer onSubmit={handleSubmit(handleCreateNewBoard)}>
-            <InputContainer>
-              <Label>Board Name</Label>
-              <Input placeholder="e.g. Web Design" {...register('name')} />
-              {errors?.name && <FormError>{errors.name.message}</FormError>}
-            </InputContainer>
+      <Content className="bigger">
+        <Title>Add New Board</Title>
+        <FormContainer onSubmit={handleSubmit(handleCreateNewBoard)}>
+          <InputContainer>
+            <Label>Name</Label>
+            <Input placeholder="e.g. Web Design" {...register('name')} />
+            {errors?.name && <FormError>{errors.name.message}</FormError>}
+          </InputContainer>
 
-            <ColumnsContainer>
-              <Label>Board Columns</Label>
-              <ColumnsContent>
-                {boardColumns.map((column, index) =>
-                  renderColumnInput(column, index),
-                )}
-              </ColumnsContent>
-              {boardColumns.length !== 6 && (
-                <Button
-                  type="button"
-                  title="+ Add New Column"
-                  onClick={() => handleAddColumn()}
-                />
+          <ColumnsContainer>
+            <Label>Columns</Label>
+            <ColumnsContent>
+              {boardColumns.map((column, index) =>
+                renderColumnInput(column, index),
               )}
-            </ColumnsContainer>
+            </ColumnsContent>
+            {boardColumns.length !== 6 && (
+              <Button
+                type="button"
+                title="+ Add New Column"
+                onClick={() => handleAddColumn()}
+              />
+            )}
+          </ColumnsContainer>
 
-            <Button
-              type="submit"
-              title="Save Changes"
-              variant="secondary"
-              disabled={isSubmitting}
-            />
-          </FormContainer>
-        </Description>
+          <Button
+            type="submit"
+            title="Save Changes"
+            variant="secondary"
+            disabled={isSubmitting}
+          />
+        </FormContainer>
       </Content>
     </>
   )

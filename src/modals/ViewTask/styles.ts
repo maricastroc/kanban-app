@@ -1,36 +1,4 @@
-import { styled } from '../../styles'
-
-export const Overlay = styled('div', {
-  position: 'fixed',
-  width: '100vw',
-  height: '100vh',
-  inset: 0,
-  zIndex: 9998,
-  backgroundColor: 'rgba(10, 10, 10, 0.7)',
-})
-
-export const Content = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
-  padding: '1.5rem 1.5rem 3rem',
-  backgroundColor: '$gray600',
-  border: 'none',
-  position: 'fixed',
-  left: '50%',
-  overflowY: 'scroll',
-  overflowX: 'hidden',
-  top: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 'clamp(300px, 90vw, 33rem)',
-  borderRadius: 8,
-  zIndex: 9999,
-  height: '90vh',
-
-  '&:focus': {
-    boxShadow: 'none',
-  },
-})
+import { styled } from '@/styles'
 
 export const Title = styled('div', {
   display: 'flex',
@@ -134,4 +102,11 @@ export const OptionsModal = styled('div', {
       color: '$red500',
     },
   },
+})
+
+export const EmptySubtask = styled('p', {
+  color: '$gray400',
+  fontSize: '0.8125rem',
+  lineHeight: '1.4rem',
+  marginTop: '0.5rem',
 })
