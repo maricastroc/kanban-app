@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Container, Input, RemoveButton } from './styles'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
@@ -29,7 +28,7 @@ export function InputVariant({
         defaultValue={defaultValue}
         onChange={onChange}
       />
-      <RemoveButton className={btnClassName} onClick={onClick}>
+      <RemoveButton type="button" className={btnClassName} onClick={onClick}>
         <FontAwesomeIcon icon={faXmark} />
       </RemoveButton>
     </Container>

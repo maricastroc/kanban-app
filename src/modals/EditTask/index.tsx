@@ -116,12 +116,13 @@ export function EditTask({ task, onClose }: EditTaskProps) {
     setFormSubtasks([...formSubtasks, newSubtask])
   }
 
-  function removeSubtask(indexToRemove: number) {
-    const updatedSubtasks = formSubtasks.filter(
-      (_, index) => index !== indexToRemove,
+  function removeSubtask(subtaskTitle: string) {
+    setFormSubtasks((prevSubtasks) =>
+      prevSubtasks.filter((subtask) => subtask.title !== subtaskTitle),
     )
-    setFormSubtasks(updatedSubtasks)
   }
+
+  console.log(formSubtasks)
 
   function handleSubtaskChange(index: number, newValue: string) {
     const updatedSubtasks = [...formSubtasks]
@@ -140,13 +141,13 @@ export function EditTask({ task, onClose }: EditTaskProps) {
 
   const renderSubtaskInput = (subtask: SubtaskDTO, index: number) => {
     return (
-      <InputVariantsContainer key={index}>
+      <InputVariantsContainer>
         <InputVariant
           defaultValue={subtask.title}
           inputClassName={`${subtaskErrors[index] ? 'error' : ''}`}
           onChange={(e) => handleSubtaskChange(index, e.target.value)}
           placeholder="e.g. Make coffee"
-          onClick={() => removeSubtask(index)}
+          onClick={() => removeSubtask(subtask.title)}
         />
         {subtaskErrors[index] && <span>{subtaskErrors[index]}</span>}
       </InputVariantsContainer>

@@ -83,10 +83,8 @@ export function AddBoard({ onClose }: AddBoardProps) {
   }
 
   function renderColumnInput(column: ColumnDTO, index: number) {
-    const columnKey = `column-${index}`
-
     return (
-      <InputVariantsContainer key={columnKey}>
+      <InputVariantsContainer key={column.name}>
         {boardColumns.length !== 1 ? (
           <>
             <InputVariant

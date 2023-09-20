@@ -133,18 +133,36 @@ export function AddTask({ onClose }: AddTaskProps) {
 
     addTaskToColumn(newTask, status)
 
-    setSubtasks(initialSubtasks)
+    setSubtasks([
+      {
+        title: '',
+        isCompleted: false,
+      },
+      {
+        title: '',
+        isCompleted: false,
+      },
+    ])
 
     onClose()
   }
 
   useEffect(() => {
-    setSubtasks(initialSubtasks)
+    setSubtasks([
+      {
+        title: '',
+        isCompleted: false,
+      },
+      {
+        title: '',
+        isCompleted: false,
+      },
+    ])
   }, [])
 
-  const renderSubtaskInput = (index: number) => {
+  const renderSubtaskInput = (subtask: SubtaskDTO, index: number) => {
     return (
-      <InputVariantsContainer key={index}>
+      <InputVariantsContainer key={subtask.title}>
         <InputVariant
           inputClassName={`${subtaskErrors[index] ? 'error' : ''}`}
           placeholder="e.g. Make coffee"
@@ -156,6 +174,8 @@ export function AddTask({ onClose }: AddTaskProps) {
       </InputVariantsContainer>
     )
   }
+
+  console.log(subtasks)
 
   return (
     <>
@@ -183,7 +203,9 @@ export function AddTask({ onClose }: AddTaskProps) {
           <SubtasksContainer>
             <Label>Subtasks</Label>
             <SubtasksContent>
-              {subtasks.map((_, index) => renderSubtaskInput(index))}
+              {subtasks.map((subtask, index) =>
+                renderSubtaskInput(subtask, index),
+              )}
             </SubtasksContent>
             <Button
               type="button"

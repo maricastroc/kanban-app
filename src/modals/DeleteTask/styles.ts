@@ -1,22 +1,22 @@
-import { styled } from '../../styles'
+import styled from 'styled-components'
 
-export const Description = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
-  width: '100%',
-  marginTop: '1.5rem',
+export const Description = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 1.5rem;
 
-  p: {
-    color: '$gray400',
-    fontSize: '0.8125rem',
-    lineHeight: '1.4rem',
-  },
-})
+  p {
+    color: ${(props) => props.theme['gray-400']};
+    font-size: 0.8125rem;
+    line-height: 1.4rem;
+  }
+`
 
-export const ButtonsContainer = styled('div', {
-  display: 'flex',
-  marginTop: '1.5rem',
-  flexDirection: 'column',
-  width: '100%',
-  gap: '1rem',
-})
+export const ButtonsContainer = styled.div`
+  display: flex;
+  margin-top: 1.5rem;
+  flex-direction: column;
+  width: 100%;
+  gap: 1rem;
+`

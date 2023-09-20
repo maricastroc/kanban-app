@@ -1,45 +1,46 @@
-import { globalCss } from '.'
+import { createGlobalStyle } from 'styled-components'
 
-export const globalStyles = globalCss({
-  '*': {
-    margin: 0,
-    padding: 0,
-    boxSizing: 'border-box',
+export const GlobalStyle = createGlobalStyle`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-    ':focus': {
-      outline: 'transparent',
-      boxShadow: '0 0 0 2px rgba(99, 95, 199, 1)',
-    },
-  },
+  :focus {
+    outline: none;
+    boxShadow: 0 0 0 2px rgba(99, 95, 199, 1);
+  }
 
-  body: {
-    backgroundColor: '$gray700',
-    color: '$white',
-    height: '100vh',
-    '-webkit-font-smoothing': 'antialiased',
+  body {
+    background-color: ${(props) => props.theme['gray-700']};
+    color: ${(props) => props.theme['white-color']};
+    height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
 
-    '*::-webkit-scrollbar': {
-      width: '0.7rem',
-      height: '0.4rem',
-    },
+  body, input, textarea, button {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+  }
 
-    '*::-webkit-scrollbar-track': {
-      backgroundColor: 'rgba(0, 0, 0, 0.3)',
-      borderRadius: 10,
-    },
+  ::-webkit-scrollbar {
+    width: 0.7rem;
+    height: 0.4rem;
+  }
 
-    '*::-webkit-scrollbar-thumb': {
-      background: '$gray500',
-      borderRadius: 10,
-    },
+  ::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+  }
 
-    '*::-webkit-scrollbar-corner': {
-      backgroundColor: '$gray800',
-    },
-  },
+  ::-webkit-scrollbar-thumb {
+    background-color: ${(props) => props.theme['gray-500']};
+    border-radius: 10px;
+  }
 
-  'body, input, textarea, button': {
-    fontFamily: 'Plus Jakarta Sans',
-    fontWeight: 500,
-  },
-})
+  ::-webkit-scrollbar-corner {
+    background-color: ${(props) => props.theme['gray-800']};
+  }
+`

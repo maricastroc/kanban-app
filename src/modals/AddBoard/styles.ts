@@ -1,101 +1,14 @@
-import { styled } from '@/styles'
+import styled from 'styled-components'
 
-export const Content = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
-  padding: '2rem 1.5rem 3rem',
-  backgroundColor: '$gray600',
-  border: 'none',
-  position: 'fixed',
-  left: '50%',
-  overflowY: 'scroll',
-  top: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 'clamp(300px, 90vw, 33rem)',
-  borderRadius: 8,
-  zIndex: 9999,
+export const ColumnsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+`
 
-  '&:focus': {
-    boxShadow: 'none',
-  },
-})
-
-export const ColumnsContainer = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '0.3rem',
-})
-
-export const ColumnsContent = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '0.5rem',
-  marginBottom: '1rem',
-})
-
-export const InputColumnsContainer = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
-
-  span: {
-    marginTop: '0.3rem',
-    display: 'block',
-    color: '$red500',
-    fontSize: '0.75rem',
-    fontWeight: 700,
-    left: '75%',
-  },
-})
-
-export const InputColumnContent = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '1rem',
-  width: '100%',
-})
-
-export const InputColumn = styled('input', {
-  position: 'relative',
-  width: '100%',
-  backgroundColor: '$gray600',
-  border: 'solid 1px $gray500',
-  padding: '0.7rem 1rem',
-  color: '$white',
-  fontSize: '0.8125rem',
-  borderRadius: 4,
-
-  '&.error': {
-    border: 'solid 2px $red500',
-  },
-})
-
-export const RemoveColumnButton = styled('button', {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  cursor: 'pointer',
-  backgroundColor: 'transparent',
-  border: 'none',
-  pointerEvents: 'initial',
-
-  svg: {
-    fontSize: '1.5rem',
-    color: '$gray400',
-  },
-
-  '&.disabled': {
-    cursor: 'not-allowed',
-    pointerEvents: 'none',
-
-    svg: {
-      opacity: 0.2,
-    },
-  },
-})
-
-export const FormError = styled('p', {
-  fontSize: '0.75rem',
-  color: '$red500',
-  fontWeight: 700,
-})
+export const ColumnsContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+`

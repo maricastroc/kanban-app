@@ -4,7 +4,7 @@ import { ColumnsContainer, ColumnsContent } from './styles'
 
 import {
   Content,
-  FormContainer,
+  DataContainer,
   Input,
   InputContainer,
   InputVariantsContainer,
@@ -71,18 +71,15 @@ export function AddColumn({ onClose }: AddColumnProps) {
 
     if (hasErrors) {
       setColumnErrors(columnErrors)
-      return
+    } else {
+      updateColumnsInBoard(columns)
+      onClose()
     }
-
-    updateColumnsInBoard(columns)
-    onClose()
   }
 
   const renderColumnInput = (column: ColumnDTO, index: number) => {
-    const columnKey = `column-${index}`
-
     return (
-      <InputVariantsContainer key={columnKey}>
+      <InputVariantsContainer key={column.name}>
         <InputVariant
           inputClassName={`${column.tasks.length > 0 ? 'disabled' : ''} ${
             columnErrors[index] ? 'error' : ''
@@ -103,7 +100,7 @@ export function AddColumn({ onClose }: AddColumnProps) {
       <Overlay onClick={() => onClose()} />
       <Content className="bigger">
         <Title>Add New Column</Title>
-        <FormContainer>
+        <DataContainer>
           <InputContainer>
             <Label>Name</Label>
             <Input className="disabled" type="text" value={activeBoard.name} />
@@ -126,7 +123,7 @@ export function AddColumn({ onClose }: AddColumnProps) {
             variant="secondary"
             onClick={handleAddColumnsToBoard}
           />
-        </FormContainer>
+        </DataContainer>
       </Content>
     </>
   )

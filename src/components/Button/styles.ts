@@ -1,58 +1,54 @@
-import { styled } from '@/styles'
+import styled from 'styled-components'
 
-export const Container = styled('button', {
-  cursor: 'pointer',
-  width: '100%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderRadius: 12,
-  padding: '0.7rem',
-  border: 'none',
+export const Container = styled.button`
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  padding: 0.7rem;
+  border: none;
 
-  '&.primary': {
-    backgroundColor: '$white',
+  &.primary {
+    background-color: ${(props) => props.theme['white-color']};
 
-    p: {
-      color: '$purple500',
-    },
-  },
+    p {
+      color: ${(props) => props.theme['purple-500']};
+    }
+  }
 
-  '&.secondary': {
-    backgroundColor: '$purple500',
+  &.secondary {
+    background-color: ${(props) => props.theme['purple-500']};
 
-    p: {
-      color: '$white',
-    },
-  },
+    p {
+      color: ${(props) => props.theme['white-color']};
+    }
+  }
 
-  '&.tertiary': {
-    backgroundColor: '$red500',
+  &.tertiary {
+    background-color: ${(props) => props.theme['red-500']};
 
-    p: {
-      color: '$white',
-    },
-  },
+    p {
+      color: ${(props) => props.theme['white-color']};
+    }
+  }
 
-  p: {
-    fontSize: '0.8125rem',
-    fontWeight: 700,
-  },
+  p {
+    font-size: 0.8125rem;
+    font-weight: 700;
+  }
 
-  '&:focus': {
-    boxShadow: 'none',
-  },
+  &:focus {
+    box-shadow: none;
+  }
 
-  '&:hover': {
-    filter: 'brightness(1.2)',
-    transition: '200ms',
-  },
+  &:hover {
+    filter: brightness(1.2);
+    transition: 200ms;
+  }
 
-  variants: {
-    disabled: {
-      true: {
-        cursor: 'not-allowed',
-      },
-    },
-  },
-})
+  &[disabled] {
+    cursor: not-allowed;
+  }
+`

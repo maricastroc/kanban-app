@@ -102,10 +102,8 @@ export function EditBoard({ board, onClose }: EditBoardProps) {
   }
 
   const renderColumnInput = (column: ColumnDTO, index: number) => {
-    const columnKey = `column-${index}`
-
     return (
-      <InputVariantsContainer key={columnKey}>
+      <InputVariantsContainer key={column.name}>
         <InputVariant
           inputClassName={`${column.tasks.length > 0 ? 'disabled' : ''} ${
             columnErrors[index] ? 'error' : ''

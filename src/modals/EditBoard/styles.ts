@@ -1,20 +1,20 @@
-import { styled } from '@/styles'
+import styled from 'styled-components'
 
-export const Description = styled('div', {
-  display: 'flex',
-  marginTop: '1.5rem',
-  flexDirection: 'column',
-  width: '100%',
-})
+export const Description = styled.div`
+  display: flex;
+  margin-top: 1.5rem;
+  flex-direction: column;
+  width: 100%;
+`
 
-export const ColumnsContainer = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
-})
+export const ColumnsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`
 
-export const ColumnsContent = styled('p', {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '0.75rem',
-  marginBottom: '1rem',
-})
+export const ColumnsContent = styled.p`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+`

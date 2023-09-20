@@ -1,218 +1,218 @@
-import { styled } from '@/styles'
+import styled from 'styled-components'
 
-export const Container = styled('header', {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: '1.25rem 1rem',
-  backgroundColor: '$gray600',
-  position: 'sticky',
-  top: 0,
-  zIndex: 10,
+export const Container = styled.header`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1rem;
+  background-color: ${(props) => props.theme['gray-600']};
+  position: sticky;
+  top: 0;
+  z-index: 10;
 
-  '@media(min-width: 768px)': {
-    padding: '0',
-    justifyContent: 'initial',
-    borderBottom: 'solid 1px $gray500',
-  },
-})
+  @media (min-width: 768px) {
+    padding: 0;
+    justify-content: initial;
+    border-bottom: solid 1px ${(props) => props.theme['gray-500']};
+  }
+`
 
-export const Wrapper = styled('div', {
-  display: 'flex',
+export const Wrapper = styled.div`
+  display: flex;
 
-  '@media(min-width: 768px)': {
-    alignItems: 'center',
-    gap: '1rem',
-    justifyContent: 'space-between',
-    width: '100%',
-    paddingRight: '1.7rem',
-    marginLeft: 0,
-  },
-})
+  @media (min-width: 768px) {
+    align-items: center;
+    gap: 1rem;
+    justify-content: space-between;
+    width: 100%;
+    padding-right: 1.7rem;
+    margin-left: 0;
+  }
+`
 
-export const BoardName = styled('h2', {
-  fontSize: '1.25rem',
-  fontWeight: 700,
-  color: '$white',
-  marginLeft: '1.8rem',
-  padding: '1.75rem 0',
+export const BoardName = styled.h2`
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: ${(props) => props.theme['white-color']};
+  margin-left: 1.8rem;
+  padding: 1.75rem 0;
 
-  '@media(min-width: 1024px)': {
-    fontSize: '1.5rem',
-  },
-})
+  @media (min-width: 1024px) {
+    font-size: 1.5rem;
+  }
+`
 
-export const LogoContainer = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  minWidth: 260,
-  borderRight: 'solid 1px $gray500',
-  height: 80,
-})
+export const LogoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  min-width: 260px;
+  border-right: solid 1px ${(props) => props.theme['gray-500']};
+  height: 80px;
+`
 
-export const LogoWrapper = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '1rem',
-  paddingLeft: '1.7rem',
-})
+export const LogoWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-left: 1.7rem;
+`
 
-export const TextMobileContainer = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '1rem',
+export const TextMobileContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 
-  img: {
-    width: 24,
-    height: 24,
-  },
-})
+  img {
+    width: 24px;
+    height: 24px;
+  }
+`
 
-export const LaunchButton = styled('button', {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '1rem',
-  cursor: 'pointer',
-  backgroundColor: 'transparent',
-  border: 'none',
+export const LaunchButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
 
-  h2: {
-    fontSize: '1.125rem',
-    fontWeight: 700,
-    color: '$white',
-  },
+  h2 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: ${(props) => props.theme['white-color']};
+  }
 
-  svg: {
-    color: '$purple500',
-    fontSize: '0.85rem',
-    marginTop: '0.3rem',
-    marginLeft: '-0.4rem',
-  },
+  svg {
+    color: ${(props) => props.theme['purple-500']};
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+    margin-left: -0.4rem;
+  }
 
-  '&:focus': {
-    boxShadow: 'none',
-  },
-})
+  &:focus {
+    box-shadow: none;
+  }
+`
 
-export const OptionsContainer = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '0.3rem',
+export const OptionsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 
-  '@media(min-width: 768px)': {
-    gap: '1.5rem',
-  },
-})
+  @media (min-width: 768px) {
+    gap: 1.5rem;
+  }
+`
 
-export const AddButton = styled('button', {
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: '$purple500',
-  width: 48,
-  height: 32,
-  border: 'none',
-  borderRadius: 16,
+export const AddButton = styled.button`
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${(props) => props.theme['purple-500']};
+  width: 48px;
+  height: 32px;
+  border: none;
+  border-radius: 16px;
 
-  svg: {
-    fontSize: '1rem',
-    color: '$white',
-  },
+  svg {
+    font-size: 1rem;
+    color: ${(props) => props.theme['white-color']};
+  }
 
-  p: {
-    display: 'none',
-  },
+  p {
+    display: none;
+  }
 
-  '&:hover': {
-    transition: '200ms',
-    backgroundColor: '$purple300',
-  },
+  &:hover {
+    transition: 200ms;
+    background-color: ${(props) => props.theme['purple-300']};
+  }
 
-  '@media(min-width: 768px)': {
-    gap: '1.5rem',
-    width: 164,
-    height: 48,
-    borderRadius: 22,
+  @media (min-width: 768px) {
+    gap: 1.5rem;
+    width: 164px;
+    height: 48px;
+    border-radius: 22px;
 
-    svg: {
-      display: 'none',
-    },
+    svg {
+      display: none;
+    }
 
-    p: {
-      display: 'block',
-      fontSize: '0.93rem',
-      color: '$white',
-      fontWeight: 700,
-    },
-  },
-})
+    p {
+      display: block;
+      font-size: 0.93rem;
+      color: ${(props) => props.theme['white-color']};
+      font-weight: 700;
+    }
+  }
+`
 
-export const ViewMoreContainer = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
-  position: 'relative',
-})
+export const ViewMoreContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+`
 
-export const ViewMoreButton = styled('button', {
-  cursor: 'pointer',
-  display: 'flex',
-  backgroundColor: 'transparent',
-  border: 'none',
-  padding: '0.5rem',
-  borderRadius: 8,
-  alignItems: 'center',
-  justifyContent: 'center',
+export const ViewMoreButton = styled.button`
+  cursor: pointer;
+  display: flex;
+  background-color: transparent;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
 
-  svg: {
-    cursor: 'pointer',
-    color: '$gray400',
-    fontSize: '1.5rem',
-  },
+  svg {
+    cursor: pointer;
+    color: ${(props) => props.theme['gray-400']};
+    font-size: 1.5rem;
+  }
 
-  '&:hover': {
-    backgroundColor: '$gray700',
-    transition: '200ms',
-  },
+  &:hover {
+    background-color: ${(props) => props.theme['gray-700']};
+    transition: 200ms;
+  }
 
-  '&:focus': {
-    boxShadow: 'none',
-  },
-})
+  &:focus {
+    box-shadow: none;
+  }
+`
 
-export const ViewMoreModal = styled('div', {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'flex-start',
-  padding: '1.2rem',
-  borderRadius: 8,
-  position: 'absolute',
-  gap: '0.7rem',
-  top: '2.8rem',
-  right: 0,
-  width: '10rem',
-  backgroundColor: '$gray700',
+export const ViewMoreModal = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1.2rem;
+  border-radius: 8px;
+  position: absolute;
+  gap: 0.7rem;
+  top: 2.8rem;
+  right: 0;
+  width: 10rem;
+  background-color: ${(props) => props.theme['gray-700']};
 
-  button: {
-    cursor: 'pointer',
-    backgroundColor: 'transparent',
-    border: 'none',
-    fontSize: '1rem',
+  button {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    font-size: 1rem;
 
-    '&:focus': {
-      boxShadow: 'none',
-    },
+    &:focus {
+      box-shadow: none;
+    }
 
-    '&.edit': {
-      color: '$gray400',
-    },
+    &.edit {
+      color: ${(props) => props.theme['gray-400']};
+    }
 
-    '&.delete': {
-      color: '$red500',
-    },
-  },
+    &.delete {
+      color: ${(props) => props.theme['red-500']};
+    }
+  }
 
-  '@media(min-width: 1024px)': {
-    top: '3.5rem',
-  },
-})
+  @media (min-width: 1024px) {
+    top: 3.5rem;
+  }
+`
