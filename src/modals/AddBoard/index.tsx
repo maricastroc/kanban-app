@@ -150,9 +150,11 @@ export function AddBoard({ onClose }: AddBoardProps) {
           <ColumnsContainer>
             <Label>Columns</Label>
             <ColumnsContent>
-              {boardColumns.map((column, index) =>
-                renderColumnInput(column, index),
-              )}
+              {boardColumns.map((column, index) => (
+                <div key={`${column.name}-${index}`}>
+                  {renderColumnInput(column, index)}
+                </div>
+              ))}
             </ColumnsContent>
             {boardColumns.length !== 6 && (
               <Button

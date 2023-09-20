@@ -26,7 +26,7 @@ export function InputVariant({
         className={inputClassName}
         placeholder={placeholder}
         defaultValue={defaultValue}
-        onChange={onChange}
+        onBlur={onChange}
       />
       <RemoveButton type="button" className={btnClassName} onClick={onClick}>
         <FontAwesomeIcon icon={faXmark} />

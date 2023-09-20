@@ -79,7 +79,7 @@ export function AddColumn({ onClose }: AddColumnProps) {
 
   const renderColumnInput = (column: ColumnDTO, index: number) => {
     return (
-      <InputVariantsContainer key={column.name}>
+      <InputVariantsContainer>
         <InputVariant
           inputClassName={`${column.tasks.length > 0 ? 'disabled' : ''} ${
             columnErrors[index] ? 'error' : ''
@@ -108,7 +108,11 @@ export function AddColumn({ onClose }: AddColumnProps) {
           <ColumnsContainer>
             <Label>Columns</Label>
             <ColumnsContent>
-              {columns.map((column, index) => renderColumnInput(column, index))}
+              {columns.map((column, index) => (
+                <div key={`${column.name}-${index}`}>
+                  {renderColumnInput(column, index)}
+                </div>
+              ))}
             </ColumnsContent>
             {columns.length !== 6 && (
               <Button

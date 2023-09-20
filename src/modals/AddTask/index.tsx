@@ -160,13 +160,13 @@ export function AddTask({ onClose }: AddTaskProps) {
     ])
   }, [])
 
-  const renderSubtaskInput = (subtask: SubtaskDTO, index: number) => {
+  const renderSubtaskInput = (index: number, subtask: SubtaskDTO) => {
     return (
-      <InputVariantsContainer key={subtask.title}>
+      <InputVariantsContainer>
         <InputVariant
           inputClassName={`${subtaskErrors[index] ? 'error' : ''}`}
           placeholder="e.g. Make coffee"
-          defaultValue={''}
+          defaultValue={subtask.title}
           onChange={(e) => handleSubtaskChange(index, e.target.value)}
           onClick={() => handleRemoveSubtask(index)}
         />
@@ -203,9 +203,11 @@ export function AddTask({ onClose }: AddTaskProps) {
           <SubtasksContainer>
             <Label>Subtasks</Label>
             <SubtasksContent>
-              {subtasks.map((subtask, index) =>
-                renderSubtaskInput(subtask, index),
-              )}
+              {subtasks.map((subtask, index) => (
+                <div key={`${subtask.title}-${index}`}>
+                  {renderSubtaskInput(index, subtask)}
+                </div>
+              ))}
             </SubtasksContent>
             <Button
               type="button"

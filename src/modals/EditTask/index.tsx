@@ -181,9 +181,11 @@ export function EditTask({ task, onClose }: EditTaskProps) {
           <SubtasksContainer>
             <Label>Subtasks</Label>
             <SubtasksContent>
-              {formSubtasks.map((subtask, index) =>
-                renderSubtaskInput(subtask, index),
-              )}
+              {formSubtasks.map((subtask, index) => (
+                <div key={`${subtask.title}-${index}`}>
+                  {renderSubtaskInput(subtask, index)}
+                </div>
+              ))}
             </SubtasksContent>
             <Button
               type="button"
