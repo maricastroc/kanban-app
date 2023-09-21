@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import Logo from '@/../public/icon.svg'
-import LogoText from '@/../public/kanban.svg'
+import LogoTextLight from '@/../public/kanban.svg'
+import LogoTextDark from '@/../public/kanban-dark.svg'
 
 import {
   faAngleDown,
@@ -30,7 +31,7 @@ import { DeleteBoard } from '@/modals/DeleteBoard'
 import { EditBoard } from '@/modals/EditBoard'
 
 export function Header() {
-  const { activeBoard } = useBoardsContext()
+  const { activeBoard, isDarkTheme } = useBoardsContext()
 
   const [isMobile, setIsMobile] = useState(false)
 
@@ -79,7 +80,12 @@ export function Header() {
         <LogoContainer>
           <LogoWrapper>
             <img src={Logo} width={24} height={24} alt="" />
-            <img src={LogoText} width={112} height={24} alt="" />
+            <img
+              src={isDarkTheme ? LogoTextLight : LogoTextDark}
+              width={112}
+              height={24}
+              alt=""
+            />
           </LogoWrapper>
         </LogoContainer>
       )}

@@ -6,31 +6,31 @@ export const Container = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
+  border-radius: 18px;
   padding: 0.7rem;
   border: none;
 
   &.primary {
-    background-color: ${(props) => props.theme['white-color']};
+    background-color: ${(props) => props.theme['light-bg-color']};
 
     p {
-      color: ${(props) => props.theme['purple-500']};
+      color: ${(props) => props.theme['primary-color']};
     }
   }
 
   &.secondary {
-    background-color: ${(props) => props.theme['purple-500']};
+    background-color: ${(props) => props.theme['primary-color']};
 
     p {
-      color: ${(props) => props.theme['white-color']};
+      color: ${(props) => props.theme['button-title']};
     }
   }
 
   &.tertiary {
-    background-color: ${(props) => props.theme['red-500']};
+    background-color: ${(props) => props.theme['error-color']};
 
     p {
-      color: ${(props) => props.theme['white-color']};
+      color: ${(props) => props.theme['title-color']};
     }
   }
 

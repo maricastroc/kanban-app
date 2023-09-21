@@ -14,7 +14,7 @@ export const Content = styled.div`
   flex-direction: column;
   align-items: flex-start;
   padding: 1.5rem;
-  background-color: ${(props) => props.theme['gray-600']};
+  background-color: ${(props) => props.theme['cards-color']};
   border: none;
   position: fixed;
   left: 50%;
@@ -41,13 +41,13 @@ export const Title = styled.div`
   max-width: 100%;
 
   &.delete {
-    color: ${(props) => props.theme['red-500']};
+    color: ${(props) => props.theme['error-color']};
   }
 `
 
 export const FormError = styled.p`
   font-size: 0.75rem;
-  color: ${(props) => props.theme['red-500']};
+  color: ${(props) => props.theme['error-color']};
   font-weight: 700;
 `
 
@@ -78,7 +78,7 @@ export const InputContainer = styled.div`
 export const Label = styled.label`
   font-size: 0.75rem;
   font-weight: 700;
-  color: ${(props) => props.theme['white-color']};
+  color: ${(props) => props.theme['title-color']};
   margin-bottom: 0.7rem;
 `
 
@@ -86,10 +86,10 @@ export const Input = styled.input`
   pointer-events: initial;
   opacity: 1;
   width: 100%;
-  background-color: ${(props) => props.theme['gray-600']};
-  border: solid 2px ${(props) => props.theme['gray-500']};
+  background-color: ${(props) => props.theme['cards-color']};
+  border: solid 2px ${(props) => props.theme['border-color']};
   padding: 0.7rem 1rem;
-  color: ${(props) => props.theme['white-color']};
+  color: ${(props) => props.theme['title-color']};
   font-size: 0.8125rem;
   border-radius: 4px;
 
@@ -100,11 +100,11 @@ export const Input = styled.input`
 `
 
 export const TextArea = styled.textarea`
-  background-color: ${(props) => props.theme['gray-600']};
-  border: solid 2px ${(props) => props.theme['gray-500']};
+  background-color: ${(props) => props.theme['cards-color']};
+  border: solid 2px ${(props) => props.theme['border-color']};
   padding: 0.7rem 1rem;
   line-height: 1.3rem;
-  color: ${(props) => props.theme['white-color']};
+  color: ${(props) => props.theme['title-color']};
   font-size: 0.8125rem;
   border-radius: 4px;
   min-height: 112px;
@@ -119,7 +119,7 @@ export const InputVariantsContainer = styled.div`
   span {
     margin-top: 0.3rem;
     display: block;
-    color: ${(props) => props.theme['red-500']};
+    color: ${(props) => props.theme['error-color']};
     font-size: 0.75rem;
     font-weight: 700;
     left: 75%;

@@ -21,10 +21,12 @@ import { EyeSlash } from 'phosphor-react'
 
 interface SidebarProps {
   onClose: () => void
+  onChangeTheme: () => void
 }
 
-export function Sidebar({ onClose }: SidebarProps) {
-  const { allBoards, activeBoard, handleSetActiveBoard } = useBoardsContext()
+export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
+  const { allBoards, activeBoard, handleSetActiveBoard, handleSetDarkTheme } =
+    useBoardsContext()
 
   const [openAddBoard, setOpenAddBoard] = useState(false)
 
@@ -68,7 +70,14 @@ export function Sidebar({ onClose }: SidebarProps) {
       <OptionsContainer>
         <ThemeSwitcherContainer>
           <img src={DarkThemeSvg} alt="" />
-          <SwitchRoot className="SwitchRoot" id="airplane-mode">
+          <SwitchRoot
+            className="SwitchRoot"
+            id="airplane-mode"
+            onClick={() => {
+              onChangeTheme()
+              handleSetDarkTheme()
+            }}
+          >
             <SwitchThumb className="SwitchThumb" />
           </SwitchRoot>
           <img src={LightThemeSvg} alt="" />

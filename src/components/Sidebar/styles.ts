@@ -5,9 +5,9 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-right: solid 1px ${(props) => props.theme['gray-500']};
+  border-right: solid 1px ${(props) => props.theme['border-color']};
   min-width: 260px;
-  background-color: ${(props) => props.theme['gray-600']};
+  background-color: ${(props) => props.theme['cards-color']};
 `
 
 export const Wrapper = styled.div`
@@ -23,7 +23,7 @@ export const Title = styled.h3`
   width: 100%;
   font-size: 0.75rem;
   font-weight: 700;
-  color: ${(props) => props.theme['gray-400']};
+  color: ${(props) => props.theme['subtitle-color']};
   text-transform: uppercase;
   letter-spacing: 1.5px;
 `
@@ -49,23 +49,23 @@ export const Board = styled.button`
   width: 100%;
 
   p {
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
     font-size: 0.93rem;
     font-weight: 700;
   }
 
   img {
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
     font-size: 1.5rem;
   }
 
   &.active {
-    background-color: ${(props) => props.theme['purple-500']};
+    background-color: ${(props) => props.theme['primary-color']};
     border-top-right-radius: 22px;
     border-bottom-right-radius: 22px;
 
     p {
-      color: ${(props) => props.theme['white-color']};
+      color: ${(props) => props.theme['button-title']};
     }
 
     img {
@@ -75,7 +75,7 @@ export const Board = styled.button`
 
   &.create {
     p {
-      color: ${(props) => props.theme['purple-500']};
+      color: ${(props) => props.theme['primary-color']};
     }
 
     img {
@@ -92,7 +92,7 @@ export const Board = styled.button`
       }
 
       p {
-        color: ${(props) => props.theme['purple-300']};
+        color: ${(props) => props.theme['primary-hover']};
         transition: 200ms;
       }
     }
@@ -103,13 +103,13 @@ export const Board = styled.button`
   }
 
   &:hover {
-    background-color: ${(props) => props.theme['white-color']};
+    background-color: ${(props) => props.theme['primary-hover']};
     transition: 200ms;
     border-top-right-radius: 22px;
     border-bottom-right-radius: 22px;
 
     p {
-      color: ${(props) => props.theme['purple-500']};
+      color: ${(props) => props.theme['button-title']};
     }
 
     img {
@@ -144,21 +144,21 @@ export const HideButton = styled.button`
   p {
     font-size: 0.93rem;
     font-weight: 700;
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
   }
 
   svg {
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
     font-size: 1.3rem;
     margin-left: 1.5rem;
   }
 
   &:hover {
-    background-color: ${(props) => props.theme['white-color']};
+    background-color: ${(props) => props.theme['primary-hover']};
     transition: 200ms;
 
     p {
-      color: ${(props) => props.theme['purple-500']};
+      color: ${(props) => props.theme['button-title']};
     }
   }
 
@@ -168,7 +168,7 @@ export const HideButton = styled.button`
 `
 
 export const ThemeSwitcherContainer = styled.div`
-  background-color: ${(props) => props.theme['gray-700']};
+  background-color: ${(props) => props.theme['bg-color']};
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -179,7 +179,7 @@ export const ThemeSwitcherContainer = styled.div`
   margin: 0 auto;
 
   svg {
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
     font-size: 1.5rem;
   }
 `
@@ -188,14 +188,14 @@ export const SwitchRoot = styled(RadixRoot)`
   cursor: pointer;
   width: 40px;
   height: 20px;
-  background-color: ${(props) => props.theme['purple-500']};
+  background-color: ${(props) => props.theme['primary-color']};
   border-radius: 9999px;
   position: relative;
   box-shadow: none;
   border: none;
 
   &:hover {
-    background-color: ${(props) => props.theme['purple-300']};
+    background-color: ${(props) => props.theme['primary-hover']};
     transition: 200ms;
   }
 `
@@ -205,7 +205,7 @@ export const SwitchThumb = styled(RadixThumb)`
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background-color: ${(props) => props.theme['white-color']};
+  background-color: ${(props) => props.theme['button-title']};
   top: 3px;
   transform: translateX(-16px);
   transition: transform 0.2s ease;

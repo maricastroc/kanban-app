@@ -14,20 +14,20 @@ export const StatusBarContent = styled.div`
   justify-content: space-between;
   padding: 0.5rem 1rem;
   background-color: transparent;
-  border: solid 2px ${(props) => props.theme['gray-500']};
-  border-radius: 8;
+  border: solid 2px ${(props) => props.theme['border-color']};
+  border-radius: 8px;
 
   &.active {
-    border: solid 2px ${(props) => props.theme['purple-500']};
+    border: solid 2px ${(props) => props.theme['primary-color']};
   }
 
   p {
     font-size: 0.8125rem;
-    color: ${(props) => props.theme['white-color']};
+    color: ${(props) => props.theme['title-color']};
   }
 
   svg {
-    color: ${(props) => props.theme['purple-500']};
+    color: ${(props) => props.theme['primary-color']};
     font-size: 1rem;
   }
 `
@@ -39,8 +39,8 @@ export const OptionsContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   padding: 1rem;
-  background-color: ${(props) => props.theme['gray-700']};
-  border-radius: 8;
+  background-color: ${(props) => props.theme['bg-color']};
+  border-radius: 8px;
   gap: 0.9rem;
 
   button {
@@ -48,14 +48,14 @@ export const OptionsContainer = styled.div`
     background-color: transparent;
     border: none;
     font-size: 0.8125rem;
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
 
     &:focus {
       box-shadow: none;
     }
 
     &:hover {
-      color: ${(props) => props.theme['white-color']};
+      color: ${(props) => props.theme['title-color']};
       font-weight: 700;
     }
   }

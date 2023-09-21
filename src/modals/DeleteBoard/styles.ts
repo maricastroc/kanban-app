@@ -5,14 +5,14 @@ export const Content = styled.div`
   flex-direction: column;
   align-items: flex-start;
   padding: 1.5rem;
-  background-color: ${(props) => props.theme['gray-600']};
+  background-color: ${(props) => props.theme['cards-color']};
   border: none;
   position: fixed;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   width: clamp(300px, 90vw, 25rem);
-  border-radius: 8;
+  border-radius: 8px;
   z-index: 9999;
 
   &:focus {
@@ -27,7 +27,7 @@ export const Description = styled.div`
   margin-top: 1.5rem;
 
   p {
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
     font-size: 0.8125rem;
     line-height: 1.4rem;
   }

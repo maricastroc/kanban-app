@@ -20,7 +20,11 @@ import {
 
 import HideSidebar from '@/../public/icon-show-sidebar.svg'
 
-export default function Home() {
+interface HomeProps {
+  onChangeTheme: () => void
+}
+
+export default function Home({ onChangeTheme }: HomeProps) {
   const { activeBoard } = useBoardsContext()
 
   const [isMobile, setIsMobile] = useState(true)
@@ -80,7 +84,10 @@ export default function Home() {
       {openAddColumn && <AddColumn onClose={() => setOpenAddColumn(false)} />}
       <Wrapper>
         {!isMobile && !hideSidebar && (
-          <Sidebar onClose={() => setHideSidebar(true)} />
+          <Sidebar
+            onClose={() => setHideSidebar(true)}
+            onChangeTheme={onChangeTheme}
+          />
         )}
         <ColumnsContainer
           ref={columnsContainerRef}

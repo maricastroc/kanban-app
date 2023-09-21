@@ -7,7 +7,7 @@ export const Container = styled.div`
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background-color: ${(props) => props.theme['gray-700']};
+  background-color: ${(props) => props.theme['bg-color']};
 `
 
 export const Wrapper = styled.div`
@@ -59,7 +59,7 @@ export const NewColumnContainer = styled.div`
 
   &:hover {
     h2 {
-      ${(props) => props.theme['purple-500']};
+      color: ${(props) => props.theme['primary-color']};
       transition: 200ms;
     }
   }
@@ -75,14 +75,14 @@ export const NewColumnButton = styled.button`
 
   h2 {
     font-size: clamp(1.2rem, 3vw, 1.5rem);
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
   }
 `
 
 export const StyledToastContainer = styled(ToastContainer)`
   & .Toastify__toast {
-    background-color: ${(props) => props.theme['gray-700']};
-    color: ${(props) => props.theme['gray-300']};
+    background-color: ${(props) => props.theme['bg-color']};
+    color: ${(props) => props.theme['details-color']};
     border-radius: 4px;
     font-family: 'Plus Jakarta Sans';
     font-size: 0.85rem;
@@ -90,16 +90,16 @@ export const StyledToastContainer = styled(ToastContainer)`
   }
 
   & .Toastify__close-button {
-    color: ${(props) => props.theme['white-color']};
+    color: ${(props) => props.theme['title-color']};
   }
 
   & .Toastify__toast-body svg {
-    fill: ${(props) => props.theme['purple-500']};
+    fill: ${(props) => props.theme['primary-color']};
     font-size: 0.5rem;
   }
 
   & .Toastify__progress-bar {
-    background-color: ${(props) => props.theme['purple-500']};
+    background-color: ${(props) => props.theme['primary-color']};
   }
 `
 
@@ -113,18 +113,18 @@ export const ShowSidebarButton = styled.button`
   border-bottom-right-radius: 22px;
   position: absolute;
   z-index: 9999;
-  background-color: ${(props) => props.theme['purple-500']};
+  background-color: ${(props) => props.theme['primary-color']};
   width: 56px;
   height: 48px;
   top: 87%;
 
   svg {
     font-size: 1.5rem;
-    color: ${(props) => props.theme['white-color']};
+    color: ${(props) => props.theme['title-color']};
   }
 
   &:hover {
-    background-color: ${(props) => props.theme['purple-300']};
+    background-color: ${(props) => props.theme['primary-hover']};
     transition: 200ms;
   }
 `

@@ -7,7 +7,7 @@ export const Description = styled.div`
   margin-top: 1.5rem;
 
   p {
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
     font-size: 0.8125rem;
     line-height: 1.4rem;
   }

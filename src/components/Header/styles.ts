@@ -5,7 +5,7 @@ export const Container = styled.header`
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 1rem;
-  background-color: ${(props) => props.theme['gray-600']};
+  background-color: ${(props) => props.theme['cards-color']};
   position: sticky;
   top: 0;
   z-index: 10;
@@ -13,7 +13,7 @@ export const Container = styled.header`
   @media (min-width: 768px) {
     padding: 0;
     justify-content: initial;
-    border-bottom: solid 1px ${(props) => props.theme['gray-500']};
+    border-bottom: solid 1px ${(props) => props.theme['border-color']};
   }
 `
 
@@ -33,7 +33,7 @@ export const Wrapper = styled.div`
 export const BoardName = styled.h2`
   font-size: 1.25rem;
   font-weight: 700;
-  color: ${(props) => props.theme['white-color']};
+  color: ${(props) => props.theme['title-color']};
   margin-left: 1.8rem;
   padding: 1.75rem 0;
 
@@ -46,7 +46,7 @@ export const LogoContainer = styled.div`
   display: flex;
   align-items: center;
   min-width: 260px;
-  border-right: solid 1px ${(props) => props.theme['gray-500']};
+  border-right: solid 1px ${(props) => props.theme['border-color']};
   height: 80px;
 `
 
@@ -79,11 +79,11 @@ export const LaunchButton = styled.button`
   h2 {
     font-size: 1.125rem;
     font-weight: 700;
-    color: ${(props) => props.theme['white-color']};
+    color: ${(props) => props.theme['title-color']};
   }
 
   svg {
-    color: ${(props) => props.theme['purple-500']};
+    color: ${(props) => props.theme['primary-color']};
     font-size: 0.85rem;
     margin-top: 0.3rem;
     margin-left: -0.4rem;
@@ -109,7 +109,7 @@ export const AddButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${(props) => props.theme['purple-500']};
+  background-color: ${(props) => props.theme['primary-color']};
   width: 48px;
   height: 32px;
   border: none;
@@ -117,7 +117,7 @@ export const AddButton = styled.button`
 
   svg {
     font-size: 1rem;
-    color: ${(props) => props.theme['white-color']};
+    color: ${(props) => props.theme['title-color']};
   }
 
   p {
@@ -126,7 +126,7 @@ export const AddButton = styled.button`
 
   &:hover {
     transition: 200ms;
-    background-color: ${(props) => props.theme['purple-300']};
+    background-color: ${(props) => props.theme['primary-hover']};
   }
 
   @media (min-width: 768px) {
@@ -142,7 +142,7 @@ export const AddButton = styled.button`
     p {
       display: block;
       font-size: 0.93rem;
-      color: ${(props) => props.theme['white-color']};
+      color: ${(props) => props.theme['button-title']};
       font-weight: 700;
     }
   }
@@ -166,12 +166,12 @@ export const ViewMoreButton = styled.button`
 
   svg {
     cursor: pointer;
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
     font-size: 1.5rem;
   }
 
   &:hover {
-    background-color: ${(props) => props.theme['gray-700']};
+    background-color: ${(props) => props.theme['bg-color']};
     transition: 200ms;
   }
 
@@ -191,7 +191,7 @@ export const ViewMoreModal = styled.div`
   top: 2.8rem;
   right: 0;
   width: 10rem;
-  background-color: ${(props) => props.theme['gray-700']};
+  background-color: ${(props) => props.theme['bg-color']};
 
   button {
     cursor: pointer;
@@ -204,11 +204,11 @@ export const ViewMoreModal = styled.div`
     }
 
     &.edit {
-      color: ${(props) => props.theme['gray-400']};
+      color: ${(props) => props.theme['subtitle-color']};
     }
 
     &.delete {
-      color: ${(props) => props.theme['red-500']};
+      color: ${(props) => props.theme['error-color']};
     }
   }
 

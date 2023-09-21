@@ -14,11 +14,11 @@ export const StatusBarContent = styled.div`
   justify-content: space-between;
   padding: 0.5rem 1rem;
   background-color: transparent;
-  border: solid 2px ${(props) => props.theme['gray-500']};
+  border: solid 2px ${(props) => props.theme['border-color']};
   border-radius: 8px;
 
   &.active {
-    border: solid 2px ${(props) => props.theme['purple-500']};
+    border: solid 2px ${(props) => props.theme['primary-color']};
   }
 
   p {
@@ -39,7 +39,7 @@ export const OptionsContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   padding: 1rem;
-  background-color: ${(props) => props.theme['gray-700']};
+  background-color: ${(props) => props.theme['bg-color']};
   border-radius: 8px;
   gap: 0.9rem;
 
@@ -48,14 +48,14 @@ export const OptionsContainer = styled.div`
     background-color: transparent;
     border: none;
     font-size: 0.8125rem;
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
 
     &:focus {
       box-shadow: none;
     }
 
     &:hover {
-      color: ${(props) => props.theme['white-color']};
+      color: ${(props) => props.theme['title-color']};
       font-weight: 700;
     }
   }
@@ -81,20 +81,20 @@ export const InputVariantContainer = styled.div`
 
 export const Input = styled.input`
   width: 100%;
-  background-color: ${(props) => props.theme['gray-600']};
-  border: solid 1px ${(props) => props.theme['gray-500']};
+  background-color: ${(props) => props.theme['cards-color']};
+  border: solid 1px ${(props) => props.theme['border-color']};
   padding: 0.7rem 1rem;
-  color: ${(props) => props.theme['white-color']};
+  color: ${(props) => props.theme['title-color']};
   font-size: 0.8125rem;
   border-radius: 4px;
 
   &.error {
-    border: solid 2px ${(props) => props.theme['red-500']};
+    border: solid 2px ${(props) => props.theme['error-color']};
   }
 
   &.disabled {
     pointer-events: none;
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
   }
 `
 
@@ -109,7 +109,7 @@ export const RemoveButton = styled.button`
 
   svg {
     font-size: 1.5rem;
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
   }
 
   &.disabled {

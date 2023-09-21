@@ -12,6 +12,9 @@ import { toast } from 'react-toastify'
 import { ColumnDTO } from '@/dtos/columnDTO'
 
 interface BoardsContextData {
+  isDarkTheme: boolean
+  handleSetDarkTheme: () => void
+
   activeBoard: BoardDTO
   allBoards: BoardDTO[]
   updateActiveBoard: (board: BoardDTO) => void
@@ -48,6 +51,12 @@ export function BoardsContextProvider({
   )
 
   const [allBoards, setAllBoards] = useState<BoardDTO[]>(getStorageBoards())
+
+  const [isDarkTheme, setDarkTheme] = useState(true)
+
+  function handleSetDarkTheme() {
+    setDarkTheme(!isDarkTheme)
+  }
 
   function handleSetActiveBoard(board: BoardDTO) {
     saveStorageActiveBoard({
@@ -150,6 +159,8 @@ export function BoardsContextProvider({
   return (
     <BoardsContext.Provider
       value={{
+        isDarkTheme,
+        handleSetDarkTheme,
         activeBoard,
         allBoards,
         updateActiveBoard,

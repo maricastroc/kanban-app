@@ -20,7 +20,7 @@ export const Description = styled.div`
   width: 100%;
 
   p {
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
     font-size: 0.8125rem;
     line-height: 1.4rem;
   }
@@ -35,14 +35,14 @@ export const SubtasksContainer = styled.div`
 
 export const SubtasksTitle = styled.strong`
   font-size: 0.75rem;
-  color: ${(props) => props.theme['white-color']};
+  color: ${(props) => props.theme['title-color']};
   font-weight: 700;
   margin-top: 1.5rem;
 `
 
 export const CurrentStatusTitle = styled.strong`
   font-size: 0.75rem;
-  color: ${(props) => props.theme['white-color']};
+  color: ${(props) => props.theme['title-color']};
   font-weight: 700;
   margin-top: 1.5rem;
 `
@@ -65,12 +65,12 @@ export const OptionsButton = styled.button`
 
   svg {
     cursor: pointer;
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
     font-size: 1.5rem;
   }
 
   &:hover {
-    background-color: ${(props) => props.theme['gray-700']};
+    background-color: ${(props) => props.theme['bg-color']};
     transition: 200ms;
   }
 `
@@ -86,7 +86,7 @@ export const OptionsModal = styled.div`
   top: 2.5rem;
   right: 0;
   width: 10rem;
-  background-color: ${(props) => props.theme['gray-700']};
+  background-color: ${(props) => props.theme['bg-color']};
 
   button {
     cursor: pointer;
@@ -95,17 +95,17 @@ export const OptionsModal = styled.div`
     font-size: 1rem;
 
     &.edit {
-      color: ${(props) => props.theme['gray-400']};
+      color: ${(props) => props.theme['subtitle-color']};
     }
 
     &.delete {
-      color: ${(props) => props.theme['red-500']};
+      color: ${(props) => props.theme['error-color']};
     }
   }
 `
 
 export const EmptySubtask = styled.p`
-  color: ${(props) => props.theme['gray-400']};
+  color: ${(props) => props.theme['subtitle-color']};
   font-size: 0.8125rem;
   line-height: 1.4rem;
   margin-top: 0.5rem;

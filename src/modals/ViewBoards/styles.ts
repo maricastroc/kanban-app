@@ -6,7 +6,7 @@ export const Content = styled.div`
   flex-direction: column;
   align-items: flex-start;
   padding: 1.5rem 0;
-  background-color: ${(props) => props.theme['gray-600']};
+  background-color: ${(props) => props.theme['cards-color']};
   border: none;
   position: fixed;
   overflow-x: hidden;
@@ -34,7 +34,7 @@ export const Title = styled.div`
   h3 {
     font-size: 0.75rem;
     font-weight: 700;
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
     text-transform: uppercase;
     letter-spacing: 1.2px;
   }
@@ -66,23 +66,23 @@ export const Board = styled.button`
   width: 100%;
 
   p {
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
     font-size: 0.93rem;
     font-weight: 700;
   }
 
   img {
-    color: color: ${(props) => props.theme['gray-400']};
+    color: color: ${(props) => props.theme['subtitle-color']};
     font-size: 1.5rem;
   }
 
   &.active {
-    background-color: color: ${(props) => props.theme['purple-500']};
+    background-color: color: ${(props) => props.theme['primary-color']};
     border-top-right-radius: 16px;
     border-bottom-right-radius: 16px;
 
     p {
-      color: color: ${(props) => props.theme['white-color']};
+      color: color: ${(props) => props.theme['title-color']};
     }
 
     img {
@@ -92,7 +92,7 @@ export const Board = styled.button`
 
   &.create {
     p {
-      color: color: ${(props) => props.theme['purple-500']};
+      color: color: ${(props) => props.theme['primary-color']};
     }
 
     img {
@@ -108,7 +108,7 @@ export const Board = styled.button`
 
 export const ThemeSwitcherContainer = styled.div`
   margin: 1rem 1rem 0;
-  background-color: color: ${(props) => props.theme['gray-700']};
+  background-color: color: ${(props) => props.theme['bg-color']};
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -118,7 +118,7 @@ export const ThemeSwitcherContainer = styled.div`
   width: 90%;
 
   svg {
-    color: color: ${(props) => props.theme['gray-400']};
+    color: color: ${(props) => props.theme['subtitle-color']};
     font-size: 1.5rem;
   }
 `
@@ -127,14 +127,14 @@ export const SwitchRoot = styled(RadixRoot)`
   cursor: pointer;
   width: 40px;
   height: 20px;
-  background-color: color: ${(props) => props.theme['purple-500']};
+  background-color: color: ${(props) => props.theme['primary-color']};
   border-radius: 9999px;
   position: relative;
   box-shadow: none;
   border: none;
 
   &:hover {
-    background-color: color: ${(props) => props.theme['purple-300']};
+    background-color: color: ${(props) => props.theme['primary-hover']};
     transition: 200ms;
   }
 `
@@ -144,7 +144,7 @@ export const SwitchThumb = styled(RadixThumb)`
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background-color: color: ${(props) => props.theme['white-color']};
+  background-color: color: ${(props) => props.theme['button-title']};
   top: 3px;
   transform: translateX(-16px);
   transition: transform 0.2s ease;

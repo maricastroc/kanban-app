@@ -38,7 +38,7 @@ export const TagContainer = styled.div<TagContainerProps>`
   }
 
   strong {
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
     text-transform: uppercase;
     letter-spacing: 1px;
     font-size: 0.75rem;
@@ -62,7 +62,7 @@ export const EmptyTasksContainer = styled.div`
   flex-direction: column;
   gap: 1.25rem;
   width: 100%;
-  border: dashed 2px ${(props) => props.theme['gray-500']};
+  border: dashed 2px ${(props) => props.theme['border-color']};
   height: 100vh;
   border-radius: 8px;
 `
@@ -74,28 +74,29 @@ export const TaskItem = styled.div`
   gap: 0.5rem;
   padding: 1.5rem 1rem;
   border-radius: 8px;
-  background-color: ${(props) => props.theme['gray-600']};
+  background-color: ${(props) => props.theme['cards-color']};
   width: 100%;
   align-items: flex-start;
+  box-shadow: 0 4px 6px rgba(54, 78, 126, 0.1);
 
   strong {
     font-size: 0.95rem;
     font-weight: 700;
-    color: ${(props) => props.theme['white-color']};
+    color: ${(props) => props.theme['title-color']};
     line-height: 1.3rem;
   }
 
   p {
     font-size: 0.75rem;
     font-weight: 700;
-    color: ${(props) => props.theme['gray-400']};
+    color: ${(props) => props.theme['subtitle-color']};
   }
 
   &:hover {
     transition: 200ms;
 
     strong {
-      color: ${(props) => props.theme['purple-500']};
+      color: ${(props) => props.theme['primary-color']};
     }
   }
 `
