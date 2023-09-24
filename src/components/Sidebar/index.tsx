@@ -25,7 +25,8 @@ interface SidebarProps {
 }
 
 export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
-  const { allBoards, activeBoard, handleSetActiveBoard } = useBoardsContext()
+  const { allBoards, activeBoard, handleSetActiveBoard, handleSetDarkTheme } =
+    useBoardsContext()
 
   const [openAddBoard, setOpenAddBoard] = useState(false)
 
@@ -72,7 +73,10 @@ export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
           <SwitchRoot
             className="SwitchRoot"
             id="airplane-mode"
-            onClick={() => onChangeTheme()}
+            onClick={() => {
+              onChangeTheme()
+              handleSetDarkTheme()
+            }}
           >
             <SwitchThumb className="SwitchThumb" />
           </SwitchRoot>

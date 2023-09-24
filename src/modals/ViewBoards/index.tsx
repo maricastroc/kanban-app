@@ -27,7 +27,8 @@ interface ViewBoardsProps {
 export function ViewBoards({ onClose, onChangeTheme }: ViewBoardsProps) {
   useEscapeKeyHandler(onClose)
 
-  const { activeBoard, allBoards, handleSetActiveBoard } = useBoardsContext()
+  const { activeBoard, allBoards, handleSetActiveBoard, handleSetDarkTheme } =
+    useBoardsContext()
 
   const [openAddBoard, setOpenAddBoard] = useState(false)
 
@@ -71,6 +72,7 @@ export function ViewBoards({ onClose, onChangeTheme }: ViewBoardsProps) {
             id="airplane-mode"
             onClick={() => {
               onChangeTheme()
+              handleSetDarkTheme()
             }}
           >
             <SwitchThumb className="SwitchThumb" />

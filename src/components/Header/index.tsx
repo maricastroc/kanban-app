@@ -88,7 +88,7 @@ export function Header({ onChangeTheme }: HeaderProps) {
           <LogoWrapper>
             <img src={Logo} width={24} height={24} alt="" />
             <img
-              src={isDarkTheme ? LogoTextDark : LogoTextLight}
+              src={isDarkTheme ? LogoTextLight : LogoTextDark}
               width={112}
               height={24}
               alt=""
