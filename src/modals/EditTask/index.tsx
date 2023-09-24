@@ -122,8 +122,6 @@ export function EditTask({ task, onClose }: EditTaskProps) {
     )
   }
 
-  console.log(formSubtasks)
-
   function handleSubtaskChange(index: number, newValue: string) {
     const updatedSubtasks = [...formSubtasks]
     updatedSubtasks[index].title = newValue

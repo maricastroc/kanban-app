@@ -30,7 +30,11 @@ import { ViewBoards } from '@/modals/ViewBoards'
 import { DeleteBoard } from '@/modals/DeleteBoard'
 import { EditBoard } from '@/modals/EditBoard'
 
-export function Header() {
+interface HeaderProps {
+  onChangeTheme: () => void
+}
+
+export function Header({ onChangeTheme }: HeaderProps) {
   const { activeBoard, isDarkTheme } = useBoardsContext()
 
   const [isMobile, setIsMobile] = useState(false)
@@ -59,7 +63,10 @@ export function Header() {
       {showAddTask && <AddTask onClose={() => setShowAddTask(false)} />}
 
       {showViewBoards && (
-        <ViewBoards onClose={() => setShowViewBoards(false)} />
+        <ViewBoards
+          onClose={() => setShowViewBoards(false)}
+          onChangeTheme={onChangeTheme}
+        />
       )}
 
       {showDeleteBoard && (
@@ -81,7 +88,7 @@ export function Header() {
           <LogoWrapper>
             <img src={Logo} width={24} height={24} alt="" />
             <img
-              src={isDarkTheme ? LogoTextLight : LogoTextDark}
+              src={isDarkTheme ? LogoTextDark : LogoTextLight}
               width={112}
               height={24}
               alt=""

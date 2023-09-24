@@ -25,7 +25,7 @@ interface HomeProps {
 }
 
 export default function Home({ onChangeTheme }: HomeProps) {
-  const { activeBoard } = useBoardsContext()
+  const { activeBoard, isDarkTheme } = useBoardsContext()
 
   const [isMobile, setIsMobile] = useState(true)
   const [updatedBoard, setUpdatedBoard] = useState<BoardDTO>(activeBoard)
@@ -80,7 +80,7 @@ export default function Home({ onChangeTheme }: HomeProps) {
 
   return (
     <Container>
-      <Header />
+      <Header onChangeTheme={onChangeTheme} />
       {openAddColumn && <AddColumn onClose={() => setOpenAddColumn(false)} />}
       <Wrapper>
         {!isMobile && !hideSidebar && (
@@ -105,7 +105,10 @@ export default function Home({ onChangeTheme }: HomeProps) {
               index={index}
             />
           ))}
-          <NewColumnContainer onClick={() => setOpenAddColumn(true)}>
+          <NewColumnContainer
+            onClick={() => setOpenAddColumn(true)}
+            className={isDarkTheme ? 'dark' : 'light'}
+          >
             <NewColumnButton>
               <h2>+ New Column</h2>
             </NewColumnButton>

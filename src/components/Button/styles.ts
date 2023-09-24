@@ -30,7 +30,7 @@ export const Container = styled.button`
     background-color: ${(props) => props.theme['error-color']};
 
     p {
-      color: ${(props) => props.theme['title-color']};
+      color: ${(props) => props.theme['button-title']};
     }
   }
 

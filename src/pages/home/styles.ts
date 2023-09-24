@@ -50,12 +50,19 @@ export const NewColumnContainer = styled.div`
   height: 100%;
   margin-top: 2.4rem;
   border-radius: 8px;
-  background: linear-gradient(
-    to bottom,
-    rgba(121, 132, 147, 0.2),
-    rgba(130, 143, 163, 0.1),
-    rgba(130, 143, 163, 0)
-  );
+
+  &.dark {
+    background: linear-gradient(
+      to bottom,
+      rgba(121, 132, 147, 0.2),
+      rgba(130, 143, 163, 0.1),
+      rgba(130, 143, 163, 0)
+    );
+  }
+
+  &.light {
+    background: linear-gradient(180deg, #e9effa, rgba(233, 239, 250, 0.5));
+  }
 
   &:hover {
     h2 {

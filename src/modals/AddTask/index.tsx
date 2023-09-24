@@ -175,8 +175,6 @@ export function AddTask({ onClose }: AddTaskProps) {
     )
   }
 
-  console.log(subtasks)
-
   return (
     <>
       <Overlay onClick={() => onClose()} />

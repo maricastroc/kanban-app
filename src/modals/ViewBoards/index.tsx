@@ -21,9 +21,10 @@ import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 
 interface ViewBoardsProps {
   onClose: () => void
+  onChangeTheme: () => void
 }
 
-export function ViewBoards({ onClose }: ViewBoardsProps) {
+export function ViewBoards({ onClose, onChangeTheme }: ViewBoardsProps) {
   useEscapeKeyHandler(onClose)
 
   const { activeBoard, allBoards, handleSetActiveBoard } = useBoardsContext()
@@ -63,9 +64,15 @@ export function ViewBoards({ onClose }: ViewBoardsProps) {
             <p>+ Create New Board</p>
           </Board>
         </BoardsContainer>
-        <ThemeSwitcherContainer>
+        <ThemeSwitcherContainer onClick={() => onChangeTheme()}>
           <img src={DarkThemeSvg} alt="" />
-          <SwitchRoot className="SwitchRoot" id="airplane-mode">
+          <SwitchRoot
+            className="SwitchRoot"
+            id="airplane-mode"
+            onClick={() => {
+              onChangeTheme()
+            }}
+          >
             <SwitchThumb className="SwitchThumb" />
           </SwitchRoot>
           <img src={LightThemeSvg} alt="" />

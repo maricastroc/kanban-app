@@ -53,7 +53,7 @@ export const CheckedBox = styled.button`
   border-radius: 3;
 
   svg {
-    color: ${(props) => props.theme['title-color']};
+    color: ${(props) => props.theme['button-title']};
     font-size: 0.7rem;
   }
 

@@ -117,7 +117,7 @@ export const AddButton = styled.button`
 
   svg {
     font-size: 1rem;
-    color: ${(props) => props.theme['title-color']};
+    color: ${(props) => props.theme['button-title']};
   }
 
   p {
