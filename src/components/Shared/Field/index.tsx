@@ -1,9 +1,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Container, Input, DeleteSubtaskBtn } from './styles'
+import { Container, Input, DeleteFieldBtn } from './styles'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 
-interface SubtaskFieldProps {
-  hasError: boolean;
+interface FieldProps {
+  hasError?: boolean
+  isDisabled?: boolean
   placeholder?: string
   value: string
   btnVariant?: string
@@ -11,26 +12,27 @@ interface SubtaskFieldProps {
   onClick: () => void
 }
 
-export function SubtaskField({
-  hasError,
-  placeholder = '',
+export function Field({
   value,
+  hasError = false,
+  isDisabled = false,
+  placeholder = '',
   btnVariant = '',
   onChange,
   onClick,
-}: SubtaskFieldProps) {
+}: FieldProps) {
   return (
     <Container>
       <Input
         type="text"
-        className={hasError ? 'error' : ''}
+        className={`${hasError ? 'error' : ''} ${isDisabled ? 'disabled' : ''}`}
         placeholder={placeholder}
         defaultValue={value}
         onBlur={onChange}
       />
-      <DeleteSubtaskBtn type="button" className={btnVariant} onClick={onClick}>
+      <DeleteFieldBtn type="button" className={btnVariant} onClick={onClick}>
         <FontAwesomeIcon icon={faXmark} />
-      </DeleteSubtaskBtn>
+      </DeleteFieldBtn>
     </Container>
   )
 }

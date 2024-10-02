@@ -1,14 +1,10 @@
-import { ReactNode } from 'react';
+import { ReactNode } from 'react'
 import { InputContainer as CustomInputContainer } from './styles'
 
 interface InputContainerProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 export function InputContainer({ children }: InputContainerProps) {
-  return (
-    <CustomInputContainer>
-      {children}
-    </CustomInputContainer>
-  )
+  return <CustomInputContainer>{children}</CustomInputContainer>
 }

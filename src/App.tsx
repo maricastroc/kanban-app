@@ -14,7 +14,7 @@ function App() {
     <ThemeProvider theme={enableDarkMode ? darkTheme : lightTheme}>
       <BoardsContextProvider>
         <TaskContextProvider>
-          <Home onChangeTheme={() => setEnableDarkMode(!enableDarkMode)}/>
+          <Home onChangeTheme={() => setEnableDarkMode(!enableDarkMode)} />
         </TaskContextProvider>
       </BoardsContextProvider>
       <GlobalStyle />

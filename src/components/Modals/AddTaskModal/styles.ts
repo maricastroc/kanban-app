@@ -4,7 +4,6 @@ import {
   Overlay as RadixOverlay,
   Content as RadixContent,
   Title as RadixTitle,
-  Description as RadixDescription,
 } from '@radix-ui/react-dialog'
 
 export const ModalOverlay = styled(RadixOverlay)`
@@ -48,11 +47,6 @@ export const ModalTitle = styled(RadixTitle)`
   }
 `
 
-export const ModalDescription = styled(RadixDescription)`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`
 export const StatusOptionsWrapper = styled.div`
   display: flex;
   flex-direction: column;

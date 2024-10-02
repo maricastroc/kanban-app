@@ -3,12 +3,20 @@ import styled from 'styled-components'
 export const Container = styled.div`
   display: flex;
   width: 100%;
-  height: 4rem;
-  overflow: hidden;
+  height: 5rem;
   padding: 1.25rem 1rem;
   align-items: center;
   justify-content: space-between;
   background-color: ${(props) => props.theme['cards-color']};
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  @media (min-width: 768px) {
+    padding: 0;
+    justify-content: initial;
+    border-bottom: solid 1px ${(props) => props.theme['border-color']};
+  }
 `
 export const LogoContainer = styled.div`
   display: flex;
@@ -31,6 +39,10 @@ export const BoardNameContainer = styled.div`
 
 export const BoardName = styled.h1`
   font-size: ${(props) => props.theme['heading-l']};
+
+  @media (min-width: 1024px) {
+    font-size: 1.5rem;
+  }
 `
 
 export const OptionsContainer = styled.div`
@@ -63,4 +75,13 @@ export const AddTaskBtn = styled.button`
   }
 `
 
+export const OpenMoreOptionsBtn = styled.button`
+  display: flex;
+  background-color: transparent;
+  border: none;
+`
 
+export const MoreOptionsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`

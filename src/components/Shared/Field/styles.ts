@@ -26,7 +26,7 @@ export const Input = styled.input`
   }
 `
 
-export const DeleteSubtaskBtn = styled.button`
+export const DeleteFieldBtn = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;

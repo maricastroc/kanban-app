@@ -7,7 +7,7 @@ import {
   getActiveStorageBoard,
   getStorageBoards,
   saveStorageActiveBoard,
-  saveStorageBoards
+  saveStorageBoards,
 } from '@/storage/boardsConfig'
 
 interface BoardsContextData {
@@ -22,7 +22,11 @@ interface BoardsContextData {
 
   createNewBoard: (name: string, columns: BoardColumnProps[]) => void
   deleteBoard: (board: BoardProps) => void
-  editBoard: (board: BoardProps, newName: string, newColumns: BoardColumnProps[]) => void
+  editBoard: (
+    board: BoardProps,
+    newName: string,
+    newColumns: BoardColumnProps[],
+  ) => void
 }
 
 const BoardsContext = createContext<BoardsContextData | undefined>(undefined)
@@ -60,15 +64,15 @@ export function BoardsContextProvider({
     saveStorageActiveBoard({
       name: board.name,
       columns: [...board.columns],
-    });
+    })
     setActiveBoard({
       name: board.name,
       columns: [...board.columns],
-    });
+    })
   }
-  
+
   function handleSetActiveBoard(board: BoardProps) {
-    saveActiveBoard(board);
+    saveActiveBoard(board)
   }
 
   function updateBoards(updatedBoards: BoardProps[]) {
@@ -79,103 +83,102 @@ export function BoardsContextProvider({
   function nameExistsInBoards(
     name: string,
     boards: BoardProps[],
-    excludeBoard?: BoardProps
+    excludeBoard?: BoardProps,
   ): boolean {
     return boards.some(
       (board) =>
-        board.name.toLowerCase() === name.toLowerCase() && 
-        (!excludeBoard || board.name !== excludeBoard.name)
-    );
+        board.name.toLowerCase() === name.toLowerCase() &&
+        (!excludeBoard || board.name !== excludeBoard.name),
+    )
   }
 
   function createNewBoard(name: string, columns: BoardColumnProps[]) {
     const newBoard: BoardProps = {
       name,
       columns,
-    };
-  
+    }
+
     if (nameExistsInBoards(name, allBoards)) {
-      toast.error('A board with this name already exists.');
-      return;
+      toast.error('A board with this name already exists.')
+      return
     }
 
     if (!name.trim()) {
-      toast.error('Board name cannot be empty.');
-      return;
+      toast.error('Board name cannot be empty.')
+      return
     }
-    
+
     if (columns.length === 0) {
-      toast.error('Board must have at least one column.');
-      return;
+      toast.error('Board must have at least one column.')
+      return
     }
-  
-    const updatedBoards = [...allBoards, newBoard];
-    updateBoards(updatedBoards);
-    handleSetActiveBoard(newBoard);
+
+    const updatedBoards = [...allBoards, newBoard]
+    updateBoards(updatedBoards)
+    handleSetActiveBoard(newBoard)
   }
-  
+
   function editBoard(
     boardToEdit: BoardProps,
     newName: string,
     newColumns: BoardColumnProps[],
   ) {
     if (!newName.trim()) {
-      toast.error('Board name cannot be empty.');
-      return;
+      toast.error('Board name cannot be empty.')
+      return
     }
-  
+
     if (newColumns.length === 0) {
-      toast.error('Board must have at least one column.');
-      return;
+      toast.error('Board must have at least one column.')
+      return
     }
-  
+
     const boardIndex = allBoards.findIndex(
       (board) => board.name === boardToEdit.name,
-    );
-  
+    )
+
     if (boardIndex === -1) {
-      toast.error('Board not found.');
-      return;
+      toast.error('Board not found.')
+      return
     }
-  
+
     if (nameExistsInBoards(newName, allBoards, boardToEdit)) {
-      toast.error('A board with this name already exists.');
-      return;
+      toast.error('A board with this name already exists.')
+      return
     }
-  
+
     const lowerCaseColumnNames = newColumns.map((column) =>
       column.name.toLowerCase(),
-    );
-  
+    )
+
     const hasDuplicateNames =
-      new Set(lowerCaseColumnNames).size !== newColumns.length;
-  
+      new Set(lowerCaseColumnNames).size !== newColumns.length
+
     if (hasDuplicateNames) {
-      toast.error('This board already contains a column with this name.');
-      return;
+      toast.error('This board already contains a column with this name.')
+      return
     }
-  
-    const updatedBoards = [...allBoards];
-    const editedBoard = updatedBoards[boardIndex];
-  
-    editedBoard.name = newName;
-    editedBoard.columns = newColumns;
-  
-    updatedBoards[boardIndex] = editedBoard;
-  
-    updateBoards(updatedBoards);
-    handleSetActiveBoard(editedBoard);
+
+    const updatedBoards = [...allBoards]
+    const editedBoard = updatedBoards[boardIndex]
+
+    editedBoard.name = newName
+    editedBoard.columns = newColumns
+
+    updatedBoards[boardIndex] = editedBoard
+
+    updateBoards(updatedBoards)
+    handleSetActiveBoard(editedBoard)
   }
-  
 
   function deleteBoard(board: BoardProps) {
     const updatedBoards = allBoards.filter((b) => b.name !== board.name)
 
     if (activeBoard && activeBoard.name === board.name) {
       if (allBoards.length > 1) {
-        handleSetActiveBoard(allBoards[0]);
+        handleSetActiveBoard(allBoards[0])
       } else {
-        setActiveBoard(null);
+        setActiveBoard(null)
       }
     }
 

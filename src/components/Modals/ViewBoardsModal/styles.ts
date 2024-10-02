@@ -4,7 +4,6 @@ import {
   Overlay as RadixOverlay,
   Content as RadixContent,
   Title as RadixTitle,
-  Description as RadixDescription,
   Close as RadixClose,
 } from '@radix-ui/react-dialog'
 
@@ -53,12 +52,6 @@ export const ModalTitle = styled(RadixTitle)`
   color: ${(props) => props.theme['subtitle-color']};
   text-transform: uppercase;
   letter-spacing: 1.2px;
-`
-
-export const ModalDescription = styled(RadixDescription)`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
 `
 
 export const BoardsContainer = styled.div`
@@ -197,4 +190,3 @@ export const SwitchThumb = styled(RadixThumb)`
     transform: translateX(2px);
   }
 `
-

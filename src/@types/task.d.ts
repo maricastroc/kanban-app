@@ -1,4 +1,4 @@
-import { SubtaskProps } from "./subtask"
+import { SubtaskProps } from './subtask'
 
 export interface TaskProps {
   title: string

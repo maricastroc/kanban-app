@@ -1,4 +1,4 @@
-import { TaskProps } from "./task"
+import { TaskProps } from './task'
 
 export interface BoardColumnProps {
   name: string

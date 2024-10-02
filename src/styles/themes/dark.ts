@@ -25,5 +25,10 @@ export const darkTheme = {
   'tag-color-5': '#2a3fdb',
   'tag-color-6': '#c36e6e',
 
+  'body-m': '0.075rem',
+  'body-l': '0.8175rem',
+  'heading-s': '0.075rem',
+  'heading-m': '0.9375rem',
   'heading-l': '1.125rem',
+  'heading-xl': '1.5rem',
 }

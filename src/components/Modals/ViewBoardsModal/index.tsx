@@ -2,14 +2,13 @@ import * as Dialog from '@radix-ui/react-dialog'
 
 import {
   ModalOverlay,
-  ModalDescription,
   ModalTitle,
   ModalContent,
   BoardsContainer,
   BoardItem,
   ThemeSwitcherContainer,
   SwitchRoot,
-  SwitchThumb
+  SwitchThumb,
 } from './styles'
 
 import { useBoardsContext } from '@/contexts/BoardsContext'
@@ -17,6 +16,7 @@ import { useBoardsContext } from '@/contexts/BoardsContext'
 import BoardIcon from '@/../public/icon-board.svg'
 import LightThemeSvg from '@/../public/icon-light-theme.svg'
 import DarkThemeSvg from '@/../public/icon-dark-theme.svg'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
 interface ViewBoardsModalProps {
   onChangeTheme: () => void
@@ -29,12 +29,11 @@ export function ViewBoardsModal({ onChangeTheme }: ViewBoardsModalProps) {
   return (
     <Dialog.Portal>
       <ModalOverlay className="DialogOverlay" />
-      <ModalContent className="DialogContent">
-        <ModalTitle className="DialogTitle">
-          All Boards (5)
-        </ModalTitle>
-        <ModalDescription className="DialogDescription">
-
+      <ModalContent className="DialogContent" aria-describedby={undefined}>
+        <ModalTitle className="DialogTitle">All Boards (5)</ModalTitle>
+        <VisuallyHidden>
+          <Dialog.Description />
+        </VisuallyHidden>
         <BoardsContainer>
           {allBoards.map((board) => {
             return (
@@ -50,9 +49,7 @@ export function ViewBoardsModal({ onChangeTheme }: ViewBoardsModalProps) {
               </BoardItem>
             )
           })}
-          <BoardItem
-            className="create"
-          >
+          <BoardItem className="create">
             <img src={BoardIcon} alt="" />
             <p>+ Create New Board</p>
           </BoardItem>
@@ -71,8 +68,6 @@ export function ViewBoardsModal({ onChangeTheme }: ViewBoardsModalProps) {
           </SwitchRoot>
           <img src={LightThemeSvg} alt="" />
         </ThemeSwitcherContainer>
-
-        </ModalDescription>
       </ModalContent>
     </Dialog.Portal>
   )

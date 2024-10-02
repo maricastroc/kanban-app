@@ -1,18 +1,32 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { AddTaskBtn, BoardName, BoardNameContainer, Container, LogoContainer, OptionsContainer } from "./styles";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  AddTaskBtn,
+  BoardName,
+  BoardNameContainer,
+  Container,
+  LogoContainer,
+  OptionsContainer,
+  MoreOptionsWrapper,
+  OpenMoreOptionsBtn,
+} from './styles'
 import Logo from '@/../public/icon.svg'
-import { faAngleDown, faEllipsisVertical, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAngleDown,
+  faEllipsisVertical,
+  faPlus,
+} from '@fortawesome/free-solid-svg-icons'
 import * as Dialog from '@radix-ui/react-dialog'
-import { ViewBoardsModal } from "@/components/Modals/ViewBoardsModal";
-import { useState } from "react";
-import { AddTaskModal } from "@/components/Modals/AddTaskModal";
+import { ViewBoardsModal } from '@/components/Modals/ViewBoardsModal'
+import { useState } from 'react'
+import { AddTaskModal } from '@/components/Modals/AddTaskModal'
+import { MoreOptionsModal } from '@/components/Modals/MoreOptionsModal'
 
 interface HeaderProps {
   onChangeTheme: () => void
 }
 
 export function Header({ onChangeTheme }: HeaderProps) {
-  const [showAddTaskModal, setShowAddTaskModal] = useState(false)
+  const [, setShowAddTaskModal] = useState(false)
 
   return (
     <Container>
@@ -28,20 +42,27 @@ export function Header({ onChangeTheme }: HeaderProps) {
           </Dialog.Trigger>
           <ViewBoardsModal onChangeTheme={onChangeTheme} />
         </Dialog.Root>
-
       </LogoContainer>
       <OptionsContainer>
-
         <Dialog.Root>
           <Dialog.Trigger asChild>
-            <AddTaskBtn onClick={() => setShowAddTaskModal(true)}>
+            <AddTaskBtn>
               <FontAwesomeIcon icon={faPlus} />
             </AddTaskBtn>
           </Dialog.Trigger>
           <AddTaskModal onClose={() => setShowAddTaskModal(false)} />
         </Dialog.Root>
 
-        <FontAwesomeIcon icon={faEllipsisVertical} />
+        <MoreOptionsWrapper>
+          <Dialog.Root>
+          <Dialog.Trigger asChild>
+            <OpenMoreOptionsBtn>
+              <FontAwesomeIcon icon={faEllipsisVertical} />
+            </OpenMoreOptionsBtn>
+          </Dialog.Trigger>
+          <MoreOptionsModal />
+        </Dialog.Root>
+        </MoreOptionsWrapper>
       </OptionsContainer>
     </Container>
   )

@@ -1,5 +1,5 @@
-import { Header } from "../../components/Core/Header";
-import { Container } from "./styles";
+import { Header } from '../../components/Core/Header'
+import { Container } from './styles'
 
 interface HomeProps {
   onChangeTheme: () => void
