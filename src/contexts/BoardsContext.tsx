@@ -169,6 +169,8 @@ export function BoardsContextProvider({
 
     updateBoards(updatedBoards)
     handleSetActiveBoard(editedBoard)
+
+    toast.success('Board successfully edited!')
   }
 
   function deleteBoard(board: BoardProps) {

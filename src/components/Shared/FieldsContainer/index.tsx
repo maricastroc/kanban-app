@@ -5,6 +5,11 @@ interface FieldsContainerProps {
   children: ReactNode
 }
 
-export function FieldsContainer({ children }: FieldsContainerProps) {
+const FieldsContainer = ({ children }: FieldsContainerProps) => {
   return <CustomFieldsContainer>{children}</CustomFieldsContainer>
 }
+
+FieldsContainer.displayName = 'FieldsContainer'
+
+export { FieldsContainer }
+

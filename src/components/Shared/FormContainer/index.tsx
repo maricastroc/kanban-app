@@ -5,6 +5,10 @@ interface FormContainerProps extends FormHTMLAttributes<HTMLFormElement> {
   children: ReactNode
 }
 
-export function FormContainer({ children, ...rest }: FormContainerProps) {
+const FormContainer = ({ children, ...rest }: FormContainerProps) => {
   return <CustomFormContainer {...rest}>{children}</CustomFormContainer>
 }
+
+FormContainer.displayName = 'FormContainer'
+
+export { FormContainer }

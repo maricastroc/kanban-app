@@ -13,8 +13,7 @@ export const Container = styled.div`
   z-index: 10;
 
   @media (min-width: 768px) {
-    padding: 0;
-    justify-content: initial;
+    justify-content: space-between;
     border-bottom: solid 1px ${(props) => props.theme['border-color']};
   }
 `
@@ -64,14 +63,41 @@ export const AddTaskBtn = styled.button`
   align-items: center;
   justify-content: center;
   background-color: ${(props) => props.theme['primary-color']};
-  width: 3rem;
-  height: 2rem;
+  width: 48px;
+  height: 32px;
   border: none;
-  border-radius: 1rem;
+  border-radius: 16px;
 
   svg {
     font-size: 1rem;
     color: ${(props) => props.theme['button-title']};
+  }
+
+  p {
+    display: none;
+  }
+
+  &:hover {
+    transition: 200ms;
+    background-color: ${(props) => props.theme['primary-hover']};
+  }
+
+  @media (min-width: 768px) {
+    gap: 1.5rem;
+    width: 164px;
+    height: 48px;
+    border-radius: 22px;
+
+    svg {
+      display: none;
+    }
+
+    p {
+      display: block;
+      font-size: 0.93rem;
+      color: ${(props) => props.theme['button-title']};
+      font-weight: 700;
+    }
   }
 `
 

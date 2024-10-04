@@ -1,8 +1,6 @@
 import styled from 'styled-components'
 
-import {
-  Content as RadixContent,
-} from '@radix-ui/react-dialog'
+import { Content as RadixContent } from '@radix-ui/react-dialog'
 
 export const ModalContent = styled(RadixContent)`
   display: flex;

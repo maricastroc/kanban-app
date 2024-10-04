@@ -5,6 +5,11 @@ interface CustomLabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
   children: ReactNode
 }
 
-export function CustomLabel({ children, ...rest }: CustomLabelProps) {
+const CustomLabel = ({ children, ...rest }: CustomLabelProps) => {
   return <StyledLabel {...rest}>{children}</StyledLabel>
 }
+
+CustomLabel.displayName = 'CustomLabel'
+
+export { CustomLabel }
+

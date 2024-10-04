@@ -65,7 +65,7 @@ export const StatusOptionsContainer = styled.div`
   border-radius: 8px;
 
   &.active {
-    border: solid 2px ${(props) => props.theme['primary-color']};
+    border: solid 1px ${(props) => props.theme['primary-color']};
   }
 
   p {
@@ -85,16 +85,24 @@ export const SelectStatusContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 1rem;
-  background-color: ${(props) => props.theme['bg-color']};
+  background-color: ${(props) => props.theme['cards-color']};
+  border: 1px solid ${(props) => props.theme['primary-color']};
   border-radius: 8px;
-  gap: 0.9rem;
+  padding: 0.5rem;
 
   button {
+    position: relative;
+    display: flex;
+    padding: 0.5rem;
+    padding-left: 0rem;
+    align-items: center;
     cursor: pointer;
+    border-radius: 8px;
+    width: 100%;
     background-color: transparent;
     border: none;
     font-size: 0.8125rem;
+    text-align: flex-start;
     color: ${(props) => props.theme['subtitle-color']};
 
     &:focus {
@@ -102,8 +110,19 @@ export const SelectStatusContainer = styled.div`
     }
 
     &:hover {
-      color: ${(props) => props.theme['title-color']};
+      background-color: ${(props) => `${props.theme['subtitle-color']}1A`};
       font-weight: 700;
+    }
+
+    svg {
+      position: absolute;
+      color: ${(props) => props.theme['primary-color']};
+      font-size: 0.9rem;
+      left: 0.2rem;
+    }
+
+    span {
+      margin-left: 1.2rem;
     }
   }
 `

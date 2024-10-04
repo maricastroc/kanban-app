@@ -26,42 +26,56 @@ interface HeaderProps {
 }
 
 export function Header({ onChangeTheme }: HeaderProps) {
-  const [, setShowAddTaskModal] = useState(false)
+  const [openAddTaskModal, setOpenAddTaskModal] = useState(false)
+
+  const [openViewBoardsModal, setOpenViewBoardsModal] = useState(false)
+
+  const [openMoreOptionsModal, setOpenMoreOptionsModal] = useState(false)
 
   return (
     <Container>
       <LogoContainer>
         <img src={Logo} width={24} height={24} alt="Project Logo" />
 
-        <Dialog.Root>
+        <Dialog.Root open={openViewBoardsModal}>
           <Dialog.Trigger asChild>
-            <BoardNameContainer>
+            <BoardNameContainer onClick={() => setOpenViewBoardsModal(true)}>
               <BoardName>Platform Launch</BoardName>
               <FontAwesomeIcon icon={faAngleDown} />
             </BoardNameContainer>
           </Dialog.Trigger>
-          <ViewBoardsModal onChangeTheme={onChangeTheme} />
+          <ViewBoardsModal
+            onChangeTheme={onChangeTheme}
+            onClose={() => setOpenViewBoardsModal(false)}
+          />
         </Dialog.Root>
       </LogoContainer>
       <OptionsContainer>
-        <Dialog.Root>
+        <Dialog.Root open={openAddTaskModal}>
           <Dialog.Trigger asChild>
-            <AddTaskBtn>
+            <AddTaskBtn onClick={() => setOpenAddTaskModal(true)}>
               <FontAwesomeIcon icon={faPlus} />
+              <p>+ Add New Task</p>
             </AddTaskBtn>
           </Dialog.Trigger>
-          <AddTaskModal onClose={() => setShowAddTaskModal(false)} />
+          <AddTaskModal onClose={() => setOpenAddTaskModal(false)} />
         </Dialog.Root>
 
         <MoreOptionsWrapper>
-          <Dialog.Root>
-          <Dialog.Trigger asChild>
-            <OpenMoreOptionsBtn>
-              <FontAwesomeIcon icon={faEllipsisVertical} />
-            </OpenMoreOptionsBtn>
-          </Dialog.Trigger>
-          <MoreOptionsModal />
-        </Dialog.Root>
+          <Dialog.Root
+            open={openMoreOptionsModal}
+            onOpenChange={setOpenMoreOptionsModal}
+          >
+            <Dialog.Trigger asChild>
+              <OpenMoreOptionsBtn>
+                <FontAwesomeIcon
+                  icon={faEllipsisVertical}
+                  onClick={() => setOpenMoreOptionsModal(false)}
+                />
+              </OpenMoreOptionsBtn>
+            </Dialog.Trigger>
+            <MoreOptionsModal onClose={() => setOpenMoreOptionsModal(false)} />
+          </Dialog.Root>
         </MoreOptionsWrapper>
       </OptionsContainer>
     </Container>

@@ -5,6 +5,10 @@ interface InputContainerProps {
   children: ReactNode
 }
 
-export function InputContainer({ children }: InputContainerProps) {
-  return <CustomInputContainer>{children}</CustomInputContainer>
+const InputContainer = ({ children }: InputContainerProps) => {
+  return <CustomInputContainer spellCheck={false}>{children}</CustomInputContainer>
 }
+
+InputContainer.displayName = 'InputContainer'
+
+export { InputContainer }

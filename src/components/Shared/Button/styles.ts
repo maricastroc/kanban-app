@@ -11,18 +11,28 @@ export const Container = styled.button`
   border: none;
 
   &.primary {
-    background-color: ${(props) => props.theme['light-bg-color']};
-
-    p {
-      color: ${(props) => props.theme['primary-color']};
-    }
-  }
-
-  &.secondary {
     background-color: ${(props) => props.theme['primary-color']};
 
     p {
       color: ${(props) => props.theme['button-title']};
+    }
+
+    &:hover {
+      background-color: ${(props) => props.theme['primary-hover']};
+      transition: 200ms;
+    }
+  }
+
+  &.secondary {
+    background-color: ${(props) => `${props.theme['primary-color']}1A`};
+
+    p {
+      color: ${(props) => props.theme['primary-color']};
+    }
+
+    &:hover {
+      background-color: ${(props) => `${props.theme['primary-color']}40`};
+      transition: 200ms;
     }
   }
 
@@ -41,11 +51,6 @@ export const Container = styled.button`
 
   &:focus {
     box-shadow: none;
-  }
-
-  &:hover {
-    filter: brightness(1.2);
-    transition: 200ms;
   }
 
   &[disabled] {

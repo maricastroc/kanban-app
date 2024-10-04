@@ -1,4 +1,4 @@
-import { TextareaHTMLAttributes } from 'react'
+import React, { TextareaHTMLAttributes } from 'react'
 import { TextArea as StyledTextArea } from './styles'
 
 interface CustomTextareaProps
@@ -6,9 +6,15 @@ interface CustomTextareaProps
   hasError?: boolean
 }
 
-export function CustomTextarea({
-  hasError = false,
-  ...rest
-}: CustomTextareaProps) {
-  return <StyledTextArea className={hasError ? 'error' : ''} {...rest} />
-}
+const CustomTextarea = React.forwardRef<
+  HTMLTextAreaElement,
+  CustomTextareaProps
+>(({ hasError = false, ...rest }, ref) => {
+  return (
+    <StyledTextArea spellCheck={false} ref={ref} className={hasError ? 'error' : ''} {...rest} />
+  )
+})
+
+CustomTextarea.displayName = 'CustomTextarea'
+
+export { CustomTextarea }

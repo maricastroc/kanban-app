@@ -6,10 +6,14 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   title: string
 }
 
-export function Button({ variant = 'primary', title, ...props }: ButtonProps) {
+const Button = ({ variant = 'primary', title, ...props }: ButtonProps) => {
   return (
     <Container className={variant} {...props}>
       <p>{title}</p>
     </Container>
   )
 }
+
+Button.displayName = 'Button'
+
+export { Button }

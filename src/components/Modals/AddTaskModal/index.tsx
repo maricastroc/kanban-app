@@ -1,5 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useRef, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faAngleDown,
+  faAngleUp,
+  faCheck,
+} from '@fortawesome/free-solid-svg-icons'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+
 import {
   ModalOverlay,
   ModalTitle,
@@ -10,27 +20,23 @@ import {
   SelectStatusContainer,
   SubtasksWrapper,
 } from './styles'
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
-
 import { FormContainer } from '@/components/Shared/FormContainer'
 import { InputContainer } from '@/components/Shared/InputContainer'
 import { Button } from '@/components/Shared/Button'
-
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { useTaskContext } from '@/contexts/TasksContext'
-import { useBoardsContext } from '@/contexts/BoardsContext'
-import { SubtaskProps } from '@/@types/subtask'
-import { initialSubtasks } from '@/utils/getInitialValues'
 import { FieldsContainer } from '@/components/Shared/FieldsContainer'
 import { Field } from '@/components/Shared/Field'
 import { CustomTextarea } from '@/components/Shared/TextArea'
 import { CustomInput } from '@/components/Shared/Input'
 import { CustomLabel } from '@/components/Shared/Label'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { useTaskContext } from '@/contexts/TasksContext'
+import { useBoardsContext } from '@/contexts/BoardsContext'
+import { SubtaskProps } from '@/@types/subtask'
+import { initialSubtasks } from '@/utils/getInitialValues'
+import { ErrorMessage } from '@/components/Shared/ErrorMessage'
+import { toast } from 'react-toastify'
+import { useOutsideClick } from '@/utils/useOutsideClick'
+import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 
 const subtaskSchema = z.object({
   title: z.string().min(1, { message: 'Subtask title is required' }),
@@ -57,54 +63,71 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
 
   const { addTaskToColumn } = useTaskContext()
 
+  const initialStatus = activeBoard?.columns[0]?.name || 'Not specified'
+
+  const statusRef = useRef<HTMLDivElement | null>(null)
+
+  useOutsideClick(statusRef, () => setOpenOptionsContainer(false))
+
+  useEscapeKeyHandler(onClose)
+
   const [openOptionsContainer, setOpenOptionsContainer] = useState(false)
 
   const [subtasks, setSubtasks] = useState<SubtaskProps[]>(initialSubtasks)
 
-  const [status, setStatus] = useState(activeBoard?.columns[0]?.name)
+  const [status, setStatus] = useState(initialStatus)
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
+    reset,
+    trigger,
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
       description: '',
-      subtasks: initialSubtasks,
-      status: '',
+      subtasks:
+        subtasks.length > 0 ? subtasks : [{ title: '', isCompleted: false }],
+      status: initialStatus,
     },
   })
 
   const handleAddSubtask = () => {
-    setSubtasks((prevSubtasks) => [
-      ...prevSubtasks,
-      { title: '', isCompleted: false },
-    ])
-    setValue('subtasks', [...subtasks, { title: '', isCompleted: false }])
+    const newSubtask = { title: '', isCompleted: false }
+    setSubtasks((prev) => [...prev, newSubtask])
+    setValue('subtasks', [...subtasks, newSubtask])
   }
 
   const handleChangeSubtask = (index: number, newValue: string) => {
-    setSubtasks((prevSubtasks) => {
-      const updated = [...prevSubtasks]
-      updated[index].title = newValue
-      return updated
-    })
+    setSubtasks((prev) =>
+      prev.map((subtask, i) =>
+        i === index ? { ...subtask, title: newValue } : subtask,
+      ),
+    )
+    setValue(`subtasks.${index}.title`, newValue)
   }
 
   const handleChangeStatus = (newStatus: string) => {
     setStatus(newStatus)
+    setValue('status', newStatus)
+    setOpenOptionsContainer(false)
   }
 
   const handleRemoveSubtask = (indexToRemove: number) => {
-    setSubtasks((prevSubtasks) =>
-      prevSubtasks.filter((_, index) => index !== indexToRemove),
-    )
+    setSubtasks((prev) => prev.filter((_, index) => index !== indexToRemove))
   }
 
-  const handleAddTask = (data: FormData) => {
+  const handleAddTask = async (data: FormData) => {
+    const isValid = await trigger('subtasks')
+
+    if (!isValid) {
+      toast.error('Please correct the errors before submitting the task.')
+      return
+    }
+
     const newTask = {
       title: data.title,
       description: data.description || '',
@@ -113,13 +136,13 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
     }
 
     addTaskToColumn(newTask, status)
+
     setSubtasks(initialSubtasks)
+
+    reset()
+
     onClose()
   }
-
-  useEffect(() => {
-    setSubtasks(initialSubtasks)
-  }, [])
 
   const renderSubtaskInput = (index: number, subtask: SubtaskProps) => {
     const error = errors.subtasks?.[index]?.title?.message
@@ -127,14 +150,13 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
     return (
       <FieldsContainer key={index}>
         <Field
-          key={index}
           hasError={!!error}
           placeholder="e.g. Make coffee"
           value={subtask.title}
           onChange={(e) => handleChangeSubtask(index, e.target.value)}
           onClick={() => handleRemoveSubtask(index)}
         />
-        {error && <span>{error}</span>}
+        {error && <ErrorMessage message={error} />}
       </FieldsContainer>
     )
   }
@@ -143,10 +165,10 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
     <Dialog.Portal>
       <ModalOverlay className="DialogOverlay" onClick={onClose} />
       <ModalContent className="DialogContent" aria-describedby={undefined}>
-        <ModalTitle className="DialogTitle">Task Title</ModalTitle>
-          <VisuallyHidden>
-            <Dialog.Description />
-          </VisuallyHidden>
+        <ModalTitle className="DialogTitle">Add Task</ModalTitle>
+        <VisuallyHidden>
+          <Dialog.Description />
+        </VisuallyHidden>
         <FormContainer onSubmit={handleSubmit(handleAddTask)}>
           <InputContainer>
             <CustomLabel htmlFor="title">Title</CustomLabel>
@@ -155,7 +177,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
               placeholder="e.g. Take coffee break"
               {...register('title')}
             />
-            {errors.title && <span>{errors.title.message}</span>}
+            {<ErrorMessage message={errors.title?.message} />}
           </InputContainer>
 
           <InputContainer>
@@ -165,7 +187,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
               placeholder="e.g. Task description"
               {...register('description')}
             />
-            {errors.description && <span>{errors.description.message}</span>}
+            {<ErrorMessage message={errors.description?.message} />}
           </InputContainer>
 
           <SubtasksForm>
@@ -177,6 +199,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
             </SubtasksWrapper>
             <Button
               type="button"
+              variant="secondary"
               title="+ Add New Subtask"
               onClick={handleAddSubtask}
             />
@@ -194,22 +217,26 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
               />
             </StatusOptionsContainer>
             {openOptionsContainer && (
-              <SelectStatusContainer>
+              <SelectStatusContainer ref={statusRef}>
                 {activeBoard?.columns?.map((column) => (
                   <button
                     type="button"
                     key={column.name}
                     onClick={() => handleChangeStatus(column.name)}
+                    {...register('status')}
                   >
-                    {column.name}
+                    {status === column.name && (
+                      <FontAwesomeIcon icon={faCheck} />
+                    )}
+                    <span>{column.name}</span>
                   </button>
                 ))}
               </SelectStatusContainer>
             )}
-            {errors.status && <span>{errors.status.message}</span>}
+            {<ErrorMessage message={errors.status?.message} />}
           </StatusOptionsWrapper>
 
-          <Button title="Create Task" type="submit" variant="secondary" />
+          <Button title="Create Task" type="submit" variant="primary" />
         </FormContainer>
       </ModalContent>
     </Dialog.Portal>

@@ -1,73 +1,62 @@
 import { useState } from 'react'
-import { useBoardsContext } from '@/contexts/BoardsContext'
+import * as Dialog from '@radix-ui/react-dialog'
+import { ModalTitle, ModalContent, ColumnsContainer, ColumnsContent, ModalOverlay } from './styles'
+
+import { FormContainer } from '@/components/Shared/FormContainer'
+import { InputContainer } from '@/components/Shared/InputContainer'
+import { Button } from '@/components/Shared/Button'
+
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import * as Dialog from '@radix-ui/react-dialog'
-
-import {
-  ColumnsContainer,
-  ColumnsContent,
-  ModalContent,
-  ModalOverlay,
-  ModalTitle,
-} from './styles'
-import { BoardProps } from '@/@types/board'
-import { BoardColumnProps } from '@/@types/board-column'
-import { InputContainer } from '@/components/Shared/InputContainer'
-import { Field } from '@/components/Shared/Field'
+import { useBoardsContext } from '@/contexts/BoardsContext'
+import { initialBoardColumns } from '@/utils/getInitialValues'
 import { FieldsContainer } from '@/components/Shared/FieldsContainer'
-import { Button } from '@/components/Shared/Button'
-import { FormContainer } from '@/components/Shared/FormContainer'
-import { CustomLabel } from '@/components/Shared/Label'
+import { Field } from '@/components/Shared/Field'
 import { CustomInput } from '@/components/Shared/Input'
+import { CustomLabel } from '@/components/Shared/Label'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { BoardColumnProps } from '@/@types/board-column'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
 import { toast } from 'react-toastify'
-import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
+
+interface AddBoardModalProps {
+  onClose: () => void
+}
 
 const columnSchema = z.object({
-  name: z.string().min(1, { message: 'Column name is required' }),
+  name: z.string().min(3, { message: 'Name is required' }),
 })
 
 const formSchema = z.object({
-  name: z.string().min(3, { message: 'Board name is required' }),
+  name: z.string().min(3, { message: 'Title is required' }),
   columns: z
     .array(columnSchema)
-    .min(1, { message: 'At least one column is required' })
-    .max(6, { message: 'A maximum of 6 columns is allowed' }),
+    .min(1, { message: 'At least one column is required' }),
 })
 
 export type FormData = z.infer<typeof formSchema>
 
-interface EditBoardModalProps {
-  board: BoardProps
-  onClose: () => void
-}
-
-export function EditBoardModal({ board, onClose }: EditBoardModalProps) {
-  const { editBoard } = useBoardsContext()
-
-  const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>(
-    board.columns || [],
-  )
-
+export function AddBoardModal({ onClose }: AddBoardModalProps) {
   const wait = () => new Promise((resolve) => setTimeout(resolve, 100))
 
-  const {
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    setValue,
-    register,
-  } = useForm<FormData>({
-    defaultValues: {
-      name: board.name || '',
-      columns: boardColumns,
-    },
-    resolver: zodResolver(formSchema),
-  })
+  const { createNewBoard } = useBoardsContext()
 
-  useEscapeKeyHandler(onClose)
+  const [boardColumns, setBoardColumns] =
+    useState<BoardColumnProps[]>(initialBoardColumns)
+
+    const {
+      handleSubmit,
+      formState: { errors, isSubmitting },
+      setValue,
+      register,
+    } = useForm<FormData>({
+      defaultValues: {
+        name: '',
+        columns: [],
+      },
+      resolver: zodResolver(formSchema),
+    })
 
   const handleAddColumn = () => {
     const newColumn = { name: '', tasks: [] }
@@ -75,17 +64,6 @@ export function EditBoardModal({ board, onClose }: EditBoardModalProps) {
     setBoardColumns(updatedColumns)
     setValue('columns', updatedColumns)
   }
-
-  const handleRemoveColumn = (indexToRemove: number) => {
-    if (indexToRemove < 0 || indexToRemove >= boardColumns.length) {
-      toast.error('Index out of bounds');
-      return;
-    }
-  
-    const updatedColumns = boardColumns.filter((_, index) => index !== indexToRemove);
-    setBoardColumns(updatedColumns);
-    setValue('columns', updatedColumns);
-  };
 
   const handleChangeColumn = (index: number, newValue: string) => {
     if (index < 0 || index >= boardColumns.length) {
@@ -102,8 +80,20 @@ export function EditBoardModal({ board, onClose }: EditBoardModalProps) {
     setValue('columns', updatedColumns);
   };
 
-  const handleEditBoard = async (data: FormData) => {
-    editBoard(board, data.name, boardColumns)
+  const handleRemoveColumn = (indexToRemove: number) => {
+    if (indexToRemove < 0 || indexToRemove >= boardColumns.length) {
+      toast.error('Index out of bounds');
+      return;
+    }
+  
+    const updatedColumns = boardColumns.filter((_, index) => index !== indexToRemove);
+    setBoardColumns(updatedColumns);
+    setValue('columns', updatedColumns);
+  };
+
+
+  const handleCreateBoard = async (data: FormData) => {
+    createNewBoard(data.name, boardColumns)
     await wait()
     onClose()
   }
@@ -119,6 +109,7 @@ export function EditBoardModal({ board, onClose }: EditBoardModalProps) {
           isDisabled={false}
           btnVariant={''}
           value={column.name}
+          placeholder="e.g. New Column"
           onChange={(e) => handleChangeColumn(index, e.target.value)}
           onClick={() => handleRemoveColumn(index)}
         />
@@ -128,19 +119,19 @@ export function EditBoardModal({ board, onClose }: EditBoardModalProps) {
   }
 
   return (
-    <>
-      <ModalOverlay className="DialogOverlay" onClick={() => onClose()} />
+    <Dialog.Portal>
+            <ModalOverlay className="DialogOverlay" onClick={() => onClose()} />
       <ModalContent className="DialogContent" aria-describedby={undefined}>
-        <ModalTitle className="DialogTitle">Edit Board</ModalTitle>
+        <ModalTitle className="DialogTitle">Add New Board</ModalTitle>
         <VisuallyHidden>
           <Dialog.Description />
         </VisuallyHidden>
-        <FormContainer onSubmit={handleSubmit(handleEditBoard)}>
+        <FormContainer onSubmit={handleSubmit(handleCreateBoard)}>
           <InputContainer>
-            <CustomLabel>Name</CustomLabel>
+            <CustomLabel htmlFor="title">Board Name</CustomLabel>
             <CustomInput
               hasError={!!errors.name}
-              type="text"
+              placeholder="e.g. Backend Tasks"
               {...register('name')}
             />
             {<ErrorMessage message={errors.name?.message} />}
@@ -163,14 +154,9 @@ export function EditBoardModal({ board, onClose }: EditBoardModalProps) {
             )}
           </ColumnsContainer>
 
-          <Button
-            title="Save Changes"
-            type="submit"
-            variant="primary"
-            disabled={isSubmitting}
-          />
+          <Button disabled={isSubmitting} title="Create Board" type="submit" variant="primary" />
         </FormContainer>
       </ModalContent>
-    </>
+    </Dialog.Portal>
   )
 }
