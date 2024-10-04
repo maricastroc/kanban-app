@@ -30,5 +30,6 @@ export const lightTheme = {
   'heading-s': '0.75rem',
   'heading-m': '0.9375rem',
   'heading-l': '1.125rem',
-  'heading-xl': '1.5rem',
+  'heading-xl': '1.25rem',
+  'heading-xxl': '1.5rem',
 }

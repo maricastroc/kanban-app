@@ -31,7 +31,7 @@ export function ViewBoardsModal({
   onChangeTheme,
   onClose,
 }: ViewBoardsModalProps) {
-  const { activeBoard, allBoards, handleEnableDarkMode, handleSetActiveBoard } =
+  const { activeBoard, allBoards, enableDarkMode, handleEnableDarkMode, handleSetActiveBoard } =
     useBoardsContext()
 
   const [openAddBoardModal, setOpenAddBoardModal] = useState(false)
@@ -85,9 +85,9 @@ export function ViewBoardsModal({
             className="SwitchRoot"
             id="airplane-mode"
             onClick={async () => {
-              handleEnableDarkMode() // Ativa o modo escuro
-              await wait() // Espera 1 segundo
-              onClose() // Fecha o modal
+              handleEnableDarkMode(!enableDarkMode)
+              await wait()
+              onClose()
             }}
           >
             <SwitchThumb className="SwitchThumb" />

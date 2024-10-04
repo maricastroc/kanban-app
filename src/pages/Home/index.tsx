@@ -34,15 +34,6 @@ export function Home({ onChangeTheme }: HomeProps) {
 
   const [hideSidebar, setHideSidebar] = useState(false)
 
-  useEffect(() => {
-    function handleResize() {
-      setIsSmallerThanSm(window.innerWidth <= BREAKPOINT_SM)
-    }
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsDragging(true)
     const container = columnsContainerRef.current
@@ -101,10 +92,17 @@ export function Home({ onChangeTheme }: HomeProps) {
   
         return updatedColumns;
       });
-    } else {
-      console.error('Task column index is undefined');
     }
   }
+
+  useEffect(() => {
+    function handleResize() {
+      setIsSmallerThanSm(window.innerWidth <= BREAKPOINT_SM)
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   return (
     <DndProvider backend={HTML5Backend}>

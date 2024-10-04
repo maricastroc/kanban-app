@@ -8,17 +8,28 @@ export const Container = styled.div`
   border-right: solid 1px ${(props) => props.theme['border-color']};
   min-width: 260px;
   background-color: ${(props) => props.theme['cards-color']};
-  height: 100%;
-  overflow: auto;
   position: sticky;
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  scrollbar-width: none;
 `
 
 export const Wrapper = styled.div`
   display: flex;
-  height: 100%;
   flex-direction: column;
   background-color: ${(props) => props.theme['cards-color']};
-  align-items: flex-start;
+`
+
+export const LogoWrapper = styled.div`
+  display: flex;
+  margin: 2.3rem 0;
+  align-items: center;
+  gap: 1rem;
+  padding-left: 1.7rem;
 `
 
 export const Title = styled.h3`
@@ -26,7 +37,7 @@ export const Title = styled.h3`
   justify-content: flex-start;
   padding: 1.875rem 1.5rem 0;
   width: 100%;
-  font-size: 0.75rem;
+  font-size: ${(props) => props.theme['heading-s']};
   font-weight: 700;
   color: ${(props) => props.theme['subtitle-color']};
   text-transform: uppercase;
@@ -37,14 +48,13 @@ export const BoardsContainer = styled.div`
   display: flex;
   margin-top: 1.25rem;
   flex-direction: column;
-  height: 100%;
   width: 100%;
   background-color: ${(props) => props.theme['cards-color']};
   padding-right: 1.5rem;
   gap: 0.5rem;
 `
 
-export const Board = styled.button`
+export const BoardBtn = styled.button`
   cursor: pointer;
   display: flex;
   padding: 0.9rem 1.5rem;
@@ -54,6 +64,12 @@ export const Board = styled.button`
   border: none;
   gap: 0.75rem;
   width: 100%;
+  text-align: left;
+
+  p {
+    color: ${(props) => props.theme['subtitle-color']};
+    font-weight: 700;
+  }
 
   &.active {
     background-color: ${(props) => props.theme['primary-color']};
@@ -62,35 +78,11 @@ export const Board = styled.button`
 
     p {
       color: ${(props) => props.theme['button-title']};
+      font-size: ${(props) => props.theme['heading-m']};
     }
 
     img {
       filter: brightness(1.5);
-    }
-  }
-
-  &.create {
-    p {
-      color: ${(props) => props.theme['primary-color']};
-    }
-
-    img {
-      filter: invert(39%) sepia(47%) saturate(748%) hue-rotate(203deg)
-        brightness(94%) contrast(93%);
-    }
-
-    &:hover {
-      background-color: transparent;
-
-      img {
-        filter: invert(39%) sepia(47%) saturate(748%) hue-rotate(203deg)
-          brightness(130%) contrast(93%);
-      }
-
-      p {
-        color: ${(props) => props.theme['primary-hover']};
-        transition: 200ms;
-      }
     }
   }
 
@@ -115,25 +107,47 @@ export const Board = styled.button`
   }
 `
 
-export const NewBoardBtn = styled.button`
+export const CreateBoardBtn = styled.button`
+  cursor: pointer;
+  display: flex;
+  padding: 0.9rem 1.5rem;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: transparent;
+  border: none;
+  gap: 0.75rem;
+  width: 100%;
+  text-align: left;
+
   p {
-    color: ${(props) => props.theme['subtitle-color']};
-    font-size: 0.93rem;
+    color: ${(props) => props.theme['primary-color']};
+    font-size: ${(props) => props.theme['heading-m']};
     font-weight: 700;
   }
 
   img {
-    color: ${(props) => props.theme['subtitle-color']};
-    font-size: 1.5rem;
+    filter: invert(39%) sepia(47%) saturate(748%) hue-rotate(203deg)
+      brightness(94%) contrast(93%);
+  }
+
+  &:hover {
+    background-color: transparent;
+
+    img {
+      filter: invert(39%) sepia(47%) saturate(748%) hue-rotate(203deg)
+        brightness(130%) contrast(93%);
+    }
+
+    p {
+      color: ${(props) => props.theme['primary-hover']};
+      transition: 200ms;
+    }
   }
 `
 
 export const OptionsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: space-between;
-  justify-content: space-between;
-  min-height: 100vh;
   gap: 1rem;
   background-color: ${(props) => props.theme['cards-color']};
 `
@@ -154,7 +168,7 @@ export const HideButton = styled.button`
   border-bottom-right-radius: 22px;
 
   p {
-    font-size: 0.93rem;
+    font-size: ${(props) => props.theme['heading-m']};
     font-weight: 700;
     color: ${(props) => props.theme['subtitle-color']};
   }

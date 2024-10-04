@@ -14,6 +14,8 @@ export const Container = styled.div`
 
   @media (min-width: 768px) {
     justify-content: space-between;
+    height: 6rem;
+    padding: 2rem;
     border-bottom: solid 1px ${(props) => props.theme['border-color']};
   }
 `
@@ -39,8 +41,8 @@ export const BoardNameContainer = styled.div`
 export const BoardName = styled.h1`
   font-size: ${(props) => props.theme['heading-l']};
 
-  @media (min-width: 1024px) {
-    font-size: 1.5rem;
+  @media (min-width: 768px) {
+    font-size: ${(props) => props.theme['heading-xl']};
   }
 `
 
@@ -94,7 +96,7 @@ export const AddTaskBtn = styled.button`
 
     p {
       display: block;
-      font-size: 0.93rem;
+      font-size: ${(props) => props.theme['heading-m']};
       color: ${(props) => props.theme['button-title']};
       font-weight: 700;
     }

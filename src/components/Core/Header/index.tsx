@@ -17,9 +17,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import * as Dialog from '@radix-ui/react-dialog'
 import { ViewBoardsModal } from '@/components/Modals/ViewBoardsModal'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AddTaskModal } from '@/components/Modals/AddTaskModal'
 import { MoreOptionsModal } from '@/components/Modals/MoreOptionsModal'
+import { BREAKPOINT_SM } from '@/utils/constants'
 
 interface HeaderProps {
   onChangeTheme: () => void
@@ -32,16 +33,35 @@ export function Header({ onChangeTheme }: HeaderProps) {
 
   const [openMoreOptionsModal, setOpenMoreOptionsModal] = useState(false)
 
+  const [isSmallerThanSm, setIsSmallerThanSm] = useState(false)
+
+  useEffect(() => {
+    function handleResize() {
+      setIsSmallerThanSm(window.innerWidth <= BREAKPOINT_SM)
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   return (
     <Container>
       <LogoContainer>
-        <img src={Logo} width={24} height={24} alt="Project Logo" />
+        {isSmallerThanSm && (
+          <img src={Logo} width={24} height={24} alt="Project Logo" />
+        )}
 
         <Dialog.Root open={openViewBoardsModal}>
           <Dialog.Trigger asChild>
-            <BoardNameContainer onClick={() => setOpenViewBoardsModal(true)}>
+            <BoardNameContainer onClick={() => 
+              isSmallerThanSm && (
+                setOpenViewBoardsModal(true)
+              )            
+            }>
               <BoardName>Platform Launch</BoardName>
-              <FontAwesomeIcon icon={faAngleDown} />
+              {isSmallerThanSm && (
+                <FontAwesomeIcon icon={faAngleDown} />
+              )}
             </BoardNameContainer>
           </Dialog.Trigger>
           <ViewBoardsModal

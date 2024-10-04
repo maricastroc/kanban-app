@@ -12,7 +12,7 @@ import {
 
 interface BoardsContextData {
   enableDarkMode: boolean
-  handleEnableDarkMode: () => void
+  handleEnableDarkMode: (value: boolean) => void
 
   activeBoard: BoardProps | null
   allBoards: BoardProps[]

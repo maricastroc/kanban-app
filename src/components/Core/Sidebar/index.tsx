@@ -1,9 +1,11 @@
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import {
-  Board,
+  BoardBtn,
   BoardsContainer,
   Container,
+  CreateBoardBtn,
   HideButton,
+  LogoWrapper,
   OptionsContainer,
   SwitchRoot,
   SwitchThumb,
@@ -15,6 +17,9 @@ import {
 import IconBoard from '@/../public/icon-board.svg'
 import LightThemeSvg from '@/../public/icon-light-theme.svg'
 import DarkThemeSvg from '@/../public/icon-dark-theme.svg'
+import Logo from '@/../public/icon.svg'
+import LogoTextLight from '@/../public/kanban.svg'
+import LogoTextDark from '@/../public/kanban-dark.svg'
 import { useState } from 'react'
 
 import { EyeSlash } from 'phosphor-react'
@@ -26,7 +31,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
-  const { allBoards, activeBoard, handleSetActiveBoard, handleEnableDarkMode } =
+  const { allBoards, activeBoard, enableDarkMode, handleSetActiveBoard, handleEnableDarkMode } =
     useBoardsContext()
 
   const [openAddBoard, setOpenAddBoard] = useState(false)
@@ -41,11 +46,20 @@ export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
         />
       )}
       <Wrapper>
+      <LogoWrapper>
+            <img src={Logo} width={24} height={24} alt="" />
+            <img
+              src={enableDarkMode ? LogoTextDark : LogoTextLight}
+              width={112}
+              height={24}
+              alt=""
+            />
+          </LogoWrapper>
         <Title>{`All Boards (${allBoards.length})`}</Title>
         <BoardsContainer>
           {allBoards.map((board) => {
             return (
-              <Board
+              <BoardBtn
                 key={board.name}
                 className={board.name === activeBoard?.name ? 'active' : ''}
                 onClick={() => {
@@ -54,10 +68,10 @@ export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
               >
                 <img src={IconBoard} alt="" />
                 <p>{board.name}</p>
-              </Board>
+              </BoardBtn>
             )
           })}
-          <Board
+          <CreateBoardBtn
             className="create"
             onClick={() => {
               setOpenAddBoard(true)
@@ -65,23 +79,23 @@ export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
           >
             <img src={IconBoard} alt="" />
             <p>+ Create New Board</p>
-          </Board>
+          </CreateBoardBtn>
         </BoardsContainer>
       </Wrapper>
       <OptionsContainer>
         <ThemeSwitcherContainer>
-          <img src={DarkThemeSvg} alt="" />
+          <img src={LightThemeSvg} alt="" />
           <SwitchRoot
             className="SwitchRoot"
             id="airplane-mode"
             onClick={() => {
               onChangeTheme()
-              handleEnableDarkMode()
+              handleEnableDarkMode(!enableDarkMode)
             }}
           >
             <SwitchThumb className="SwitchThumb" />
           </SwitchRoot>
-          <img src={LightThemeSvg} alt="" />
+          <img src={DarkThemeSvg} alt="" />
         </ThemeSwitcherContainer>
         <HideButton onClick={onClose}>
           <EyeSlash />
