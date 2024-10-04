@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { TaskProps } from '@/@types/task'
 import { BoardColumnProps } from '@/@types/board-column'
+import { useDrop } from 'react-dnd'
+import { TaskCard } from '../TaskCard'
 
 import {
   Container,
@@ -18,9 +20,6 @@ type ColumnProps = BoardColumnProps & {
     targetIndex: number
   ) => void
 }
-
-import { useDrop } from 'react-dnd'
-import { TaskCard } from '../TaskCard'
 
 export function BoardColumn({ name, tasks, index, handleDragAndDropTask }: ColumnProps) {
   const variant = `${index + 1}` as '1' | '2' | '3' | '4' | '5' | '6'
@@ -58,14 +57,17 @@ export function BoardColumn({ name, tasks, index, handleDragAndDropTask }: Colum
   }
 
   return (
-    <Container ref={drop} style={{ backgroundColor: isOver ? 'lightgreen' : 'inherit' }}>
+    <Container ref={drop}>
       <TagContainer variant={variant}>
         <span />
         <p>{`${name} (${tasks.length})`}</p>
       </TagContainer>
 
       {tasks.length > 0 ? (
-        <TasksContainer>{renderTasks()}</TasksContainer>
+        <TasksContainer style={{ 
+          backgroundColor: isOver ? 'rgba(0, 0, 0, 0.05)' : 'inherit',
+          transition: 'border 0.3s ease' // Adiciona uma transição suave para a borda
+        }}>{renderTasks()}</TasksContainer>
       ) : (
         <EmptyTasksContainer />
       )}

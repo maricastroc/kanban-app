@@ -21,16 +21,13 @@ export const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   overflow-x: scroll;
+  flex-direction: column;
 
   &::-webkit-scrollbar {
     display: none;
   }
 
   scrollbar-width: none;
-
-  @media (min-width: 768px) {
-    flex-direction: column;
-  }
 `
 
 export const ColumnsContainer = styled.div`
@@ -40,9 +37,14 @@ export const ColumnsContainer = styled.div`
   padding: 1.5rem 1rem 0;
   gap: 1.5rem;
   padding-bottom: 2rem;
+  justify-content: initial;
 
   &.hand-cursor {
     cursor: grab;
+  }
+
+  &.hide-sidebar-mode {
+    justify-content: center;
   }
 
   @media (min-width: 768px) {
@@ -94,11 +96,9 @@ export const AddColumnBtn = styled.button`
   justify-content: center;
   background-color: transparent;
   border: none;
-
-  h2 {
-    font-size: clamp(1.2rem, 3vw, 1.5rem);
-    color: ${(props) => props.theme['subtitle-color']};
-  }
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  color: ${(props) => props.theme['subtitle-color']};
+  font-weight: 700;
 `
 
 export const StyledToastContainer = styled(ToastContainer)`
@@ -125,7 +125,7 @@ export const StyledToastContainer = styled(ToastContainer)`
   }
 `
 
-export const ShowSidebarButton = styled.button`
+export const ShowSidebarBtn = styled.button`
   cursor: pointer;
   display: flex;
   align-items: center;

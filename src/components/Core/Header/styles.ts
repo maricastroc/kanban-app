@@ -40,9 +40,14 @@ export const BoardNameContainer = styled.div`
 
 export const BoardName = styled.h1`
   font-size: ${(props) => props.theme['heading-l']};
+  font-weight: 800;
 
   @media (min-width: 768px) {
     font-size: ${(props) => props.theme['heading-xl']};
+  }
+
+  @media (min-width: 1023px) {
+    font-size: ${(props) => props.theme['heading-xxl']};
   }
 `
 
@@ -103,13 +108,15 @@ export const AddTaskBtn = styled.button`
   }
 `
 
-export const OpenMoreOptionsBtn = styled.button`
+export const MoreOptionsBtn = styled.button`
   display: flex;
   background-color: transparent;
   border: none;
+  cursor: pointer;
 `
 
 export const MoreOptionsWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 `

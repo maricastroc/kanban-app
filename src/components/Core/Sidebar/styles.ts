@@ -26,7 +26,7 @@ export const Wrapper = styled.div`
 
 export const LogoWrapper = styled.div`
   display: flex;
-  margin: 2.3rem 0;
+  margin: 2.3rem 0 2.5rem;
   align-items: center;
   gap: 1rem;
   padding-left: 1.7rem;
@@ -91,13 +91,13 @@ export const BoardBtn = styled.button`
   }
 
   &:hover {
-    background-color: ${(props) => props.theme['primary-hover']};
+    background-color: ${(props) => `${props.theme['primary-color']}40`};
     transition: 200ms;
     border-top-right-radius: 22px;
     border-bottom-right-radius: 22px;
 
     p {
-      color: ${(props) => props.theme['button-title']};
+      color: ${(props) => props.theme['primary-color']};
     }
 
     img {
@@ -131,18 +131,19 @@ export const CreateBoardBtn = styled.button`
   }
 
   &:hover {
-    background-color: transparent;
+    background-color: ${(props) => `${props.theme['primary-color']}40`};
+    transition: 200ms;
+    border-top-right-radius: 22px;
+    border-bottom-right-radius: 22px;
+
+    p {
+      color: ${(props) => props.theme['primary-color']};
+    }
 
     img {
       filter: invert(39%) sepia(47%) saturate(748%) hue-rotate(203deg)
-        brightness(130%) contrast(93%);
+        brightness(94%) contrast(93%);
     }
-
-    p {
-      color: ${(props) => props.theme['primary-hover']};
-      transition: 200ms;
-    }
-  }
 `
 
 export const OptionsContainer = styled.div`
@@ -180,11 +181,18 @@ export const HideButton = styled.button`
   }
 
   &:hover {
-    background-color: ${(props) => props.theme['primary-hover']};
+    background-color: ${(props) => `${props.theme['primary-color']}40`};
     transition: 200ms;
+    border-top-right-radius: 22px;
+    border-bottom-right-radius: 22px;
 
     p {
-      color: ${(props) => props.theme['button-title']};
+      color: ${(props) => props.theme['primary-color']};
+    }
+
+    svg {
+      filter: invert(39%) sepia(47%) saturate(748%) hue-rotate(203deg)
+        brightness(94%) contrast(93%);
     }
   }
 

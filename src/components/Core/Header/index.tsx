@@ -7,7 +7,7 @@ import {
   LogoContainer,
   OptionsContainer,
   MoreOptionsWrapper,
-  OpenMoreOptionsBtn,
+  MoreOptionsBtn,
 } from './styles'
 import Logo from '@/../public/icon.svg'
 import {
@@ -21,12 +21,15 @@ import { useEffect, useState } from 'react'
 import { AddTaskModal } from '@/components/Modals/AddTaskModal'
 import { MoreOptionsModal } from '@/components/Modals/MoreOptionsModal'
 import { BREAKPOINT_SM } from '@/utils/constants'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 
 interface HeaderProps {
   onChangeTheme: () => void
 }
 
 export function Header({ onChangeTheme }: HeaderProps) {
+  const { activeBoard } = useBoardsContext()
+
   const [openAddTaskModal, setOpenAddTaskModal] = useState(false)
 
   const [openViewBoardsModal, setOpenViewBoardsModal] = useState(false)
@@ -58,7 +61,7 @@ export function Header({ onChangeTheme }: HeaderProps) {
                 setOpenViewBoardsModal(true)
               )            
             }>
-              <BoardName>Platform Launch</BoardName>
+              <BoardName>{activeBoard?.name}</BoardName>
               {isSmallerThanSm && (
                 <FontAwesomeIcon icon={faAngleDown} />
               )}
@@ -87,12 +90,12 @@ export function Header({ onChangeTheme }: HeaderProps) {
             onOpenChange={setOpenMoreOptionsModal}
           >
             <Dialog.Trigger asChild>
-              <OpenMoreOptionsBtn>
+              <MoreOptionsBtn>
                 <FontAwesomeIcon
                   icon={faEllipsisVertical}
                   onClick={() => setOpenMoreOptionsModal(false)}
                 />
-              </OpenMoreOptionsBtn>
+              </MoreOptionsBtn>
             </Dialog.Trigger>
             <MoreOptionsModal onClose={() => setOpenMoreOptionsModal(false)} />
           </Dialog.Root>

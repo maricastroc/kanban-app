@@ -3,13 +3,14 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { BoardColumn } from '@/components/Core/BoardColumn'
 import { Header } from '@/components/Core/Header'
-import { AddColumnBtn, AddColumnContainer, ColumnsContainer, Container, HomeContent, Wrapper } from './styles'
+import { AddColumnBtn, AddColumnContainer, ColumnsContainer, Container, HomeContent, ShowSidebarBtn, Wrapper } from './styles'
 import { BoardColumnProps } from '@/@types/board-column'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { TaskProps } from '@/@types/task'
 import { useTaskContext } from '@/contexts/TasksContext'
 import { BREAKPOINT_SM } from '@/utils/constants'
 import { Sidebar } from '@/components/Core/Sidebar'
+import HideSidebar from '@/../public/icon-show-sidebar.svg'
 
 interface HomeProps {
   onChangeTheme: () => void
@@ -104,6 +105,14 @@ export function Home({ onChangeTheme }: HomeProps) {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  useEffect(() => {
+    if (activeBoard?.columns) {
+      setColumns(activeBoard.columns)
+    }
+  }, [activeBoard])
+
+  console.log(activeBoard, columns)
+
   return (
     <DndProvider backend={HTML5Backend}>
       <Container>
@@ -118,7 +127,7 @@ export function Home({ onChangeTheme }: HomeProps) {
           <Header onChangeTheme={onChangeTheme} />
           <ColumnsContainer
             ref={columnsContainerRef}
-            className="hand-cursor"
+            className={`hand-cursor ${hideSidebar && 'hide-sidebar-mode'}`}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
@@ -133,11 +142,16 @@ export function Home({ onChangeTheme }: HomeProps) {
                 handleDragAndDropTask={handleDragAndDropTask}
               />
             ))}
-            <AddColumnContainer className={enableDarkMode ? 'dark' : 'light'}>
+            <AddColumnContainer className={enableDarkMode ? 'light' : 'dark'}>
               <AddColumnBtn>+ New Column</AddColumnBtn>
             </AddColumnContainer>
           </ColumnsContainer>
         </Wrapper>
+        {hideSidebar && (
+          <ShowSidebarBtn onClick={() => setHideSidebar(false)}>
+            <img src={HideSidebar} alt="" />
+          </ShowSidebarBtn>
+        )}
         </HomeContent>
       </Container>
     </DndProvider>
