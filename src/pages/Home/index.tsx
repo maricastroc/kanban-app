@@ -11,7 +11,6 @@ import { BREAKPOINT_SM } from '@/utils/constants'
 import { Sidebar } from '@/components/Core/Sidebar'
 import HideSidebar from '@/../public/icon-show-sidebar.svg'
 import { useDragAndDropTask } from '@/utils/useDragAndDropTask'
-import { useDragScroll } from '@/utils/useDragScroll'
 import { useWindowResize } from '@/utils/useWindowResize'
 
 interface HomeProps {
@@ -29,15 +28,12 @@ export function Home({ onChangeTheme }: HomeProps) {
 
   const [hideSidebar, setHideSidebar] = useState(false)
 
-  const { handleMouseDown, handleMouseMove, handleMouseUp } = useDragScroll(columnsContainerRef);
-
   const isSmallerThanSm = useWindowResize(BREAKPOINT_SM);
 
   const { handleDragAndDropTask } = useDragAndDropTask(
     activeBoard?.columns || [], 
     moveTaskToColumn
   );
-
 
   useEffect(() => {
     if (activeBoard?.columns) {
@@ -60,10 +56,6 @@ export function Home({ onChangeTheme }: HomeProps) {
           <ColumnsContainer
             ref={columnsContainerRef}
             className={`${hideSidebar && 'hide-sidebar-mode'}`}
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onMouseMove={handleMouseMove}
           >
             {columns.map((column: BoardColumnProps, index: number) => (
               <BoardColumn

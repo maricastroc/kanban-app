@@ -14,7 +14,6 @@ export function useDragAndDropTask(
 
   const handleDragAndDropTask = (
     task: TaskProps,
-    previousName: string,
     name: string,
     newColumnIndex: number,
   ) => {
@@ -28,7 +27,7 @@ export function useDragAndDropTask(
         const updatedSourceColumnTasks = sourceColumn.tasks.filter(
           (t) => t.title !== task.title,
         )
-
+        console.log(sourceColumn)
         const updatedTargetColumnTasks = [...targetColumn.tasks, task]
 
         const updatedColumns = prevColumns.map((column, index) => {
@@ -40,7 +39,7 @@ export function useDragAndDropTask(
           return column
         })
 
-        moveTaskToColumn(task, name, previousName)
+        moveTaskToColumn(task, name, sourceColumn.name)
 
         return updatedColumns
       })

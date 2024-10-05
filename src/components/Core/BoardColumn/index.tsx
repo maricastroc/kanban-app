@@ -15,7 +15,6 @@ type ColumnProps = BoardColumnProps & {
   index: number,
   handleDragAndDropTask: (
     task: TaskProps, 
-    previousColumn: string, 
     targetColumn: string, 
     targetIndex: number,
   ) => void
@@ -29,8 +28,9 @@ export function BoardColumn({ name, tasks, index, handleDragAndDropTask }: Colum
   const [{ isOver }, drop] = useDrop({
     accept: 'CARD',
     drop: (item: TaskProps) => {
+
       if (previousColumn) {
-        handleDragAndDropTask(item, previousColumn, name, index)
+        handleDragAndDropTask(item, name, index)
       }
       setPreviousColumn(null)
     },
@@ -66,7 +66,7 @@ export function BoardColumn({ name, tasks, index, handleDragAndDropTask }: Colum
       {tasks.length > 0 ? (
         <TasksContainer style={{ 
           backgroundColor: isOver ? 'rgba(0, 0, 0, 0.05)' : 'inherit',
-          transition: 'border 0.3s ease' // Adiciona uma transição suave para a borda
+          transition: 'border 0.3s ease'
         }}>{renderTasks()}</TasksContainer>
       ) : (
         <EmptyTasksContainer />

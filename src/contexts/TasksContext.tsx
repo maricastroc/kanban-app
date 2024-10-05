@@ -59,6 +59,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     const taskIndex = sourceColumn.tasks.findIndex(
       (t) => t.title === task.title,
     )
+
     if (taskIndex === -1) return
 
     const taskToMove = sourceColumn.tasks[taskIndex]
@@ -67,7 +68,9 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
 
     const targetColumn = boardCopy?.columns?.find(
       (column) => column.name === targetColumnName,
-    )
+    ) 
+
+    console.log(targetColumn)
     if (!targetColumn) return
 
     const isTaskDuplicate = targetColumn.tasks.some(
