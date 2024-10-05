@@ -11,15 +11,13 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import {
-  ModalOverlay,
-  ModalTitle,
-  ModalContent,
   StatusOptionsWrapper,
   SubtasksForm,
   StatusOptionsContainer,
   SelectStatusContainer,
   SubtasksWrapper,
 } from './styles'
+import { ModalContent, ModalOverlay, ModalTitle } from '@/styles/shared'
 import { FormContainer } from '@/components/Shared/FormContainer'
 import { InputContainer } from '@/components/Shared/InputContainer'
 import { Button } from '@/components/Shared/Button'
@@ -164,7 +162,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
   return (
     <Dialog.Portal>
       <ModalOverlay className="DialogOverlay" onClick={onClose} />
-      <ModalContent className="DialogContent" aria-describedby={undefined}>
+      <ModalContent padding="1.5rem 1.5rem 3rem" className="DialogContent" aria-describedby={undefined}>
         <ModalTitle className="DialogTitle">Add Task</ModalTitle>
         <VisuallyHidden>
           <Dialog.Description />

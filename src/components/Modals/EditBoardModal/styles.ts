@@ -1,19 +1,8 @@
 import styled from 'styled-components'
 
 import {
-  Overlay as RadixOverlay,
   Content as RadixContent,
-  Title as RadixTitle,
 } from '@radix-ui/react-dialog'
-
-export const ModalOverlay = styled(RadixOverlay)`
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  inset: 0;
-  z-index: 9998;
-  background-color: rgba(10, 10, 10, 0.7);
-`
 
 export const ModalContent = styled(RadixContent)`
   display: flex;
@@ -36,12 +25,6 @@ export const ModalContent = styled(RadixContent)`
   &:focus {
     box-shadow: none;
   }
-`
-
-export const ModalTitle = styled(RadixTitle)`
-  font-size: 1.125rem;
-  font-weight: 700;
-  max-width: 100%;
 `
 
 export const Description = styled.div`

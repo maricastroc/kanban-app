@@ -1,19 +1,21 @@
+import { baseFontSizes } from './base'
+
 export const lightTheme = {
-  'title-color': '#000000', //
+  'title-color': '#000000',
 
-  'primary-color': '#635FC7', //
-  'primary-hover': '#A8A4FF', //
+  'primary-color': '#635FC7',
+  'primary-hover': '#A8A4FF',
 
-  'error-color': '#EA5555', //
-  'error-hover': '#FF9898', //
+  'error-color': '#EA5555',
+  'error-hover': '#FF9898',
 
-  'button-title': '#FFFFFF', //
+  'button-title': '#FFFFFF',
 
   'details-color': '#635FC7',
-  'subtitle-color': '#828FA3', //
-  'border-color': '#E4EBFA', //
-  'cards-color': '#FFFFFF', //
-  'bg-color': '#F4F7FD', //
+  'subtitle-color': '#828FA3',
+  'border-color': '#E4EBFA',
+  'cards-color': '#FFFFFF',
+  'bg-color': '#F4F7FD',
   'scroll-color': '#828FA3',
 
   'light-bg-color': '#F0EFFA',
@@ -25,11 +27,5 @@ export const lightTheme = {
   'tag-color-5': '#2a3fdb',
   'tag-color-6': '#c36e6e',
 
-  'body-m': '0.75rem',
-  'body-l': '0.8175rem',
-  'heading-s': '0.75rem',
-  'heading-m': '0.9375rem',
-  'heading-l': '1.125rem',
-  'heading-xl': '1.25rem',
-  'heading-xxl': '1.5rem',
+  ...baseFontSizes,
 }

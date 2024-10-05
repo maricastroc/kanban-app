@@ -70,7 +70,6 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
       (column) => column.name === targetColumnName,
     ) 
 
-    console.log(targetColumn)
     if (!targetColumn) return
 
     const isTaskDuplicate = targetColumn.tasks.some(
@@ -187,6 +186,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     const columnNames = updatedColumns.map((column) =>
       column.name.toLowerCase(),
     )
+    
     const hasDuplicateColumns =
       new Set(columnNames).size !== updatedColumns.length
 

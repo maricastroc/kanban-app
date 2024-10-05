@@ -2,12 +2,11 @@ import {
   ButtonsContainer,
   ModalContent,
   ModalDescription,
-  ModalOverlay,
-  ModalTitle,
 } from './styles'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { Button } from '@/components/Shared/Button'
 import { BoardProps } from '@/@types/board'
+import { ModalOverlay, ModalTitle } from '@/styles/shared'
 
 interface DeleteBoardProps {
   board: BoardProps

@@ -13,6 +13,7 @@ import {
   Title,
   Wrapper,
 } from './styles'
+import * as Dialog from '@radix-ui/react-dialog'
 
 import IconBoard from '@/../public/icon-board.svg'
 import LightThemeSvg from '@/../public/icon-light-theme.svg'
@@ -34,17 +35,10 @@ export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
   const { allBoards, activeBoard, enableDarkMode, handleSetActiveBoard, handleEnableDarkMode } =
     useBoardsContext()
 
-  const [openAddBoard, setOpenAddBoard] = useState(false)
+  const [openAddBoardModal, setOpenAddBoardModal] = useState(false)
 
   return (
     <Container>
-      {openAddBoard && (
-        <AddBoardModal
-          onClose={() => {
-            setOpenAddBoard(false)
-          }}
-        />
-      )}
       <Wrapper>
       <LogoWrapper>
             <img src={Logo} width={24} height={24} alt="" />
@@ -71,15 +65,26 @@ export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
               </BoardBtn>
             )
           })}
+                    <Dialog.Root open={openAddBoardModal}>
+          <Dialog.Trigger asChild>
           <CreateBoardBtn
             className="create"
             onClick={() => {
-              setOpenAddBoard(true)
+              setOpenAddBoardModal(true)
             }}
           >
             <img src={IconBoard} alt="" />
             <p>+ Create New Board</p>
           </CreateBoardBtn>
+          </Dialog.Trigger>
+        {openAddBoardModal && (
+          <AddBoardModal
+            onClose={() => {
+              setOpenAddBoardModal(false)
+            }}
+          />
+        )}
+      </Dialog.Root>
         </BoardsContainer>
       </Wrapper>
       <OptionsContainer>

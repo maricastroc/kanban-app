@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { DndProvider } from 'react-dnd'
+import * as Dialog from '@radix-ui/react-dialog'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { BoardColumn } from '@/components/Core/BoardColumn'
 import { Header } from '@/components/Core/Header'
@@ -13,6 +14,7 @@ import HideSidebar from '@/../public/icon-show-sidebar.svg'
 import { useDragAndDropTask } from '@/utils/useDragAndDropTask'
 import { useWindowResize } from '@/utils/useWindowResize'
 import { useDragScroll } from '@/utils/useDragScroll'
+import { AddColumnModal } from '@/components/Modals/AddColumnModal'
 
 interface HomeProps {
   onChangeTheme: () => void
@@ -28,6 +30,8 @@ export function Home({ onChangeTheme }: HomeProps) {
   const [columns, setColumns] = useState<BoardColumnProps[]>(activeBoard?.columns || [])
 
   const [hideSidebar, setHideSidebar] = useState(false)
+
+  const [openNewColumnModal, setOpenNewColumnModal] = useState(false)
 
   const isSmallerThanSm = useWindowResize(BREAKPOINT_SM);
 
@@ -47,7 +51,7 @@ export function Home({ onChangeTheme }: HomeProps) {
   const handleContainerMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement
 
-    if (target.closest('.task-card')) {
+    if (target.closest('.task-card') || target.closest('.modal')) {
       return
     }
 
@@ -83,9 +87,16 @@ export function Home({ onChangeTheme }: HomeProps) {
                   handleDragAndDropTask={handleDragAndDropTask}
                 />
               ))}
-              <AddColumnContainer className={enableDarkMode ? 'light' : 'dark'}>
-                <AddColumnBtn>+ New Column</AddColumnBtn>
-              </AddColumnContainer>
+            <Dialog.Root open={openNewColumnModal}>
+              <Dialog.Trigger asChild>
+                <AddColumnContainer className={enableDarkMode ? 'light' : 'dark'} onClick={() => setOpenNewColumnModal(true)}>
+                  <AddColumnBtn>+ New Column</AddColumnBtn>
+                </AddColumnContainer>
+              </Dialog.Trigger>
+              {openNewColumnModal && (
+                <AddColumnModal onClose={() => setOpenNewColumnModal(false)} />
+              )}
+            </Dialog.Root>
             </ColumnsContainer>
           </Wrapper>
           {hideSidebar && (

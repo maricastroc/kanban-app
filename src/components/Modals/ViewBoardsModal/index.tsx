@@ -1,7 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 
 import {
-  ModalOverlay,
   ModalTitle,
   ModalContent,
   BoardsContainer,
@@ -21,6 +20,7 @@ import { AddBoardModal } from '../AddBoardModal'
 import { useState } from 'react'
 import { BoardProps } from '@/@types/board'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
+import { ModalOverlay } from '@/styles/shared'
 
 interface ViewBoardsModalProps {
   onChangeTheme: () => void

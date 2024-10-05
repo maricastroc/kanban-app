@@ -1,21 +1,11 @@
 import styled from 'styled-components'
 
 import {
-  Overlay as RadixOverlay,
   Content as RadixContent,
   Title as RadixTitle,
 } from '@radix-ui/react-dialog'
 
 import { Root as RadixRoot, Thumb as RadixThumb } from '@radix-ui/react-switch'
-
-export const ModalOverlay = styled(RadixOverlay)`
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  inset: 0;
-  z-index: 10;
-  background-color: rgba(10, 10, 10, 0.7);
-`
 
 export const ModalContent = styled(RadixContent)`
   display: flex;
