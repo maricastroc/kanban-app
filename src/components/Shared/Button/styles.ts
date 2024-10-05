@@ -42,10 +42,15 @@ export const Container = styled.button`
     p {
       color: ${(props) => props.theme['button-title']};
     }
+
+    &:hover {
+      background-color: ${(props) => props.theme['error-hover']};
+      transition: 200ms;
+    }
   }
 
   p {
-    font-size: 0.8125rem;
+    font-size: ${(props) => props.theme['body-l']};
     font-weight: 700;
   }
 

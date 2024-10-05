@@ -11,7 +11,7 @@ export const InputContainer = styled.div`
     margin-top: 0.3rem;
     display: block;
     color: ${(props) => props.theme['error-color']};
-    font-size: 0.75rem;
+    font-size: ${(props) => props.theme['body-m']};
     font-weight: 700;
     left: 75%;
   }

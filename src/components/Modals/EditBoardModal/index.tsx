@@ -8,7 +8,6 @@ import * as Dialog from '@radix-ui/react-dialog'
 import {
   ColumnsContainer,
   ColumnsContent,
-  ModalContent,
 } from './styles'
 import { BoardProps } from '@/@types/board'
 import { BoardColumnProps } from '@/@types/board-column'
@@ -23,7 +22,7 @@ import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
 import { toast } from 'react-toastify'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
-import { ModalOverlay, ModalTitle } from '@/styles/shared'
+import { ModalContent, ModalOverlay, ModalTitle } from '@/styles/shared'
 
 const columnSchema = z.object({
   name: z.string().min(1, { message: 'Column name is required' }),
@@ -129,7 +128,7 @@ export function EditBoardModal({ board, onClose }: EditBoardModalProps) {
   return (
     <>
       <ModalOverlay className="DialogOverlay" onClick={() => onClose()} />
-      <ModalContent className="DialogContent" aria-describedby={undefined}>
+      <ModalContent padding="1.5rem 1.5rem 3rem" className="DialogContent" aria-describedby={undefined}>
         <ModalTitle className="DialogTitle">Edit Board</ModalTitle>
         <VisuallyHidden>
           <Dialog.Description />

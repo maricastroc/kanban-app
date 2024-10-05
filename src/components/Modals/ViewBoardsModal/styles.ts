@@ -1,42 +1,17 @@
 import styled from 'styled-components'
 
 import {
-  Content as RadixContent,
   Title as RadixTitle,
 } from '@radix-ui/react-dialog'
 
 import { Root as RadixRoot, Thumb as RadixThumb } from '@radix-ui/react-switch'
-
-export const ModalContent = styled(RadixContent)`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 1.5rem 0;
-  background-color: ${(props) => props.theme['cards-color']};
-  border: none;
-  position: fixed;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  left: 50%;
-  top: 50%;
-  height: fit-content;
-  max-height: 100vh;
-  transform: translate(-50%, -50%);
-  width: clamp(300px, 90vw, 320px);
-  border-radius: 8px;
-  z-index: 9990;
-
-  &:focus {
-    box-shadow: none;
-  }
-`
 
 export const ModalTitle = styled(RadixTitle)`
   display: flex;
   justify-content: flex-start;
   padding: 0 1.5rem;
   width: 100%;
-  font-size: 0.75rem;
+  font-size: ${(props) => props.theme['heading-s']};
   font-weight: 700;
   color: ${(props) => props.theme['subtitle-color']};
   text-transform: uppercase;
@@ -63,7 +38,7 @@ export const BoardItem = styled.button`
 
   p {
     color: ${(props) => props.theme['subtitle-color']};
-    font-size: 0.93rem;
+    font-size: ${(props) => props.theme['heading-m']};
     font-weight: 700;
   }
 

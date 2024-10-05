@@ -22,7 +22,7 @@ export const StatusOptionsContainer = styled.div`
   }
 
   p {
-    font-size: 0.8125rem;
+    font-size: ${(props) => props.theme['body-l']};
     color: ${(props) => props.theme['title-color']};
   }
 
@@ -54,7 +54,7 @@ export const SelectStatusContainer = styled.div`
     width: 100%;
     background-color: transparent;
     border: none;
-    font-size: 0.8125rem;
+    font-size: ${(props) => props.theme['body-l']};
     text-align: flex-start;
     color: ${(props) => props.theme['subtitle-color']};
 

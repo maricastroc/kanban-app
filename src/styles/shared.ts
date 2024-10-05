@@ -50,4 +50,10 @@ export const ModalContent = styled(RadixContent)<{ padding?: string }>`
   &.bigger {
     max-height: 35rem;
   }
+
+  &.delete {
+    height: auto;
+    max-height: auto;
+    width: clamp(300px, 90vw, 25rem);
+  }
 `

@@ -13,14 +13,14 @@ export const TaskCardContainer = styled.div`
   box-shadow: 0 4px 6px rgba(54, 78, 126, 0.1);
 
   strong {
-    font-size: 0.95rem;
+    font-size: ${(props) => props.theme['heading-m']};
     font-weight: 700;
     color: ${(props) => props.theme['title-color']};
     line-height: 1.3rem;
   }
 
   p {
-    font-size: 0.75rem;
+    font-size: ${(props) => props.theme['heading-s']};
     font-weight: 700;
     color: ${(props) => props.theme['subtitle-color']};
   }

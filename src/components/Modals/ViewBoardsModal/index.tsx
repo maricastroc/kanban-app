@@ -2,7 +2,6 @@ import * as Dialog from '@radix-ui/react-dialog'
 
 import {
   ModalTitle,
-  ModalContent,
   BoardsContainer,
   BoardItem,
   ThemeSwitcherContainer,
@@ -20,7 +19,7 @@ import { AddBoardModal } from '../AddBoardModal'
 import { useState } from 'react'
 import { BoardProps } from '@/@types/board'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
-import { ModalOverlay } from '@/styles/shared'
+import { ModalContent, ModalOverlay } from '@/styles/shared'
 
 interface ViewBoardsModalProps {
   onChangeTheme: () => void
@@ -49,7 +48,7 @@ export function ViewBoardsModal({
   return (
     <Dialog.Portal>
       <ModalOverlay className="DialogOverlay" onClick={() => onClose()} />
-      <ModalContent className="DialogContent" aria-describedby={undefined}>
+      <ModalContent padding="1.5rem 0" className="DialogContent" aria-describedby={undefined}>
         <ModalTitle className="DialogTitle">All Boards (5)</ModalTitle>
         <VisuallyHidden>
           <Dialog.Description />
@@ -60,7 +59,7 @@ export function ViewBoardsModal({
               <BoardItem
                 key={board.name}
                 className={board.name === activeBoard?.name ? 'active' : ''}
-                onClick={() => handleClickBoard(board)} // Função assíncrona para setar o board e fechar o modal
+                onClick={() => handleClickBoard(board)}
               >
                 <img src={BoardIcon} alt="" />
                 <p>{board.name}</p>

@@ -22,6 +22,7 @@ import { AddTaskModal } from '@/components/Modals/AddTaskModal'
 import { MoreOptionsModal } from '@/components/Modals/MoreOptionsModal'
 import { BREAKPOINT_SM } from '@/utils/constants'
 import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useWindowResize } from '@/utils/useWindowResize'
 
 interface HeaderProps {
   onChangeTheme: () => void
@@ -36,16 +37,13 @@ export function Header({ onChangeTheme }: HeaderProps) {
 
   const [openMoreOptionsModal, setOpenMoreOptionsModal] = useState(false)
 
-  const [isSmallerThanSm, setIsSmallerThanSm] = useState(false)
+  const isSmallerThanSm = useWindowResize(BREAKPOINT_SM);
 
   useEffect(() => {
-    function handleResize() {
-      setIsSmallerThanSm(window.innerWidth <= BREAKPOINT_SM)
+    if (!isSmallerThanSm) {
+      setOpenViewBoardsModal(false)
     }
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  }, [isSmallerThanSm])
 
   return (
     <Container>

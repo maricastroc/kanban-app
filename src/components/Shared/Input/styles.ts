@@ -8,7 +8,7 @@ export const Input = styled.input`
   border: solid 2px ${(props) => props.theme['border-color']};
   padding: 0.7rem 1rem;
   color: ${(props) => props.theme['title-color']};
-  font-size: 0.8125rem;
+  font-size: ${(props) => props.theme['body-l']};
   border-radius: 4px;
 
   &.error {

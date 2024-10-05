@@ -1,12 +1,11 @@
 import {
   ButtonsContainer,
-  ModalContent,
   ModalDescription,
 } from './styles'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { Button } from '@/components/Shared/Button'
 import { BoardProps } from '@/@types/board'
-import { ModalOverlay, ModalTitle } from '@/styles/shared'
+import { ModalContent, ModalOverlay, ModalTitle } from '@/styles/shared'
 
 interface DeleteBoardProps {
   board: BoardProps
@@ -19,7 +18,7 @@ export function DeleteBoard({ board, onClose }: DeleteBoardProps) {
   return (
     <>
       <ModalOverlay className="DialogOverlay" onClick={() => onClose()} />
-      <ModalContent className="DialogContent" aria-describedby={undefined}>
+      <ModalContent className="delete" aria-describedby={undefined}>
         <ModalTitle className="delete">Delete this board?</ModalTitle>
         <ModalDescription>
           <span>
@@ -36,7 +35,7 @@ export function DeleteBoard({ board, onClose }: DeleteBoardProps) {
               onClose()
             }}
           />
-          <Button title="Cancel" variant="primary" onClick={() => onClose()} />
+          <Button title="Cancel" variant="secondary" onClick={() => onClose()} />
         </ButtonsContainer>
       </ModalContent>
     </>

@@ -109,10 +109,29 @@ export const AddTaskBtn = styled.button`
 `
 
 export const MoreOptionsBtn = styled.button`
+  cursor: pointer;
   display: flex;
   background-color: transparent;
   border: none;
-  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    cursor: pointer;
+    color: ${(props) => props.theme['subtitle-color']};
+    font-size: 1.5rem;
+  }
+
+  &:hover {
+    background-color: ${(props) => props.theme['bg-color']};
+    transition: 200ms;
+  }
+
+  &:focus {
+    box-shadow: none;
+  }
 `
 
 export const MoreOptionsWrapper = styled.div`
