@@ -12,6 +12,7 @@ import { Sidebar } from '@/components/Core/Sidebar'
 import HideSidebar from '@/../public/icon-show-sidebar.svg'
 import { useDragAndDropTask } from '@/utils/useDragAndDropTask'
 import { useWindowResize } from '@/utils/useWindowResize'
+import { useDragScroll } from '@/utils/useDragScroll'
 
 interface HomeProps {
   onChangeTheme: () => void
@@ -30,6 +31,8 @@ export function Home({ onChangeTheme }: HomeProps) {
 
   const isSmallerThanSm = useWindowResize(BREAKPOINT_SM);
 
+  const { handleMouseDown, handleMouseMove, handleMouseUp } = useDragScroll(columnsContainerRef);
+
   const { handleDragAndDropTask } = useDragAndDropTask(
     activeBoard?.columns || [], 
     moveTaskToColumn
@@ -41,41 +44,55 @@ export function Home({ onChangeTheme }: HomeProps) {
     }
   }, [activeBoard])
 
+  const handleContainerMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement
+
+    if (target.closest('.task-card')) {
+      return
+    }
+
+    handleMouseDown(e)
+  }
+
   return (
     <DndProvider backend={HTML5Backend}>
       <LayoutContainer>
-      <BoardContent>
-      {!isSmallerThanSm && !hideSidebar && (
+        <BoardContent>
+          {!isSmallerThanSm && !hideSidebar && (
             <Sidebar
               onClose={() => setHideSidebar(true)}
               onChangeTheme={onChangeTheme}
             />
           )}
-        <Wrapper>
-          <Header onChangeTheme={onChangeTheme} />
-          <ColumnsContainer
-            ref={columnsContainerRef}
-            className={`${hideSidebar && 'hide-sidebar-mode'}`}
-          >
-            {columns.map((column: BoardColumnProps, index: number) => (
-              <BoardColumn
-                key={index}
-                name={column.name}
-                tasks={column.tasks}
-                index={index}
-                handleDragAndDropTask={handleDragAndDropTask}
-              />
-            ))}
-            <AddColumnContainer className={enableDarkMode ? 'light' : 'dark'}>
-              <AddColumnBtn>+ New Column</AddColumnBtn>
-            </AddColumnContainer>
-          </ColumnsContainer>
-        </Wrapper>
-        {hideSidebar && (
-          <ShowSidebarBtn onClick={() => setHideSidebar(false)}>
-            <img src={HideSidebar} alt="" />
-          </ShowSidebarBtn>
-        )}
+          <Wrapper>
+            <Header onChangeTheme={onChangeTheme} />
+            <ColumnsContainer
+              ref={columnsContainerRef}
+              className={`${hideSidebar && 'hide-sidebar-mode'}`}
+              onMouseDown={handleContainerMouseDown} // Usa a função personalizada
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp} 
+              onMouseMove={handleMouseMove}
+            >
+              {columns.map((column: BoardColumnProps, index: number) => (
+                <BoardColumn
+                  key={index}
+                  name={column.name}
+                  tasks={column.tasks}
+                  index={index}
+                  handleDragAndDropTask={handleDragAndDropTask}
+                />
+              ))}
+              <AddColumnContainer className={enableDarkMode ? 'light' : 'dark'}>
+                <AddColumnBtn>+ New Column</AddColumnBtn>
+              </AddColumnContainer>
+            </ColumnsContainer>
+          </Wrapper>
+          {hideSidebar && (
+            <ShowSidebarBtn onClick={() => setHideSidebar(false)}>
+              <img src={HideSidebar} alt="" />
+            </ShowSidebarBtn>
+          )}
         </BoardContent>
       </LayoutContainer>
     </DndProvider>

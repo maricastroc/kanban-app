@@ -17,7 +17,7 @@ export function TaskCard({ task, column_index }: TaskCardProps) {
   })
 
   return (
-    <TaskCardContainer ref={drag} style={{ opacity: isDragging ? 0.5 : 1 }}>
+    <TaskCardContainer className="task-card" ref={drag} style={{ opacity: isDragging ? 0.5 : 1 }}>
       <strong>{task.title}</strong>
       <p>{`${task.subtasks.filter(subtask => subtask.isCompleted).length} of ${task.subtasks.length} subtasks`}</p>
     </TaskCardContainer>
