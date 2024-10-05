@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const TaskCardContainer = styled.div`
-  cursor: pointer;
+  cursor: grab;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;

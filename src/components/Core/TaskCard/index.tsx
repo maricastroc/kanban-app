@@ -4,7 +4,7 @@ import { TaskCardContainer } from './styles'
 
 type TaskCardProps = {
   task: TaskProps
-  column_index: number
+  column_index: number,
 }
 
 export function TaskCard({ task, column_index }: TaskCardProps) {

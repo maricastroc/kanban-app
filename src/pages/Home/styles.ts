@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { ToastContainer } from 'react-toastify'
 
-export const Container = styled.div`
+export const LayoutContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -9,7 +9,7 @@ export const Container = styled.div`
   background-color: ${(props) => props.theme['bg-color']};
 `
 
-export const HomeContent = styled.div`
+export const BoardContent = styled.div`
   display: flex;
   width: 100%;
   height: 100vh;
@@ -38,10 +38,7 @@ export const ColumnsContainer = styled.div`
   gap: 1.5rem;
   padding-bottom: 2rem;
   justify-content: initial;
-
-  &.hand-cursor {
-    cursor: grab;
-  }
+  cursor: move;
 
   &.hide-sidebar-mode {
     justify-content: center;

@@ -12,12 +12,12 @@ import {
 } from './styles'
 
 type ColumnProps = BoardColumnProps & {
-  index: number
+  index: number,
   handleDragAndDropTask: (
     task: TaskProps, 
     previousColumn: string, 
     targetColumn: string, 
-    targetIndex: number
+    targetIndex: number,
   ) => void
 }
 
