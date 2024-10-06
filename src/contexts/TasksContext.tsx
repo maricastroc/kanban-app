@@ -5,6 +5,7 @@ import { useBoardsContext } from './BoardsContext'
 import { getStorageBoards } from '@/storage/boardsConfig'
 import { TaskProps } from '@/@types/task'
 import { BoardColumnProps } from '@/@types/board-column'
+import { SubtaskProps } from '@/@types/subtask'
 
 interface TaskContextData {
   deleteTask: (task: TaskProps) => void
@@ -16,6 +17,7 @@ interface TaskContextData {
     targetColumn: string,
     previousColumn: string,
   ) => void
+  toggleSubtaskStatus: (task: TaskProps, subtaskTitle: string, status: boolean) => void
 }
 
 const TaskContext = createContext<TaskContextData | undefined>(undefined)
@@ -221,6 +223,41 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     handleSetActiveBoard(boardCopy)
   }
 
+  function toggleSubtaskStatus(task: TaskProps, subtaskTitle: string, isChecked: boolean) {
+    const boardsCopy = [...allBoards];
+    const boardIndex = boardsCopy.findIndex(
+      (board) => board.name === activeBoard?.name,
+    );
+  
+    if (boardIndex !== -1) {
+      const updatedBoard = { ...boardsCopy[boardIndex] };
+  
+      const targetTaskIndex = updatedBoard.columns.findIndex(
+        (column: BoardColumnProps) => column.tasks.some((t) => t.title === task.title),
+      );
+  
+      if (targetTaskIndex !== -1) {
+        const targetTask = updatedBoard.columns[targetTaskIndex].tasks.find(
+          (t: TaskProps) => t.title === task.title,
+        );
+  
+        if (targetTask) {
+          const targetSubtask = targetTask.subtasks.find(
+            (subtask: SubtaskProps) => subtask.title === subtaskTitle,
+          );
+  
+          if (targetSubtask) {
+            targetSubtask.isCompleted = isChecked;
+            boardsCopy[boardIndex] = updatedBoard;
+  
+            updateBoardColumns(updatedBoard.columns);
+            updateBoards(boardsCopy);
+          }
+        }
+      }
+    }
+  }
+
   return (
     <TaskContext.Provider
       value={{
@@ -229,6 +266,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
         addTaskToColumn,
         moveTaskToColumn,
         updateBoardColumns,
+        toggleSubtaskStatus,
       }}
     >
       {children}

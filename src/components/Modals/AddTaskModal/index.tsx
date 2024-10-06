@@ -4,20 +4,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faAngleDown,
   faAngleUp,
-  faCheck,
 } from '@fortawesome/free-solid-svg-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import {
-  StatusOptionsWrapper,
   SubtasksForm,
-  StatusOptionsContainer,
-  SelectStatusContainer,
   SubtasksWrapper,
 } from './styles'
-import { ModalContent, ModalOverlay, ModalTitle } from '@/styles/shared'
+import { ModalContent, ModalOverlay, ModalTitle, SelectStatusField, StatusContainer, StatusSelectorContainer } from '@/styles/shared'
 import { FormContainer } from '@/components/Shared/FormContainer'
 import { InputContainer } from '@/components/Shared/InputContainer'
 import { Button } from '@/components/Shared/Button'
@@ -35,6 +31,7 @@ import { ErrorMessage } from '@/components/Shared/ErrorMessage'
 import { toast } from 'react-toastify'
 import { useOutsideClick } from '@/utils/useOutsideClick'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
+import { StatusSelector } from '@/components/Shared/StatusSelector'
 
 const subtaskSchema = z.object({
   title: z.string().min(1, { message: 'Subtask title is required' }),
@@ -203,9 +200,9 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
             />
           </SubtasksForm>
 
-          <StatusOptionsWrapper>
+          <StatusContainer>
             <CustomLabel>Status</CustomLabel>
-            <StatusOptionsContainer
+            <SelectStatusField
               className={openOptionsContainer ? 'active' : ''}
               onClick={() => setOpenOptionsContainer((prev) => !prev)}
             >
@@ -213,26 +210,20 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
               <FontAwesomeIcon
                 icon={openOptionsContainer ? faAngleUp : faAngleDown}
               />
-            </StatusOptionsContainer>
+            </SelectStatusField>
             {openOptionsContainer && (
-              <SelectStatusContainer ref={statusRef}>
+              <StatusSelectorContainer ref={statusRef}>
                 {activeBoard?.columns?.map((column) => (
-                  <button
-                    type="button"
-                    key={column.name}
-                    onClick={() => handleChangeStatus(column.name)}
-                    {...register('status')}
-                  >
-                    {status === column.name && (
-                      <FontAwesomeIcon icon={faCheck} />
-                    )}
-                    <span>{column.name}</span>
-                  </button>
+                  <StatusSelector column={column} status={status} handleChangeStatus={() => {
+                    if (status) {
+                      handleChangeStatus(column.name)
+                    }
+                  }} />
                 ))}
-              </SelectStatusContainer>
+              </StatusSelectorContainer>
             )}
             {<ErrorMessage message={errors.status?.message} />}
-          </StatusOptionsWrapper>
+          </StatusContainer>
 
           <Button title="Create Task" type="submit" variant="primary" />
         </FormContainer>
