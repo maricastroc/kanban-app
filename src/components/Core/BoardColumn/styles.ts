@@ -67,4 +67,3 @@ export const EmptyTasksContainer = styled.div`
   height: 100vh;
   border-radius: 8px;
 `
-

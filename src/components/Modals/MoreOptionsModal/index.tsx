@@ -1,7 +1,5 @@
 import * as Dialog from '@radix-ui/react-dialog'
-
 import { ModalContent, ActionBtn } from './styles'
-
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { useState } from 'react'
 import { useBoardsContext } from '@/contexts/BoardsContext'
@@ -15,56 +13,54 @@ interface MoreOptionsModal {
 export function MoreOptionsModal({ onClose }: MoreOptionsModal) {
   const { activeBoard } = useBoardsContext()
 
-  const [openEditBoardModal, setOpenEditBoardModal] = useState(false)
+  const [isEditModalOpen, setEditModalOpen] = useState(false)
 
-  const [openDeleteBoardModal, setOpenDeleteBoardModal] = useState(false)
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
+
+  const handleEditModalOpen = () => {
+    setEditModalOpen(true)
+  }
+
+  const handleDeleteModalOpen = () => {
+    setDeleteModalOpen(true)
+  }
+
+  const closeEditModal = () => {
+    setEditModalOpen(false)
+    onClose()
+  }
+
+  const closeDeleteModal = () => {
+    setDeleteModalOpen(false)
+    onClose()
+  }
 
   return (
     <Dialog.Portal>
-      <Dialog.Overlay onClick={() => onClose()} />
+      <Dialog.Overlay onClick={onClose} />
       <VisuallyHidden>
-        <Dialog.Title />
+        <Dialog.Title>Edit or Delete Board</Dialog.Title>
+        <Dialog.Description>Select an option to proceed.</Dialog.Description>
       </VisuallyHidden>
-      <VisuallyHidden>
-        <Dialog.Description />
-      </VisuallyHidden>
-      <ModalContent className="DialogContent" aria-describedby={undefined}>
-        <Dialog.Root open={openEditBoardModal}>
+      <ModalContent className="DialogContent">
+        <Dialog.Root open={isEditModalOpen}>
           <Dialog.Trigger asChild>
-            <ActionBtn
-              onClick={() => setOpenEditBoardModal(true)}
-              className="edit"
-            >
+            <ActionBtn onClick={handleEditModalOpen} className="edit">
               Edit Board
             </ActionBtn>
           </Dialog.Trigger>
           {activeBoard && (
-            <EditBoardModal
-              onClose={() => {
-                setOpenEditBoardModal(false)
-                onClose()
-              }}
-              board={activeBoard}
-            />
+            <EditBoardModal onClose={closeEditModal} board={activeBoard} />
           )}
         </Dialog.Root>
-        <Dialog.Root open={openDeleteBoardModal}>
+        <Dialog.Root open={isDeleteModalOpen}>
           <Dialog.Trigger asChild>
-            <ActionBtn
-              onClick={() => setOpenDeleteBoardModal(true)}
-              className="delete"
-            >
+            <ActionBtn onClick={handleDeleteModalOpen} className="delete">
               Delete Board
             </ActionBtn>
           </Dialog.Trigger>
           {activeBoard && (
-            <DeleteBoard
-              onClose={() => {
-                setOpenDeleteBoardModal(false)
-                onClose()
-              }}
-              board={activeBoard}
-            />
+            <DeleteBoard onClose={closeDeleteModal} board={activeBoard} />
           )}
         </Dialog.Root>
       </ModalContent>

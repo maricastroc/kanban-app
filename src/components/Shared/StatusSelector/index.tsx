@@ -14,12 +14,12 @@ export function StatusSelector({
   column,
 }: StatusSelectorProps) {
   return (
-    <StatusSelectorBtn                     type="button"
-    key={column.name}
-    onClick={() => handleChangeStatus(column.name)}>
-      {status === column.name && (
-        <FontAwesomeIcon icon={faCheck} />
-      )}
+    <StatusSelectorBtn
+      type="button"
+      key={column.name}
+      onClick={() => handleChangeStatus(column.name)}
+    >
+      {status === column.name && <FontAwesomeIcon icon={faCheck} />}
       <span>{column.name}</span>
     </StatusSelectorBtn>
   )

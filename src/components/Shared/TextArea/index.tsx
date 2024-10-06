@@ -11,7 +11,12 @@ const CustomTextarea = React.forwardRef<
   CustomTextareaProps
 >(({ hasError = false, ...rest }, ref) => {
   return (
-    <StyledTextArea spellCheck={false} ref={ref} className={hasError ? 'error' : ''} {...rest} />
+    <StyledTextArea
+      spellCheck={false}
+      ref={ref}
+      className={hasError ? 'error' : ''}
+      {...rest}
+    />
   )
 })
 

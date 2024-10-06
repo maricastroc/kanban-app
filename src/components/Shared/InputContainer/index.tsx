@@ -6,7 +6,9 @@ interface InputContainerProps {
 }
 
 const InputContainer = ({ children }: InputContainerProps) => {
-  return <CustomInputContainer spellCheck={false}>{children}</CustomInputContainer>
+  return (
+    <CustomInputContainer spellCheck={false}>{children}</CustomInputContainer>
+  )
 }
 
 InputContainer.displayName = 'InputContainer'

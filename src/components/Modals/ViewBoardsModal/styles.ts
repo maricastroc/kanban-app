@@ -1,8 +1,6 @@
 import styled from 'styled-components'
 
-import {
-  Title as RadixTitle,
-} from '@radix-ui/react-dialog'
+import { Title as RadixTitle } from '@radix-ui/react-dialog'
 
 import { Root as RadixRoot, Thumb as RadixThumb } from '@radix-ui/react-switch'
 

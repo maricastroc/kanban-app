@@ -12,4 +12,3 @@ const FieldsContainer = ({ children }: FieldsContainerProps) => {
 FieldsContainer.displayName = 'FieldsContainer'
 
 export { FieldsContainer }
-

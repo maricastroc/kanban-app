@@ -21,6 +21,7 @@ import { z } from 'zod'
 import { toast } from 'react-toastify'
 import { FormContainer } from '@/components/Shared/FormContainer'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { simulateDelay } from '@/utils/simulateDelay'
 
 interface AddColumnModalProps {
   onClose: () => void
@@ -46,16 +47,16 @@ export function AddColumnModal({ onClose }: AddColumnModalProps) {
 
   const { updateBoardColumns } = useTaskContext()
 
-  const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>(activeBoard?.columns ?? [])
-
-  const wait = () => new Promise((resolve) => setTimeout(resolve, 100))
+  const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>(
+    activeBoard?.columns ?? [],
+  )
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
-    watch
+    watch,
   } = useForm<FormData>({
     defaultValues: {
       name: activeBoard?.name,
@@ -65,8 +66,7 @@ export function AddColumnModal({ onClose }: AddColumnModalProps) {
   })
 
   useEscapeKeyHandler(onClose)
-  const formValues = watch(); 
-  console.log(formValues, boardColumns)
+
   const handleAddColumn = () => {
     const newColumn = { name: '', tasks: [] }
     const updatedColumns = [...boardColumns, newColumn]
@@ -74,53 +74,58 @@ export function AddColumnModal({ onClose }: AddColumnModalProps) {
     setValue('columns', updatedColumns)
   }
 
-
   const handleRemoveColumn = (indexToRemove: number) => {
     if (indexToRemove < 0 || indexToRemove >= boardColumns.length) {
-      toast.error('Index out of bounds');
-      return;
+      toast.error('Index out of bounds')
+      return
     }
-  
-    const updatedColumns = boardColumns.filter((_, index) => index !== indexToRemove);
-    setBoardColumns(updatedColumns);
-    setValue('columns', updatedColumns);
-  };
+
+    const updatedColumns = boardColumns.filter(
+      (_, index) => index !== indexToRemove,
+    )
+    setBoardColumns(updatedColumns)
+    setValue('columns', updatedColumns)
+  }
 
   const handleChangeColumn = (index: number, newValue: string) => {
     if (index < 0 || index >= boardColumns.length) {
       toast.error('Index out of bounds')
-      return;
+      return
     }
-  
+
     const updatedColumns = boardColumns.map((column, i) =>
-      i === index ? { ...column, name: newValue } : column
-    );
-  
-    setValue('columns', updatedColumns);
-  };
+      i === index ? { ...column, name: newValue } : column,
+    )
+
+    setValue('columns', updatedColumns)
+  }
 
   const handleUpdateBoardColumns = async () => {
-    const formValues = watch();
-  
-    const updatedColumns: BoardColumnProps[] = formValues.columns.map((column, index) => {
-      const existingColumn = boardColumns[index];
-  
-      return {
-        name: column.name,
-        tasks: existingColumn?.tasks || [],
-      };
-    });
-  
-    updateBoardColumns(updatedColumns);
-    await wait();
-    onClose();
-  };
+    const formValues = watch()
+
+    const updatedColumns: BoardColumnProps[] = formValues.columns.map(
+      (column, index) => {
+        const existingColumn = boardColumns[index]
+
+        return {
+          name: column.name,
+          tasks: existingColumn?.tasks || [],
+        }
+      },
+    )
+
+    updateBoardColumns(updatedColumns)
+    await simulateDelay()
+    onClose()
+  }
 
   const renderColumnInput = (column: BoardColumnProps, index: number) => {
     const error = errors.columns?.[index]?.name?.message
-  
-    const isDisabled = activeBoard?.columns.some((existingColumn) => existingColumn.name === column.name)
-  
+
+    const isDisabled = activeBoard?.columns.some(
+      (existingColumn) => existingColumn.name === column.name,
+    )
+
     return (
       <FieldsContainer key={index}>
         <Field
@@ -141,7 +146,7 @@ export function AddColumnModal({ onClose }: AddColumnModalProps) {
   return (
     <>
       <ModalOverlay className="DialogOverlay" onClick={() => onClose()} />
-      <ModalContent className="DialogContent" aria-describedby={undefined}>
+      <ModalContent className="DialogContent">
         <ModalTitle className="DialogTitle">Add New Column</ModalTitle>
         <VisuallyHidden>
           <Dialog.Description />
@@ -149,7 +154,12 @@ export function AddColumnModal({ onClose }: AddColumnModalProps) {
         <FormContainer onSubmit={handleSubmit(handleUpdateBoardColumns)}>
           <InputContainer>
             <CustomLabel>Name</CustomLabel>
-            <CustomInput className="disabled" type="text" value={activeBoard?.name} {...register('name')}/>
+            <CustomInput
+              className="disabled"
+              type="text"
+              value={activeBoard?.name}
+              {...register('name')}
+            />
           </InputContainer>
           <LayoutContainer>
             <CustomLabel>Columns</CustomLabel>
@@ -163,13 +173,18 @@ export function AddColumnModal({ onClose }: AddColumnModalProps) {
             {boardColumns.length < 6 && (
               <Button
                 type="button"
-                variant='secondary'
+                variant="secondary"
                 title="+ Add New Column"
                 onClick={handleAddColumn}
               />
             )}
           </LayoutContainer>
-          <Button disabled={isSubmitting} title="Create Column" type="submit" variant="primary" />
+          <Button
+            disabled={isSubmitting}
+            title="Create Column"
+            type="submit"
+            variant="primary"
+          />
         </FormContainer>
       </ModalContent>
     </>

@@ -4,7 +4,15 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { BoardColumn } from '@/components/Core/BoardColumn'
 import { Header } from '@/components/Core/Header'
-import { AddColumnBtn, AddColumnContainer, ColumnsContainer, LayoutContainer, BoardContent, ShowSidebarBtn, Wrapper } from './styles'
+import {
+  AddColumnBtn,
+  AddColumnContainer,
+  ColumnsContainer,
+  LayoutContainer,
+  BoardContent,
+  ShowSidebarBtn,
+  Wrapper,
+} from './styles'
 import { BoardColumnProps } from '@/@types/board-column'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { useTaskContext } from '@/contexts/TasksContext'
@@ -27,20 +35,23 @@ export function Home({ onChangeTheme }: HomeProps) {
 
   const { moveTaskToColumn } = useTaskContext()
 
-  const [columns, setColumns] = useState<BoardColumnProps[]>(activeBoard?.columns || [])
+  const [columns, setColumns] = useState<BoardColumnProps[]>(
+    activeBoard?.columns || [],
+  )
 
   const [hideSidebar, setHideSidebar] = useState(false)
 
   const [openNewColumnModal, setOpenNewColumnModal] = useState(false)
 
-  const isSmallerThanSm = useWindowResize(BREAKPOINT_SM);
+  const isSmallerThanSm = useWindowResize(BREAKPOINT_SM)
 
-  const { handleMouseDown, handleMouseMove, handleMouseUp } = useDragScroll(columnsContainerRef);
+  const { handleMouseDown, handleMouseMove, handleMouseUp } =
+    useDragScroll(columnsContainerRef)
 
   const { handleDragAndDropTask } = useDragAndDropTask(
-    activeBoard?.columns || [], 
-    moveTaskToColumn
-  );
+    activeBoard?.columns || [],
+    moveTaskToColumn,
+  )
 
   useEffect(() => {
     if (activeBoard?.columns) {
@@ -75,7 +86,7 @@ export function Home({ onChangeTheme }: HomeProps) {
               className={`${hideSidebar && 'hide-sidebar-mode'}`}
               onMouseDown={handleContainerMouseDown} // Usa a função personalizada
               onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp} 
+              onMouseLeave={handleMouseUp}
               onMouseMove={handleMouseMove}
             >
               {columns.map((column: BoardColumnProps, index: number) => (
@@ -87,16 +98,21 @@ export function Home({ onChangeTheme }: HomeProps) {
                   handleDragAndDropTask={handleDragAndDropTask}
                 />
               ))}
-            <Dialog.Root open={openNewColumnModal}>
-              <Dialog.Trigger asChild>
-                <AddColumnContainer className={enableDarkMode ? 'light' : 'dark'} onClick={() => setOpenNewColumnModal(true)}>
-                  <AddColumnBtn>+ New Column</AddColumnBtn>
-                </AddColumnContainer>
-              </Dialog.Trigger>
-              {openNewColumnModal && (
-                <AddColumnModal onClose={() => setOpenNewColumnModal(false)} />
-              )}
-            </Dialog.Root>
+              <Dialog.Root open={openNewColumnModal}>
+                <Dialog.Trigger asChild>
+                  <AddColumnContainer
+                    className={enableDarkMode ? 'light' : 'dark'}
+                    onClick={() => setOpenNewColumnModal(true)}
+                  >
+                    <AddColumnBtn>+ New Column</AddColumnBtn>
+                  </AddColumnContainer>
+                </Dialog.Trigger>
+                {openNewColumnModal && (
+                  <AddColumnModal
+                    onClose={() => setOpenNewColumnModal(false)}
+                  />
+                )}
+              </Dialog.Root>
             </ColumnsContainer>
           </Wrapper>
           {hideSidebar && (

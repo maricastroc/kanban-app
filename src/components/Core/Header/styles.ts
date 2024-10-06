@@ -55,12 +55,15 @@ export const OptionsContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
 
   svg {
     cursor: pointer;
     color: ${(props) => props.theme['subtitle-color']};
     font-size: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    gap: 1rem;
   }
 `
 

@@ -19,9 +19,9 @@ export function SubtaskItem({ task, title, isCompleted }: SubtaskItemProps) {
   const [isChecked, setIsChecked] = useState(isCompleted)
 
   const handleToggleSubtaskStatus = () => {
-    setIsChecked((prev) => !prev);
-    toggleSubtaskStatus(task, title, !isChecked);
-  };
+    setIsChecked((prev) => !prev)
+    toggleSubtaskStatus(task, title, !isChecked)
+  }
 
   return (
     <Container>

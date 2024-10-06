@@ -7,7 +7,7 @@ import { useState } from 'react'
 
 type TaskCardProps = {
   task: TaskProps
-  column_index: number,
+  column_index: number
 }
 
 export function TaskCard({ task, column_index }: TaskCardProps) {
@@ -24,14 +24,19 @@ export function TaskCard({ task, column_index }: TaskCardProps) {
   return (
     <Dialog.Root open={openViewTaskModal}>
       <Dialog.Trigger asChild>
-      <TaskCardContainer onClick={() => setOpenViewTaskModal(true)} className="task-card" ref={drag} style={{ opacity: isDragging ? 0.5 : 1 }}>
+        <TaskCardContainer
+          onClick={() => setOpenViewTaskModal(true)}
+          className="task-card"
+          ref={drag}
+          style={{ opacity: isDragging ? 0.5 : 1 }}
+        >
           <strong>{task.title}</strong>
-          <p>{`${task.subtasks.filter(subtask => subtask.isCompleted).length} of ${task.subtasks.length} subtasks`}</p>
+          <p>{`${
+            task.subtasks.filter((subtask) => subtask.isCompleted).length
+          } of ${task.subtasks.length} subtasks`}</p>
         </TaskCardContainer>
       </Dialog.Trigger>
-      {openViewTaskModal && (
-        <ViewTaskModal task={task} onClose={() => setOpenViewTaskModal(false)} />
-      )}
+      <ViewTaskModal task={task} onClose={() => setOpenViewTaskModal(false)} />
     </Dialog.Root>
   )
 }

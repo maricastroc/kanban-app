@@ -12,15 +12,20 @@ import {
 } from './styles'
 
 type ColumnProps = BoardColumnProps & {
-  index: number,
+  index: number
   handleDragAndDropTask: (
-    task: TaskProps, 
-    targetColumn: string, 
+    task: TaskProps,
+    targetColumn: string,
     targetIndex: number,
   ) => void
 }
 
-export function BoardColumn({ name, tasks, index, handleDragAndDropTask }: ColumnProps) {
+export function BoardColumn({
+  name,
+  tasks,
+  index,
+  handleDragAndDropTask,
+}: ColumnProps) {
   const variant = `${index + 1}` as '1' | '2' | '3' | '4' | '5' | '6'
 
   const [previousColumn, setPreviousColumn] = useState<string | null>(null)
@@ -28,7 +33,6 @@ export function BoardColumn({ name, tasks, index, handleDragAndDropTask }: Colum
   const [{ isOver }, drop] = useDrop({
     accept: 'CARD',
     drop: (item: TaskProps) => {
-
       if (previousColumn) {
         handleDragAndDropTask(item, name, index)
       }
@@ -46,13 +50,7 @@ export function BoardColumn({ name, tasks, index, handleDragAndDropTask }: Colum
 
   const renderTasks = () => {
     return tasks.map((task: TaskProps) => {
-      return (
-        <TaskCard
-          key={task.title}
-          task={task}
-          column_index={index}
-        />
-      )
+      return <TaskCard key={task.title} task={task} column_index={index} />
     })
   }
 
@@ -64,10 +62,14 @@ export function BoardColumn({ name, tasks, index, handleDragAndDropTask }: Colum
       </TagContainer>
 
       {tasks.length > 0 ? (
-        <TasksContainer style={{ 
-          backgroundColor: isOver ? 'rgba(0, 0, 0, 0.05)' : 'inherit',
-          transition: 'border 0.3s ease'
-        }}>{renderTasks()}</TasksContainer>
+        <TasksContainer
+          style={{
+            backgroundColor: isOver ? 'rgba(0, 0, 0, 0.05)' : 'inherit',
+            transition: 'border 0.3s ease',
+          }}
+        >
+          {renderTasks()}
+        </TasksContainer>
       ) : (
         <EmptyTasksContainer />
       )}

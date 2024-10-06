@@ -1,8 +1,6 @@
 import styled from 'styled-components'
 
-import { 
-  Description as RadixDescription,
-} from '@radix-ui/react-dialog'
+import { Description as RadixDescription } from '@radix-ui/react-dialog'
 
 export const ModalDescription = styled(RadixDescription)`
   display: flex;

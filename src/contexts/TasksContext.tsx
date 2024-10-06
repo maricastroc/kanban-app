@@ -17,7 +17,11 @@ interface TaskContextData {
     targetColumn: string,
     previousColumn: string,
   ) => void
-  toggleSubtaskStatus: (task: TaskProps, subtaskTitle: string, status: boolean) => void
+  toggleSubtaskStatus: (
+    task: TaskProps,
+    subtaskTitle: string,
+    status: boolean,
+  ) => void
 }
 
 const TaskContext = createContext<TaskContextData | undefined>(undefined)
@@ -70,7 +74,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
 
     const targetColumn = boardCopy?.columns?.find(
       (column) => column.name === targetColumnName,
-    ) 
+    )
 
     if (!targetColumn) return
 
@@ -84,6 +88,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
 
     targetColumn.tasks.push(taskToMove)
     boardsCopy[boardIndex] = boardCopy
+
     updateBoards(boardsCopy)
     handleSetActiveBoard(boardCopy)
   }
@@ -188,7 +193,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     const columnNames = updatedColumns.map((column) =>
       column.name.toLowerCase(),
     )
-    
+
     const hasDuplicateColumns =
       new Set(columnNames).size !== updatedColumns.length
 
@@ -223,35 +228,40 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     handleSetActiveBoard(boardCopy)
   }
 
-  function toggleSubtaskStatus(task: TaskProps, subtaskTitle: string, isChecked: boolean) {
-    const boardsCopy = [...allBoards];
+  function toggleSubtaskStatus(
+    task: TaskProps,
+    subtaskTitle: string,
+    isChecked: boolean,
+  ) {
+    const boardsCopy = [...allBoards]
     const boardIndex = boardsCopy.findIndex(
       (board) => board.name === activeBoard?.name,
-    );
-  
+    )
+
     if (boardIndex !== -1) {
-      const updatedBoard = { ...boardsCopy[boardIndex] };
-  
+      const updatedBoard = { ...boardsCopy[boardIndex] }
+
       const targetTaskIndex = updatedBoard.columns.findIndex(
-        (column: BoardColumnProps) => column.tasks.some((t) => t.title === task.title),
-      );
-  
+        (column: BoardColumnProps) =>
+          column.tasks.some((t) => t.title === task.title),
+      )
+
       if (targetTaskIndex !== -1) {
         const targetTask = updatedBoard.columns[targetTaskIndex].tasks.find(
           (t: TaskProps) => t.title === task.title,
-        );
-  
+        )
+
         if (targetTask) {
           const targetSubtask = targetTask.subtasks.find(
             (subtask: SubtaskProps) => subtask.title === subtaskTitle,
-          );
-  
+          )
+
           if (targetSubtask) {
-            targetSubtask.isCompleted = isChecked;
-            boardsCopy[boardIndex] = updatedBoard;
-  
-            updateBoardColumns(updatedBoard.columns);
-            updateBoards(boardsCopy);
+            targetSubtask.isCompleted = isChecked
+            boardsCopy[boardIndex] = updatedBoard
+
+            updateBoardColumns(updatedBoard.columns)
+            updateBoards(boardsCopy)
           }
         }
       }

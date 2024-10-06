@@ -32,23 +32,28 @@ interface SidebarProps {
 }
 
 export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
-  const { allBoards, activeBoard, enableDarkMode, handleSetActiveBoard, handleEnableDarkMode } =
-    useBoardsContext()
+  const {
+    allBoards,
+    activeBoard,
+    enableDarkMode,
+    handleSetActiveBoard,
+    handleEnableDarkMode,
+  } = useBoardsContext()
 
   const [openAddBoardModal, setOpenAddBoardModal] = useState(false)
 
   return (
     <Container>
       <Wrapper>
-      <LogoWrapper>
-            <img src={Logo} width={24} height={24} alt="" />
-            <img
-              src={enableDarkMode ? LogoTextDark : LogoTextLight}
-              width={112}
-              height={24}
-              alt=""
-            />
-          </LogoWrapper>
+        <LogoWrapper>
+          <img src={Logo} width={24} height={24} alt="" />
+          <img
+            src={enableDarkMode ? LogoTextDark : LogoTextLight}
+            width={112}
+            height={24}
+            alt=""
+          />
+        </LogoWrapper>
         <Title>{`All Boards (${allBoards.length})`}</Title>
         <BoardsContainer>
           {allBoards.map((board) => {
@@ -65,26 +70,26 @@ export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
               </BoardBtn>
             )
           })}
-                    <Dialog.Root open={openAddBoardModal}>
-          <Dialog.Trigger asChild>
-          <CreateBoardBtn
-            className="create"
-            onClick={() => {
-              setOpenAddBoardModal(true)
-            }}
-          >
-            <img src={IconBoard} alt="" />
-            <p>+ Create New Board</p>
-          </CreateBoardBtn>
-          </Dialog.Trigger>
-        {openAddBoardModal && (
-          <AddBoardModal
-            onClose={() => {
-              setOpenAddBoardModal(false)
-            }}
-          />
-        )}
-      </Dialog.Root>
+          <Dialog.Root open={openAddBoardModal}>
+            <Dialog.Trigger asChild>
+              <CreateBoardBtn
+                className="create"
+                onClick={() => {
+                  setOpenAddBoardModal(true)
+                }}
+              >
+                <img src={IconBoard} alt="" />
+                <p>+ Create New Board</p>
+              </CreateBoardBtn>
+            </Dialog.Trigger>
+            {openAddBoardModal && (
+              <AddBoardModal
+                onClose={() => {
+                  setOpenAddBoardModal(false)
+                }}
+              />
+            )}
+          </Dialog.Root>
         </BoardsContainer>
       </Wrapper>
       <OptionsContainer>

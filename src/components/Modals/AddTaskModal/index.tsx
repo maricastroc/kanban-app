@@ -1,19 +1,20 @@
 import { useRef, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faAngleDown,
-  faAngleUp,
-} from '@fortawesome/free-solid-svg-icons'
+import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { SubtasksForm, SubtasksWrapper } from './styles'
 import {
-  SubtasksForm,
-  SubtasksWrapper,
-} from './styles'
-import { ModalContent, ModalOverlay, ModalTitle, SelectStatusField, StatusContainer, StatusSelectorContainer } from '@/styles/shared'
+  ModalContent,
+  ModalOverlay,
+  ModalTitle,
+  SelectStatusField,
+  StatusContainer,
+  StatusSelectorContainer,
+} from '@/styles/shared'
 import { FormContainer } from '@/components/Shared/FormContainer'
 import { InputContainer } from '@/components/Shared/InputContainer'
 import { Button } from '@/components/Shared/Button'
@@ -32,6 +33,11 @@ import { toast } from 'react-toastify'
 import { useOutsideClick } from '@/utils/useOutsideClick'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 import { StatusSelector } from '@/components/Shared/StatusSelector'
+import {
+  DEFAULT_STATUS,
+  MIN_SUBTASKS,
+  MIN_TITLE_LENGTH,
+} from '@/utils/constants'
 
 const subtaskSchema = z.object({
   title: z.string().min(1, { message: 'Subtask title is required' }),
@@ -39,11 +45,11 @@ const subtaskSchema = z.object({
 })
 
 const formSchema = z.object({
-  title: z.string().min(3, { message: 'Title is required' }),
+  title: z.string().min(MIN_TITLE_LENGTH, { message: 'Title is required' }),
   description: z.string().optional(),
   subtasks: z
     .array(subtaskSchema)
-    .min(1, { message: 'At least one subtask is required' }),
+    .min(MIN_SUBTASKS, { message: 'At least one subtask is required' }),
   status: z.string().min(1, { message: 'Status is required' }),
 })
 
@@ -55,21 +61,16 @@ interface AddTaskModalProps {
 
 export function AddTaskModal({ onClose }: AddTaskModalProps) {
   const { activeBoard } = useBoardsContext()
-
   const { addTaskToColumn } = useTaskContext()
 
-  const initialStatus = activeBoard?.columns[0]?.name || 'Not specified'
-
+  const initialStatus = activeBoard?.columns[0]?.name || DEFAULT_STATUS
   const statusRef = useRef<HTMLDivElement | null>(null)
 
   useOutsideClick(statusRef, () => setOpenOptionsContainer(false))
-
   useEscapeKeyHandler(onClose)
 
   const [openOptionsContainer, setOpenOptionsContainer] = useState(false)
-
   const [subtasks, setSubtasks] = useState<SubtaskProps[]>(initialSubtasks)
-
   const [status, setStatus] = useState(initialStatus)
 
   const {
@@ -90,19 +91,21 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
     },
   })
 
+  const updateSubtasks = (updatedSubtasks: SubtaskProps[]) => {
+    setSubtasks(updatedSubtasks)
+    setValue('subtasks', updatedSubtasks)
+  }
+
   const handleAddSubtask = () => {
-    const newSubtask = { title: '', isCompleted: false }
-    setSubtasks((prev) => [...prev, newSubtask])
-    setValue('subtasks', [...subtasks, newSubtask])
+    const newSubtask: SubtaskProps = { title: '', isCompleted: false }
+    updateSubtasks([...subtasks, newSubtask])
   }
 
   const handleChangeSubtask = (index: number, newValue: string) => {
-    setSubtasks((prev) =>
-      prev.map((subtask, i) =>
-        i === index ? { ...subtask, title: newValue } : subtask,
-      ),
+    const updatedSubtasks = subtasks.map((subtask, i) =>
+      i === index ? { ...subtask, title: newValue } : subtask,
     )
-    setValue(`subtasks.${index}.title`, newValue)
+    updateSubtasks(updatedSubtasks)
   }
 
   const handleChangeStatus = (newStatus: string) => {
@@ -112,7 +115,10 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
   }
 
   const handleRemoveSubtask = (indexToRemove: number) => {
-    setSubtasks((prev) => prev.filter((_, index) => index !== indexToRemove))
+    const updatedSubtasks = subtasks.filter(
+      (_, index) => index !== indexToRemove,
+    )
+    updateSubtasks(updatedSubtasks)
   }
 
   const handleAddTask = async (data: FormData) => {
@@ -126,16 +132,14 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
     const newTask = {
       title: data.title,
       description: data.description || '',
-      status: status || 'Not specified',
+      status: status || DEFAULT_STATUS,
       subtasks,
     }
 
     addTaskToColumn(newTask, status)
 
-    setSubtasks(initialSubtasks)
-
     reset()
-
+    setSubtasks(initialSubtasks)
     onClose()
   }
 
@@ -159,7 +163,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
   return (
     <Dialog.Portal>
       <ModalOverlay className="DialogOverlay" onClick={onClose} />
-      <ModalContent padding="1.5rem 1.5rem 3rem" className="DialogContent" aria-describedby={undefined}>
+      <ModalContent padding="1.5rem 1.5rem 3rem" className="DialogContent">
         <ModalTitle className="DialogTitle">Add Task</ModalTitle>
         <VisuallyHidden>
           <Dialog.Description />
@@ -214,11 +218,12 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
             {openOptionsContainer && (
               <StatusSelectorContainer ref={statusRef}>
                 {activeBoard?.columns?.map((column) => (
-                  <StatusSelector column={column} status={status} handleChangeStatus={() => {
-                    if (status) {
-                      handleChangeStatus(column.name)
-                    }
-                  }} />
+                  <StatusSelector
+                    key={column.name}
+                    column={column}
+                    status={status}
+                    handleChangeStatus={() => handleChangeStatus(column.name)}
+                  />
                 ))}
               </StatusSelectorContainer>
             )}

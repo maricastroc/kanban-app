@@ -37,7 +37,7 @@ export function Header({ onChangeTheme }: HeaderProps) {
 
   const [openMoreOptionsModal, setOpenMoreOptionsModal] = useState(false)
 
-  const isSmallerThanSm = useWindowResize(BREAKPOINT_SM);
+  const isSmallerThanSm = useWindowResize(BREAKPOINT_SM)
 
   useEffect(() => {
     if (!isSmallerThanSm) {
@@ -54,15 +54,11 @@ export function Header({ onChangeTheme }: HeaderProps) {
 
         <Dialog.Root open={openViewBoardsModal}>
           <Dialog.Trigger asChild>
-            <BoardNameContainer onClick={() => 
-              isSmallerThanSm && (
-                setOpenViewBoardsModal(true)
-              )            
-            }>
+            <BoardNameContainer
+              onClick={() => isSmallerThanSm && setOpenViewBoardsModal(true)}
+            >
               <BoardName>{activeBoard?.name}</BoardName>
-              {isSmallerThanSm && (
-                <FontAwesomeIcon icon={faAngleDown} />
-              )}
+              {isSmallerThanSm && <FontAwesomeIcon icon={faAngleDown} />}
             </BoardNameContainer>
           </Dialog.Trigger>
           <ViewBoardsModal

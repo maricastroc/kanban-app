@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const StatusSelectorBtn = styled.button`
-position: relative;
+  position: relative;
   display: flex;
   padding: 0.5rem;
   padding-left: 0rem;
@@ -12,6 +12,7 @@ position: relative;
   background-color: transparent;
   border: none;
   font-size: ${(props) => props.theme['body-l']};
+  font-weight: 500;
   text-align: flex-start;
   color: ${(props) => props.theme['subtitle-color']};
 

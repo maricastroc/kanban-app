@@ -51,6 +51,10 @@ export const ModalContent = styled(RadixContent)<{ padding?: string }>`
     max-height: 35rem;
   }
 
+  &.smaller {
+    height: auto;
+  }
+
   &.delete {
     height: auto;
     max-height: auto;
@@ -68,11 +72,6 @@ export const StatusSelectorContainer = styled.div`
   border: 1px solid ${(props) => props.theme['primary-color']};
   border-radius: 8px;
   padding: 0.5rem;
-
-    &:hover {
-      background-color: ${(props) => `${props.theme['subtitle-color']}1A`};
-      font-weight: 700;
-    }
 
     svg {
       position: absolute;

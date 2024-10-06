@@ -1,37 +1,45 @@
 import { useRef, useState } from 'react'
-
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleDown, faAngleUp, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
+import {
+  faAngleDown,
+  faAngleUp,
+  faEllipsisVertical,
+} from '@fortawesome/free-solid-svg-icons'
 import * as Dialog from '@radix-ui/react-dialog'
 
 import {
   Description,
   Title,
   SubtasksContainer,
-  SubtasksTitle,
   OptionsModal,
   OptionsContainer,
   OptionsBtn,
   EmptySubtask,
 } from './styles'
+import {
+  ModalContent,
+  ModalOverlay,
+  SelectStatusField,
+  StatusContainer,
+  StatusSelectorContainer,
+} from '@/styles/shared'
 
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
-import { ModalContent, ModalOverlay, SelectStatusField, StatusContainer, StatusSelectorContainer } from '@/styles/shared'
-import { CustomLabel } from '@/components/Shared/Label'
-import { SubtaskItem } from '@/components/Core/SubtaskItem'
+import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useTaskContext } from '@/contexts/TasksContext'
+import { TaskProps } from '@/@types/task'
 import { SubtaskProps } from '@/@types/subtask'
 import { useOutsideClick } from '@/utils/useOutsideClick'
-import { TaskProps } from '@/@types/task'
-import { useBoardsContext } from '@/contexts/BoardsContext'
-
-import { useTaskContext } from '@/contexts/TasksContext'
+import { CustomLabel } from '@/components/Shared/Label'
+import { SubtaskItem } from '@/components/Core/SubtaskItem'
 import { StatusSelector } from '@/components/Shared/StatusSelector'
 
 interface ViewTaskModalProps {
   task: TaskProps
   onClose: () => void
 }
+
+type ModalType = 'edit' | 'delete' | 'options' | 'status' | null
 
 export function ViewTaskModal({ task, onClose }: ViewTaskModalProps) {
   useEscapeKeyHandler(onClose)
@@ -44,52 +52,49 @@ export function ViewTaskModal({ task, onClose }: ViewTaskModalProps) {
 
   const { moveTaskToColumn } = useTaskContext()
 
-  const [openStatusOptionsContainer, setOpenStatusOptionsContainer] = useState(false)
-
-  const [openMoreOptionsModal, setOpenMoreOptionsModal] = useState(false)
-
-  const [openEditTaskModal, setOpenEditTaskModal] = useState(false)
-
-  const [openDeleteTask, setOpenDeleteTask] = useState(false)
-
   const [status, setStatus] = useState(task.status)
+
+  const [activeModal, setActiveModal] = useState<ModalType>(null)
 
   const statusRef = useRef<HTMLDivElement | null>(null)
 
-  useOutsideClick(statusRef, () => handleCloseModals())
+  useOutsideClick(statusRef, () => setActiveModal(null))
 
-  const handleCloseModals = () => {
-    setOpenEditTaskModal(false)
-    setOpenDeleteTask(false)
-    setOpenMoreOptionsModal(false)
+  const toggleModal = (modal: ModalType) => {
+    setActiveModal(activeModal === modal ? null : modal)
+  }
+
+  const closeAllModals = () => {
+    setActiveModal(null)
     onClose()
   }
 
   return (
     <>
-      {!openEditTaskModal && !openDeleteTask && (
-      <Dialog.Portal>
-      <ModalOverlay className="DialogOverlay" onClick={() => onClose()} />
-      <ModalContent padding="1.5rem 1.5rem 3rem" className="DialogContent" aria-describedby={undefined}>
+      {activeModal !== 'edit' && activeModal !== 'delete' && (
+        <Dialog.Portal>
+          <ModalOverlay className="DialogOverlay" onClick={closeAllModals} />
+          <ModalContent
+            padding="1.5rem 1.5rem 3rem"
+            className="DialogContent smaller"
+          >
             <Title>
               <h3>{task.title}</h3>
               <OptionsContainer>
-                <OptionsBtn
-                  onClick={() => setOpenMoreOptionsModal(!openMoreOptionsModal)}
-                >
+                <OptionsBtn onClick={() => toggleModal('options')}>
                   <FontAwesomeIcon icon={faEllipsisVertical} />
                 </OptionsBtn>
-                {openMoreOptionsModal && (
+                {activeModal === 'options' && (
                   <OptionsModal>
                     <button
                       className="edit"
-                      onClick={() => setOpenEditTaskModal(true)}
+                      onClick={() => toggleModal('edit')}
                     >
                       Edit Task
                     </button>
                     <button
                       className="delete"
-                      onClick={() => setOpenDeleteTask(true)}
+                      onClick={() => toggleModal('delete')}
                     >
                       Delete Task
                     </button>
@@ -98,12 +103,8 @@ export function ViewTaskModal({ task, onClose }: ViewTaskModalProps) {
               </OptionsContainer>
             </Title>
             <Description>
-              {task.description.length > 0 ? (
-                <p>{task.description}</p>
-              ) : (
-                <p>No description</p>
-              )}
-              <SubtasksTitle>{`Subtasks (${subtasksCompleted.length} of ${task.subtasks.length})`}</SubtasksTitle>
+              <p>{task.description || 'No description'}</p>
+              <CustomLabel>{`Subtasks (${subtasksCompleted.length} of ${task.subtasks.length})`}</CustomLabel>
               {task.subtasks.length > 0 ? (
                 <SubtasksContainer>
                   {task.subtasks.map((subtask: SubtaskProps) => (
@@ -118,33 +119,39 @@ export function ViewTaskModal({ task, onClose }: ViewTaskModalProps) {
               ) : (
                 <EmptySubtask>No subtasks.</EmptySubtask>
               )}
-<StatusContainer>
-<CustomLabel>Status</CustomLabel>
-            <SelectStatusField
-              className={openStatusOptionsContainer ? 'active' : ''}
-              onClick={() => setOpenStatusOptionsContainer ((prev) => !prev)}
-            >
-              <p>{status}</p>
-              <FontAwesomeIcon
-                icon={openStatusOptionsContainer  ? faAngleUp : faAngleDown}
-              />
-            </SelectStatusField>
-            {openStatusOptionsContainer && (
-              <StatusSelectorContainer ref={statusRef}>
-                {activeBoard?.columns?.map((column) => (
-                  <StatusSelector column={column} status={status} handleChangeStatus={() => {
-                    if (status) {
-                      moveTaskToColumn(task, column.name, status)
-                      setStatus(column.name)
-                    }
-                  }} />
-                ))}
-              </StatusSelectorContainer>
-            )}
-          </StatusContainer>
+              <StatusContainer>
+                <CustomLabel>Current Status</CustomLabel>
+                <SelectStatusField
+                  className={activeModal === 'status' ? 'active' : ''}
+                  onClick={() => toggleModal('status')}
+                >
+                  <p>{status}</p>
+                  <FontAwesomeIcon
+                    icon={activeModal === 'status' ? faAngleUp : faAngleDown}
+                  />
+                </SelectStatusField>
+                {activeModal === 'status' && (
+                  <StatusSelectorContainer ref={statusRef}>
+                    {activeBoard?.columns?.map((column) => (
+                      <StatusSelector
+                        key={column.name}
+                        column={column}
+                        status={status}
+                        handleChangeStatus={() => {
+                          if (status !== column.name) {
+                            moveTaskToColumn(task, column.name, status)
+                            setStatus(column.name)
+                          }
+                          setActiveModal(null)
+                        }}
+                      />
+                    ))}
+                  </StatusSelectorContainer>
+                )}
+              </StatusContainer>
             </Description>
           </ModalContent>
-          </Dialog.Portal>
+        </Dialog.Portal>
       )}
     </>
   )

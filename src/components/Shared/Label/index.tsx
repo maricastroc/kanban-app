@@ -12,4 +12,3 @@ const CustomLabel = ({ children, ...rest }: CustomLabelProps) => {
 CustomLabel.displayName = 'CustomLabel'
 
 export { CustomLabel }
-

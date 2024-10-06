@@ -7,7 +7,7 @@ export const Title = styled.div`
   width: 100%;
 
   h3 {
-    font-size: 1.125rem;
+    font-size: ${(props) => props.theme['heading-l']};
     font-weight: 700;
     max-width: 85%;
   }
@@ -19,10 +19,12 @@ export const Description = styled.div`
   flex-direction: column;
   width: 100%;
 
-  p {
+  > p {
     color: ${(props) => props.theme['subtitle-color']};
-    font-size: 0.8125rem;
+    font-size: ${(props) => props.theme['body-l']};
     line-height: 1.4rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
   }
 `
 
@@ -30,21 +32,7 @@ export const SubtasksContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  margin-top: 1rem;
-`
-
-export const SubtasksTitle = styled.strong`
-  font-size: 0.75rem;
-  color: ${(props) => props.theme['title-color']};
-  font-weight: 700;
-  margin-top: 1.5rem;
-`
-
-export const CurrentStatusTitle = styled.strong`
-  font-size: 0.75rem;
-  color: ${(props) => props.theme['title-color']};
-  font-weight: 700;
-  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
 `
 
 export const OptionsContainer = styled.div`
@@ -86,13 +74,15 @@ export const OptionsModal = styled.div`
   top: 2.5rem;
   right: 0;
   width: 10rem;
-  background-color: ${(props) => props.theme['bg-color']};
+  background-color: ${(props) => props.theme['cards-color']};
+  box-shadow: 0 6px 8px rgba(54, 78, 126, 0.1);
 
   button {
     cursor: pointer;
     background-color: transparent;
     border: none;
-    font-size: 1rem;
+    font-size: ${(props) => props.theme['heading-m']};
+    font-weight: 700;
 
     &.edit {
       color: ${(props) => props.theme['subtitle-color']};
@@ -101,12 +91,17 @@ export const OptionsModal = styled.div`
     &.delete {
       color: ${(props) => props.theme['error-color']};
     }
+
+    &:hover {
+      filter: brightness(1.2);
+      transition: 200ms;
+    }
   }
 `
 
 export const EmptySubtask = styled.p`
   color: ${(props) => props.theme['subtitle-color']};
-  font-size: 0.8125rem;
+  font-size: ${(props) => props.theme['body-l']};
   line-height: 1.4rem;
   margin-top: 0.5rem;
 `
