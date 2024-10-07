@@ -41,7 +41,7 @@ import {
 
 const subtaskSchema = z.object({
   title: z.string().min(1, { message: 'Subtask title is required' }),
-  isCompleted: z.boolean().optional(),
+  isCompleted: z.boolean(),
 })
 
 const formSchema = z.object({
@@ -64,13 +64,17 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
   const { addTaskToColumn } = useTaskContext()
 
   const initialStatus = activeBoard?.columns[0]?.name || DEFAULT_STATUS
+
   const statusRef = useRef<HTMLDivElement | null>(null)
 
-  useOutsideClick(statusRef, () => setOpenOptionsContainer(false))
+  useOutsideClick(statusRef, () => setIsOptionsContainerOpen(false))
+
   useEscapeKeyHandler(onClose)
 
-  const [openOptionsContainer, setOpenOptionsContainer] = useState(false)
+  const [isOptionsContainerOpen, setIsOptionsContainerOpen] = useState(false)
+
   const [subtasks, setSubtasks] = useState<SubtaskProps[]>(initialSubtasks)
+
   const [status, setStatus] = useState(initialStatus)
 
   const {
@@ -78,6 +82,8 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
     handleSubmit,
     formState: { errors },
     setValue,
+    getValues,
+    watch,
     reset,
     trigger,
   } = useForm<FormData>({
@@ -85,40 +91,45 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
     defaultValues: {
       title: '',
       description: '',
-      subtasks:
-        subtasks.length > 0 ? subtasks : [{ title: '', isCompleted: false }],
+      subtasks,
       status: initialStatus,
     },
   })
 
-  const updateSubtasks = (updatedSubtasks: SubtaskProps[]) => {
+  const subtasksValues = watch('subtasks')
+
+  const handleAddSubtask = () => {
+    const newSubtask: SubtaskProps = { title: '', isCompleted: false }
+
+    const updatedSubtasks = [...subtasks, newSubtask]
+
     setSubtasks(updatedSubtasks)
     setValue('subtasks', updatedSubtasks)
   }
 
-  const handleAddSubtask = () => {
-    const newSubtask: SubtaskProps = { title: '', isCompleted: false }
-    updateSubtasks([...subtasks, newSubtask])
-  }
-
   const handleChangeSubtask = (index: number, newValue: string) => {
-    const updatedSubtasks = subtasks.map((subtask, i) =>
-      i === index ? { ...subtask, title: newValue } : subtask,
+    console.log(subtasks, index)
+    const updatedSubtasks = subtasksValues.map((task, i) =>
+      i === index ? { ...task, title: newValue } : task,
     )
-    updateSubtasks(updatedSubtasks)
+
+    setSubtasks(updatedSubtasks)
+    setValue('subtasks', updatedSubtasks)
   }
 
   const handleChangeStatus = (newStatus: string) => {
     setStatus(newStatus)
     setValue('status', newStatus)
-    setOpenOptionsContainer(false)
+    setIsOptionsContainerOpen(false)
   }
 
   const handleRemoveSubtask = (indexToRemove: number) => {
-    const updatedSubtasks = subtasks.filter(
+    const updatedSubtasks = getValues('subtasks').filter(
       (_, index) => index !== indexToRemove,
     )
-    updateSubtasks(updatedSubtasks)
+    setSubtasks(updatedSubtasks)
+    
+    setValue('subtasks', updatedSubtasks)
   }
 
   const handleAddTask = async (data: FormData) => {
@@ -147,24 +158,29 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
     const error = errors.subtasks?.[index]?.title?.message
 
     return (
-      <FieldsContainer key={index}>
+      <FieldsContainer>
         <Field
           hasError={!!error}
           placeholder="e.g. Make coffee"
-          value={subtask.title}
+          defaultValue={subtask.title}
+          btnVariant={subtasks.length > 1 ? '' : 'disabled'}
           onChange={(e) => handleChangeSubtask(index, e.target.value)}
-          onClick={() => handleRemoveSubtask(index)}
+          onClick={() => {
+            handleRemoveSubtask(index)
+          }}
         />
         {error && <ErrorMessage message={error} />}
       </FieldsContainer>
     )
   }
 
+
+console.log(subtasksValues)
   return (
     <Dialog.Portal>
       <ModalOverlay className="DialogOverlay" onClick={onClose} />
-      <ModalContent padding="1.5rem 1.5rem 3rem" className="DialogContent">
-        <ModalTitle className="DialogTitle">Add Task</ModalTitle>
+      <ModalContent padding="1.5rem 1.5rem 2rem" className="DialogContent xl">
+        <ModalTitle className="DialogTitle">Add New Task</ModalTitle>
         <VisuallyHidden>
           <Dialog.Description />
         </VisuallyHidden>
@@ -192,9 +208,11 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
           <SubtasksForm>
             <CustomLabel>Subtasks</CustomLabel>
             <SubtasksWrapper>
-              {subtasks.map((subtask, index) =>
-                renderSubtaskInput(index, subtask),
-              )}
+            {subtasks.map((subtask, index) => (
+              <div key={`${subtask.title}-${index}`}>
+                  {renderSubtaskInput(index, subtask)}
+                </div>
+              ))}
             </SubtasksWrapper>
             <Button
               type="button"
@@ -207,15 +225,15 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
           <StatusContainer>
             <CustomLabel>Status</CustomLabel>
             <SelectStatusField
-              className={openOptionsContainer ? 'active' : ''}
-              onClick={() => setOpenOptionsContainer((prev) => !prev)}
+              className={isOptionsContainerOpen ? 'active' : ''}
+              onClick={() => setIsOptionsContainerOpen((prev) => !prev)}
             >
               <p>{status}</p>
               <FontAwesomeIcon
-                icon={openOptionsContainer ? faAngleUp : faAngleDown}
+                icon={isOptionsContainerOpen ? faAngleUp : faAngleDown}
               />
             </SelectStatusField>
-            {openOptionsContainer && (
+            {isOptionsContainerOpen && (
               <StatusSelectorContainer ref={statusRef}>
                 {activeBoard?.columns?.map((column) => (
                   <StatusSelector

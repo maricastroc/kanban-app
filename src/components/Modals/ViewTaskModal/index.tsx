@@ -1,27 +1,15 @@
 import { useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faAngleDown,
-  faAngleUp,
-  faEllipsisVertical,
-} from '@fortawesome/free-solid-svg-icons'
+import { faAngleDown, faAngleUp, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
 import * as Dialog from '@radix-ui/react-dialog'
 
 import {
-  Description,
-  Title,
-  SubtasksContainer,
-  OptionsModal,
-  OptionsContainer,
-  OptionsBtn,
-  EmptySubtask,
+  Description, LayoutContainer, SubtasksContainer, OptionsModal, 
+  OptionsContainer, OptionsBtn, EmptySubtask, ModalTitle
 } from './styles'
 import {
-  ModalContent,
-  ModalOverlay,
-  SelectStatusField,
-  StatusContainer,
-  StatusSelectorContainer,
+  ModalContent, ModalOverlay, SelectStatusField, StatusContainer, 
+  StatusSelectorContainer
 } from '@/styles/shared'
 
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
@@ -33,13 +21,12 @@ import { useOutsideClick } from '@/utils/useOutsideClick'
 import { CustomLabel } from '@/components/Shared/Label'
 import { SubtaskItem } from '@/components/Core/SubtaskItem'
 import { StatusSelector } from '@/components/Shared/StatusSelector'
+import { DeleteModal } from '../DeleteModal'
 
 interface ViewTaskModalProps {
   task: TaskProps
   onClose: () => void
 }
-
-type ModalType = 'edit' | 'delete' | 'options' | 'status' | null
 
 export function ViewTaskModal({ task, onClose }: ViewTaskModalProps) {
   useEscapeKeyHandler(onClose)
@@ -49,59 +36,56 @@ export function ViewTaskModal({ task, onClose }: ViewTaskModalProps) {
   )
 
   const { activeBoard } = useBoardsContext()
-
   const { moveTaskToColumn } = useTaskContext()
 
   const [status, setStatus] = useState(task.status)
-
-  const [activeModal, setActiveModal] = useState<ModalType>(null)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isMoreOptionsModalOpen, setIsMoreOptionsModalOpen] = useState(false)
+  const [isStatusOptionsContainerOpen, setIsStatusOptionsContainerOpen] = useState(false)
 
   const statusRef = useRef<HTMLDivElement | null>(null)
 
-  useOutsideClick(statusRef, () => setActiveModal(null))
-
-  const toggleModal = (modal: ModalType) => {
-    setActiveModal(activeModal === modal ? null : modal)
-  }
+  useOutsideClick(statusRef, () => closeAllModals())
 
   const closeAllModals = () => {
-    setActiveModal(null)
+    setIsDeleteModalOpen(false)
+    setIsEditModalOpen(false)
+    setIsMoreOptionsModalOpen(false)
     onClose()
   }
 
   return (
     <>
-      {activeModal !== 'edit' && activeModal !== 'delete' && (
+      {!isDeleteModalOpen && !isEditModalOpen && (
         <Dialog.Portal>
           <ModalOverlay className="DialogOverlay" onClick={closeAllModals} />
-          <ModalContent
-            padding="1.5rem 1.5rem 3rem"
-            className="DialogContent smaller"
-          >
-            <Title>
-              <h3>{task.title}</h3>
+          <ModalContent padding="1.5rem 1.5rem 3rem" className="DialogContent smaller">
+            <LayoutContainer>
+              <ModalTitle>{task.title}</ModalTitle>
               <OptionsContainer>
-                <OptionsBtn onClick={() => toggleModal('options')}>
+                <OptionsBtn onClick={() => setIsMoreOptionsModalOpen(true)}>
                   <FontAwesomeIcon icon={faEllipsisVertical} />
                 </OptionsBtn>
-                {activeModal === 'options' && (
+                {isMoreOptionsModalOpen && (
                   <OptionsModal>
                     <button
                       className="edit"
-                      onClick={() => toggleModal('edit')}
+                      onClick={() => setIsEditModalOpen(true)}
                     >
                       Edit Task
                     </button>
                     <button
                       className="delete"
-                      onClick={() => toggleModal('delete')}
+                      onClick={() => setIsDeleteModalOpen(true)}
                     >
                       Delete Task
                     </button>
                   </OptionsModal>
                 )}
               </OptionsContainer>
-            </Title>
+            </LayoutContainer>
+
             <Description>
               <p>{task.description || 'No description'}</p>
               <CustomLabel>{`Subtasks (${subtasksCompleted.length} of ${task.subtasks.length})`}</CustomLabel>
@@ -122,15 +106,15 @@ export function ViewTaskModal({ task, onClose }: ViewTaskModalProps) {
               <StatusContainer>
                 <CustomLabel>Current Status</CustomLabel>
                 <SelectStatusField
-                  className={activeModal === 'status' ? 'active' : ''}
-                  onClick={() => toggleModal('status')}
+                  className={isMoreOptionsModalOpen ? 'active' : ''}
+                  onClick={() => setIsStatusOptionsContainerOpen(false)}
                 >
                   <p>{status}</p>
                   <FontAwesomeIcon
-                    icon={activeModal === 'status' ? faAngleUp : faAngleDown}
+                    icon={isStatusOptionsContainerOpen ? faAngleUp : faAngleDown}
                   />
                 </SelectStatusField>
-                {activeModal === 'status' && (
+                {isStatusOptionsContainerOpen && (
                   <StatusSelectorContainer ref={statusRef}>
                     {activeBoard?.columns?.map((column) => (
                       <StatusSelector
@@ -142,7 +126,6 @@ export function ViewTaskModal({ task, onClose }: ViewTaskModalProps) {
                             moveTaskToColumn(task, column.name, status)
                             setStatus(column.name)
                           }
-                          setActiveModal(null)
                         }}
                       />
                     ))}
@@ -153,6 +136,14 @@ export function ViewTaskModal({ task, onClose }: ViewTaskModalProps) {
           </ModalContent>
         </Dialog.Portal>
       )}
+
+        {isDeleteModalOpen && (
+          <DeleteModal
+            type="task"
+            task={task}
+            onClose={() => closeAllModals()}
+          />
+        )}
     </>
   )
 }

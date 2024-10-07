@@ -40,7 +40,7 @@ export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
     handleEnableDarkMode,
   } = useBoardsContext()
 
-  const [openAddBoardModal, setOpenAddBoardModal] = useState(false)
+  const [isAddBoardModalOpen, setIsAddBoardModalOpen] = useState(false)
 
   return (
     <Container>
@@ -70,22 +70,22 @@ export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
               </BoardBtn>
             )
           })}
-          <Dialog.Root open={openAddBoardModal}>
+          <Dialog.Root open={isAddBoardModalOpen}>
             <Dialog.Trigger asChild>
               <CreateBoardBtn
                 className="create"
                 onClick={() => {
-                  setOpenAddBoardModal(true)
+                  setIsAddBoardModalOpen(true)
                 }}
               >
                 <img src={IconBoard} alt="" />
                 <p>+ Create New Board</p>
               </CreateBoardBtn>
             </Dialog.Trigger>
-            {openAddBoardModal && (
+            {isAddBoardModalOpen && (
               <AddBoardModal
                 onClose={() => {
-                  setOpenAddBoardModal(false)
+                  setIsAddBoardModalOpen(false)
                 }}
               />
             )}

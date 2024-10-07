@@ -14,8 +14,4 @@ export const initialSubtasks = [
     title: '',
     isCompleted: false,
   },
-  {
-    title: '',
-    isCompleted: false,
-  },
 ]

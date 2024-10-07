@@ -7,7 +7,7 @@ interface FieldProps {
   hasError?: boolean
   isDisabled?: boolean
   placeholder?: string
-  value?: string
+  defaultValue?: string
   btnVariant?: string
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   onClick?: () => void
@@ -16,7 +16,7 @@ interface FieldProps {
 const Field = forwardRef<HTMLInputElement, FieldProps>(
   (
     {
-      value,
+      defaultValue,
       hasError = false,
       isDisabled = false,
       placeholder = '',
@@ -36,8 +36,8 @@ const Field = forwardRef<HTMLInputElement, FieldProps>(
             isDisabled ? 'disabled' : ''
           }`}
           placeholder={placeholder}
-          defaultValue={value}
-          onChange={onChange}
+          defaultValue={defaultValue}
+          onBlur={onChange}
         />
         <DeleteFieldBtn type="button" className={btnVariant} onClick={onClick}>
           <FontAwesomeIcon icon={faXmark} />

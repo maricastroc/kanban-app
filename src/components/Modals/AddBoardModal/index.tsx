@@ -114,7 +114,7 @@ export function AddBoardModal({ onClose }: AddBoardModalProps) {
           hasError={!!error}
           isDisabled={false}
           btnVariant={boardColumns?.length > 1 ? '' : 'disabled'}
-          value={column.name}
+          defaultValue={column.name}
           placeholder="e.g. New Column"
           onChange={(e) => handleChangeColumn(index, e.target.value)}
           onClick={() => handleRemoveColumn(index)}

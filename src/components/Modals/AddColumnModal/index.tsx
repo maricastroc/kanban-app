@@ -22,17 +22,18 @@ import { toast } from 'react-toastify'
 import { FormContainer } from '@/components/Shared/FormContainer'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { simulateDelay } from '@/utils/simulateDelay'
+import { MIN_BOARD_NAME_LENGTH, MIN_COLUMN_NAME_LENGTH } from '@/utils/constants'
 
 interface AddColumnModalProps {
   onClose: () => void
 }
 
 const columnSchema = z.object({
-  name: z.string().min(3, { message: 'Name is required' }),
+  name: z.string().min(MIN_COLUMN_NAME_LENGTH, { message: 'Column Name must have at least three characters' }),
 })
 
 const formSchema = z.object({
-  name: z.string().min(3, { message: 'Title is required' }),
+  name: z.string().min(MIN_BOARD_NAME_LENGTH, { message: 'Title is required' }),
   columns: z
     .array(columnSchema)
     .min(1, { message: 'At least one column is required' }),
@@ -70,6 +71,7 @@ export function AddColumnModal({ onClose }: AddColumnModalProps) {
   const handleAddColumn = () => {
     const newColumn = { name: '', tasks: [] }
     const updatedColumns = [...boardColumns, newColumn]
+
     setBoardColumns(updatedColumns)
     setValue('columns', updatedColumns)
   }
@@ -97,6 +99,7 @@ export function AddColumnModal({ onClose }: AddColumnModalProps) {
       i === index ? { ...column, name: newValue } : column,
     )
 
+    setBoardColumns(updatedColumns)
     setValue('columns', updatedColumns)
   }
 
@@ -133,7 +136,7 @@ export function AddColumnModal({ onClose }: AddColumnModalProps) {
           hasError={!!error}
           isDisabled={isDisabled}
           btnVariant={isDisabled ? 'disabled' : ''}
-          value={column.name}
+          defaultValue={column.name}
           placeholder="e.g. New Column"
           onChange={(e) => handleChangeColumn(index, e.target.value)}
           onClick={() => handleRemoveColumn(index)}

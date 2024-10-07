@@ -31,17 +31,17 @@ interface HeaderProps {
 export function Header({ onChangeTheme }: HeaderProps) {
   const { activeBoard } = useBoardsContext()
 
-  const [openAddTaskModal, setOpenAddTaskModal] = useState(false)
+  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
 
-  const [openViewBoardsModal, setOpenViewBoardsModal] = useState(false)
+  const [isViewBoardsModalOpen, setIsViewBoardsModalOpen] = useState(false)
 
-  const [openMoreOptionsModal, setOpenMoreOptionsModal] = useState(false)
+  const [isMoreOptionsModalOpen, setIsMoreOptionsModalOpen] = useState(false)
 
   const isSmallerThanSm = useWindowResize(BREAKPOINT_SM)
 
   useEffect(() => {
     if (!isSmallerThanSm) {
-      setOpenViewBoardsModal(false)
+      setIsViewBoardsModalOpen(false)
     }
   }, [isSmallerThanSm])
 
@@ -52,10 +52,10 @@ export function Header({ onChangeTheme }: HeaderProps) {
           <img src={Logo} width={24} height={24} alt="Project Logo" />
         )}
 
-        <Dialog.Root open={openViewBoardsModal}>
+        <Dialog.Root open={isViewBoardsModalOpen}>
           <Dialog.Trigger asChild>
             <BoardNameContainer
-              onClick={() => isSmallerThanSm && setOpenViewBoardsModal(true)}
+              onClick={() => isSmallerThanSm && setIsViewBoardsModalOpen(true)}
             >
               <BoardName>{activeBoard?.name}</BoardName>
               {isSmallerThanSm && <FontAwesomeIcon icon={faAngleDown} />}
@@ -63,35 +63,35 @@ export function Header({ onChangeTheme }: HeaderProps) {
           </Dialog.Trigger>
           <ViewBoardsModal
             onChangeTheme={onChangeTheme}
-            onClose={() => setOpenViewBoardsModal(false)}
+            onClose={() => setIsViewBoardsModalOpen(false)}
           />
         </Dialog.Root>
       </LogoContainer>
       <OptionsContainer>
-        <Dialog.Root open={openAddTaskModal}>
+        <Dialog.Root open={isAddTaskModalOpen}>
           <Dialog.Trigger asChild>
-            <AddTaskBtn onClick={() => setOpenAddTaskModal(true)}>
+            <AddTaskBtn onClick={() => setIsAddTaskModalOpen(true)}>
               <FontAwesomeIcon icon={faPlus} />
               <p>+ Add New Task</p>
             </AddTaskBtn>
           </Dialog.Trigger>
-          <AddTaskModal onClose={() => setOpenAddTaskModal(false)} />
+          <AddTaskModal onClose={() => setIsAddTaskModalOpen(false)} />
         </Dialog.Root>
 
         <MoreOptionsWrapper>
           <Dialog.Root
-            open={openMoreOptionsModal}
-            onOpenChange={setOpenMoreOptionsModal}
+            open={isMoreOptionsModalOpen}
+            onOpenChange={setIsMoreOptionsModalOpen}
           >
             <Dialog.Trigger asChild>
               <MoreOptionsBtn>
                 <FontAwesomeIcon
                   icon={faEllipsisVertical}
-                  onClick={() => setOpenMoreOptionsModal(false)}
+                  onClick={() => setIsMoreOptionsModalOpen(false)}
                 />
               </MoreOptionsBtn>
             </Dialog.Trigger>
-            <MoreOptionsModal onClose={() => setOpenMoreOptionsModal(false)} />
+            <MoreOptionsModal onClose={() => setIsMoreOptionsModalOpen(false)} />
           </Dialog.Root>
         </MoreOptionsWrapper>
       </OptionsContainer>

@@ -8,7 +8,7 @@ import { BoardColumnProps } from '@/@types/board-column'
 import { SubtaskProps } from '@/@types/subtask'
 
 interface TaskContextData {
-  deleteTask: (task: TaskProps) => void
+  deleteTask: (task: TaskProps | undefined) => void
   editTask: (updatedTask: TaskProps, originalTask: TaskProps) => void
   addTaskToColumn: (task: TaskProps, columnName: string | undefined) => void
   updateBoardColumns: (updatedColumns: BoardColumnProps[]) => void
@@ -93,7 +93,10 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     handleSetActiveBoard(boardCopy)
   }
 
-  function deleteTask(task: TaskProps) {
+  function deleteTask(task: TaskProps | undefined) {
+    if (task === undefined) {
+      return
+    } 
     const boardIndex = findActiveBoardIndex()
     if (boardIndex === -1) return
 
@@ -110,6 +113,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     boardsCopy[boardIndex] = boardCopy
     updateBoards(boardsCopy)
     handleSetActiveBoard(boardCopy)
+    toast.success('Task successfully deleted!')
   }
 
   function editTask(updatedTask: TaskProps, originalTask: TaskProps) {
@@ -149,6 +153,8 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
           taskToEdit.description = updatedTask.description
           taskToEdit.subtasks = updatedTask.subtasks
 
+          toast.success('Task successfully edited!')
+
           boardsCopy[boardIndex] = boardCopy
           updateBoards(boardsCopy)
           handleSetActiveBoard(boardCopy)
@@ -176,6 +182,8 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
       toast.error('This column already contains a task with this name.')
       return
     }
+
+    toast.success('Task successfully created!')
 
     column.tasks.push(task)
     boardsCopy[boardIndex] = boardCopy
@@ -222,6 +230,8 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
         (columnToUpdate) => columnToUpdate.name === column.name,
       ),
     )
+
+    toast.success('Board successfully updated!')
 
     boardsCopy[boardIndex] = boardCopy
     updateBoards(boardsCopy)

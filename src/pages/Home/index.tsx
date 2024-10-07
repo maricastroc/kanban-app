@@ -41,7 +41,7 @@ export function Home({ onChangeTheme }: HomeProps) {
 
   const [hideSidebar, setHideSidebar] = useState(false)
 
-  const [openNewColumnModal, setOpenNewColumnModal] = useState(false)
+  const [isNewColumnModalOpen, setIsNewColumnModalOpen] = useState(false)
 
   const isSmallerThanSm = useWindowResize(BREAKPOINT_SM)
 
@@ -98,21 +98,23 @@ export function Home({ onChangeTheme }: HomeProps) {
                   handleDragAndDropTask={handleDragAndDropTask}
                 />
               ))}
-              <Dialog.Root open={openNewColumnModal}>
+              {(activeBoard?.columns && activeBoard?.columns?.length < 6) && (
+                <Dialog.Root open={isNewColumnModalOpen}>
                 <Dialog.Trigger asChild>
                   <AddColumnContainer
                     className={enableDarkMode ? 'light' : 'dark'}
-                    onClick={() => setOpenNewColumnModal(true)}
+                    onClick={() => setIsNewColumnModalOpen(true)}
                   >
                     <AddColumnBtn>+ New Column</AddColumnBtn>
                   </AddColumnContainer>
                 </Dialog.Trigger>
-                {openNewColumnModal && (
+                {isNewColumnModalOpen && (
                   <AddColumnModal
-                    onClose={() => setOpenNewColumnModal(false)}
+                    onClose={() => setIsNewColumnModalOpen(false)}
                   />
                 )}
               </Dialog.Root>
+              )}
             </ColumnsContainer>
           </Wrapper>
           {hideSidebar && (

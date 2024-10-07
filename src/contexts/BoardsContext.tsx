@@ -21,7 +21,7 @@ interface BoardsContextData {
   handleSetActiveBoard: (board: BoardProps) => void
 
   createNewBoard: (name: string, columns: BoardColumnProps[]) => void
-  deleteBoard: (board: BoardProps) => void
+  deleteBoard: (board: BoardProps | undefined) => void
   editBoard: (
     board: BoardProps,
     newName: string,
@@ -173,7 +173,11 @@ export function BoardsContextProvider({
     toast.success('Board successfully edited!')
   }
 
-  function deleteBoard(board: BoardProps) {
+  function deleteBoard(board: BoardProps | undefined) {
+    if (board === undefined) {
+      return
+    }
+    
     const updatedBoards = allBoards.filter((b) => b.name !== board.name)
 
     if (activeBoard && activeBoard.name === board.name) {

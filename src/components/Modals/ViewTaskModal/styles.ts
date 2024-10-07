@@ -1,6 +1,20 @@
 import styled from 'styled-components'
 
-export const Title = styled.div`
+import {
+  Title as RadixTitle,
+} from '@radix-ui/react-dialog'
+
+export const ModalTitle = styled(RadixTitle)`
+  font-size: ${(props) => props.theme['heading-l']};
+  font-weight: 700;
+  max-width: 100%;
+
+  &.delete {
+    color: ${(props) => props.theme['error-color']};
+  }
+`
+
+export const LayoutContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;

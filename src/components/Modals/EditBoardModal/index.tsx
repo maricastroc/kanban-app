@@ -118,7 +118,7 @@ export function EditBoardModal({ board, onClose }: EditBoardModalProps) {
       <FieldsContainer key={index}>
         <Field
           hasError={!!error}
-          value={column.name}
+          defaultValue={column.name}
           btnVariant={boardColumns?.length > 1 ? '' : 'disabled'}
           onChange={(e) => handleChangeColumn(index, e.target.value)}
           onClick={() => handleRemoveColumn(index)}

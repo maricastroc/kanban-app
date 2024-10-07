@@ -11,7 +11,7 @@ type TaskCardProps = {
 }
 
 export function TaskCard({ task, column_index }: TaskCardProps) {
-  const [openViewTaskModal, setOpenViewTaskModal] = useState(false)
+  const [isViewTaskModalOpen, setIsViewTaskModalOpen] = useState(false)
 
   const [{ isDragging }, drag] = useDrag({
     type: 'CARD',
@@ -22,10 +22,10 @@ export function TaskCard({ task, column_index }: TaskCardProps) {
   })
 
   return (
-    <Dialog.Root open={openViewTaskModal}>
+    <Dialog.Root open={isViewTaskModalOpen}>
       <Dialog.Trigger asChild>
         <TaskCardContainer
-          onClick={() => setOpenViewTaskModal(true)}
+          onClick={() => setIsViewTaskModalOpen(true)}
           className="task-card"
           ref={drag}
           style={{ opacity: isDragging ? 0.5 : 1 }}
@@ -36,7 +36,7 @@ export function TaskCard({ task, column_index }: TaskCardProps) {
           } of ${task.subtasks.length} subtasks`}</p>
         </TaskCardContainer>
       </Dialog.Trigger>
-      <ViewTaskModal task={task} onClose={() => setOpenViewTaskModal(false)} />
+      <ViewTaskModal task={task} onClose={() => setIsViewTaskModalOpen(false)} />
     </Dialog.Root>
   )
 }

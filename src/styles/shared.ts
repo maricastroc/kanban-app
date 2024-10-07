@@ -19,6 +19,7 @@ export const ModalTitle = styled(RadixTitle)`
   font-size: ${(props) => props.theme['heading-l']};
   font-weight: 700;
   max-width: 100%;
+  margin-bottom: 0.8rem;
 
   &.delete {
     color: ${(props) => props.theme['error-color']};
@@ -47,8 +48,13 @@ export const ModalContent = styled(RadixContent)<{ padding?: string }>`
     box-shadow: none;
   }
 
-  &.bigger {
+  &.lg {
     max-height: 35rem;
+  }
+
+  &.xl {
+    height: auto;
+    max-height: 50rem;
   }
 
   &.smaller {
@@ -57,6 +63,7 @@ export const ModalContent = styled(RadixContent)<{ padding?: string }>`
 
   &.delete {
     height: auto;
+    overflow: auto;
     max-height: auto;
     width: clamp(300px, 90vw, 25rem);
   }

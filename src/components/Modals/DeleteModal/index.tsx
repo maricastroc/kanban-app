@@ -3,23 +3,29 @@ import { useBoardsContext } from '@/contexts/BoardsContext'
 import { Button } from '@/components/Shared/Button'
 import { BoardProps } from '@/@types/board'
 import { ModalContent, ModalOverlay, ModalTitle } from '@/styles/shared'
+import { useTaskContext } from '@/contexts/TasksContext'
+import { TaskProps } from '@/@types/task'
 
 interface DeleteBoardProps {
-  board: BoardProps
+  type: 'board' | 'task'
+  board?: BoardProps | undefined
+  task?: TaskProps | undefined
   onClose: () => void
 }
 
-export function DeleteBoard({ board, onClose }: DeleteBoardProps) {
+export function DeleteModal({ type, board, task, onClose }: DeleteBoardProps) {
   const { deleteBoard } = useBoardsContext()
+
+  const { deleteTask } = useTaskContext()
 
   return (
     <>
       <ModalOverlay className="DialogOverlay" onClick={() => onClose()} />
       <ModalContent className="delete">
-        <ModalTitle className="delete">Delete this board?</ModalTitle>
+        <ModalTitle className="delete">{`Delete this ${type === 'board' ? 'board' : 'task'}?`}</ModalTitle>
         <ModalDescription>
           <span>
-            {`Are you sure you want to delete the ‘${board.name}’ board? This action will remove all columns and tasks and cannot be reversed.`}
+            {`Are you sure you want to delete the ‘${type === 'board' ? `${board?.name} board` : `${task?.title} task`}’? This action will remove all columns and tasks and cannot be reversed.`}
           </span>
         </ModalDescription>
 
@@ -28,7 +34,7 @@ export function DeleteBoard({ board, onClose }: DeleteBoardProps) {
             title="Delete"
             variant="tertiary"
             onClick={() => {
-              deleteBoard(board)
+              type === 'board' ? deleteBoard(board) : deleteTask(task)
               onClose()
             }}
           />

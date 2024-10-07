@@ -4,7 +4,7 @@ import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { useState } from 'react'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { EditBoardModal } from '../EditBoardModal'
-import { DeleteBoard } from '../DeleteBoardModal'
+import { DeleteModal } from '../DeleteModal'
 
 interface MoreOptionsModal {
   onClose: () => void
@@ -60,7 +60,7 @@ export function MoreOptionsModal({ onClose }: MoreOptionsModal) {
             </ActionBtn>
           </Dialog.Trigger>
           {activeBoard && (
-            <DeleteBoard onClose={closeDeleteModal} board={activeBoard} />
+            <DeleteModal type={'board'} onClose={closeDeleteModal} board={activeBoard} />
           )}
         </Dialog.Root>
       </ModalContent>
