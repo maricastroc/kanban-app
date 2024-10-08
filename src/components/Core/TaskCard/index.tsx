@@ -2,7 +2,7 @@ import { TaskProps } from '@/@types/task'
 import { useDrag } from 'react-dnd'
 import { TaskCardContainer } from './styles'
 import * as Dialog from '@radix-ui/react-dialog'
-import { ViewTaskModal } from '@/components/Modals/ViewTaskModal'
+import { TaskDetailsModal } from '@/components/Modals/TaskDetailsModal'
 import { useState } from 'react'
 
 type TaskCardProps = {
@@ -11,7 +11,7 @@ type TaskCardProps = {
 }
 
 export function TaskCard({ task, column_index }: TaskCardProps) {
-  const [isViewTaskModalOpen, setIsViewTaskModalOpen] = useState(false)
+  const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false)
 
   const [{ isDragging }, drag] = useDrag({
     type: 'CARD',
@@ -22,10 +22,10 @@ export function TaskCard({ task, column_index }: TaskCardProps) {
   })
 
   return (
-    <Dialog.Root open={isViewTaskModalOpen}>
+    <Dialog.Root open={isTaskDetailsModalOpen}>
       <Dialog.Trigger asChild>
         <TaskCardContainer
-          onClick={() => setIsViewTaskModalOpen(true)}
+          onClick={() => setIsTaskDetailsModalOpen(true)}
           className="task-card"
           ref={drag}
           style={{ opacity: isDragging ? 0.5 : 1 }}
@@ -36,7 +36,7 @@ export function TaskCard({ task, column_index }: TaskCardProps) {
           } of ${task.subtasks.length} subtasks`}</p>
         </TaskCardContainer>
       </Dialog.Trigger>
-      <ViewTaskModal task={task} onClose={() => setIsViewTaskModalOpen(false)} />
+      <TaskDetailsModal task={task} onClose={() => setIsTaskDetailsModalOpen(false)} />
     </Dialog.Root>
   )
 }

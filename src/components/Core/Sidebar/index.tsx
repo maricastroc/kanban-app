@@ -24,7 +24,7 @@ import LogoTextDark from '@/../public/kanban-dark.svg'
 import { useState } from 'react'
 
 import { EyeSlash } from 'phosphor-react'
-import { AddBoardModal } from '@/components/Modals/AddBoardModal'
+import { BoardFormModal } from '@/components/Modals/BoardFormModal'
 
 interface SidebarProps {
   onClose: () => void
@@ -83,7 +83,8 @@ export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
               </CreateBoardBtn>
             </Dialog.Trigger>
             {isAddBoardModalOpen && (
-              <AddBoardModal
+              <BoardFormModal
+                isEditing={false}
                 onClose={() => {
                   setIsAddBoardModalOpen(false)
                 }}

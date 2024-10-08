@@ -22,7 +22,7 @@ import HideSidebar from '@/../public/icon-show-sidebar.svg'
 import { useDragAndDropTask } from '@/utils/useDragAndDropTask'
 import { useWindowResize } from '@/utils/useWindowResize'
 import { useDragScroll } from '@/utils/useDragScroll'
-import { AddColumnModal } from '@/components/Modals/AddColumnModal'
+import { ColumnFormModal } from '@/components/Modals/ColumnFormModal'
 
 interface HomeProps {
   onChangeTheme: () => void
@@ -41,7 +41,7 @@ export function Home({ onChangeTheme }: HomeProps) {
 
   const [hideSidebar, setHideSidebar] = useState(false)
 
-  const [isNewColumnModalOpen, setIsNewColumnModalOpen] = useState(false)
+  const [isColumnFormModalOpen, setIsColumnFormModalOpen] = useState(false)
 
   const isSmallerThanSm = useWindowResize(BREAKPOINT_SM)
 
@@ -99,18 +99,18 @@ export function Home({ onChangeTheme }: HomeProps) {
                 />
               ))}
               {(activeBoard?.columns && activeBoard?.columns?.length < 6) && (
-                <Dialog.Root open={isNewColumnModalOpen}>
+                <Dialog.Root open={isColumnFormModalOpen}>
                 <Dialog.Trigger asChild>
                   <AddColumnContainer
                     className={enableDarkMode ? 'light' : 'dark'}
-                    onClick={() => setIsNewColumnModalOpen(true)}
+                    onClick={() => setIsColumnFormModalOpen(true)}
                   >
                     <AddColumnBtn>+ New Column</AddColumnBtn>
                   </AddColumnContainer>
                 </Dialog.Trigger>
-                {isNewColumnModalOpen && (
-                  <AddColumnModal
-                    onClose={() => setIsNewColumnModalOpen(false)}
+                {isColumnFormModalOpen && (
+                  <ColumnFormModal
+                    onClose={() => setIsColumnFormModalOpen(false)}
                   />
                 )}
               </Dialog.Root>

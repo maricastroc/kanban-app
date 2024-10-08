@@ -3,14 +3,14 @@ import { ModalContent, ActionBtn } from './styles'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { useState } from 'react'
 import { useBoardsContext } from '@/contexts/BoardsContext'
-import { EditBoardModal } from '../EditBoardModal'
 import { DeleteModal } from '../DeleteModal'
+import { BoardFormModal } from '../BoardFormModal'
 
-interface MoreOptionsModal {
+interface EditDeleteModalProps {
   onClose: () => void
 }
 
-export function MoreOptionsModal({ onClose }: MoreOptionsModal) {
+export function EditDeleteModal({ onClose }: EditDeleteModalProps) {
   const { activeBoard } = useBoardsContext()
 
   const [isEditModalOpen, setEditModalOpen] = useState(false)
@@ -50,7 +50,7 @@ export function MoreOptionsModal({ onClose }: MoreOptionsModal) {
             </ActionBtn>
           </Dialog.Trigger>
           {activeBoard && (
-            <EditBoardModal onClose={closeEditModal} board={activeBoard} />
+            <BoardFormModal isEditing onClose={closeEditModal} board={activeBoard} />
           )}
         </Dialog.Root>
         <Dialog.Root open={isDeleteModalOpen}>

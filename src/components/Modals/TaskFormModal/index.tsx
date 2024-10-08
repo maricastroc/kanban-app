@@ -5,8 +5,9 @@ import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { toast } from 'react-toastify'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
-import { SubtasksForm, SubtasksWrapper } from './styles'
 import {
   ModalContent,
   ModalOverlay,
@@ -23,21 +24,20 @@ import { Field } from '@/components/Shared/Field'
 import { CustomTextarea } from '@/components/Shared/TextArea'
 import { CustomInput } from '@/components/Shared/Input'
 import { CustomLabel } from '@/components/Shared/Label'
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { ErrorMessage } from '@/components/Shared/ErrorMessage'
+import { StatusSelector } from '@/components/Shared/StatusSelector'
+
 import { useTaskContext } from '@/contexts/TasksContext'
 import { useBoardsContext } from '@/contexts/BoardsContext'
-import { SubtaskProps } from '@/@types/subtask'
-import { initialSubtasks } from '@/utils/getInitialValues'
-import { ErrorMessage } from '@/components/Shared/ErrorMessage'
-import { toast } from 'react-toastify'
 import { useOutsideClick } from '@/utils/useOutsideClick'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
-import { StatusSelector } from '@/components/Shared/StatusSelector'
-import {
-  DEFAULT_STATUS,
-  MIN_SUBTASKS,
-  MIN_TITLE_LENGTH,
-} from '@/utils/constants'
+
+import { SubtasksForm, SubtasksWrapper } from './styles'
+import { initialSubtasks } from '@/utils/getInitialValues'
+import { DEFAULT_STATUS, MIN_SUBTASKS, MIN_TITLE_LENGTH } from '@/utils/constants'
+
+import { SubtaskProps } from '@/@types/subtask'
+import { TaskProps } from '@/@types/task'
 
 const subtaskSchema = z.object({
   title: z.string().min(1, { message: 'Subtask title is required' }),
@@ -56,27 +56,30 @@ const formSchema = z.object({
 export type FormData = z.infer<typeof formSchema>
 
 interface AddTaskModalProps {
+  isEditing?: boolean,
+  task?: TaskProps,
   onClose: () => void
 }
 
-export function AddTaskModal({ onClose }: AddTaskModalProps) {
+export function TaskFormModal({ onClose, isEditing = false, task }: AddTaskModalProps) {
   const { activeBoard } = useBoardsContext()
-  const { addTaskToColumn } = useTaskContext()
+
+  const { addTaskToColumn, editTask } = useTaskContext()
 
   const initialStatus = activeBoard?.columns[0]?.name || DEFAULT_STATUS
 
   const statusRef = useRef<HTMLDivElement | null>(null)
 
+  const [isOptionsContainerOpen, setIsOptionsContainerOpen] = useState(false)
+
+  const [subtasks, setSubtasks] = useState<SubtaskProps[]>((isEditing && task?.subtasks) ? task.subtasks : initialSubtasks)
+
+  const [status, setStatus] = useState((isEditing && task?.status) ? task.status : initialStatus)
+
   useOutsideClick(statusRef, () => setIsOptionsContainerOpen(false))
 
   useEscapeKeyHandler(onClose)
-
-  const [isOptionsContainerOpen, setIsOptionsContainerOpen] = useState(false)
-
-  const [subtasks, setSubtasks] = useState<SubtaskProps[]>(initialSubtasks)
-
-  const [status, setStatus] = useState(initialStatus)
-
+  
   const {
     register,
     handleSubmit,
@@ -89,10 +92,10 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
-      description: '',
+      title: task?.title ?? '',
+      description: task?.description ?? '',
       subtasks,
-      status: initialStatus,
+      status,
     },
   })
 
@@ -108,7 +111,6 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
   }
 
   const handleChangeSubtask = (index: number, newValue: string) => {
-    console.log(subtasks, index)
     const updatedSubtasks = subtasksValues.map((task, i) =>
       i === index ? { ...task, title: newValue } : task,
     )
@@ -132,7 +134,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
     setValue('subtasks', updatedSubtasks)
   }
 
-  const handleAddTask = async (data: FormData) => {
+  const handleSubmitTask = async (data: FormData) => {
     const isValid = await trigger('subtasks')
 
     if (!isValid) {
@@ -147,7 +149,7 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
       subtasks,
     }
 
-    addTaskToColumn(newTask, status)
+    isEditing ? editTask(newTask, task) : addTaskToColumn(newTask, status)
 
     reset()
     setSubtasks(initialSubtasks)
@@ -174,17 +176,15 @@ export function AddTaskModal({ onClose }: AddTaskModalProps) {
     )
   }
 
-
-console.log(subtasksValues)
   return (
     <Dialog.Portal>
       <ModalOverlay className="DialogOverlay" onClick={onClose} />
       <ModalContent padding="1.5rem 1.5rem 2rem" className="DialogContent xl">
-        <ModalTitle className="DialogTitle">Add New Task</ModalTitle>
+        <ModalTitle className="DialogTitle">{isEditing ? 'Edit Task' : 'Add New Task'}</ModalTitle>
         <VisuallyHidden>
           <Dialog.Description />
         </VisuallyHidden>
-        <FormContainer onSubmit={handleSubmit(handleAddTask)}>
+        <FormContainer onSubmit={handleSubmit(handleSubmitTask)}>
           <InputContainer>
             <CustomLabel htmlFor="title">Title</CustomLabel>
             <CustomInput

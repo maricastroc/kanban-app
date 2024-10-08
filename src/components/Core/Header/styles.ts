@@ -51,7 +51,7 @@ export const BoardName = styled.h1`
   }
 `
 
-export const OptionsContainer = styled.div`
+export const EditDeleteContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -111,7 +111,7 @@ export const AddTaskBtn = styled.button`
   }
 `
 
-export const MoreOptionsBtn = styled.button`
+export const EditDeleteBtn = styled.button`
   cursor: pointer;
   display: flex;
   background-color: transparent;
@@ -137,7 +137,7 @@ export const MoreOptionsBtn = styled.button`
   }
 `
 
-export const MoreOptionsWrapper = styled.div`
+export const EditDeleteWrapper = styled.div`
   display: flex;
   flex-direction: column;
   cursor: pointer;

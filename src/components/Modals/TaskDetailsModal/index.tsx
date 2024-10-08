@@ -22,13 +22,14 @@ import { CustomLabel } from '@/components/Shared/Label'
 import { SubtaskItem } from '@/components/Core/SubtaskItem'
 import { StatusSelector } from '@/components/Shared/StatusSelector'
 import { DeleteModal } from '../DeleteModal'
+import { TaskFormModal } from '../TaskFormModal'
 
-interface ViewTaskModalProps {
+interface TaskDetailsModalProps {
   task: TaskProps
   onClose: () => void
 }
 
-export function ViewTaskModal({ task, onClose }: ViewTaskModalProps) {
+export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
   useEscapeKeyHandler(onClose)
 
   const subtasksCompleted = task.subtasks.filter(
@@ -36,12 +37,17 @@ export function ViewTaskModal({ task, onClose }: ViewTaskModalProps) {
   )
 
   const { activeBoard } = useBoardsContext()
+
   const { moveTaskToColumn } = useTaskContext()
 
   const [status, setStatus] = useState(task.status)
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [isMoreOptionsModalOpen, setIsMoreOptionsModalOpen] = useState(false)
+
+  const [isEditDeleteModalOpen, setIsEditDeleteModalOpen] = useState(false)
+
   const [isStatusOptionsContainerOpen, setIsStatusOptionsContainerOpen] = useState(false)
 
   const statusRef = useRef<HTMLDivElement | null>(null)
@@ -51,23 +57,26 @@ export function ViewTaskModal({ task, onClose }: ViewTaskModalProps) {
   const closeAllModals = () => {
     setIsDeleteModalOpen(false)
     setIsEditModalOpen(false)
-    setIsMoreOptionsModalOpen(false)
-    onClose()
+    setIsEditDeleteModalOpen(false)
+    setIsStatusOptionsContainerOpen(false)
   }
 
   return (
     <>
       {!isDeleteModalOpen && !isEditModalOpen && (
         <Dialog.Portal>
-          <ModalOverlay className="DialogOverlay" onClick={closeAllModals} />
+          <ModalOverlay className="DialogOverlay" onClick={() => {
+            closeAllModals()
+            onClose()
+          }} />
           <ModalContent padding="1.5rem 1.5rem 3rem" className="DialogContent smaller">
             <LayoutContainer>
               <ModalTitle>{task.title}</ModalTitle>
               <OptionsContainer>
-                <OptionsBtn onClick={() => setIsMoreOptionsModalOpen(true)}>
+                <OptionsBtn onClick={() => setIsEditDeleteModalOpen(true)}>
                   <FontAwesomeIcon icon={faEllipsisVertical} />
                 </OptionsBtn>
-                {isMoreOptionsModalOpen && (
+                {isEditDeleteModalOpen && (
                   <OptionsModal>
                     <button
                       className="edit"
@@ -106,8 +115,8 @@ export function ViewTaskModal({ task, onClose }: ViewTaskModalProps) {
               <StatusContainer>
                 <CustomLabel>Current Status</CustomLabel>
                 <SelectStatusField
-                  className={isMoreOptionsModalOpen ? 'active' : ''}
-                  onClick={() => setIsStatusOptionsContainerOpen(false)}
+                  className={isEditDeleteModalOpen ? 'active' : ''}
+                  onClick={() => setIsStatusOptionsContainerOpen(true)}
                 >
                   <p>{status}</p>
                   <FontAwesomeIcon
@@ -122,10 +131,8 @@ export function ViewTaskModal({ task, onClose }: ViewTaskModalProps) {
                         column={column}
                         status={status}
                         handleChangeStatus={() => {
-                          if (status !== column.name) {
-                            moveTaskToColumn(task, column.name, status)
-                            setStatus(column.name)
-                          }
+                          moveTaskToColumn(task, column.name, status)
+                          setStatus(column.name)
                         }}
                       />
                     ))}
@@ -140,6 +147,14 @@ export function ViewTaskModal({ task, onClose }: ViewTaskModalProps) {
         {isDeleteModalOpen && (
           <DeleteModal
             type="task"
+            task={task}
+            onClose={() => closeAllModals()}
+          />
+        )}
+
+        {isEditModalOpen && (
+          <TaskFormModal
+            isEditing
             task={task}
             onClose={() => closeAllModals()}
           />

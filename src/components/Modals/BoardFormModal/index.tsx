@@ -1,42 +1,44 @@
 import { useState } from 'react'
-import { useBoardsContext } from '@/contexts/BoardsContext'
+import * as Dialog from '@radix-ui/react-dialog'
+import { ColumnsContainer, ColumnsContent } from './styles'
+import { ModalContent, ModalOverlay, ModalTitle } from '@/styles/shared'
+
+import { FormContainer } from '@/components/Shared/FormContainer'
+import { InputContainer } from '@/components/Shared/InputContainer'
+import { Button } from '@/components/Shared/Button'
+
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import * as Dialog from '@radix-ui/react-dialog'
-
-import { ColumnsContainer, ColumnsContent } from './styles'
-import { BoardProps } from '@/@types/board'
-import { BoardColumnProps } from '@/@types/board-column'
-import { InputContainer } from '@/components/Shared/InputContainer'
-import { Field } from '@/components/Shared/Field'
+import { useBoardsContext } from '@/contexts/BoardsContext'
+import { initialBoardColumns } from '@/utils/getInitialValues'
 import { FieldsContainer } from '@/components/Shared/FieldsContainer'
-import { Button } from '@/components/Shared/Button'
-import { FormContainer } from '@/components/Shared/FormContainer'
-import { CustomLabel } from '@/components/Shared/Label'
+import { Field } from '@/components/Shared/Field'
 import { CustomInput } from '@/components/Shared/Input'
+import { CustomLabel } from '@/components/Shared/Label'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { BoardColumnProps } from '@/@types/board-column'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
 import { toast } from 'react-toastify'
-import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
-import { ModalContent, ModalOverlay, ModalTitle } from '@/styles/shared'
-import { simulateDelay } from '@/utils/simulateDelay'
 import {
-  MAX_COLUMNS,
   MIN_BOARD_NAME_LENGTH,
   MIN_COLUMN_NAME_LENGTH,
+  MAX_COLUMNS,
 } from '@/utils/constants'
+import { BoardProps } from '@/@types/board'
+
+interface BoardModalProps {
+  board?: BoardProps
+  onClose: () => void
+  isEditing: boolean
+}
 
 const columnSchema = z.object({
-  name: z
-    .string()
-    .min(MIN_COLUMN_NAME_LENGTH, { message: 'Column name is required' }),
+  name: z.string().min(MIN_COLUMN_NAME_LENGTH, { message: 'Column name is required' }),
 })
 
 const formSchema = z.object({
-  name: z.string().min(MIN_BOARD_NAME_LENGTH, {
-    message: 'Board name must have at least 3 characters',
-  }),
+  name: z.string().min(MIN_BOARD_NAME_LENGTH, { message: 'Board title is required' }),
   columns: z
     .array(columnSchema)
     .min(1, { message: 'At least one column is required' })
@@ -47,15 +49,11 @@ const formSchema = z.object({
 
 export type FormData = z.infer<typeof formSchema>
 
-interface EditBoardModalProps {
-  board: BoardProps
-  onClose: () => void
-}
+export function BoardFormModal({ board, onClose, isEditing }: BoardModalProps) {
+  const { createNewBoard, editBoard } = useBoardsContext()
 
-export function EditBoardModal({ board, onClose }: EditBoardModalProps) {
-  const { editBoard } = useBoardsContext()
   const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>(
-    board.columns || [],
+    board?.columns || initialBoardColumns,
   )
 
   const {
@@ -65,33 +63,17 @@ export function EditBoardModal({ board, onClose }: EditBoardModalProps) {
     register,
   } = useForm<FormData>({
     defaultValues: {
-      name: board.name || '',
-      columns: boardColumns,
+      name: board?.name || '',
+      columns: board?.columns || [],
     },
     resolver: zodResolver(formSchema),
   })
 
-  useEscapeKeyHandler(onClose)
-
-  const updateColumnState = (updatedColumns: BoardColumnProps[]) => {
-    setBoardColumns(updatedColumns)
-    setValue('columns', updatedColumns)
-  }
-
   const handleAddColumn = () => {
     const newColumn = { name: '', tasks: [] }
-    updateColumnState([...boardColumns, newColumn])
-  }
-
-  const handleRemoveColumn = (indexToRemove: number) => {
-    if (indexToRemove < 0 || indexToRemove >= boardColumns.length) {
-      toast.error('Index out of bounds')
-      return
-    }
-    const updatedColumns = boardColumns.filter(
-      (_, index) => index !== indexToRemove,
-    )
-    updateColumnState(updatedColumns)
+    const updatedColumns = [...boardColumns, newColumn]
+    setBoardColumns(updatedColumns)
+    setValue('columns', updatedColumns)
   }
 
   const handleChangeColumn = (index: number, newValue: string) => {
@@ -99,15 +81,34 @@ export function EditBoardModal({ board, onClose }: EditBoardModalProps) {
       toast.error('Index out of bounds')
       return
     }
+
     const updatedColumns = boardColumns.map((column, i) =>
       i === index ? { ...column, name: newValue } : column,
     )
-    updateColumnState(updatedColumns)
+
+    setBoardColumns(updatedColumns)
+    setValue('columns', updatedColumns)
   }
 
-  const handleEditBoard = async (data: FormData) => {
-    editBoard(board, data.name, boardColumns)
-    await simulateDelay()
+  const handleRemoveColumn = (indexToRemove: number) => {
+    if (indexToRemove < 0 || indexToRemove >= boardColumns.length) {
+      toast.error('Index out of bounds')
+      return
+    }
+
+    const updatedColumns = boardColumns.filter(
+      (_, index) => index !== indexToRemove,
+    )
+    setBoardColumns(updatedColumns)
+    setValue('columns', updatedColumns)
+  }
+
+  const onSubmit = async (data: FormData) => {
+    if (isEditing && board) {
+      editBoard(board, data.name, boardColumns)
+    } else {
+      createNewBoard(data.name, boardColumns)
+    }
     onClose()
   }
 
@@ -118,8 +119,10 @@ export function EditBoardModal({ board, onClose }: EditBoardModalProps) {
       <FieldsContainer key={index}>
         <Field
           hasError={!!error}
-          defaultValue={column.name}
+          isDisabled={false}
           btnVariant={boardColumns?.length > 1 ? '' : 'disabled'}
+          defaultValue={column.name}
+          placeholder="e.g. New Column"
           onChange={(e) => handleChangeColumn(index, e.target.value)}
           onClick={() => handleRemoveColumn(index)}
         />
@@ -129,25 +132,25 @@ export function EditBoardModal({ board, onClose }: EditBoardModalProps) {
   }
 
   return (
-    <>
+    <Dialog.Portal>
       <ModalOverlay className="DialogOverlay" onClick={onClose} />
       <ModalContent
         padding="1.5rem 1.5rem 3rem"
         className="DialogContent"
         aria-describedby={undefined}
       >
-        <ModalTitle className="DialogTitle">Edit Board</ModalTitle>
+        <ModalTitle className="DialogTitle">
+          {isEditing ? 'Edit Board' : 'Add New Board'}
+        </ModalTitle>
         <VisuallyHidden>
-          <Dialog.Description>
-            {`Edit the board's details here.`}
-          </Dialog.Description>
+          <Dialog.Description />
         </VisuallyHidden>
-        <FormContainer onSubmit={handleSubmit(handleEditBoard)}>
+        <FormContainer onSubmit={handleSubmit(onSubmit)}>
           <InputContainer>
-            <CustomLabel>Name</CustomLabel>
+            <CustomLabel htmlFor="name">Board Name</CustomLabel>
             <CustomInput
               hasError={!!errors.name}
-              type="text"
+              placeholder="e.g. Backend Tasks"
               {...register('name')}
             />
             {<ErrorMessage message={errors.name?.message} />}
@@ -156,9 +159,11 @@ export function EditBoardModal({ board, onClose }: EditBoardModalProps) {
           <ColumnsContainer>
             <CustomLabel>Columns</CustomLabel>
             <ColumnsContent>
-              {boardColumns.map((column, index) =>
-                renderColumnInput(column, index),
-              )}
+              {boardColumns.map((column, index) => (
+                <div key={`${column.name}-${index}`}>
+                  {renderColumnInput(column, index)}
+                </div>
+              ))}
             </ColumnsContent>
             {boardColumns.length < MAX_COLUMNS && (
               <Button
@@ -171,13 +176,13 @@ export function EditBoardModal({ board, onClose }: EditBoardModalProps) {
           </ColumnsContainer>
 
           <Button
-            title="Save Changes"
+            disabled={isSubmitting}
+            title={isEditing ? 'Save Changes' : 'Create Board'}
             type="submit"
             variant="primary"
-            disabled={isSubmitting}
           />
         </FormContainer>
       </ModalContent>
-    </>
+    </Dialog.Portal>
   )
 }

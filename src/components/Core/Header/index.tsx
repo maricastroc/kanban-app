@@ -5,9 +5,9 @@ import {
   BoardNameContainer,
   Container,
   LogoContainer,
-  OptionsContainer,
-  MoreOptionsWrapper,
-  MoreOptionsBtn,
+  EditDeleteContainer,
+  EditDeleteWrapper,
+  EditDeleteBtn,
 } from './styles'
 import Logo from '@/../public/icon.svg'
 import {
@@ -16,10 +16,10 @@ import {
   faPlus,
 } from '@fortawesome/free-solid-svg-icons'
 import * as Dialog from '@radix-ui/react-dialog'
-import { ViewBoardsModal } from '@/components/Modals/ViewBoardsModal'
+import { BoardsDetailsModal } from '@/components/Modals/BoardsDetailsModal'
 import { useEffect, useState } from 'react'
-import { AddTaskModal } from '@/components/Modals/AddTaskModal'
-import { MoreOptionsModal } from '@/components/Modals/MoreOptionsModal'
+import { TaskFormModal } from '@/components/Modals/TaskFormModal'
+import { EditDeleteModal } from '@/components/Modals/EditDeleteModal'
 import { BREAKPOINT_SM } from '@/utils/constants'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { useWindowResize } from '@/utils/useWindowResize'
@@ -33,15 +33,15 @@ export function Header({ onChangeTheme }: HeaderProps) {
 
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
 
-  const [isViewBoardsModalOpen, setIsViewBoardsModalOpen] = useState(false)
+  const [isBoardsDetailsModalOpen, setIsBoardsDetailsModalOpen] = useState(false)
 
-  const [isMoreOptionsModalOpen, setIsMoreOptionsModalOpen] = useState(false)
+  const [isEditDeleteModalOpen, setIsEditDeleteModalOpen] = useState(false)
 
   const isSmallerThanSm = useWindowResize(BREAKPOINT_SM)
 
   useEffect(() => {
     if (!isSmallerThanSm) {
-      setIsViewBoardsModalOpen(false)
+      setIsBoardsDetailsModalOpen(false)
     }
   }, [isSmallerThanSm])
 
@@ -52,22 +52,22 @@ export function Header({ onChangeTheme }: HeaderProps) {
           <img src={Logo} width={24} height={24} alt="Project Logo" />
         )}
 
-        <Dialog.Root open={isViewBoardsModalOpen}>
+        <Dialog.Root open={isBoardsDetailsModalOpen}>
           <Dialog.Trigger asChild>
             <BoardNameContainer
-              onClick={() => isSmallerThanSm && setIsViewBoardsModalOpen(true)}
+              onClick={() => isSmallerThanSm && setIsBoardsDetailsModalOpen(true)}
             >
               <BoardName>{activeBoard?.name}</BoardName>
               {isSmallerThanSm && <FontAwesomeIcon icon={faAngleDown} />}
             </BoardNameContainer>
           </Dialog.Trigger>
-          <ViewBoardsModal
+          <BoardsDetailsModal
             onChangeTheme={onChangeTheme}
-            onClose={() => setIsViewBoardsModalOpen(false)}
+            onClose={() => setIsBoardsDetailsModalOpen(false)}
           />
         </Dialog.Root>
       </LogoContainer>
-      <OptionsContainer>
+      <EditDeleteContainer>
         <Dialog.Root open={isAddTaskModalOpen}>
           <Dialog.Trigger asChild>
             <AddTaskBtn onClick={() => setIsAddTaskModalOpen(true)}>
@@ -75,26 +75,26 @@ export function Header({ onChangeTheme }: HeaderProps) {
               <p>+ Add New Task</p>
             </AddTaskBtn>
           </Dialog.Trigger>
-          <AddTaskModal onClose={() => setIsAddTaskModalOpen(false)} />
+          <TaskFormModal isEditing={false} onClose={() => setIsAddTaskModalOpen(false)} />
         </Dialog.Root>
 
-        <MoreOptionsWrapper>
+        <EditDeleteWrapper>
           <Dialog.Root
-            open={isMoreOptionsModalOpen}
-            onOpenChange={setIsMoreOptionsModalOpen}
+            open={isEditDeleteModalOpen}
+            onOpenChange={setIsEditDeleteModalOpen}
           >
             <Dialog.Trigger asChild>
-              <MoreOptionsBtn>
+              <EditDeleteBtn>
                 <FontAwesomeIcon
                   icon={faEllipsisVertical}
-                  onClick={() => setIsMoreOptionsModalOpen(false)}
+                  onClick={() => setIsEditDeleteModalOpen(false)}
                 />
-              </MoreOptionsBtn>
+              </EditDeleteBtn>
             </Dialog.Trigger>
-            <MoreOptionsModal onClose={() => setIsMoreOptionsModalOpen(false)} />
+            <EditDeleteModal onClose={() => setIsEditDeleteModalOpen(false)} />
           </Dialog.Root>
-        </MoreOptionsWrapper>
-      </OptionsContainer>
+        </EditDeleteWrapper>
+      </EditDeleteContainer>
     </Container>
   )
 }

@@ -24,7 +24,7 @@ import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { simulateDelay } from '@/utils/simulateDelay'
 import { MIN_BOARD_NAME_LENGTH, MIN_COLUMN_NAME_LENGTH } from '@/utils/constants'
 
-interface AddColumnModalProps {
+interface ColumnFormModalProps {
   onClose: () => void
 }
 
@@ -41,7 +41,7 @@ const formSchema = z.object({
 
 export type FormData = z.infer<typeof formSchema>
 
-export function AddColumnModal({ onClose }: AddColumnModalProps) {
+export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
   useEscapeKeyHandler(onClose)
 
   const { activeBoard } = useBoardsContext()

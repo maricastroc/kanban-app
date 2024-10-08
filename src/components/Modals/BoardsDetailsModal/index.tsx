@@ -12,7 +12,6 @@ import {
 } from './styles'
 
 import { useBoardsContext } from '@/contexts/BoardsContext'
-import { AddBoardModal } from '../AddBoardModal'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 import { ModalContent, ModalOverlay } from '@/styles/shared'
 
@@ -22,8 +21,9 @@ import DarkThemeSvg from '@/../public/icon-dark-theme.svg'
 
 import { BoardProps } from '@/@types/board'
 import { simulateDelay } from '@/utils/simulateDelay'
+import { BoardFormModal } from '../BoardFormModal'
 
-interface ViewBoardsModalProps {
+interface BoardsDetailsModalProps {
   onChangeTheme: () => void
   onClose: () => void
 }
@@ -47,10 +47,10 @@ const BoardListItem = ({
   </BoardItem>
 )
 
-export function ViewBoardsModal({
+export function BoardsDetailsModal({
   onChangeTheme,
   onClose,
-}: ViewBoardsModalProps) {
+}: BoardsDetailsModalProps) {
   const {
     activeBoard,
     allBoards,
@@ -98,7 +98,7 @@ export function ViewBoardsModal({
                 <p>+ Create New Board</p>
               </BoardItem>
             </Dialog.Trigger>
-            <AddBoardModal onClose={() => setAddBoardModalOpen(false)} />
+            <BoardFormModal isEditing={false} onClose={() => setAddBoardModalOpen(false)} />
           </Dialog.Root>
         </BoardsContainer>
 

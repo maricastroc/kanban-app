@@ -9,7 +9,7 @@ import { SubtaskProps } from '@/@types/subtask'
 
 interface TaskContextData {
   deleteTask: (task: TaskProps | undefined) => void
-  editTask: (updatedTask: TaskProps, originalTask: TaskProps) => void
+  editTask: (updatedTask: TaskProps, originalTask: TaskProps | undefined) => void
   addTaskToColumn: (task: TaskProps, columnName: string | undefined) => void
   updateBoardColumns: (updatedColumns: BoardColumnProps[]) => void
   moveTaskToColumn: (
@@ -116,7 +116,11 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     toast.success('Task successfully deleted!')
   }
 
-  function editTask(updatedTask: TaskProps, originalTask: TaskProps) {
+  function editTask(updatedTask: TaskProps, originalTask: TaskProps | undefined) {
+    if (originalTask === undefined) {
+      return
+    }
+    
     const boardsCopy = [...getStorageBoards()]
     const boardIndex = boardsCopy.findIndex(
       (board) => board.name === activeBoard?.name,
