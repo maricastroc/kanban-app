@@ -66,10 +66,12 @@ export function BoardsContextProvider({
 
   function saveActiveBoard(board: BoardProps) {
     saveStorageActiveBoard({
+      id: board.id,
       name: board.name,
       columns: [...board.columns],
     })
     setActiveBoard({
+      id: board.id,
       name: board.name,
       columns: [...board.columns],
     })
@@ -98,6 +100,7 @@ export function BoardsContextProvider({
 
   function createNewBoard(name: string, columns: BoardColumnProps[]) {
     const newBoard: BoardProps = {
+      id: Date.now(),
       name,
       columns,
     }

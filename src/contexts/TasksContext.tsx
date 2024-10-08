@@ -19,7 +19,7 @@ interface TaskContextData {
   ) => void
   toggleSubtaskStatus: (
     task: TaskProps,
-    subtaskTitle: string,
+    subtaskId: number,
     status: boolean,
   ) => void
 }
@@ -63,7 +63,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     if (!sourceColumn) return
 
     const taskIndex = sourceColumn.tasks.findIndex(
-      (t) => t.title === task.title,
+      (t) => t.id === task.id,
     )
 
     if (taskIndex === -1) return
@@ -79,10 +79,10 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     if (!targetColumn) return
 
     const isTaskDuplicate = targetColumn.tasks.some(
-      (t) => t.title === taskToMove.title,
+      (t) => t.id === taskToMove.id,
     )
     if (isTaskDuplicate) {
-      toast.error('This column already contains a task with this name.')
+      toast.error('This column already contains a task with this ID.')
       return
     }
 
@@ -104,7 +104,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     const boardCopy = { ...boardsCopy[boardIndex] }
 
     boardCopy.columns.forEach((column) => {
-      const taskIndex = column.tasks.findIndex((t) => t.title === task.title)
+      const taskIndex = column.tasks.findIndex((t) => t.id === task.id)
       if (taskIndex !== -1) {
         column.tasks.splice(taskIndex, 1)
       }
@@ -132,7 +132,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
       const columnIndex = boardCopy.columns.findIndex(
         (column: BoardColumnProps) =>
           column.tasks.some(
-            (task: TaskProps) => task.title === originalTask.title,
+            (task: TaskProps) => task.id === originalTask.id,
           ),
       )
 
@@ -140,8 +140,8 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
         const column = boardCopy.columns[columnIndex]
         const isDuplicateTask = column.tasks.some(
           (task: TaskProps) =>
-            task.title === updatedTask.title &&
-            updatedTask.title !== originalTask.title,
+            task.id !== originalTask.id &&
+            task.title === updatedTask.title,
         )
 
         if (isDuplicateTask) {
@@ -150,7 +150,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
         }
 
         const taskToEdit = column.tasks.find(
-          (task: TaskProps) => task.title === originalTask.title,
+          (task: TaskProps) => task.id === originalTask.id,
         )
         if (taskToEdit) {
           taskToEdit.title = updatedTask.title
@@ -179,11 +179,11 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
 
     const isDuplicateTask = column.tasks.some(
       (existingTask) =>
-        existingTask.title.toLowerCase() === task.title.toLowerCase(),
+        existingTask.id === task.id,
     )
 
     if (isDuplicateTask) {
-      toast.error('This column already contains a task with this name.')
+      toast.error('This column already contains a task with this ID.')
       return
     }
 
@@ -223,6 +223,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
         boardCopy.columns[columnIndex].tasks = columnToUpdate.tasks || []
       } else {
         boardCopy.columns.push({
+          id: columnToUpdate.id,
           name: columnToUpdate.name,
           tasks: columnToUpdate.tasks || [],
         })
@@ -231,7 +232,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
 
     boardCopy.columns = boardCopy.columns.filter((column) =>
       updatedColumns.some(
-        (columnToUpdate) => columnToUpdate.name === column.name,
+        (columnToUpdate) => columnToUpdate.id === column.id,
       ),
     )
 
@@ -244,7 +245,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
 
   function toggleSubtaskStatus(
     task: TaskProps,
-    subtaskTitle: string,
+    subtaskId: number,
     isChecked: boolean,
   ) {
     const boardsCopy = [...allBoards]
@@ -257,17 +258,17 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
 
       const targetTaskIndex = updatedBoard.columns.findIndex(
         (column: BoardColumnProps) =>
-          column.tasks.some((t) => t.title === task.title),
+          column.tasks.some((t) => t.id === task.id),
       )
 
       if (targetTaskIndex !== -1) {
         const targetTask = updatedBoard.columns[targetTaskIndex].tasks.find(
-          (t: TaskProps) => t.title === task.title,
+          (t: TaskProps) => t.id === task.id,
         )
 
         if (targetTask) {
           const targetSubtask = targetTask.subtasks.find(
-            (subtask: SubtaskProps) => subtask.title === subtaskTitle,
+            (subtask: SubtaskProps) => subtask.id === subtaskId,
           )
 
           if (targetSubtask) {

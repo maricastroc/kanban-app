@@ -91,6 +91,7 @@ export function Home({ onChangeTheme }: HomeProps) {
             >
               {columns.map((column: BoardColumnProps, index: number) => (
                 <BoardColumn
+                  id={column.id}
                   key={index}
                   name={column.name}
                   tasks={column.tasks}
