@@ -9,6 +9,7 @@ import {
   saveStorageActiveBoard,
   saveStorageBoards,
 } from '@/storage/boardsConfig'
+import { getStorageTheme, saveStorageTheme } from '@/storage/themeConfig'
 
 interface BoardsContextData {
   enableDarkMode: boolean
@@ -48,7 +49,9 @@ interface BoardsContextProviderProps {
 export function BoardsContextProvider({
   children,
 }: BoardsContextProviderProps) {
-  const [enableDarkMode, setEnableDarkMode] = useState(true)
+  const activeTheme = getStorageTheme()
+
+  const [enableDarkMode, setEnableDarkMode] = useState(activeTheme === 'DARK_THEME')
 
   const [activeBoard, setActiveBoard] = useState<BoardProps | null>(
     getActiveStorageBoard(),
@@ -58,6 +61,7 @@ export function BoardsContextProvider({
 
   function handleEnableDarkMode() {
     setEnableDarkMode(!enableDarkMode)
+    saveStorageTheme(enableDarkMode ? 'LIGHT_THEME' : 'DARK_THEME')
   }
 
   function saveActiveBoard(board: BoardProps) {

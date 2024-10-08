@@ -102,7 +102,7 @@ export function Home({ onChangeTheme }: HomeProps) {
                 <Dialog.Root open={isColumnFormModalOpen}>
                 <Dialog.Trigger asChild>
                   <AddColumnContainer
-                    className={enableDarkMode ? 'light' : 'dark'}
+                    className={enableDarkMode ? 'dark' : 'light'}
                     onClick={() => setIsColumnFormModalOpen(true)}
                   >
                     <AddColumnBtn>+ New Column</AddColumnBtn>

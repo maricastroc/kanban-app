@@ -27,7 +27,7 @@ export function useDragAndDropTask(
         const updatedSourceColumnTasks = sourceColumn.tasks.filter(
           (t) => t.title !== task.title,
         )
-        console.log(sourceColumn)
+
         const updatedTargetColumnTasks = [...targetColumn.tasks, task]
 
         const updatedColumns = prevColumns.map((column, index) => {

@@ -48,7 +48,7 @@ export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
         <LogoWrapper>
           <img src={Logo} width={24} height={24} alt="" />
           <img
-            src={enableDarkMode ? LogoTextDark : LogoTextLight}
+            src={enableDarkMode ? LogoTextLight : LogoTextDark}
             width={112}
             height={24}
             alt=""
