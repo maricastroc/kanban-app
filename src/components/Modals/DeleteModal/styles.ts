@@ -6,7 +6,7 @@ export const ModalDescription = styled(RadixDescription)`
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 
   span {
     color: ${(props) => props.theme['subtitle-color']};

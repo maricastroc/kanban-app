@@ -34,10 +34,12 @@ interface BoardModalProps {
 }
 
 const columnSchema = z.object({
+  id: z.number(),
   name: z.string().min(MIN_COLUMN_NAME_LENGTH, { message: 'Column name is required' }),
 })
 
 const formSchema = z.object({
+  id: z.number(),
   name: z.string().min(MIN_BOARD_NAME_LENGTH, { message: 'Board title is required' }),
   columns: z
     .array(columnSchema)
@@ -53,24 +55,27 @@ export function BoardFormModal({ board, onClose, isEditing }: BoardModalProps) {
   const { createNewBoard, editBoard } = useBoardsContext()
 
   const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>(
-    board?.columns || initialBoardColumns,
+    board?.columns ?? initialBoardColumns
   )
 
   const {
+    watch,
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
     register,
   } = useForm<FormData>({
     defaultValues: {
+      id: Date.now(),
       name: board?.name || '',
-      columns: board?.columns || [],
+      columns: isEditing ? board?.columns : initialBoardColumns,
     },
     resolver: zodResolver(formSchema),
   })
-
+const form = watch()
+console.log(form)
   const handleAddColumn = () => {
-    const newColumn = { name: '', tasks: [] }
+    const newColumn = { id: Date.now(), name: '', tasks: [] }
     const updatedColumns = [...boardColumns, newColumn]
     setBoardColumns(updatedColumns)
     setValue('columns', updatedColumns)

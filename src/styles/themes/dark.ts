@@ -6,6 +6,9 @@ export const darkTheme = {
   'primary-color': '#635FC7',
   'primary-hover': '#A8A4FF',
 
+  'secondary-btn': '#FFFFFF',
+  'secondary-hover': '#DCDBFA',
+
   'error-color': '#EA5555',
   'error-hover': '#FF9898',
 

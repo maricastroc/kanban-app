@@ -103,6 +103,7 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
                   {task.subtasks.map((subtask: SubtaskProps) => (
                     <SubtaskItem
                       key={subtask.title}
+                      id={subtask.id}
                       task={task}
                       title={subtask.title}
                       isCompleted={subtask.isCompleted}

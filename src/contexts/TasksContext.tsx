@@ -79,10 +79,10 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     if (!targetColumn) return
 
     const isTaskDuplicate = targetColumn.tasks.some(
-      (t) => t.id === taskToMove.id,
+      (t) => t.title === taskToMove.title,
     )
     if (isTaskDuplicate) {
-      toast.error('This column already contains a task with this ID.')
+      toast.error('This column already contains a task with this name.')
       return
     }
 
@@ -179,11 +179,11 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
 
     const isDuplicateTask = column.tasks.some(
       (existingTask) =>
-        existingTask.id === task.id,
+        existingTask.title === task.title,
     )
 
     if (isDuplicateTask) {
-      toast.error('This column already contains a task with this ID.')
+      toast.error('This column already contains a task with this name.')
       return
     }
 

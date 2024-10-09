@@ -43,7 +43,7 @@ const formSchema = z.object({
 
 export type FormData = z.infer<typeof formSchema>
 
-export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
+export function AddColumnModal({ onClose }: ColumnFormModalProps) {
   useEscapeKeyHandler(onClose)
 
   const { activeBoard } = useBoardsContext()
@@ -150,10 +150,10 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
   }
 
   return (
-    <>
+    <Dialog.Portal>
       <ModalOverlay className="DialogOverlay" onClick={() => onClose()} />
       <ModalContent className="DialogContent">
-        <ModalTitle className="DialogTitle">Add New Column</ModalTitle>
+        <ModalTitle className="DialogTitle">Add New Column a</ModalTitle>
         <VisuallyHidden>
           <Dialog.Description />
         </VisuallyHidden>
@@ -193,6 +193,6 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
           />
         </FormContainer>
       </ModalContent>
-    </>
+    </Dialog.Portal>
   )
 }

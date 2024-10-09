@@ -24,14 +24,14 @@ export const Container = styled.button`
   }
 
   &.secondary {
-    background-color: ${(props) => `${props.theme['primary-color']}1A`};
+    background-color: ${(props) => `${props.theme['secondary-btn']}`};
 
     p {
       color: ${(props) => props.theme['primary-color']};
     }
 
     &:hover {
-      background-color: ${(props) => `${props.theme['primary-color']}40`};
+      background-color: ${(props) => `${props.theme['secondary-hover']}`};
       transition: 200ms;
     }
   }

@@ -120,6 +120,8 @@ export function BoardsContextProvider({
       return
     }
 
+    toast.success('Board successfully created!')
+
     const updatedBoards = [...allBoards, newBoard]
     updateBoards(updatedBoards)
     handleSetActiveBoard(newBoard)
@@ -194,6 +196,8 @@ export function BoardsContextProvider({
         setActiveBoard(null)
       }
     }
+
+    toast.success('Board successfully deleted!')
 
     updateBoards(updatedBoards)
   }

@@ -40,11 +40,13 @@ import { SubtaskProps } from '@/@types/subtask'
 import { TaskProps } from '@/@types/task'
 
 const subtaskSchema = z.object({
+  id: z.number(),
   title: z.string().min(1, { message: 'Subtask title is required' }),
   isCompleted: z.boolean(),
 })
 
 const formSchema = z.object({
+  id: z.number(),
   title: z.string().min(MIN_TITLE_LENGTH, { message: 'Title is required' }),
   description: z.string().optional(),
   subtasks: z
@@ -92,6 +94,7 @@ export function TaskFormModal({ onClose, isEditing = false, task }: AddTaskModal
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      id: Date.now(),
       title: task?.title ?? '',
       description: task?.description ?? '',
       subtasks,
@@ -101,8 +104,12 @@ export function TaskFormModal({ onClose, isEditing = false, task }: AddTaskModal
 
   const subtasksValues = watch('subtasks')
 
+  const form = watch()
+  console.log(form)
+
   const handleAddSubtask = () => {
-    const newSubtask: SubtaskProps = { title: '', isCompleted: false }
+    console.log('hy')
+    const newSubtask: SubtaskProps = { id: Date.now(), title: '', isCompleted: false }
 
     const updatedSubtasks = [...subtasks, newSubtask]
 
@@ -135,6 +142,7 @@ export function TaskFormModal({ onClose, isEditing = false, task }: AddTaskModal
   }
 
   const handleSubmitTask = async (data: FormData) => {
+    console.log('hy')
     const isValid = await trigger('subtasks')
 
     if (!isValid) {
@@ -143,6 +151,7 @@ export function TaskFormModal({ onClose, isEditing = false, task }: AddTaskModal
     }
 
     const newTask = {
+      id: Date.now(),
       title: data.title,
       description: data.description || '',
       status: status || DEFAULT_STATUS,

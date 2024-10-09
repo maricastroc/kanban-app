@@ -84,7 +84,7 @@ export function Home({ onChangeTheme }: HomeProps) {
             <ColumnsContainer
               ref={columnsContainerRef}
               className={`${hideSidebar && 'hide-sidebar-mode'}`}
-              onMouseDown={handleContainerMouseDown} // Usa a função personalizada
+              onMouseDown={handleContainerMouseDown}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
               onMouseMove={handleMouseMove}

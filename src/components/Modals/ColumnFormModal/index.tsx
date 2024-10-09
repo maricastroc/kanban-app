@@ -29,10 +29,12 @@ interface ColumnFormModalProps {
 }
 
 const columnSchema = z.object({
+  id: z.number(),
   name: z.string().min(MIN_COLUMN_NAME_LENGTH, { message: 'Column Name must have at least three characters' }),
 })
 
 const formSchema = z.object({
+  id: z.number(),
   name: z.string().min(MIN_BOARD_NAME_LENGTH, { message: 'Title is required' }),
   columns: z
     .array(columnSchema)
@@ -60,6 +62,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
     watch,
   } = useForm<FormData>({
     defaultValues: {
+      id: activeBoard?.id,
       name: activeBoard?.name,
       columns: activeBoard?.columns,
     },
@@ -69,7 +72,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
   useEscapeKeyHandler(onClose)
 
   const handleAddColumn = () => {
-    const newColumn = { name: '', tasks: [] }
+    const newColumn = { id: Date.now(), name: '', tasks: [] }
     const updatedColumns = [...boardColumns, newColumn]
 
     setBoardColumns(updatedColumns)
@@ -111,6 +114,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
         const existingColumn = boardColumns[index]
 
         return {
+          id: column.id,
           name: column.name,
           tasks: existingColumn?.tasks || [],
         }
@@ -147,7 +151,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
   }
 
   return (
-    <>
+    <Dialog.Portal>
       <ModalOverlay className="DialogOverlay" onClick={() => onClose()} />
       <ModalContent className="DialogContent">
         <ModalTitle className="DialogTitle">Add New Column</ModalTitle>
@@ -190,6 +194,6 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
           />
         </FormContainer>
       </ModalContent>
-    </>
+    </Dialog.Portal>
   )
 }

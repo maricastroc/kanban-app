@@ -8,19 +8,20 @@ import { CheckedBox, Container, Title, UncheckedBox } from './styles'
 import { useTaskContext } from '@/contexts/TasksContext'
 
 interface SubtaskItemProps {
+  id: number;
   task: TaskProps
   title: string
   isCompleted: boolean
 }
 
-export function SubtaskItem({ task, title, isCompleted }: SubtaskItemProps) {
+export function SubtaskItem({ id, task, title, isCompleted }: SubtaskItemProps) {
   const { toggleSubtaskStatus } = useTaskContext()
 
   const [isChecked, setIsChecked] = useState(isCompleted)
 
   const handleToggleSubtaskStatus = () => {
     setIsChecked((prev) => !prev)
-    toggleSubtaskStatus(task, title, !isChecked)
+    toggleSubtaskStatus(task, id, !isChecked)
   }
 
   return (
