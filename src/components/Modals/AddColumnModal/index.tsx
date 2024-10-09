@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { v4 as uuidv4 } from 'uuid';
 
 import { LayoutContainer, ColumnContent } from './styles'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -32,14 +33,14 @@ interface ColumnFormModalProps {
 }
 
 const columnSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   name: z.string().min(MIN_COLUMN_NAME_LENGTH, {
     message: 'Column Name must have at least three characters',
   }),
 })
 
 const formSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   name: z.string().min(MIN_BOARD_NAME_LENGTH, { message: 'Title is required' }),
   columns: z
     .array(columnSchema)
@@ -76,7 +77,7 @@ export function AddColumnModal({ onClose }: ColumnFormModalProps) {
   useEscapeKeyHandler(onClose)
 
   const handleAddColumn = () => {
-    const newColumn = { id: Date.now(), name: '', tasks: [] }
+    const newColumn = { id: uuidv4(), name: '', tasks: [] }
     const updatedColumns = [...boardColumns, newColumn]
 
     setBoardColumns(updatedColumns)

@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
-import { DndProvider } from 'react-dnd'
+import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd'
 import * as Dialog from '@radix-ui/react-dialog'
-import { HTML5Backend } from 'react-dnd-html5-backend'
 import { BoardColumn } from '@/components/Core/BoardColumn'
 import { Header } from '@/components/Core/Header'
 import {
@@ -19,7 +18,6 @@ import { useTaskContext } from '@/contexts/TasksContext'
 import { BREAKPOINT_SM } from '@/utils/constants'
 import { Sidebar } from '@/components/Core/Sidebar'
 import HideSidebar from '@/../public/icon-show-sidebar.svg'
-import { useDragAndDropTask } from '@/utils/useDragAndDropTask'
 import { useWindowResize } from '@/utils/useWindowResize'
 import { useDragScroll } from '@/utils/useDragScroll'
 import { ColumnFormModal } from '@/components/Modals/ColumnFormModal'
@@ -48,11 +46,6 @@ export function Home({ onChangeTheme }: HomeProps) {
   const { handleMouseDown, handleMouseMove, handleMouseUp } =
     useDragScroll(columnsContainerRef)
 
-  const { handleDragAndDropTask } = useDragAndDropTask(
-    activeBoard?.columns || [],
-    moveTaskToColumn,
-  )
-
   useEffect(() => {
     if (activeBoard?.columns) {
       setColumns(activeBoard.columns)
@@ -69,9 +62,62 @@ export function Home({ onChangeTheme }: HomeProps) {
     handleMouseDown(e)
   }
 
+  const onDragEnd = (result: DropResult) => {
+    const { destination, source } = result;
+  
+    if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) {
+      return;
+    }
+
+    const sourceColumnIndex = parseInt(source.droppableId, 10);
+    const destinationColumnIndex = parseInt(destination.droppableId, 10);
+  
+    const sourceColumn = columns[sourceColumnIndex];
+    const destinationColumn = columns[destinationColumnIndex];
+  
+    const newSourceTasks = Array.from(sourceColumn.tasks);
+    const [movedTask] = newSourceTasks.splice(source.index, 1);
+  
+    if (sourceColumnIndex === destinationColumnIndex) {
+      newSourceTasks.splice(destination.index, 0, movedTask);
+
+      const newColumns = [...columns];
+
+      newColumns[sourceColumnIndex] = {
+        ...sourceColumn,
+        tasks: newSourceTasks,
+      };
+
+      setColumns(newColumns);
+    } else {
+      const newDestinationTasks = Array.from(destinationColumn.tasks);
+
+      newDestinationTasks.splice(destination.index, 0, movedTask);
+  
+      const newColumns = [...columns];
+
+      newColumns[sourceColumnIndex] = {
+        ...sourceColumn,
+        tasks: newSourceTasks,
+      };
+
+      newColumns[destinationColumnIndex] = {
+        ...destinationColumn,
+        tasks: newDestinationTasks,
+      };
+
+      setColumns(newColumns);
+  
+      moveTaskToColumn(movedTask, destinationColumn.name, sourceColumn.name);
+    }
+  }
+  
+
   return (
-    <DndProvider backend={HTML5Backend}>
-      <LayoutContainer>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Droppable droppableId="all-columns" direction="horizontal">
+      {(provided) => (
+        <LayoutContainer ref={provided.innerRef} {...provided.droppableProps}>
         <BoardContent>
           {!isSmallerThanSm && !hideSidebar && (
             <Sidebar
@@ -96,7 +142,6 @@ export function Home({ onChangeTheme }: HomeProps) {
                   name={column.name}
                   tasks={column.tasks}
                   index={index}
-                  handleDragAndDropTask={handleDragAndDropTask}
                 />
               ))}
               {activeBoard?.columns && activeBoard?.columns?.length < 6 && (
@@ -125,6 +170,8 @@ export function Home({ onChangeTheme }: HomeProps) {
           )}
         </BoardContent>
       </LayoutContainer>
-    </DndProvider>
+      )}
+      </Droppable>
+    </DragDropContext>
   )
 }

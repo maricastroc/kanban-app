@@ -22,7 +22,7 @@ interface TaskContextData {
   ) => void
   toggleSubtaskStatus: (
     task: TaskProps,
-    subtaskId: number,
+    subtaskId: string,
     status: boolean,
   ) => void
 }
@@ -243,7 +243,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
 
   function toggleSubtaskStatus(
     task: TaskProps,
-    subtaskId: number,
+    subtaskId: string,
     isChecked: boolean,
   ) {
     const boardsCopy = [...allBoards]

@@ -1,7 +1,7 @@
 import { SubtaskProps } from './subtask'
 
 export interface TaskProps {
-  id: number
+  id: string
   column_index?: number
   title: string
   description: string

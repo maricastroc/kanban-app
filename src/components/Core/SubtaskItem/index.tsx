@@ -6,12 +6,10 @@ import { TaskProps } from '@/@types/task'
 
 import { CheckedBox, Container, Title, UncheckedBox } from './styles'
 import { useTaskContext } from '@/contexts/TasksContext'
+import { SubtaskProps } from '@/@types/subtask'
 
-interface SubtaskItemProps {
-  id: number
-  task: TaskProps
-  title: string
-  isCompleted: boolean
+interface SubtaskItemProps extends SubtaskProps {
+  task: TaskProps;
 }
 
 export function SubtaskItem({

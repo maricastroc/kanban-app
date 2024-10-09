@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from 'react'
 import { toast } from 'react-toastify'
+import { v4 as uuidv4 } from 'uuid';
 
 import { BoardColumnProps } from '@/@types/board-column'
 import { BoardProps } from '@/@types/board'
@@ -102,7 +103,7 @@ export function BoardsContextProvider({
 
   function createNewBoard(name: string, columns: BoardColumnProps[]) {
     const newBoard: BoardProps = {
-      id: Date.now(),
+      id: uuidv4(),
       name,
       columns,
     }

@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { v4 as uuidv4 } from 'uuid';
 import * as Dialog from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
@@ -44,13 +45,13 @@ import { SubtaskProps } from '@/@types/subtask'
 import { TaskProps } from '@/@types/task'
 
 const subtaskSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   title: z.string().min(1, { message: 'Subtask title is required' }),
   isCompleted: z.boolean(),
 })
 
 const formSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   title: z.string().min(MIN_TITLE_LENGTH, { message: 'Title is required' }),
   description: z.string().optional(),
   subtasks: z
@@ -106,7 +107,7 @@ export function TaskFormModal({
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      id: Date.now(),
+      id: uuidv4(),
       title: task?.title ?? '',
       description: task?.description ?? '',
       subtasks,
@@ -118,7 +119,7 @@ export function TaskFormModal({
 
   const handleAddSubtask = () => {
     const newSubtask: SubtaskProps = {
-      id: Date.now(),
+      id: uuidv4(),
       title: '',
       isCompleted: false,
     }
@@ -162,7 +163,7 @@ export function TaskFormModal({
     }
 
     const newTask = {
-      id: Date.now(),
+      id: uuidv4(),
       title: data.title,
       description: data.description || '',
       status: status || DEFAULT_STATUS,

@@ -1,11 +1,13 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export const initialBoardColumns = [
   {
-    id: Date.now(),
+    id: uuidv4(),
     name: 'Todo',
     tasks: [],
   },
   {
-    id: Date.now(),
+    id: uuidv4(),
     name: 'Doing',
     tasks: [],
   },
@@ -13,7 +15,7 @@ export const initialBoardColumns = [
 
 export const initialSubtasks = [
   {
-    id: Date.now(),
+    id: uuidv4(),
     title: '',
     isCompleted: false,
   },

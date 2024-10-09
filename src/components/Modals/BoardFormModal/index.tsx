@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { v4 as uuidv4 } from 'uuid';
 import * as Dialog from '@radix-ui/react-dialog'
 import { ColumnsContainer, ColumnsContent } from './styles'
 import { ModalContent, ModalOverlay, ModalTitle } from '@/styles/shared'
@@ -34,14 +35,14 @@ interface BoardModalProps {
 }
 
 const columnSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   name: z
     .string()
     .min(MIN_COLUMN_NAME_LENGTH, { message: 'Column name is required' }),
 })
 
 const formSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   name: z
     .string()
     .min(MIN_BOARD_NAME_LENGTH, { message: 'Board title is required' }),
@@ -69,7 +70,7 @@ export function BoardFormModal({ board, onClose, isEditing }: BoardModalProps) {
     register,
   } = useForm<FormData>({
     defaultValues: {
-      id: Date.now(),
+      id: uuidv4(),
       name: board?.name || '',
       columns: isEditing ? board?.columns : initialBoardColumns,
     },
@@ -77,7 +78,7 @@ export function BoardFormModal({ board, onClose, isEditing }: BoardModalProps) {
   })
 
   const handleAddColumn = () => {
-    const newColumn = { id: Date.now(), name: '', tasks: [] }
+    const newColumn = { id: uuidv4(), name: '', tasks: [] }
     const updatedColumns = [...boardColumns, newColumn]
     setBoardColumns(updatedColumns)
     setValue('columns', updatedColumns)
