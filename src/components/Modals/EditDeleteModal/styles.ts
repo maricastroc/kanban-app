@@ -10,12 +10,20 @@ export const ModalContent = styled(RadixContent)`
   border-radius: 8px;
   position: absolute;
   gap: 0.8rem;
-  top: 4.5rem;
+  top: 5rem;
   right: 0.7rem;
   width: 10rem;
   z-index: 10;
   background-color: ${(props) => props.theme['cards-color']};
   box-shadow: 0 4px 6px rgba(54, 78, 126, 0.1);
+
+  &.dark {
+    border: solid 1px ${(props) => props.theme['border-color']};
+  }
+
+  &.light {
+    box-shadow: 0 4px 6px rgba(54, 78, 126, 0.1);
+  }
 
   @media (min-width: 768px) {
     right: 2rem;

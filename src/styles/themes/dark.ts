@@ -6,8 +6,13 @@ export const darkTheme = {
   'primary-color': '#635FC7',
   'primary-hover': '#A8A4FF',
 
-  'secondary-btn': '#FFFFFF',
+  'secondary-color': '#FFFFFF',
   'secondary-hover': '#DCDBFA',
+
+  'tertiary-hover': '#A8A4FF',
+
+  'sidebar-btn-color': '#635FC7',
+  'sidebar-btn-hover': '#FFFFFF',
 
   'error-color': '#EA5555',
   'error-hover': '#FF9898',

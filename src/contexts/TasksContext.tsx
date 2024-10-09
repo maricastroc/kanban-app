@@ -19,6 +19,7 @@ interface TaskContextData {
     task: TaskProps,
     targetColumn: string,
     previousColumn: string,
+    destinationIndex?: number,
   ) => void
   toggleSubtaskStatus: (
     task: TaskProps,
@@ -53,32 +54,32 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     task: TaskProps,
     targetColumnName: string,
     previousColumnName: string,
+    destinationIndex?: number,
   ) {
     const boardIndex = findActiveBoardIndex()
     if (boardIndex === -1) return
-
+  
     const boardsCopy = [...allBoards]
     const boardCopy = { ...boardsCopy[boardIndex] }
-
+  
     const sourceColumn = boardCopy?.columns?.find(
       (column) => column.name === previousColumnName,
     )
     if (!sourceColumn) return
-
+  
     const taskIndex = sourceColumn.tasks.findIndex((t) => t.id === task.id)
-
+  
     if (taskIndex === -1) return
-
+  
     const taskToMove = sourceColumn.tasks[taskIndex]
     taskToMove.status = targetColumnName
     sourceColumn.tasks.splice(taskIndex, 1)
-
+  
     const targetColumn = boardCopy?.columns?.find(
       (column) => column.name === targetColumnName,
     )
-
     if (!targetColumn) return
-
+  
     const isTaskDuplicate = targetColumn.tasks.some(
       (t) => t.title === taskToMove.title,
     )
@@ -86,13 +87,17 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
       toast.error('This column already contains a task with this name.')
       return
     }
-
-    targetColumn.tasks.push(taskToMove)
+  
+    const targetIndex = destinationIndex ?? targetColumn.tasks.length
+  
+    targetColumn.tasks.splice(targetIndex, 0, taskToMove)
+  
     boardsCopy[boardIndex] = boardCopy
-
+  
     updateBoards(boardsCopy)
     handleSetActiveBoard(boardCopy)
   }
+  
 
   function deleteTask(task: TaskProps | undefined) {
     if (task === undefined) {
@@ -233,8 +238,6 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     boardCopy.columns = boardCopy.columns.filter((column) =>
       updatedColumns.some((columnToUpdate) => columnToUpdate.id === column.id),
     )
-
-    toast.success('Board successfully updated!')
 
     boardsCopy[boardIndex] = boardCopy
     updateBoards(boardsCopy)

@@ -89,7 +89,7 @@ export const AddTaskBtn = styled.button`
 
   &:hover {
     transition: 200ms;
-    background-color: ${(props) => props.theme['primary-hover']};
+    background-color: ${(props) => props.theme['tertiary-hover']};
   }
 
   @media (min-width: 768px) {

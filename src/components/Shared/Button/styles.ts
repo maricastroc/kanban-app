@@ -24,7 +24,7 @@ export const Container = styled.button`
   }
 
   &.secondary {
-    background-color: ${(props) => `${props.theme['secondary-btn']}`};
+    background-color: ${(props) => `${props.theme['secondary-color']}`};
 
     p {
       color: ${(props) => props.theme['primary-color']};
@@ -58,7 +58,7 @@ export const Container = styled.button`
     box-shadow: none;
   }
 
-  &[disabled] {
+  &.disabled {
     cursor: not-allowed;
   }
 `

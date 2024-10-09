@@ -72,7 +72,7 @@ export const BoardBtn = styled.button`
   }
 
   &.active {
-    background-color: ${(props) => props.theme['primary-color']};
+    background-color: ${(props) => props.theme['sidebar-btn-color']};
     border-top-right-radius: 22px;
     border-bottom-right-radius: 22px;
 
@@ -91,7 +91,7 @@ export const BoardBtn = styled.button`
   }
 
   &:hover {
-    background-color: ${(props) => `${props.theme['primary-color']}40`};
+    background-color: ${(props) => `${props.theme['sidebar-btn-hover']}`};
     transition: 200ms;
     border-top-right-radius: 22px;
     border-bottom-right-radius: 22px;
@@ -131,7 +131,7 @@ export const CreateBoardBtn = styled.button`
   }
 
   &:hover {
-    background-color: ${(props) => `${props.theme['primary-color']}40`};
+    background-color: ${(props) => `${props.theme['sidebar-btn-hover']}`};
     transition: 200ms;
     border-top-right-radius: 22px;
     border-bottom-right-radius: 22px;
@@ -181,7 +181,7 @@ export const HideButton = styled.button`
   }
 
   &:hover {
-    background-color: ${(props) => `${props.theme['primary-color']}40`};
+    background-color: ${(props) => `${props.theme['sidebar-btn-hover']}`};
     transition: 200ms;
     border-top-right-radius: 22px;
     border-bottom-right-radius: 22px;

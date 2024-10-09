@@ -79,6 +79,7 @@ export function Home({ onChangeTheme }: HomeProps) {
     const [movedTask] = newSourceTasks.splice(source.index, 1);
   
     if (sourceColumnIndex === destinationColumnIndex) {
+      console.log('situation a')
       newSourceTasks.splice(destination.index, 0, movedTask);
 
       const newColumns = [...columns];
@@ -90,6 +91,7 @@ export function Home({ onChangeTheme }: HomeProps) {
 
       setColumns(newColumns);
     } else {
+      console.log('situation b')
       const newDestinationTasks = Array.from(destinationColumn.tasks);
 
       newDestinationTasks.splice(destination.index, 0, movedTask);
@@ -108,7 +110,7 @@ export function Home({ onChangeTheme }: HomeProps) {
 
       setColumns(newColumns);
   
-      moveTaskToColumn(movedTask, destinationColumn.name, sourceColumn.name);
+      moveTaskToColumn(movedTask, destinationColumn.name, sourceColumn.name, destination.index);
     }
   }
   
@@ -129,7 +131,6 @@ export function Home({ onChangeTheme }: HomeProps) {
             <Header onChangeTheme={onChangeTheme} />
             <ColumnsContainer
               ref={columnsContainerRef}
-              className={`${hideSidebar && 'hide-sidebar-mode'}`}
               onMouseDown={handleContainerMouseDown}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}

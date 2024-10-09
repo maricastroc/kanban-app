@@ -85,9 +85,16 @@ export const OptionsModal = styled.div`
   gap: 0.7rem;
   top: 2.5rem;
   right: 0;
-  width: 10rem;
+  width: 8rem;
   background-color: ${(props) => props.theme['cards-color']};
-  box-shadow: 0 6px 8px rgba(54, 78, 126, 0.1);
+
+  &.dark {
+    border: solid 1px ${(props) => props.theme['border-color']};
+  }
+
+  &.light {
+    box-shadow: 0 4px 6px rgba(54, 78, 126, 0.1);
+  }
 
   button {
     cursor: pointer;

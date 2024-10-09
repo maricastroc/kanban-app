@@ -11,7 +11,7 @@ interface EditDeleteModalProps {
 }
 
 export function EditDeleteModal({ onClose }: EditDeleteModalProps) {
-  const { activeBoard } = useBoardsContext()
+  const { activeBoard, enableDarkMode } = useBoardsContext()
 
   const [isEditModalOpen, setEditModalOpen] = useState(false)
 
@@ -42,7 +42,7 @@ export function EditDeleteModal({ onClose }: EditDeleteModalProps) {
         <Dialog.Title>Edit or Delete Board</Dialog.Title>
         <Dialog.Description>Select an option to proceed.</Dialog.Description>
       </VisuallyHidden>
-      <ModalContent className="DialogContent">
+      <ModalContent className={`${enableDarkMode ? 'dark' : 'light'}`}>
         <Dialog.Root open={isEditModalOpen}>
           <Dialog.Trigger asChild>
             <ActionBtn onClick={handleEditModalOpen} className="edit">

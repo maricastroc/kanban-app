@@ -49,7 +49,7 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
     (subtask: SubtaskProps) => subtask.isCompleted,
   )
 
-  const { activeBoard } = useBoardsContext()
+  const { activeBoard, enableDarkMode } = useBoardsContext()
 
   const { moveTaskToColumn } = useTaskContext()
 
@@ -93,11 +93,13 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
             <LayoutContainer>
               <ModalTitle>{task.title}</ModalTitle>
               <OptionsContainer>
-                <OptionsBtn onClick={() => setIsEditDeleteModalOpen(true)}>
+                <OptionsBtn
+                  onClick={() => setIsEditDeleteModalOpen(!isEditDeleteModalOpen)}
+                >
                   <FontAwesomeIcon icon={faEllipsisVertical} />
                 </OptionsBtn>
                 {isEditDeleteModalOpen && (
-                  <OptionsModal>
+                  <OptionsModal className={enableDarkMode ? 'dark' : 'light'}>
                     <button
                       className="edit"
                       onClick={() => setIsEditModalOpen(true)}
@@ -168,11 +170,17 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
       )}
 
       {isDeleteModalOpen && (
-        <DeleteModal type="task" task={task} onClose={() => closeAllModals()} />
+        <DeleteModal type="task" task={task} onClose={() => {
+          onClose()
+          closeAllModals()
+        }} />
       )}
 
       {isEditModalOpen && (
-        <TaskFormModal isEditing task={task} onClose={() => closeAllModals()} />
+        <TaskFormModal isEditing task={task} onClose={() => {
+          onClose()
+          closeAllModals()
+        }} />
       )}
     </>
   )

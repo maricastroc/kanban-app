@@ -54,7 +54,7 @@ export const ModalContent = styled(RadixContent)<{ padding?: string }>`
 
   &.xl {
     height: auto;
-    max-height: 50rem;
+    max-height: 35rem;
   }
 
   &.smaller {
@@ -123,4 +123,5 @@ export const StatusContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  margin-top: 1rem;
 `

@@ -21,7 +21,7 @@ export const Input = styled.input`
   }
 
   &.disabled {
-    pointer-events: none;
+    cursor: not-allowed;
     color: ${(props) => props.theme['subtitle-color']};
   }
 `
@@ -42,7 +42,6 @@ export const DeleteFieldBtn = styled.button`
 
   &.disabled {
     cursor: not-allowed;
-    pointer-events: none;
 
     svg {
       opacity: 0.2;

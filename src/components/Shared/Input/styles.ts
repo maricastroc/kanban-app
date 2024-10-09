@@ -16,7 +16,7 @@ export const Input = styled.input`
   }
 
   &.disabled {
-    pointer-events: none;
+    cursor: not-allowed;
     opacity: 0.5;
   }
 `

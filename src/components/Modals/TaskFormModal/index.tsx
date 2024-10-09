@@ -275,7 +275,7 @@ export function TaskFormModal({
             {<ErrorMessage message={errors.status?.message} />}
           </StatusContainer>
 
-          <Button title="Create Task" type="submit" variant="primary" />
+          <Button title={isEditing ? 'Edit Task' : 'Create Task'} type="submit" variant="primary" />
         </FormContainer>
       </ModalContent>
     </Dialog.Portal>
