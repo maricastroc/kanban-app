@@ -525,4 +525,4 @@ export const boards = [
       },
     ],
   },
-];
+]

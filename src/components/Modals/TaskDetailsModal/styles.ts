@@ -1,8 +1,6 @@
 import styled from 'styled-components'
 
-import {
-  Title as RadixTitle,
-} from '@radix-ui/react-dialog'
+import { Title as RadixTitle } from '@radix-ui/react-dialog'
 
 export const ModalTitle = styled(RadixTitle)`
   font-size: ${(props) => props.theme['heading-l']};

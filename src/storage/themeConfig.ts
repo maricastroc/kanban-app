@@ -1,9 +1,6 @@
 const THEME_STORAGE = '@kanban:themes'
 
-function getParsedTheme(
-  storageKey: string,
-  defaultValue: string,
-) {
+function getParsedTheme(storageKey: string, defaultValue: string) {
   const savedData = localStorage.getItem(storageKey)
   try {
     return savedData ? JSON.parse(savedData) : defaultValue
@@ -20,5 +17,3 @@ export function saveStorageTheme(theme: string) {
 export function getStorageTheme() {
   return getParsedTheme(THEME_STORAGE, 'DARK_THEME')
 }
-
-

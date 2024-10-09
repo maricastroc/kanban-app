@@ -34,7 +34,11 @@ import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 
 import { SubtasksForm, SubtasksWrapper } from './styles'
 import { initialSubtasks } from '@/utils/getInitialValues'
-import { DEFAULT_STATUS, MIN_SUBTASKS, MIN_TITLE_LENGTH } from '@/utils/constants'
+import {
+  DEFAULT_STATUS,
+  MIN_SUBTASKS,
+  MIN_TITLE_LENGTH,
+} from '@/utils/constants'
 
 import { SubtaskProps } from '@/@types/subtask'
 import { TaskProps } from '@/@types/task'
@@ -58,12 +62,16 @@ const formSchema = z.object({
 export type FormData = z.infer<typeof formSchema>
 
 interface AddTaskModalProps {
-  isEditing?: boolean,
-  task?: TaskProps,
+  isEditing?: boolean
+  task?: TaskProps
   onClose: () => void
 }
 
-export function TaskFormModal({ onClose, isEditing = false, task }: AddTaskModalProps) {
+export function TaskFormModal({
+  onClose,
+  isEditing = false,
+  task,
+}: AddTaskModalProps) {
   const { activeBoard } = useBoardsContext()
 
   const { addTaskToColumn, editTask } = useTaskContext()
@@ -74,14 +82,18 @@ export function TaskFormModal({ onClose, isEditing = false, task }: AddTaskModal
 
   const [isOptionsContainerOpen, setIsOptionsContainerOpen] = useState(false)
 
-  const [subtasks, setSubtasks] = useState<SubtaskProps[]>((isEditing && task?.subtasks) ? task.subtasks : initialSubtasks)
+  const [subtasks, setSubtasks] = useState<SubtaskProps[]>(
+    isEditing && task?.subtasks ? task.subtasks : initialSubtasks,
+  )
 
-  const [status, setStatus] = useState((isEditing && task?.status) ? task.status : initialStatus)
+  const [status, setStatus] = useState(
+    isEditing && task?.status ? task.status : initialStatus,
+  )
 
   useOutsideClick(statusRef, () => setIsOptionsContainerOpen(false))
 
   useEscapeKeyHandler(onClose)
-  
+
   const {
     register,
     handleSubmit,
@@ -104,12 +116,12 @@ export function TaskFormModal({ onClose, isEditing = false, task }: AddTaskModal
 
   const subtasksValues = watch('subtasks')
 
-  const form = watch()
-  console.log(form)
-
   const handleAddSubtask = () => {
-    console.log('hy')
-    const newSubtask: SubtaskProps = { id: Date.now(), title: '', isCompleted: false }
+    const newSubtask: SubtaskProps = {
+      id: Date.now(),
+      title: '',
+      isCompleted: false,
+    }
 
     const updatedSubtasks = [...subtasks, newSubtask]
 
@@ -137,12 +149,11 @@ export function TaskFormModal({ onClose, isEditing = false, task }: AddTaskModal
       (_, index) => index !== indexToRemove,
     )
     setSubtasks(updatedSubtasks)
-    
+
     setValue('subtasks', updatedSubtasks)
   }
 
   const handleSubmitTask = async (data: FormData) => {
-    console.log('hy')
     const isValid = await trigger('subtasks')
 
     if (!isValid) {
@@ -158,7 +169,11 @@ export function TaskFormModal({ onClose, isEditing = false, task }: AddTaskModal
       subtasks,
     }
 
-    isEditing ? editTask(newTask, task) : addTaskToColumn(newTask, status)
+    if (isEditing) {
+      editTask(newTask, task)
+    } else {
+      addTaskToColumn(newTask, status)
+    }
 
     reset()
     setSubtasks(initialSubtasks)
@@ -189,7 +204,9 @@ export function TaskFormModal({ onClose, isEditing = false, task }: AddTaskModal
     <Dialog.Portal>
       <ModalOverlay className="DialogOverlay" onClick={onClose} />
       <ModalContent padding="1.5rem 1.5rem 2rem" className="DialogContent xl">
-        <ModalTitle className="DialogTitle">{isEditing ? 'Edit Task' : 'Add New Task'}</ModalTitle>
+        <ModalTitle className="DialogTitle">
+          {isEditing ? 'Edit Task' : 'Add New Task'}
+        </ModalTitle>
         <VisuallyHidden>
           <Dialog.Description />
         </VisuallyHidden>
@@ -217,8 +234,8 @@ export function TaskFormModal({ onClose, isEditing = false, task }: AddTaskModal
           <SubtasksForm>
             <CustomLabel>Subtasks</CustomLabel>
             <SubtasksWrapper>
-            {subtasks.map((subtask, index) => (
-              <div key={`${subtask.title}-${index}`}>
+              {subtasks.map((subtask, index) => (
+                <div key={`${subtask.title}-${index}`}>
                   {renderSubtaskInput(index, subtask)}
                 </div>
               ))}

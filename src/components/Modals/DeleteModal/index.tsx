@@ -1,3 +1,4 @@
+import * as Dialog from '@radix-ui/react-dialog'
 import { ButtonsContainer, ModalDescription } from './styles'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { Button } from '@/components/Shared/Button'
@@ -19,13 +20,17 @@ export function DeleteModal({ type, board, task, onClose }: DeleteBoardProps) {
   const { deleteTask } = useTaskContext()
 
   return (
-    <>
+    <Dialog.Portal>
       <ModalOverlay className="DialogOverlay" onClick={() => onClose()} />
       <ModalContent className="delete">
-        <ModalTitle className="delete">{`Delete this ${type === 'board' ? 'board' : 'task'}?`}</ModalTitle>
+        <ModalTitle className="delete">{`Delete this ${
+          type === 'board' ? 'board' : 'task'
+        }?`}</ModalTitle>
         <ModalDescription>
           <span>
-            {`Are you sure you want to delete the ‘${type === 'board' ? `${board?.name} board` : `${task?.title} task`}’? This action will remove all columns and tasks and cannot be reversed.`}
+            {`Are you sure you want to delete the ‘${
+              type === 'board' ? `${board?.name} board` : `${task?.title} task`
+            }’? This action will remove all columns and tasks and cannot be reversed.`}
           </span>
         </ModalDescription>
 
@@ -34,7 +39,9 @@ export function DeleteModal({ type, board, task, onClose }: DeleteBoardProps) {
             title="Delete"
             variant="tertiary"
             onClick={() => {
-              type === 'board' ? deleteBoard(board) : deleteTask(task)
+              if (type === 'board') {
+                deleteBoard(board)
+              } else deleteTask(task)
               onClose()
             }}
           />
@@ -45,6 +52,6 @@ export function DeleteModal({ type, board, task, onClose }: DeleteBoardProps) {
           />
         </ButtonsContainer>
       </ModalContent>
-    </>
+    </Dialog.Portal>
   )
 }

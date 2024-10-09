@@ -1,7 +1,7 @@
 import { TaskProps } from './task'
 
 export interface BoardColumnProps {
-  id: number,
+  id: number
   name: string
   tasks: TaskProps[]
 }

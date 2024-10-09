@@ -50,7 +50,11 @@ export function EditDeleteModal({ onClose }: EditDeleteModalProps) {
             </ActionBtn>
           </Dialog.Trigger>
           {activeBoard && (
-            <BoardFormModal isEditing onClose={closeEditModal} board={activeBoard} />
+            <BoardFormModal
+              isEditing
+              onClose={closeEditModal}
+              board={activeBoard}
+            />
           )}
         </Dialog.Root>
         <Dialog.Root open={isDeleteModalOpen}>
@@ -60,7 +64,11 @@ export function EditDeleteModal({ onClose }: EditDeleteModalProps) {
             </ActionBtn>
           </Dialog.Trigger>
           {activeBoard && (
-            <DeleteModal type={'board'} onClose={closeDeleteModal} board={activeBoard} />
+            <DeleteModal
+              type={'board'}
+              onClose={closeDeleteModal}
+              board={activeBoard}
+            />
           )}
         </Dialog.Root>
       </ModalContent>

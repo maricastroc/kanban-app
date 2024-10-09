@@ -1,15 +1,28 @@
 import { useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleDown, faAngleUp, faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
+import {
+  faAngleDown,
+  faAngleUp,
+  faEllipsisVertical,
+} from '@fortawesome/free-solid-svg-icons'
 import * as Dialog from '@radix-ui/react-dialog'
 
 import {
-  Description, LayoutContainer, SubtasksContainer, OptionsModal, 
-  OptionsContainer, OptionsBtn, EmptySubtask, ModalTitle
+  Description,
+  LayoutContainer,
+  SubtasksContainer,
+  OptionsModal,
+  OptionsContainer,
+  OptionsBtn,
+  EmptySubtask,
+  ModalTitle,
 } from './styles'
 import {
-  ModalContent, ModalOverlay, SelectStatusField, StatusContainer, 
-  StatusSelectorContainer
+  ModalContent,
+  ModalOverlay,
+  SelectStatusField,
+  StatusContainer,
+  StatusSelectorContainer,
 } from '@/styles/shared'
 
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
@@ -48,7 +61,8 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
 
   const [isEditDeleteModalOpen, setIsEditDeleteModalOpen] = useState(false)
 
-  const [isStatusOptionsContainerOpen, setIsStatusOptionsContainerOpen] = useState(false)
+  const [isStatusOptionsContainerOpen, setIsStatusOptionsContainerOpen] =
+    useState(false)
 
   const statusRef = useRef<HTMLDivElement | null>(null)
 
@@ -65,11 +79,17 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
     <>
       {!isDeleteModalOpen && !isEditModalOpen && (
         <Dialog.Portal>
-          <ModalOverlay className="DialogOverlay" onClick={() => {
-            closeAllModals()
-            onClose()
-          }} />
-          <ModalContent padding="1.5rem 1.5rem 3rem" className="DialogContent smaller">
+          <ModalOverlay
+            className="DialogOverlay"
+            onClick={() => {
+              closeAllModals()
+              onClose()
+            }}
+          />
+          <ModalContent
+            padding="1.5rem 1.5rem 3rem"
+            className="DialogContent smaller"
+          >
             <LayoutContainer>
               <ModalTitle>{task.title}</ModalTitle>
               <OptionsContainer>
@@ -121,7 +141,9 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
                 >
                   <p>{status}</p>
                   <FontAwesomeIcon
-                    icon={isStatusOptionsContainerOpen ? faAngleUp : faAngleDown}
+                    icon={
+                      isStatusOptionsContainerOpen ? faAngleUp : faAngleDown
+                    }
                   />
                 </SelectStatusField>
                 {isStatusOptionsContainerOpen && (
@@ -145,21 +167,13 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
         </Dialog.Portal>
       )}
 
-        {isDeleteModalOpen && (
-          <DeleteModal
-            type="task"
-            task={task}
-            onClose={() => closeAllModals()}
-          />
-        )}
+      {isDeleteModalOpen && (
+        <DeleteModal type="task" task={task} onClose={() => closeAllModals()} />
+      )}
 
-        {isEditModalOpen && (
-          <TaskFormModal
-            isEditing
-            task={task}
-            onClose={() => closeAllModals()}
-          />
-        )}
+      {isEditModalOpen && (
+        <TaskFormModal isEditing task={task} onClose={() => closeAllModals()} />
+      )}
     </>
   )
 }

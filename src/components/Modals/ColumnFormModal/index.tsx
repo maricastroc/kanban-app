@@ -22,7 +22,10 @@ import { toast } from 'react-toastify'
 import { FormContainer } from '@/components/Shared/FormContainer'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { simulateDelay } from '@/utils/simulateDelay'
-import { MIN_BOARD_NAME_LENGTH, MIN_COLUMN_NAME_LENGTH } from '@/utils/constants'
+import {
+  MIN_BOARD_NAME_LENGTH,
+  MIN_COLUMN_NAME_LENGTH,
+} from '@/utils/constants'
 
 interface ColumnFormModalProps {
   onClose: () => void
@@ -30,7 +33,9 @@ interface ColumnFormModalProps {
 
 const columnSchema = z.object({
   id: z.number(),
-  name: z.string().min(MIN_COLUMN_NAME_LENGTH, { message: 'Column Name must have at least three characters' }),
+  name: z.string().min(MIN_COLUMN_NAME_LENGTH, {
+    message: 'Column Name must have at least three characters',
+  }),
 })
 
 const formSchema = z.object({

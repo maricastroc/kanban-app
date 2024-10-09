@@ -1,7 +1,7 @@
 import { BoardColumnProps } from './board-column'
 
 export interface BoardProps {
-  id: number,
+  id: number
   name: string
   columns: BoardColumnProps[]
 }

@@ -98,7 +98,10 @@ export function BoardsDetailsModal({
                 <p>+ Create New Board</p>
               </BoardItem>
             </Dialog.Trigger>
-            <BoardFormModal isEditing={false} onClose={() => setAddBoardModalOpen(false)} />
+            <BoardFormModal
+              isEditing={false}
+              onClose={() => setAddBoardModalOpen(false)}
+            />
           </Dialog.Root>
         </BoardsContainer>
 

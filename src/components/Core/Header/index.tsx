@@ -33,7 +33,8 @@ export function Header({ onChangeTheme }: HeaderProps) {
 
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
 
-  const [isBoardsDetailsModalOpen, setIsBoardsDetailsModalOpen] = useState(false)
+  const [isBoardsDetailsModalOpen, setIsBoardsDetailsModalOpen] =
+    useState(false)
 
   const [isEditDeleteModalOpen, setIsEditDeleteModalOpen] = useState(false)
 
@@ -55,7 +56,9 @@ export function Header({ onChangeTheme }: HeaderProps) {
         <Dialog.Root open={isBoardsDetailsModalOpen}>
           <Dialog.Trigger asChild>
             <BoardNameContainer
-              onClick={() => isSmallerThanSm && setIsBoardsDetailsModalOpen(true)}
+              onClick={() =>
+                isSmallerThanSm && setIsBoardsDetailsModalOpen(true)
+              }
             >
               <BoardName>{activeBoard?.name}</BoardName>
               {isSmallerThanSm && <FontAwesomeIcon icon={faAngleDown} />}
@@ -75,7 +78,10 @@ export function Header({ onChangeTheme }: HeaderProps) {
               <p>+ Add New Task</p>
             </AddTaskBtn>
           </Dialog.Trigger>
-          <TaskFormModal isEditing={false} onClose={() => setIsAddTaskModalOpen(false)} />
+          <TaskFormModal
+            isEditing={false}
+            onClose={() => setIsAddTaskModalOpen(false)}
+          />
         </Dialog.Root>
 
         <EditDeleteWrapper>

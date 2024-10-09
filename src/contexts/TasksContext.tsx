@@ -9,7 +9,10 @@ import { SubtaskProps } from '@/@types/subtask'
 
 interface TaskContextData {
   deleteTask: (task: TaskProps | undefined) => void
-  editTask: (updatedTask: TaskProps, originalTask: TaskProps | undefined) => void
+  editTask: (
+    updatedTask: TaskProps,
+    originalTask: TaskProps | undefined,
+  ) => void
   addTaskToColumn: (task: TaskProps, columnName: string | undefined) => void
   updateBoardColumns: (updatedColumns: BoardColumnProps[]) => void
   moveTaskToColumn: (
@@ -62,9 +65,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     )
     if (!sourceColumn) return
 
-    const taskIndex = sourceColumn.tasks.findIndex(
-      (t) => t.id === task.id,
-    )
+    const taskIndex = sourceColumn.tasks.findIndex((t) => t.id === task.id)
 
     if (taskIndex === -1) return
 
@@ -96,7 +97,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
   function deleteTask(task: TaskProps | undefined) {
     if (task === undefined) {
       return
-    } 
+    }
     const boardIndex = findActiveBoardIndex()
     if (boardIndex === -1) return
 
@@ -116,11 +117,14 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     toast.success('Task successfully deleted!')
   }
 
-  function editTask(updatedTask: TaskProps, originalTask: TaskProps | undefined) {
+  function editTask(
+    updatedTask: TaskProps,
+    originalTask: TaskProps | undefined,
+  ) {
     if (originalTask === undefined) {
       return
     }
-    
+
     const boardsCopy = [...getStorageBoards()]
     const boardIndex = boardsCopy.findIndex(
       (board) => board.name === activeBoard?.name,
@@ -131,17 +135,14 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
 
       const columnIndex = boardCopy.columns.findIndex(
         (column: BoardColumnProps) =>
-          column.tasks.some(
-            (task: TaskProps) => task.id === originalTask.id,
-          ),
+          column.tasks.some((task: TaskProps) => task.id === originalTask.id),
       )
 
       if (columnIndex !== -1) {
         const column = boardCopy.columns[columnIndex]
         const isDuplicateTask = column.tasks.some(
           (task: TaskProps) =>
-            task.id !== originalTask.id &&
-            task.title === updatedTask.title,
+            task.id !== originalTask.id && task.title === updatedTask.title,
         )
 
         if (isDuplicateTask) {
@@ -178,8 +179,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     if (!column) return
 
     const isDuplicateTask = column.tasks.some(
-      (existingTask) =>
-        existingTask.title === task.title,
+      (existingTask) => existingTask.title === task.title,
     )
 
     if (isDuplicateTask) {
@@ -231,9 +231,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     })
 
     boardCopy.columns = boardCopy.columns.filter((column) =>
-      updatedColumns.some(
-        (columnToUpdate) => columnToUpdate.id === column.id,
-      ),
+      updatedColumns.some((columnToUpdate) => columnToUpdate.id === column.id),
     )
 
     toast.success('Board successfully updated!')

@@ -99,22 +99,22 @@ export function Home({ onChangeTheme }: HomeProps) {
                   handleDragAndDropTask={handleDragAndDropTask}
                 />
               ))}
-              {(activeBoard?.columns && activeBoard?.columns?.length < 6) && (
+              {activeBoard?.columns && activeBoard?.columns?.length < 6 && (
                 <Dialog.Root open={isColumnFormModalOpen}>
-                <Dialog.Trigger asChild>
-                  <AddColumnContainer
-                    className={enableDarkMode ? 'dark' : 'light'}
-                    onClick={() => setIsColumnFormModalOpen(true)}
-                  >
-                    <AddColumnBtn>+ New Column</AddColumnBtn>
-                  </AddColumnContainer>
-                </Dialog.Trigger>
-                {isColumnFormModalOpen && (
-                  <ColumnFormModal
-                    onClose={() => setIsColumnFormModalOpen(false)}
-                  />
-                )}
-              </Dialog.Root>
+                  <Dialog.Trigger asChild>
+                    <AddColumnContainer
+                      className={enableDarkMode ? 'dark' : 'light'}
+                      onClick={() => setIsColumnFormModalOpen(true)}
+                    >
+                      <AddColumnBtn>+ New Column</AddColumnBtn>
+                    </AddColumnContainer>
+                  </Dialog.Trigger>
+                  {isColumnFormModalOpen && (
+                    <ColumnFormModal
+                      onClose={() => setIsColumnFormModalOpen(false)}
+                    />
+                  )}
+                </Dialog.Root>
               )}
             </ColumnsContainer>
           </Wrapper>

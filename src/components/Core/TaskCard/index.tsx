@@ -36,7 +36,10 @@ export function TaskCard({ task, column_index }: TaskCardProps) {
           } of ${task.subtasks.length} subtasks`}</p>
         </TaskCardContainer>
       </Dialog.Trigger>
-      <TaskDetailsModal task={task} onClose={() => setIsTaskDetailsModalOpen(false)} />
+      <TaskDetailsModal
+        task={task}
+        onClose={() => setIsTaskDetailsModalOpen(false)}
+      />
     </Dialog.Root>
   )
 }

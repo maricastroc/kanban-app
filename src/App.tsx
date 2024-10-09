@@ -12,17 +12,21 @@ import { getStorageTheme, saveStorageTheme } from './storage/themeConfig'
 
 function App() {
   const activeTheme = getStorageTheme()
-  const [enableDarkMode, setEnableDarkMode] = useState(activeTheme === 'DARK_THEME')
+  const [enableDarkMode, setEnableDarkMode] = useState(
+    activeTheme === 'DARK_THEME',
+  )
 
   return (
     <ThemeProvider theme={enableDarkMode ? darkTheme : lightTheme}>
       <BoardsContextProvider>
         <TaskContextProvider>
           <StyledToastContainer />
-          <Home onChangeTheme={() => {
-            setEnableDarkMode(!enableDarkMode)
-            saveStorageTheme(enableDarkMode ? 'LIGHT_THEME' : 'DARK_THEME')
-          }} />
+          <Home
+            onChangeTheme={() => {
+              setEnableDarkMode(!enableDarkMode)
+              saveStorageTheme(enableDarkMode ? 'LIGHT_THEME' : 'DARK_THEME')
+            }}
+          />
         </TaskContextProvider>
       </BoardsContextProvider>
       <GlobalStyle />

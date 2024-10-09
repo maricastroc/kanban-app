@@ -51,7 +51,9 @@ export function BoardsContextProvider({
 }: BoardsContextProviderProps) {
   const activeTheme = getStorageTheme()
 
-  const [enableDarkMode, setEnableDarkMode] = useState(activeTheme === 'DARK_THEME')
+  const [enableDarkMode, setEnableDarkMode] = useState(
+    activeTheme === 'DARK_THEME',
+  )
 
   const [activeBoard, setActiveBoard] = useState<BoardProps | null>(
     getActiveStorageBoard(),
@@ -186,7 +188,7 @@ export function BoardsContextProvider({
     if (board === undefined) {
       return
     }
-    
+
     const updatedBoards = allBoards.filter((b) => b.name !== board.name)
 
     if (activeBoard && activeBoard.name === board.name) {
