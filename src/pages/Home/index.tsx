@@ -83,7 +83,6 @@ export function Home({ onChangeTheme }: HomeProps) {
     const [movedTask] = newSourceTasks.splice(source.index, 1)
 
     if (sourceColumnIndex === destinationColumnIndex) {
-      console.log('situation a')
       newSourceTasks.splice(destination.index, 0, movedTask)
 
       const newColumns = [...columns]
@@ -95,7 +94,6 @@ export function Home({ onChangeTheme }: HomeProps) {
 
       setColumns(newColumns)
     } else {
-      console.log('situation b')
       const newDestinationTasks = Array.from(destinationColumn.tasks)
 
       newDestinationTasks.splice(destination.index, 0, movedTask)

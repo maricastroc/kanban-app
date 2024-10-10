@@ -2,7 +2,7 @@ const COLORS_STORAGE = '@kanban:colors';
 
 export function getParsedColors(storageKey: string) {
   const savedData = localStorage.getItem(storageKey);
-  console.log(savedData)
+
   try {
     return savedData ? JSON.parse(savedData) : {};
   } catch (e) {
