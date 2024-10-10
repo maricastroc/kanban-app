@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
 import * as Dialog from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
@@ -275,7 +275,11 @@ export function TaskFormModal({
             {<ErrorMessage message={errors.status?.message} />}
           </StatusContainer>
 
-          <Button title={isEditing ? 'Edit Task' : 'Create Task'} type="submit" variant="primary" />
+          <Button
+            title={isEditing ? 'Edit Task' : 'Create Task'}
+            type="submit"
+            variant="primary"
+          />
         </FormContainer>
       </ModalContent>
     </Dialog.Portal>

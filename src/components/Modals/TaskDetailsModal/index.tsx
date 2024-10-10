@@ -94,7 +94,9 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
               <ModalTitle>{task.title}</ModalTitle>
               <OptionsContainer>
                 <OptionsBtn
-                  onClick={() => setIsEditDeleteModalOpen(!isEditDeleteModalOpen)}
+                  onClick={() =>
+                    setIsEditDeleteModalOpen(!isEditDeleteModalOpen)
+                  }
                 >
                   <FontAwesomeIcon icon={faEllipsisVertical} />
                 </OptionsBtn>
@@ -170,17 +172,25 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
       )}
 
       {isDeleteModalOpen && (
-        <DeleteModal type="task" task={task} onClose={() => {
-          onClose()
-          closeAllModals()
-        }} />
+        <DeleteModal
+          type="task"
+          task={task}
+          onClose={() => {
+            onClose()
+            closeAllModals()
+          }}
+        />
       )}
 
       {isEditModalOpen && (
-        <TaskFormModal isEditing task={task} onClose={() => {
-          onClose()
-          closeAllModals()
-        }} />
+        <TaskFormModal
+          isEditing
+          task={task}
+          onClose={() => {
+            onClose()
+            closeAllModals()
+          }}
+        />
       )}
     </>
   )

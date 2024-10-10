@@ -23,10 +23,15 @@ export function TaskCard({ task, provided }: TaskCardProps) {
           {...provided.dragHandleProps}
         >
           <strong>{task.title}</strong>
-          <p>{`${task.subtasks.filter((subtask) => subtask.isCompleted).length} of ${task.subtasks.length} subtasks`}</p>
+          <p>{`${
+            task.subtasks.filter((subtask) => subtask.isCompleted).length
+          } of ${task.subtasks.length} subtasks`}</p>
         </TaskCardContainer>
       </Dialog.Trigger>
-      <TaskDetailsModal task={task} onClose={() => setIsTaskDetailsModalOpen(false)} />
+      <TaskDetailsModal
+        task={task}
+        onClose={() => setIsTaskDetailsModalOpen(false)}
+      />
     </Dialog.Root>
   )
 }

@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from 'react'
 import { toast } from 'react-toastify'
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
 
 import { BoardColumnProps } from '@/@types/board-column'
 import { BoardProps } from '@/@types/board'
@@ -13,6 +13,9 @@ import {
 import { getStorageTheme, saveStorageTheme } from '@/storage/themeConfig'
 
 interface BoardsContextData {
+  enableScrollFeature: boolean
+  handleEnableScrollFeature: (value: boolean) => void
+
   enableDarkMode: boolean
   handleEnableDarkMode: (value: boolean) => void
 
@@ -60,7 +63,13 @@ export function BoardsContextProvider({
     getActiveStorageBoard(),
   )
 
+  const [enableScrollFeature, setEnableScrollFeature] = useState(false)
+
   const [allBoards, setAllBoards] = useState<BoardProps[]>(getStorageBoards())
+
+  function handleEnableScrollFeature(value: boolean) {
+    setEnableScrollFeature(value)
+  }
 
   function handleEnableDarkMode() {
     setEnableDarkMode(!enableDarkMode)
@@ -208,6 +217,8 @@ export function BoardsContextProvider({
   return (
     <BoardsContext.Provider
       value={{
+        enableScrollFeature,
+        handleEnableScrollFeature,
         enableDarkMode,
         handleEnableDarkMode,
         activeBoard,

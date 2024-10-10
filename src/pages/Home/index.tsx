@@ -63,115 +63,123 @@ export function Home({ onChangeTheme }: HomeProps) {
   }
 
   const onDragEnd = (result: DropResult) => {
-    const { destination, source } = result;
-  
-    if (!destination || (destination.droppableId === source.droppableId && destination.index === source.index)) {
-      return;
+    const { destination, source } = result
+
+    if (
+      !destination ||
+      (destination.droppableId === source.droppableId &&
+        destination.index === source.index)
+    ) {
+      return
     }
 
-    const sourceColumnIndex = parseInt(source.droppableId, 10);
-    const destinationColumnIndex = parseInt(destination.droppableId, 10);
-  
-    const sourceColumn = columns[sourceColumnIndex];
-    const destinationColumn = columns[destinationColumnIndex];
-  
-    const newSourceTasks = Array.from(sourceColumn.tasks);
-    const [movedTask] = newSourceTasks.splice(source.index, 1);
-  
+    const sourceColumnIndex = parseInt(source.droppableId, 10)
+    const destinationColumnIndex = parseInt(destination.droppableId, 10)
+
+    const sourceColumn = columns[sourceColumnIndex]
+    const destinationColumn = columns[destinationColumnIndex]
+
+    const newSourceTasks = Array.from(sourceColumn.tasks)
+    const [movedTask] = newSourceTasks.splice(source.index, 1)
+
     if (sourceColumnIndex === destinationColumnIndex) {
       console.log('situation a')
-      newSourceTasks.splice(destination.index, 0, movedTask);
+      newSourceTasks.splice(destination.index, 0, movedTask)
 
-      const newColumns = [...columns];
+      const newColumns = [...columns]
 
       newColumns[sourceColumnIndex] = {
         ...sourceColumn,
         tasks: newSourceTasks,
-      };
+      }
 
-      setColumns(newColumns);
+      setColumns(newColumns)
     } else {
       console.log('situation b')
-      const newDestinationTasks = Array.from(destinationColumn.tasks);
+      const newDestinationTasks = Array.from(destinationColumn.tasks)
 
-      newDestinationTasks.splice(destination.index, 0, movedTask);
-  
-      const newColumns = [...columns];
+      newDestinationTasks.splice(destination.index, 0, movedTask)
+
+      const newColumns = [...columns]
 
       newColumns[sourceColumnIndex] = {
         ...sourceColumn,
         tasks: newSourceTasks,
-      };
+      }
 
       newColumns[destinationColumnIndex] = {
         ...destinationColumn,
         tasks: newDestinationTasks,
-      };
+      }
 
-      setColumns(newColumns);
-  
-      moveTaskToColumn(movedTask, destinationColumn.name, sourceColumn.name, destination.index);
+      setColumns(newColumns)
+
+      moveTaskToColumn(
+        movedTask,
+        destinationColumn.name,
+        sourceColumn.name,
+        destination.index,
+      )
     }
   }
-  
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="all-columns" direction="horizontal">
-      {(provided) => (
-        <LayoutContainer ref={provided.innerRef} {...provided.droppableProps}>
-        <BoardContent>
-          {!isSmallerThanSm && !hideSidebar && (
-            <Sidebar
-              onClose={() => setHideSidebar(true)}
-              onChangeTheme={onChangeTheme}
-            />
-          )}
-          <Wrapper>
-            <Header onChangeTheme={onChangeTheme} />
-            <ColumnsContainer
-              ref={columnsContainerRef}
-              onMouseDown={handleContainerMouseDown}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-              onMouseMove={handleMouseMove}
-            >
-              {columns.map((column: BoardColumnProps, index: number) => (
-                <BoardColumn
-                  id={column.id}
-                  key={index}
-                  name={column.name}
-                  tasks={column.tasks}
-                  index={index}
+        {(provided) => (
+          <LayoutContainer ref={provided.innerRef} {...provided.droppableProps}>
+            <BoardContent>
+              {!isSmallerThanSm && !hideSidebar && (
+                <Sidebar
+                  onClose={() => setHideSidebar(true)}
+                  onChangeTheme={onChangeTheme}
                 />
-              ))}
-              {activeBoard?.columns && activeBoard?.columns?.length < 6 && (
-                <Dialog.Root open={isColumnFormModalOpen}>
-                  <Dialog.Trigger asChild>
-                    <AddColumnContainer
-                      className={enableDarkMode ? 'dark' : 'light'}
-                      onClick={() => setIsColumnFormModalOpen(true)}
-                    >
-                      <AddColumnBtn>+ New Column</AddColumnBtn>
-                    </AddColumnContainer>
-                  </Dialog.Trigger>
-                  {isColumnFormModalOpen && (
-                    <ColumnFormModal
-                      onClose={() => setIsColumnFormModalOpen(false)}
-                    />
-                  )}
-                </Dialog.Root>
               )}
-            </ColumnsContainer>
-          </Wrapper>
-          {hideSidebar && (
-            <ShowSidebarBtn onClick={() => setHideSidebar(false)}>
-              <img src={HideSidebar} alt="" />
-            </ShowSidebarBtn>
-          )}
-        </BoardContent>
-      </LayoutContainer>
-      )}
+              <Wrapper>
+                <Header onChangeTheme={onChangeTheme} />
+                <ColumnsContainer
+                  ref={columnsContainerRef}
+                  onMouseDown={handleContainerMouseDown}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseUp}
+                  onMouseMove={handleMouseMove}
+                >
+                  {columns.map((column: BoardColumnProps, index: number) => (
+                    <BoardColumn
+                      id={column.id}
+                      key={index}
+                      name={column.name}
+                      tasks={column.tasks}
+                      index={index}
+                    />
+                  ))}
+                  {activeBoard?.columns && activeBoard?.columns?.length < 6 && (
+                    <Dialog.Root open={isColumnFormModalOpen}>
+                      <Dialog.Trigger asChild>
+                        <AddColumnContainer
+                          className={enableDarkMode ? 'dark' : 'light'}
+                          onClick={() => setIsColumnFormModalOpen(true)}
+                        >
+                          <AddColumnBtn>+ New Column</AddColumnBtn>
+                        </AddColumnContainer>
+                      </Dialog.Trigger>
+                      {isColumnFormModalOpen && (
+                        <ColumnFormModal
+                          onClose={() => setIsColumnFormModalOpen(false)}
+                        />
+                      )}
+                    </Dialog.Root>
+                  )}
+                </ColumnsContainer>
+              </Wrapper>
+              {hideSidebar && (
+                <ShowSidebarBtn onClick={() => setHideSidebar(false)}>
+                  <img src={HideSidebar} alt="" />
+                </ShowSidebarBtn>
+              )}
+            </BoardContent>
+          </LayoutContainer>
+        )}
       </Droppable>
     </DragDropContext>
   )

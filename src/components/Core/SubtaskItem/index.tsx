@@ -9,7 +9,7 @@ import { useTaskContext } from '@/contexts/TasksContext'
 import { SubtaskProps } from '@/@types/subtask'
 
 interface SubtaskItemProps extends SubtaskProps {
-  task: TaskProps;
+  task: TaskProps
 }
 
 export function SubtaskItem({

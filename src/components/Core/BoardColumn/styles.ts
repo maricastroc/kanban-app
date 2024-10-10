@@ -1,18 +1,5 @@
 import styled from 'styled-components'
 
-interface TagContainerProps {
-  variant: '1' | '2' | '3' | '4' | '5' | '6'
-}
-
-const tagVariants = {
-  1: 'tag-color-1',
-  2: 'tag-color-2',
-  3: 'tag-color-3',
-  4: 'tag-color-4',
-  5: 'tag-color-5',
-  6: 'tag-color-6',
-}
-
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -23,18 +10,16 @@ export const Container = styled.div`
   width: 100%;
 `
 
-export const TagContainer = styled.div<TagContainerProps>`
+export const TagContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
 
-  span {
+  button {
     width: 15px;
     height: 15px;
     border-radius: 50%;
-
-    background-color: ${(props) =>
-      props.theme[`${tagVariants[props.variant]}`]};
+    border: transparent;
   }
 
   p {

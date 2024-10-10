@@ -1,8 +1,11 @@
+import { useBoardsContext } from '@/contexts/BoardsContext'
 import { useState } from 'react'
 
 export function useDragScroll(
   columnsContainerRef: React.RefObject<HTMLDivElement>,
 ) {
+  const { enableScrollFeature } = useBoardsContext()
+
   const [isDragging, setIsDragging] = useState(false)
 
   const [startX, setStartX] = useState<number | null>(null)
@@ -21,6 +24,10 @@ export function useDragScroll(
   }
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!enableScrollFeature) {
+      return
+    }
+
     if (!isDragging || startX === null || scrollLeft === null) return
 
     const container = columnsContainerRef.current

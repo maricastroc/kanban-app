@@ -58,28 +58,28 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
   ) {
     const boardIndex = findActiveBoardIndex()
     if (boardIndex === -1) return
-  
+
     const boardsCopy = [...allBoards]
     const boardCopy = { ...boardsCopy[boardIndex] }
-  
+
     const sourceColumn = boardCopy?.columns?.find(
       (column) => column.name === previousColumnName,
     )
     if (!sourceColumn) return
-  
+
     const taskIndex = sourceColumn.tasks.findIndex((t) => t.id === task.id)
-  
+
     if (taskIndex === -1) return
-  
+
     const taskToMove = sourceColumn.tasks[taskIndex]
     taskToMove.status = targetColumnName
     sourceColumn.tasks.splice(taskIndex, 1)
-  
+
     const targetColumn = boardCopy?.columns?.find(
       (column) => column.name === targetColumnName,
     )
     if (!targetColumn) return
-  
+
     const isTaskDuplicate = targetColumn.tasks.some(
       (t) => t.title === taskToMove.title,
     )
@@ -87,17 +87,16 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
       toast.error('This column already contains a task with this name.')
       return
     }
-  
+
     const targetIndex = destinationIndex ?? targetColumn.tasks.length
-  
+
     targetColumn.tasks.splice(targetIndex, 0, taskToMove)
-  
+
     boardsCopy[boardIndex] = boardCopy
-  
+
     updateBoards(boardsCopy)
     handleSetActiveBoard(boardCopy)
   }
-  
 
   function deleteTask(task: TaskProps | undefined) {
     if (task === undefined) {
