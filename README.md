@@ -1,7 +1,6 @@
 # Kanban Task Management 
 ![mockup](https://github.com/user-attachments/assets/5ce1223d-757c-4ad6-8292-97895b8dc1d4)
 
-
 ## 📚 Project Description
 
 The project consists of a kanban app for daily task management, allowing users to organize different boards, with information stored via local storage. The application also includes drag-and-drop functionality for handling the created cards. The following features have been implemented:
