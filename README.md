@@ -3,7 +3,13 @@
 
 ## 📚 Project Description
 
-The project consists of a kanban app for daily task management, allowing users to organize different boards, with information stored via local storage. The application also includes drag-and-drop functionality for handling the created cards. The following features have been implemented:
+This is a solution to the challenge [kanban-app](https://www.frontendmentor.io/challenges/kanban-task-management-web-app-wgQLt-HlbB).
+
+![challenge-difficulty-intermediate](https://img.shields.io/badge/Difficulty-GURU-f1b604?style=for-the-badge&amp;logo=frontendmentor)
+
+The project consists of a kanban app for daily task management, allowing users to organize different boards, with information stored via local storage. The application also includes drag-and-drop functionality for handling the created cards. 
+
+Users are able to:
 
 - View the optimal layout for the app depending on their device's screen size
 - See hover states for all interactive elements on the page
@@ -13,9 +19,6 @@ The project consists of a kanban app for daily task management, allowing users t
 - Hide/show the board sidebar
 - Toggle the theme between light/dark modes
 - Allow users to drag and drop tasks to change their status and re-order them in a column
-
-![challenge-difficulty-intermediate](https://img.shields.io/badge/Difficulty-GURU-f1b604?style=for-the-badge&amp;logo=frontendmentor)
-
 
 
 ## 📌 What did I learn?
@@ -35,14 +38,13 @@ The project was an excellent opportunity to practice implementing the drag-and-d
 - [react-beautiful-dnd](https://www.npmjs.com/package/react-beautiful-dnd/v/11.0.2)
 - [ESLint](https://eslint.org/)
 - [Prettier](https://prettier.io/)
-<br/>
 
 ## ℹ️ How to run the application?
 
 > Clone the repository:
 
 ```bash
-git clone https://github.com/maricastroc/entertainment-web-app
+git clone https://github.com/maricastroc/kanban-app
 ```
 
 > Install the dependencies:
