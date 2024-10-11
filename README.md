@@ -1,5 +1,5 @@
 # Kanban Task Management 
-![mockup-kanban](https://github.com/user-attachments/assets/22a271d5-a994-4d3d-95ed-1c4e9cb66822)
+![mockup](https://github.com/user-attachments/assets/5ce1223d-757c-4ad6-8292-97895b8dc1d4)
 
 
 ## 📚 Project Description
