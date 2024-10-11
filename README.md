@@ -1,50 +1,63 @@
-# React + TypeScript + Vite
+# Kanban Task Management 
+![mockup-kanban](https://github.com/user-attachments/assets/22a271d5-a994-4d3d-95ed-1c4e9cb66822)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+## 📚 Project Description
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The project consists of a kanban app for daily task management, allowing users to organize different boards, with information stored via local storage. The application also includes drag-and-drop functionality for handling the created cards. The following features have been implemented:
 
-## Expanding the ESLint configuration
+- View the optimal layout for the app depending on their device's screen size
+- See hover states for all interactive elements on the page
+- Create, read, update, and delete boards and tasks
+- Receive form validations when trying to create/edit boards and tasks
+- Mark subtasks as complete and move tasks between columns
+- Hide/show the board sidebar
+- Toggle the theme between light/dark modes
+- Allow users to drag and drop tasks to change their status and re-order them in a column
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+![challenge-difficulty-intermediate](https://img.shields.io/badge/Difficulty-GURU-f1b604?style=for-the-badge&amp;logo=frontendmentor)
 
-- Configure the top-level `parserOptions` property like this:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+
+## 📌 What did I learn?
+
+The project was an excellent opportunity to practice implementing the drag-and-drop feature, as well as organizing different themes in local storage to persist information about boards, columns, tasks, and subtasks. The use of contexts was essential to keep the features organized and intuitive.
+
+## 🔍 Links
+[Preview Site](https://maricastroc-kanban-b4og7dlw1-maricastrocs-projects.vercel.app/)
+
+## 💻 My Process
+### Built with:
+
+- [React](https://reactjs.org/)
+- [Typescript](https://www.typescriptlang.org/)
+- [Styled Components](https://styled-components.com/)
+- [font-awesome](https://fontawesome.com/)
+- [react-beautiful-dnd](https://www.npmjs.com/package/react-beautiful-dnd/v/11.0.2)
+- [ESLint](https://eslint.org/)
+- [Prettier](https://prettier.io/)
+<br/>
+
+## ℹ️ How to run the application?
+
+> Clone the repository:
+
+```bash
+git clone https://github.com/maricastroc/entertainment-web-app
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+> Install the dependencies:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+npm install
 ```
+
+> Rename the .env.example file to .env and add the necessary information to it.
+
+> Start the service:
+
+```bash
+npm run dev
+```
+
+> ⏩ Access [http://localhost:3000](http://localhost:3000) to view the web application.
