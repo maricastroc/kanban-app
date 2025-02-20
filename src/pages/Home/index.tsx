@@ -31,7 +31,7 @@ export function Home({ onChangeTheme }: HomeProps) {
 
   const { enableDarkMode, activeBoard } = useBoardsContext()
 
-  const { moveTaskToColumn } = useTaskContext()
+  const { moveTaskToColumn, reorderTasksInColumn } = useTaskContext()
 
   const [columns, setColumns] = useState<BoardColumnProps[]>(
     activeBoard?.columns || [],
@@ -87,6 +87,8 @@ export function Home({ onChangeTheme }: HomeProps) {
 
       const newColumns = [...columns]
 
+      reorderTasksInColumn(sourceColumnIndex, newSourceTasks)
+      
       newColumns[sourceColumnIndex] = {
         ...sourceColumn,
         tasks: newSourceTasks,

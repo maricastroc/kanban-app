@@ -9,6 +9,7 @@ import {
 export const ModalOverlay = styled(RadixOverlay)`
   position: fixed;
   width: 100vw;
+  pointer-events: none
   height: 100vh;
   inset: 0;
   z-index: 9990;

@@ -14,7 +14,7 @@ interface TaskContextData {
     originalTask: TaskProps | undefined,
   ) => void
   addTaskToColumn: (task: TaskProps, columnName: string | undefined) => void
-  reorderTasksInColumn: (columnName: string, newOrder: TaskProps[]) => void
+  reorderTasksInColumn: (columnIndex: number, newOrder: TaskProps[]) => void
   updateBoardColumns: (updatedColumns: BoardColumnProps[]) => void
   moveTaskToColumn: (
     task: TaskProps,
@@ -284,22 +284,22 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     }
   }
 
-  function reorderTasksInColumn(columnName: string, newOrder: TaskProps[]) {
-    const boardIndex = findActiveBoardIndex()
-    if (boardIndex === -1) return
+  function reorderTasksInColumn(columnIndex: number, newOrder: TaskProps[]) {
+    const boardIndex = findActiveBoardIndex();
+    if (boardIndex === -1) return;
   
-    const boardsCopy = [...allBoards]
-    const boardCopy = { ...boardsCopy[boardIndex] }
+    const boardsCopy = [...allBoards];
+    const boardCopy = { ...boardsCopy[boardIndex] };
   
-    const column = boardCopy.columns.find((col) => col.name === columnName)
-    if (!column) return
+    const column = boardCopy.columns[columnIndex];
+    if (!column) return;
   
-    column.tasks = newOrder
+    column.tasks = newOrder;
   
-    boardsCopy[boardIndex] = boardCopy
+    boardsCopy[boardIndex] = boardCopy;
     
-    updateBoards(boardsCopy)
-    handleSetActiveBoard(boardCopy)
+    updateBoards(boardsCopy);
+    handleSetActiveBoard(boardCopy);
   }
 
   return (

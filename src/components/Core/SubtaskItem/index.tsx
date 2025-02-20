@@ -28,7 +28,8 @@ export function SubtaskItem({
   }
 
   return (
-    <Container>
+    <Container
+    >
       {isChecked ? (
         <CheckedBox onClick={() => handleToggleSubtaskStatus()}>
           <FontAwesomeIcon icon={faCheck} />

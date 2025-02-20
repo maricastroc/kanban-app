@@ -6,7 +6,6 @@ import {
   faEllipsisVertical,
 } from '@fortawesome/free-solid-svg-icons'
 import * as Dialog from '@radix-ui/react-dialog'
-
 import {
   Description,
   LayoutContainer,
@@ -24,7 +23,6 @@ import {
   StatusContainer,
   StatusSelectorContainer,
 } from '@/styles/shared'
-
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { useTaskContext } from '@/contexts/TasksContext'
@@ -75,11 +73,23 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
     setIsStatusOptionsContainerOpen(false)
   }
 
+  const renderSubtasks = () => {
+    return task.subtasks.map((subtask: SubtaskProps) => (
+<SubtaskItem
+            key={subtask.title}
+            id={subtask.id}
+            task={task}
+            title={subtask.title}
+            isCompleted={subtask.isCompleted}
+          />
+    ))
+  }
+
   return (
     <>
       {!isDeleteModalOpen && !isEditModalOpen && (
         <Dialog.Portal>
-         <ModalOverlay
+          <ModalOverlay
             className="DialogOverlay"
             onClick={() => {
               closeAllModals()
@@ -124,16 +134,8 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
               <CustomLabel>{`Subtasks (${subtasksCompleted.length} of ${task.subtasks.length})`}</CustomLabel>
               {task.subtasks.length > 0 ? (
                 <SubtasksContainer>
-                  {task.subtasks.map((subtask: SubtaskProps) => (
-                    <SubtaskItem
-                      key={subtask.title}
-                      id={subtask.id}
-                      task={task}
-                      title={subtask.title}
-                      isCompleted={subtask.isCompleted}
-                    />
-                  ))}
-                </SubtasksContainer>
+                {renderSubtasks()}
+              </SubtasksContainer>
               ) : (
                 <EmptySubtask>No subtasks.</EmptySubtask>
               )}

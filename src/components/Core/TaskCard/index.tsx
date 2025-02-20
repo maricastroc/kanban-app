@@ -2,7 +2,8 @@ import { TaskProps } from '@/@types/task'
 import { TaskCardContainer } from './styles'
 import * as Dialog from '@radix-ui/react-dialog'
 import { TaskDetailsModal } from '@/components/Modals/TaskDetailsModal'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 
 type TaskCardProps = {
   task: TaskProps
@@ -10,7 +11,13 @@ type TaskCardProps = {
 }
 
 export function TaskCard({ task, provided }: TaskCardProps) {
+  const { handleEnableScrollFeature } = useBoardsContext()
+
   const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false)
+
+  useEffect(() => {
+    handleEnableScrollFeature(!isTaskDetailsModalOpen)
+  }, [isTaskDetailsModalOpen])
 
   return (
     <Dialog.Root open={isTaskDetailsModalOpen}>
@@ -18,9 +25,9 @@ export function TaskCard({ task, provided }: TaskCardProps) {
         <TaskCardContainer
           onClick={() => setIsTaskDetailsModalOpen(true)}
           className="task-card"
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
+          ref={isTaskDetailsModalOpen ? null : provided.innerRef}
+          {...(isTaskDetailsModalOpen ? {} : provided.draggableProps)}
+          {...(isTaskDetailsModalOpen ? {} : provided.dragHandleProps)}
         >
           <strong>{task.title}</strong>
           <p>{`${
