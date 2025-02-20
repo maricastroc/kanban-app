@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faAngleDown,
@@ -34,6 +34,7 @@ import { SubtaskItem } from '@/components/Core/SubtaskItem'
 import { StatusSelector } from '@/components/Shared/StatusSelector'
 import { DeleteModal } from '../DeleteModal'
 import { TaskFormModal } from '../TaskFormModal'
+import { Reorder } from 'framer-motion'
 
 interface TaskDetailsModalProps {
   task: TaskProps
@@ -47,9 +48,11 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
     (subtask: SubtaskProps) => subtask.isCompleted,
   )
 
+  const [subtasks, setSubtasks] = useState<SubtaskProps[]>([])
+
   const { activeBoard, enableDarkMode } = useBoardsContext()
 
-  const { moveTaskToColumn } = useTaskContext()
+  const { moveTaskToColumn, reorderSubtasks } = useTaskContext()
 
   const [status, setStatus] = useState(task.status)
 
@@ -73,17 +76,11 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
     setIsStatusOptionsContainerOpen(false)
   }
 
-  const renderSubtasks = () => {
-    return task.subtasks.map((subtask: SubtaskProps) => (
-<SubtaskItem
-            key={subtask.title}
-            id={subtask.id}
-            task={task}
-            title={subtask.title}
-            isCompleted={subtask.isCompleted}
-          />
-    ))
-  }
+  useEffect(() => {
+    if (task?.subtasks.length) {
+      setSubtasks(task.subtasks)
+    }
+  }, [task.subtasks])
 
   return (
     <>
@@ -132,13 +129,35 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
             <Description>
               <p>{task.description || 'No description'}</p>
               <CustomLabel>{`Subtasks (${subtasksCompleted.length} of ${task.subtasks.length})`}</CustomLabel>
-              {task.subtasks.length > 0 ? (
+            
+              {subtasks.length > 0 ? (
                 <SubtasksContainer>
-                {renderSubtasks()}
-              </SubtasksContainer>
+                  <Reorder.Group axis="y" values={subtasks} onReorder={(newOrder) => {
+                    setSubtasks(newOrder)
+                    reorderSubtasks(task.id, newOrder)
+                  }}>
+                    {subtasks.map((subtask: SubtaskProps) => (
+                      <Reorder.Item
+                        as="div"
+                        key={subtask.id}
+                        value={subtask}
+                        style={{ cursor: "grab" }}
+                        whileDrag={{ cursor: "grabbing" }}
+                      >
+                        <SubtaskItem
+                          id={subtask.id}
+                          task={task}
+                          title={subtask.title}
+                          isCompleted={subtask.isCompleted}
+                        />
+                      </Reorder.Item>
+                    ))}
+                  </Reorder.Group>
+                </SubtasksContainer>
               ) : (
                 <EmptySubtask>No subtasks.</EmptySubtask>
               )}
+
               <StatusContainer>
                 <CustomLabel>Current Status</CustomLabel>
                 <SelectStatusField
