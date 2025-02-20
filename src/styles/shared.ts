@@ -43,6 +43,7 @@ export const ModalContent = styled(RadixContent)<{ padding?: string }>`
   width: clamp(300px, 90vw, 33rem);
   border-radius: 8px;
   z-index: 9999;
+  animation: scaleIn 0.3s ease-out forwards;
 
   &:focus {
     box-shadow: none;
@@ -66,6 +67,24 @@ export const ModalContent = styled(RadixContent)<{ padding?: string }>`
     overflow: auto;
     max-height: auto;
     width: clamp(300px, 90vw, 25rem);
+  }
+
+  @keyframes scaleIn {
+    0% {
+      transform: translate(-50%, -50%) scale(0.8) rotate(15deg);
+      opacity: 0;
+    }
+    33% {
+      transform: translate(-50%, -50%) scale(1.1) rotate(-10deg);
+      opacity: 1;
+    }
+    66% {
+      transform: translate(-50%, -50%) scale(0.9) rotate(-5deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    }
   }
 `
 

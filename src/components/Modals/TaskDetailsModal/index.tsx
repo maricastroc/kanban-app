@@ -79,7 +79,7 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
     <>
       {!isDeleteModalOpen && !isEditModalOpen && (
         <Dialog.Portal>
-          <ModalOverlay
+         <ModalOverlay
             className="DialogOverlay"
             onClick={() => {
               closeAllModals()

@@ -175,7 +175,6 @@ export function BoardFormModal({ board, onClose, isEditing }: BoardModalProps) {
             </ColumnsContent>
             {boardColumns.length < MAX_COLUMNS && (
               <Button
-                type="button"
                 variant="secondary"
                 title="+ Add New Column"
                 onClick={handleAddColumn}

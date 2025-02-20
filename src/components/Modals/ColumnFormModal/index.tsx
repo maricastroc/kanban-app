@@ -185,7 +185,6 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
             </ColumnContent>
             {boardColumns.length < 6 && (
               <Button
-                type="button"
                 variant="secondary"
                 title="+ Add New Column"
                 onClick={handleAddColumn}

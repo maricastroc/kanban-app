@@ -14,6 +14,7 @@ interface TaskContextData {
     originalTask: TaskProps | undefined,
   ) => void
   addTaskToColumn: (task: TaskProps, columnName: string | undefined) => void
+  reorderTasksInColumn: (columnName: string, newOrder: TaskProps[]) => void
   updateBoardColumns: (updatedColumns: BoardColumnProps[]) => void
   moveTaskToColumn: (
     task: TaskProps,
@@ -283,6 +284,24 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
     }
   }
 
+  function reorderTasksInColumn(columnName: string, newOrder: TaskProps[]) {
+    const boardIndex = findActiveBoardIndex()
+    if (boardIndex === -1) return
+  
+    const boardsCopy = [...allBoards]
+    const boardCopy = { ...boardsCopy[boardIndex] }
+  
+    const column = boardCopy.columns.find((col) => col.name === columnName)
+    if (!column) return
+  
+    column.tasks = newOrder
+  
+    boardsCopy[boardIndex] = boardCopy
+    
+    updateBoards(boardsCopy)
+    handleSetActiveBoard(boardCopy)
+  }
+
   return (
     <TaskContext.Provider
       value={{
@@ -292,6 +311,7 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
         moveTaskToColumn,
         updateBoardColumns,
         toggleSubtaskStatus,
+        reorderTasksInColumn,
       }}
     >
       {children}

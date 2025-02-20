@@ -242,7 +242,6 @@ export function TaskFormModal({
               ))}
             </SubtasksWrapper>
             <Button
-              type="button"
               variant="secondary"
               title="+ Add New Subtask"
               onClick={handleAddSubtask}

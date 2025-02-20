@@ -2,7 +2,7 @@ import { TaskProps } from '@/@types/task'
 import { BoardColumnProps } from '@/@types/board-column'
 import * as Dialog from '@radix-ui/react-dialog'
 import { TaskCard } from '../TaskCard'
-import { Droppable, Draggable } from 'react-beautiful-dnd'
+import { Droppable, Draggable, DragDropContext } from 'react-beautiful-dnd'
 
 import {
   Container,
@@ -15,6 +15,7 @@ import { ColorPickerModal } from '@/components/Modals/ColorPickerModal'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { getTagColor } from '@/utils/getTagColor'
 import { getColumnColor, saveColumnColor } from '@/storage/colorConfig'
+import { useTaskContext } from '@/contexts/TasksContext'
 
 type ColumnProps = BoardColumnProps & {
   index: number
@@ -22,6 +23,8 @@ type ColumnProps = BoardColumnProps & {
 
 export function BoardColumn({ name, tasks, index }: ColumnProps) {
   const { handleEnableScrollFeature } = useBoardsContext()
+
+  const { reorderTasksInColumn } = useTaskContext();
 
   const [currentColor, setCurrentColor] = useState(
     getColumnColor(index) || getTagColor(index),
@@ -35,6 +38,23 @@ export function BoardColumn({ name, tasks, index }: ColumnProps) {
         {(provided) => <TaskCard task={task} provided={provided} />}
       </Draggable>
     ))
+  }
+
+  const handleDragEnd = (result: any) => {
+    const { destination, source } = result
+
+    if (!destination || (destination.index === source.index && destination.droppableId === source.droppableId)) {
+      return // Não fez movimento ou movimento na mesma posição
+    }
+  
+    console.log('Source:', source, 'Destination:', destination)
+  
+    // Reordenar as tarefas na coluna
+    const newTasks = Array.from(tasks) // Faz uma cópia do array de tarefas
+    const [removed] = newTasks.splice(source.index, 1) // Remove a tarefa da posição original
+    newTasks.splice(destination.index, 0, removed) // Insere a tarefa na nova posição
+  
+    reorderTasksInColumn(name, newTasks) 
   }
 
   useEffect(() => {
@@ -67,6 +87,7 @@ export function BoardColumn({ name, tasks, index }: ColumnProps) {
         />
       </Dialog.Root>
 
+      <DragDropContext onDragEnd={handleDragEnd}>
       <Droppable droppableId={index.toString()} type="CARD">
         {(provided) => (
           <TasksContainer ref={provided.innerRef} {...provided.droppableProps}>
@@ -76,6 +97,7 @@ export function BoardColumn({ name, tasks, index }: ColumnProps) {
           </TasksContainer>
         )}
       </Droppable>
+      </DragDropContext>
     </Container>
   )
 }
