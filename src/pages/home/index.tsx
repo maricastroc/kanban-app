@@ -25,6 +25,9 @@ import { Loader } from '@/styles/shared'
 import { Circles } from 'react-loader-spinner'
 import useRequest from '@/utils/useRequest'
 import { BoardProps } from '@/@types/board'
+import { api } from '@/lib/axios'
+import toast from 'react-hot-toast'
+import { handleApiError } from '@/utils/handleApiError'
 
 interface HomeProps {
   onChangeTheme: () => void
@@ -33,9 +36,11 @@ interface HomeProps {
 export default function Home({ onChangeTheme }: HomeProps) {
   const columnsContainerRef = useRef<HTMLDivElement | null>(null)
 
-  const { enableDarkMode, isLoading } = useBoardsContext()
+  const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>()
 
-  const { moveTaskToColumn, reorderTasksInColumn } = useTaskContext()
+  const [isLoading, setIsLoading] = useState(false)
+
+  const { enableDarkMode } = useBoardsContext()
 
   const [hideSidebar, setHideSidebar] = useState(false)
 
@@ -62,8 +67,51 @@ export default function Home({ onChangeTheme }: HomeProps) {
       method: 'GET',
   })
 
+  const moveTaskToColumn = async (taskId: string, newColumnId: string, newOrder: number) => {
+    try {
+      setIsLoading(true)
+
+      const payload = {
+        taskId,
+        newColumnId,
+        newOrder
+      }
+
+      await api.put('/tasks/move', payload);
+
+      mutate()
+    } catch (error) {
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const reorderTaskInColumn = async (taskId: string, newOrder: number) => {
+    try {
+      setIsLoading(true)
+
+      const payload = {
+        taskId,
+        newOrder
+      }
+
+      await api.put('/columns/move', payload);
+      mutate()
+    } catch (error) {
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const onDragEnd = (result: DropResult) => {
     const { destination, source } = result
+
+    if (isLoading) {
+      toast.error('Please wait until the current request is completed.')
+      return 
+    }
 
     if (!activeBoard) {
       return
@@ -88,15 +136,16 @@ export default function Home({ onChangeTheme }: HomeProps) {
 
     if (sourceColumnIndex === destinationColumnIndex) {
       newSourceTasks.splice(destination.index, 0, movedTask)
-
-      const newColumns = [...activeBoard?.columns]
-
-      reorderTasksInColumn(sourceColumnIndex, newSourceTasks)
-      
+  
+      const newColumns = [...activeBoard.columns]
       newColumns[sourceColumnIndex] = {
         ...sourceColumn,
         tasks: newSourceTasks,
       }
+
+      setBoardColumns(newColumns)
+  
+      reorderTaskInColumn(movedTask?.id, destination?.index)
     } else {
       const newDestinationTasks = Array.from(destinationColumn.tasks)
 
@@ -114,14 +163,21 @@ export default function Home({ onChangeTheme }: HomeProps) {
         tasks: newDestinationTasks,
       }
 
+      setBoardColumns(newColumns)
+
       moveTaskToColumn(
-        movedTask,
-        destinationColumn.name,
-        sourceColumn.name,
-        destination.index,
+        movedTask?.id,
+        destinationColumn?.id,
+        destination?.index,
       )
     }
   }
+
+  useEffect(() => {
+    if (activeBoard) {
+      setBoardColumns(activeBoard.columns)
+    }
+  }, [activeBoard])
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -144,16 +200,19 @@ export default function Home({ onChangeTheme }: HomeProps) {
                   onMouseLeave={handleMouseUp}
                   onMouseMove={handleMouseMove}
                 >
-                  {activeBoard?.columns.map((column: BoardColumnProps, index: number) => (
+                  {boardColumns?.map((column: BoardColumnProps, index: number) => (
                     <BoardColumn
                       id={column.id}
                       key={index}
                       name={column.name}
-                      tasks={column.tasks}
+                      tasks={column.tasks.map(task => ({
+                        ...task,
+                        isDragDisabled: isLoading
+                      }))}
                       index={index}
                     />
                   ))}
-                  {activeBoard?.columns && activeBoard?.columns?.length < 6 && (
+                  {boardColumns && boardColumns?.length < 6 && (
                     <Dialog.Root open={isColumnFormModalOpen}>
                       <Dialog.Trigger asChild>
                         <AddColumnContainer
@@ -181,12 +240,6 @@ export default function Home({ onChangeTheme }: HomeProps) {
           </LayoutContainer>
         )}
       </Droppable>
-
-      {isLoading && (
-        <Loader className="overlay">
-          <Circles color="#635FC7" height={80} width={80} />
-        </Loader>
-      )}
     </DragDropContext>
   )
 }

@@ -103,7 +103,7 @@ export function TaskFormModal({
   const [status, setStatus] = useState(
     isEditing && task?.status ? task.status : initialStatus,
   )
-console.log(subtasks)
+
   useOutsideClick(statusRef as RefObject<HTMLElement>, () => setIsOptionsContainerOpen(false))
 
   useEscapeKeyHandler(onClose)
