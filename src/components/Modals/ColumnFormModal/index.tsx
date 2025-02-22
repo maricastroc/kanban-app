@@ -9,13 +9,7 @@ import { Button } from '@/components/Shared/Button'
 import { FieldsContainer } from '@/components/Shared/FieldsContainer'
 import { Field } from '@/components/Shared/Field'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
-import {
-  Loader,
-  ModalContent,
-  ModalLoading,
-  ModalOverlay,
-  ModalTitle,
-} from '@/styles/shared'
+import { ModalContent, ModalOverlay, ModalTitle } from '@/styles/shared'
 import { CustomLabel } from '@/components/Shared/Label'
 import { BoardColumnProps } from '@/@types/board-column'
 import { CustomInput } from '@/components/Shared/Input'
@@ -32,7 +26,7 @@ import { AxiosResponse } from 'axios'
 import { api } from '@/lib/axios'
 import { handleApiError } from '@/utils/handleApiError'
 import toast from 'react-hot-toast'
-import { Circles } from 'react-loader-spinner'
+import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 
 interface ColumnFormModalProps {
   onClose: () => void
@@ -231,13 +225,7 @@ export function ColumnFormModal({
           />
         </FormContainer>
 
-        {isLoading && (
-          <ModalLoading>
-            <Loader>
-              <Circles color="#635FC7" height={80} width={80} />
-            </Loader>
-          </ModalLoading>
-        )}
+        {isLoading && <LoadingComponent />}
       </ModalContent>
     </Dialog.Portal>
   )

@@ -26,12 +26,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { api } from '@/lib/axios'
 import toast from 'react-hot-toast'
-import { Circles } from 'react-loader-spinner'
-import { Loader } from '@/styles/shared'
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useTheme } from 'styled-components'
 import { useLoadingOnRouteChange } from '@/utils/useLoadingOnRouteChange'
+import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 
 const signInFormSchema = z.object({
   name: z.string().min(3, { message: 'Name is required.' }),
@@ -174,11 +173,7 @@ export default function Login() {
         </FormContainer>
       </LoginCard>
 
-      {(isLoading || isRouteLoading) && (
-        <Loader className="overlay">
-          <Circles color="#635FC7" height={80} width={80} />
-        </Loader>
-      )}
+      {(isLoading || isRouteLoading) && <LoadingComponent />}
     </LayoutContainer>
   )
 }

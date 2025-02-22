@@ -18,9 +18,7 @@ import {
   ModalTitle,
 } from './styles'
 import {
-  Loader,
   ModalContent,
-  ModalLoading,
   ModalOverlay,
   SelectStatusField,
   StatusContainer,
@@ -40,11 +38,11 @@ import { Reorder } from 'framer-motion'
 import { KeyedMutator } from 'swr'
 import { AxiosResponse } from 'axios'
 import { BoardProps } from '@/@types/board'
-import { Circles } from 'react-loader-spinner'
 import { api } from '@/lib/axios'
 import { handleApiError } from '@/utils/handleApiError'
 import toast from 'react-hot-toast'
 import { BoardColumnProps } from '@/@types/board-column'
+import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 
 interface TaskDetailsModalProps {
   task: TaskProps
@@ -202,7 +200,7 @@ export function TaskDetailsModal({
 
             <Description>
               <p>{task.description || 'No description'}</p>
-              <CustomLabel>{`Subtasks (${subtasksCompleted.length} of ${task.subtasks.length})`}</CustomLabel>
+              <CustomLabel>{`Subtasks (${subtasksCompleted?.length} of ${task?.subtasks?.length})`}</CustomLabel>
 
               {subtasks.length > 0 ? (
                 <SubtasksContainer>
@@ -273,6 +271,7 @@ export function TaskDetailsModal({
                             column.id,
                             column?.tasks?.length + 1,
                           )
+
                           setStatus(column.name)
                         }}
                       />
@@ -282,13 +281,7 @@ export function TaskDetailsModal({
               </StatusContainer>
             </Description>
 
-            {isLoading && (
-              <ModalLoading>
-                <Loader>
-                  <Circles color="#635FC7" height={80} width={80} />
-                </Loader>
-              </ModalLoading>
-            )}
+            {isLoading && <LoadingComponent />}
           </ModalContent>
         </Dialog.Portal>
       )}

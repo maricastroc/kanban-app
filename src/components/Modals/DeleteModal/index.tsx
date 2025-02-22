@@ -3,13 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { ButtonsContainer, ModalDescription } from './styles'
 import { Button } from '@/components/Shared/Button'
 import { BoardProps } from '@/@types/board'
-import {
-  Loader,
-  ModalContent,
-  ModalLoading,
-  ModalOverlay,
-  ModalTitle,
-} from '@/styles/shared'
+import { ModalContent, ModalOverlay, ModalTitle } from '@/styles/shared'
 import { TaskProps } from '@/@types/task'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
@@ -17,7 +11,7 @@ import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
 import { KeyedMutator } from 'swr'
 import { AxiosResponse } from 'axios'
-import { Circles } from 'react-loader-spinner'
+import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 
 interface DeleteBoardProps {
   type: 'board' | 'task'
@@ -95,13 +89,7 @@ export function DeleteModal({
           />
         </ButtonsContainer>
 
-        {isLoading && (
-          <ModalLoading>
-            <Loader>
-              <Circles color="#635FC7" height={80} width={80} />
-            </Loader>
-          </ModalLoading>
-        )}
+        {isLoading && <LoadingComponent />}
       </ModalContent>
     </Dialog.Portal>
   )

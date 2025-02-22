@@ -19,8 +19,6 @@ import HideSidebar from '@/../public/icon-show-sidebar.svg'
 import { useWindowResize } from '@/utils/useWindowResize'
 import { useDragScroll } from '@/utils/useDragScroll'
 import { ColumnFormModal } from '@/components/Modals/ColumnFormModal'
-import { Loader } from '@/styles/shared'
-import { Circles } from 'react-loader-spinner'
 import useRequest from '@/utils/useRequest'
 import { BoardProps } from '@/@types/board'
 import { api } from '@/lib/axios'
@@ -29,6 +27,7 @@ import { handleApiError } from '@/utils/handleApiError'
 import { useTheme } from '@/contexts/ThemeContext'
 import Image from 'next/image'
 import { EmptyContainer } from '@/components/Shared/EmptyContainer'
+import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 
 export default function Home() {
   const columnsContainerRef = useRef<HTMLDivElement | null>(null)
@@ -59,12 +58,20 @@ export default function Home() {
     handleMouseDown(e)
   }
 
-  const { data: activeBoard, mutate } = useRequest<BoardProps>({
+  const {
+    data: activeBoard,
+    mutate,
+    isValidating: activeBoardValidating,
+  } = useRequest<BoardProps>({
     url: '/board/get',
     method: 'GET',
   })
 
-  const { data: boards, mutate: boardsMutate } = useRequest<BoardProps[]>({
+  const {
+    data: boards,
+    mutate: boardsMutate,
+    isValidating: boardsValidating,
+  } = useRequest<BoardProps[]>({
     url: '/boards',
     method: 'GET',
   })
@@ -75,6 +82,8 @@ export default function Home() {
     newOrder: number,
   ) => {
     try {
+      setIsLoading(true)
+
       const payload = {
         taskId,
         newColumnId,
@@ -86,6 +95,8 @@ export default function Home() {
       mutate()
     } catch (error) {
       handleApiError(error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -105,11 +116,6 @@ export default function Home() {
 
   const onDragEnd = (result: DropResult) => {
     const { destination, source } = result
-
-    if (isLoading) {
-      toast.error('Please wait until the current request is completed.')
-      return
-    }
 
     if (!activeBoard) {
       return
@@ -223,53 +229,55 @@ export default function Home() {
                   onMouseLeave={handleMouseUp}
                   onMouseMove={handleMouseMove}
                 >
-                  {activeBoard ? (
-                    <>
-                      {boardColumns?.map(
-                        (column: BoardColumnProps, index: number) => (
-                          <BoardColumn
-                            id={column.id}
-                            mutate={mutate}
-                            column={column}
-                            key={index}
-                            name={column.name}
-                            activeBoard={activeBoard}
-                            tasks={column.tasks.map((task) => ({
-                              ...task,
-                              isDragDisabled: isLoading,
-                            }))}
-                            index={index}
-                          />
-                        ),
-                      )}
-
-                      {boardColumns && boardColumns?.length < 6 && (
-                        <Dialog.Root open={isColumnFormModalOpen}>
-                          <Dialog.Trigger asChild>
-                            <AddColumnContainer
-                              className={enableDarkMode ? 'dark' : 'light'}
-                              onClick={() => setIsColumnFormModalOpen(true)}
-                            >
-                              <AddColumnBtn>+ New Column</AddColumnBtn>
-                            </AddColumnContainer>
-                          </Dialog.Trigger>
-                          {isColumnFormModalOpen && (
-                            <ColumnFormModal
-                              activeBoard={activeBoard}
+                  {!activeBoardValidating &&
+                    !boardsValidating &&
+                    (activeBoard ? (
+                      <>
+                        {boardColumns?.map(
+                          (column: BoardColumnProps, index: number) => (
+                            <BoardColumn
+                              id={column.id}
                               mutate={mutate}
-                              onClose={() => setIsColumnFormModalOpen(false)}
+                              column={column}
+                              key={index}
+                              name={column.name}
+                              activeBoard={activeBoard}
+                              tasks={column.tasks.map((task) => ({
+                                ...task,
+                                isDragDisabled: isLoading,
+                              }))}
+                              index={index}
                             />
-                          )}
-                        </Dialog.Root>
-                      )}
-                    </>
-                  ) : (
-                    <EmptyContainer
-                      activeBoard={activeBoard}
-                      mutate={mutate}
-                      boardsMutate={boardsMutate}
-                    />
-                  )}
+                          ),
+                        )}
+
+                        {boardColumns && boardColumns?.length < 6 && (
+                          <Dialog.Root open={isColumnFormModalOpen}>
+                            <Dialog.Trigger asChild>
+                              <AddColumnContainer
+                                className={enableDarkMode ? 'dark' : 'light'}
+                                onClick={() => setIsColumnFormModalOpen(true)}
+                              >
+                                <AddColumnBtn>+ New Column</AddColumnBtn>
+                              </AddColumnContainer>
+                            </Dialog.Trigger>
+                            {isColumnFormModalOpen && (
+                              <ColumnFormModal
+                                activeBoard={activeBoard}
+                                mutate={mutate}
+                                onClose={() => setIsColumnFormModalOpen(false)}
+                              />
+                            )}
+                          </Dialog.Root>
+                        )}
+                      </>
+                    ) : (
+                      <EmptyContainer
+                        activeBoard={activeBoard}
+                        mutate={mutate}
+                        boardsMutate={boardsMutate}
+                      />
+                    ))}
                 </ColumnsContainer>
               </Wrapper>
               {hideSidebar && (
@@ -282,10 +290,8 @@ export default function Home() {
         )}
       </Droppable>
 
-      {isLoading && (
-        <Loader className="overlay">
-          <Circles color="#635FC7" height={80} width={80} />
-        </Loader>
+      {(isLoading || activeBoardValidating || boardsValidating) && (
+        <LoadingComponent />
       )}
     </DragDropContext>
   )

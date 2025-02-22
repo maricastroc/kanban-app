@@ -10,9 +10,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import {
-  Loader,
   ModalContent,
-  ModalLoading,
   ModalOverlay,
   ModalTitle,
   SelectStatusField,
@@ -45,7 +43,7 @@ import { BoardProps } from '@/@types/board'
 import toast from 'react-hot-toast'
 import { AxiosResponse } from 'axios'
 import { KeyedMutator } from 'swr'
-import { Circles } from 'react-loader-spinner'
+import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 
 const subtaskSchema = z.object({
   id: z.string(),
@@ -355,13 +353,7 @@ export function TaskFormModal({
           />
         </FormContainer>
 
-        {isLoading && (
-          <ModalLoading>
-            <Loader>
-              <Circles color="#635FC7" height={80} width={80} />
-            </Loader>
-          </ModalLoading>
-        )}
+        {isLoading && <LoadingComponent />}
       </ModalContent>
     </Dialog.Portal>
   )

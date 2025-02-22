@@ -49,7 +49,7 @@ export function TaskCard({
           <strong>{task.title}</strong>
           <p>{`${
             task?.subtasks?.filter((subtask) => subtask?.isCompleted)?.length
-          } of ${task.subtasks.length} subtasks`}</p>
+          } of ${task?.subtasks?.length} subtasks`}</p>
         </TaskCardContainer>
       </Dialog.Trigger>
       <TaskDetailsModal

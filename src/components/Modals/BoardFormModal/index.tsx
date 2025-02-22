@@ -3,13 +3,7 @@ import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import * as Dialog from '@radix-ui/react-dialog'
 import { ColumnsContainer, ColumnsContent } from './styles'
-import {
-  Loader,
-  ModalContent,
-  ModalLoading,
-  ModalOverlay,
-  ModalTitle,
-} from '@/styles/shared'
+import { ModalContent, ModalOverlay, ModalTitle } from '@/styles/shared'
 
 import { FormContainer } from '@/components/Shared/FormContainer'
 import { InputContainer } from '@/components/Shared/InputContainer'
@@ -30,10 +24,10 @@ import { MIN_BOARD_NAME_LENGTH, MAX_COLUMNS } from '@/utils/constants'
 import { BoardProps } from '@/@types/board'
 import { api } from '@/lib/axios'
 import { handleApiError } from '@/utils/handleApiError'
-import { Circles } from 'react-loader-spinner'
 import toast from 'react-hot-toast'
 import { KeyedMutator } from 'swr'
 import { AxiosResponse } from 'axios'
+import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 
 interface BoardModalProps {
   activeBoard?: BoardProps | undefined
@@ -274,13 +268,7 @@ export function BoardFormModal({
           />
         </FormContainer>
 
-        {isLoading && (
-          <ModalLoading>
-            <Loader>
-              <Circles color="#635FC7" height={80} width={80} />
-            </Loader>
-          </ModalLoading>
-        )}
+        {isLoading && <LoadingComponent />}
       </ModalContent>
     </Dialog.Portal>
   )
