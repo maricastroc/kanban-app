@@ -36,7 +36,7 @@ import { KeyedMutator } from 'swr'
 import { AxiosResponse } from 'axios'
 
 interface BoardModalProps {
-  activeBoard?: BoardProps
+  activeBoard?: BoardProps | undefined
   onClose: () => void
   isEditing: boolean
   mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
@@ -125,11 +125,25 @@ export function BoardFormModal({
   const handleEditBoard = async (data: FormData) => {
     setIsLoading(true)
 
+    const formValues = watch()
+
+    const updatedColumns: BoardColumnProps[] = formValues.columns.map(
+      (column, index) => {
+        const existingColumn = boardColumns[index]
+
+        return {
+          id: column.id,
+          name: column.name,
+          tasks: existingColumn?.tasks || [],
+        }
+      },
+    )
+
     try {
       const payload = {
         boardId: activeBoard?.id,
         name: data.name,
-        columns: boardColumns,
+        columns: updatedColumns,
       }
 
       const response = await api.put('/board/edit', payload)
@@ -182,47 +196,6 @@ export function BoardFormModal({
     )
     setBoardColumns(updatedColumns)
     setValue('columns', updatedColumns)
-  }
-
-  const handleEditColumns = async () => {
-    try {
-      setIsLoading(true)
-
-      const formValues = watch()
-
-      const updatedColumns: BoardColumnProps[] = formValues.columns.map(
-        (column, index) => {
-          const existingColumn = boardColumns[index]
-
-          return {
-            id: column.id,
-            name: column.name,
-            tasks: existingColumn?.tasks || [],
-          }
-        },
-      )
-
-      const payload = {
-        columns: updatedColumns,
-        boardId: activeBoard?.id,
-        boardName: formValues.name,
-      }
-
-      const response = await api.put('/columns/edit', payload)
-
-      toast?.success(response.data.message)
-
-      mutate()
-    } catch (error) {
-      handleApiError(error)
-    } finally {
-      setIsLoading(false)
-      reset()
-
-      setTimeout(() => {
-        onClose()
-      }, 500)
-    }
   }
 
   const renderColumnInput = (column: BoardColumnProps, index: number) => {

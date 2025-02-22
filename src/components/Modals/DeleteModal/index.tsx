@@ -1,10 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Dialog from '@radix-ui/react-dialog'
 import { ButtonsContainer, ModalDescription } from './styles'
-import { useBoardsContext } from '@/contexts/BoardsContext'
 import { Button } from '@/components/Shared/Button'
 import { BoardProps } from '@/@types/board'
-import { Loader, ModalContent, ModalLoading, ModalOverlay, ModalTitle } from '@/styles/shared'
-import { useTaskContext } from '@/contexts/TasksContext'
+import {
+  Loader,
+  ModalContent,
+  ModalLoading,
+  ModalOverlay,
+  ModalTitle,
+} from '@/styles/shared'
 import { TaskProps } from '@/@types/task'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
@@ -22,30 +27,34 @@ interface DeleteBoardProps {
   onClose: () => void
 }
 
-export function DeleteModal({ type, board, task, onClose, mutate }: DeleteBoardProps) {
-  const { deleteTask } = useTaskContext()
-
+export function DeleteModal({
+  type,
+  board,
+  task,
+  onClose,
+  mutate,
+}: DeleteBoardProps) {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleDelete = async (id: string) => {
     try {
       setIsLoading(true)
-  
+
       const routePath = type === 'board' ? '/board/delete' : '/tasks/delete'
-  
+
       const payload = {
         id,
       }
-  
+
       const response = await api.delete(routePath, { data: payload })
-  
+
       mutate()
       toast?.success(response.data.message)
     } catch (error) {
       handleApiError(error)
     } finally {
       setIsLoading(false)
-  
+
       setTimeout(() => {
         onClose()
       }, 500)

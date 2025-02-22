@@ -13,7 +13,6 @@ import {
   Wrapper,
 } from './styles'
 import { BoardColumnProps } from '@/@types/board-column'
-import { useBoardsContext } from '@/contexts/BoardsContext'
 import { BREAKPOINT_SM } from '@/utils/constants'
 import { Sidebar } from '@/components/Core/Sidebar'
 import HideSidebar from '@/../public/icon-show-sidebar.svg'
@@ -27,19 +26,18 @@ import { BoardProps } from '@/@types/board'
 import { api } from '@/lib/axios'
 import toast from 'react-hot-toast'
 import { handleApiError } from '@/utils/handleApiError'
+import { useTheme } from '@/contexts/ThemeContext'
+import Image from 'next/image'
+import { EmptyContainer } from '@/components/Shared/EmptyContainer'
 
-interface HomeProps {
-  onChangeTheme: () => void
-}
-
-export default function Home({ onChangeTheme }: HomeProps) {
+export default function Home() {
   const columnsContainerRef = useRef<HTMLDivElement | null>(null)
 
   const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>()
 
   const [isLoading, setIsLoading] = useState(false)
 
-  const { enableDarkMode } = useBoardsContext()
+  const { enableDarkMode } = useTheme()
 
   const [hideSidebar, setHideSidebar] = useState(false)
 
@@ -204,7 +202,6 @@ export default function Home({ onChangeTheme }: HomeProps) {
               {!isSmallerThanSm && !hideSidebar && (
                 <Sidebar
                   onClose={() => setHideSidebar(true)}
-                  onChangeTheme={onChangeTheme}
                   handleChangeBoardStatus={handleChangeBoardStatus}
                   activeBoard={activeBoard}
                   mutate={mutate}
@@ -215,8 +212,8 @@ export default function Home({ onChangeTheme }: HomeProps) {
               <Wrapper>
                 <Header
                   boardsMutate={boardsMutate}
+                  boards={boards}
                   activeBoard={activeBoard}
-                  onChangeTheme={onChangeTheme}
                   mutate={mutate}
                 />
                 <ColumnsContainer
@@ -226,47 +223,58 @@ export default function Home({ onChangeTheme }: HomeProps) {
                   onMouseLeave={handleMouseUp}
                   onMouseMove={handleMouseMove}
                 >
-                  {activeBoard && boardColumns?.map(
-                    (column: BoardColumnProps, index: number) => (
-                      <BoardColumn
-                        id={column.id}
-                        mutate={mutate}
-                        column={column}
-                        key={index}
-                        name={column.name}
-                        activeBoard={activeBoard}
-                        tasks={column.tasks.map((task) => ({
-                          ...task,
-                          isDragDisabled: isLoading,
-                        }))}
-                        index={index}
-                      />
-                    ),
-                  )}
-                  {boardColumns && boardColumns?.length < 6 && (
-                    <Dialog.Root open={isColumnFormModalOpen}>
-                      <Dialog.Trigger asChild>
-                        <AddColumnContainer
-                          className={enableDarkMode ? 'dark' : 'light'}
-                          onClick={() => setIsColumnFormModalOpen(true)}
-                        >
-                          <AddColumnBtn>+ New Column</AddColumnBtn>
-                        </AddColumnContainer>
-                      </Dialog.Trigger>
-                      {isColumnFormModalOpen && (
-                        <ColumnFormModal
-                          activeBoard={activeBoard}
-                          mutate={mutate}
-                          onClose={() => setIsColumnFormModalOpen(false)}
-                        />
+                  {activeBoard ? (
+                    <>
+                      {boardColumns?.map(
+                        (column: BoardColumnProps, index: number) => (
+                          <BoardColumn
+                            id={column.id}
+                            mutate={mutate}
+                            column={column}
+                            key={index}
+                            name={column.name}
+                            activeBoard={activeBoard}
+                            tasks={column.tasks.map((task) => ({
+                              ...task,
+                              isDragDisabled: isLoading,
+                            }))}
+                            index={index}
+                          />
+                        ),
                       )}
-                    </Dialog.Root>
+
+                      {boardColumns && boardColumns?.length < 6 && (
+                        <Dialog.Root open={isColumnFormModalOpen}>
+                          <Dialog.Trigger asChild>
+                            <AddColumnContainer
+                              className={enableDarkMode ? 'dark' : 'light'}
+                              onClick={() => setIsColumnFormModalOpen(true)}
+                            >
+                              <AddColumnBtn>+ New Column</AddColumnBtn>
+                            </AddColumnContainer>
+                          </Dialog.Trigger>
+                          {isColumnFormModalOpen && (
+                            <ColumnFormModal
+                              activeBoard={activeBoard}
+                              mutate={mutate}
+                              onClose={() => setIsColumnFormModalOpen(false)}
+                            />
+                          )}
+                        </Dialog.Root>
+                      )}
+                    </>
+                  ) : (
+                    <EmptyContainer
+                      activeBoard={activeBoard}
+                      mutate={mutate}
+                      boardsMutate={boardsMutate}
+                    />
                   )}
                 </ColumnsContainer>
               </Wrapper>
               {hideSidebar && (
                 <ShowSidebarBtn onClick={() => setHideSidebar(false)}>
-                  <img src={HideSidebar} alt="" />
+                  <Image src={HideSidebar} alt="" />
                 </ShowSidebarBtn>
               )}
             </BoardContent>

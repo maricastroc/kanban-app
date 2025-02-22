@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TaskProps } from '@/@types/task'
 import { BoardColumnProps } from '@/@types/board-column'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -27,7 +27,15 @@ type ColumnProps = BoardColumnProps & {
   activeBoard: BoardProps
 }
 
-export function BoardColumn({ name, id, tasks, mutate, activeBoard, column, index }: ColumnProps) {
+export function BoardColumn({
+  name,
+  id,
+  tasks,
+  mutate,
+  activeBoard,
+  column,
+  index,
+}: ColumnProps) {
   const { handleEnableScrollFeature } = useBoardsContext()
 
   const [currentColor, setCurrentColor] = useState(
@@ -39,7 +47,16 @@ export function BoardColumn({ name, id, tasks, mutate, activeBoard, column, inde
   const renderTasks = () => {
     return tasks.map((task: TaskProps, taskIndex: number) => (
       <Draggable key={task.id} draggableId={task.id} index={taskIndex}>
-        {(provided) => <TaskCard column={column} activeBoard={activeBoard} boardId={id} mutate={mutate} task={task} provided={provided} />}
+        {(provided) => (
+          <TaskCard
+            column={column}
+            activeBoard={activeBoard}
+            boardId={id}
+            mutate={mutate}
+            task={task}
+            provided={provided}
+          />
+        )}
       </Draggable>
     ))
   }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { RefObject, useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -54,7 +55,14 @@ interface TaskDetailsModalProps {
   onClose: () => void
 }
 
-export function TaskDetailsModal({ task, activeBoard, column, boardId, mutate, onClose }: TaskDetailsModalProps) {
+export function TaskDetailsModal({
+  task,
+  activeBoard,
+  column,
+  boardId,
+  mutate,
+  onClose,
+}: TaskDetailsModalProps) {
   useEscapeKeyHandler(onClose)
 
   const subtasksCompleted = task.subtasks.filter(
@@ -91,7 +99,10 @@ export function TaskDetailsModal({ task, activeBoard, column, boardId, mutate, o
     setIsStatusOptionsContainerOpen(false)
   }
 
-  const reorderSubtaskInTask = async (taskId: string, subtasks: SubtaskProps[],) => {
+  const reorderSubtaskInTask = async (
+    taskId: string,
+    subtasks: SubtaskProps[],
+  ) => {
     try {
       setIsReordering(true)
 
@@ -118,7 +129,7 @@ export function TaskDetailsModal({ task, activeBoard, column, boardId, mutate, o
   const moveTaskToColumn = async (
     taskId: string,
     newColumnId: string,
-    newOrder: number
+    newOrder: number,
   ) => {
     try {
       setIsLoading(true)
@@ -200,7 +211,9 @@ export function TaskDetailsModal({ task, activeBoard, column, boardId, mutate, o
                     values={subtasks}
                     onReorder={(newOrder) => {
                       if (isReordering) {
-                        toast.error('Please wait until the current request is completed.')
+                        toast.error(
+                          'Please wait until the current request is completed.',
+                        )
                         return
                       }
 
@@ -221,7 +234,9 @@ export function TaskDetailsModal({ task, activeBoard, column, boardId, mutate, o
                           task={task}
                           title={subtask.title}
                           isCompleted={subtask.isCompleted}
-                          handleSetIsLoading={(value: boolean) => setIsLoading(value)}
+                          handleSetIsLoading={(value: boolean) =>
+                            setIsLoading(value)
+                          }
                           mutate={mutate}
                         />
                       </Reorder.Item>
@@ -253,7 +268,11 @@ export function TaskDetailsModal({ task, activeBoard, column, boardId, mutate, o
                         column={column}
                         status={status}
                         handleChangeStatus={async () => {
-                          await moveTaskToColumn(task.id, column.id, column?.tasks?.length + 1)
+                          await moveTaskToColumn(
+                            task.id,
+                            column.id,
+                            column?.tasks?.length + 1,
+                          )
                           setStatus(column.name)
                         }}
                       />

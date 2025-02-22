@@ -68,8 +68,7 @@ export const AddColumnContainer = styled.div`
   &.dark {
     background: linear-gradient(
       to bottom,
-      rgba(121, 132, 147, 0.2),
-      rgba(130, 143, 163, 0.1),
+      rgba(130, 143, 163, 0.075),
       rgba(130, 143, 163, 0)
     );
   }

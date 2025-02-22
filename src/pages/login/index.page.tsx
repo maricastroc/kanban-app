@@ -24,12 +24,13 @@ import {
 } from './styles'
 import { Envelope, LockKey } from 'phosphor-react'
 import { Button } from '@/components/Shared/Button'
-import { useBoardsContext } from '@/contexts/BoardsContext'
 import Image from 'next/image'
 import { toast } from 'react-hot-toast'
 import Link from 'next/link'
 import { Circles } from 'react-loader-spinner'
 import { Loader } from '@/styles/shared'
+import { useTheme } from '@/contexts/ThemeContext'
+import { useLoadingOnRouteChange } from '@/utils/useLoadingOnRouteChange'
 
 const signInFormSchema = z.object({
   email: z.string().min(3, { message: 'E-mail is required.' }),
@@ -39,7 +40,11 @@ const signInFormSchema = z.object({
 type SignInFormData = z.infer<typeof signInFormSchema>
 
 export default function Login() {
-  const { enableDarkMode } = useBoardsContext()
+  const { enableDarkMode } = useTheme()
+
+  const [isLoading, setIsLoading] = useState(false)
+
+  const isRouteLoading = useLoadingOnRouteChange()
 
   const router = useRouter()
 
@@ -51,8 +56,6 @@ export default function Login() {
     resolver: zodResolver(signInFormSchema),
     defaultValues: { email: '', password: '' },
   })
-
-  const [isLoading, setIsLoading] = useState(false)
 
   async function onSubmit(data: SignInFormData) {
     setIsLoading(true)
@@ -82,8 +85,11 @@ export default function Login() {
       <LogoWrapper>
         <Image src={Logo} width={24} height={24} alt="" />
         <Image
-          src={enableDarkMode ? LogoTextLight : LogoTextDark}
-          width={112}
+          src={
+            enableDarkMode === undefined || enableDarkMode
+              ? LogoTextLight
+              : LogoTextDark
+          }
           height={24}
           alt=""
         />
@@ -138,7 +144,7 @@ export default function Login() {
         </FormContainer>
       </LoginCard>
 
-      {isLoading && (
+      {(isLoading || isRouteLoading) && (
         <Loader className="overlay">
           <Circles color="#635FC7" height={80} width={80} />{' '}
         </Loader>

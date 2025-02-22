@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useBoardsContext } from '@/contexts/BoardsContext'
 import {
   BoardBtn,
   BoardsContainer,
@@ -30,10 +29,10 @@ import Image from 'next/image'
 import { BoardProps } from '@/@types/board'
 import { AxiosResponse } from 'axios'
 import { KeyedMutator } from 'swr'
+import { useTheme } from '@/contexts/ThemeContext'
 
 interface SidebarProps {
   onClose: () => void
-  onChangeTheme: () => void
   mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
   boardsMutate: KeyedMutator<AxiosResponse<BoardProps[], any>>
   handleChangeBoardStatus: (board: BoardProps) => Promise<void>
@@ -46,12 +45,10 @@ export function Sidebar({
   boards,
   handleChangeBoardStatus,
   onClose,
-  onChangeTheme,
   mutate,
   boardsMutate,
 }: SidebarProps) {
-  const { enableDarkMode, handleSetActiveBoard, handleEnableDarkMode } =
-    useBoardsContext()
+  const { toggleTheme, enableDarkMode } = useTheme()
 
   const [isAddBoardModalOpen, setIsAddBoardModalOpen] = useState(false)
 
@@ -75,11 +72,10 @@ export function Sidebar({
                 key={board.name}
                 className={board.name === activeBoard?.name ? 'active' : ''}
                 onClick={() => {
-                  handleSetActiveBoard(board)
                   handleChangeBoardStatus(board)
                 }}
               >
-                <img src={IconBoard} alt="" />
+                <Image src={IconBoard} alt="" />
                 <p>{board.name}</p>
               </BoardBtn>
             )
@@ -92,7 +88,7 @@ export function Sidebar({
                   setIsAddBoardModalOpen(true)
                 }}
               >
-                <img src={IconBoard} alt="" />
+                <Image src={IconBoard} alt="" />
                 <p>+ Create New Board</p>
               </CreateBoardBtn>
             </Dialog.Trigger>
@@ -111,18 +107,17 @@ export function Sidebar({
       </Wrapper>
       <OptionsContainer>
         <ThemeSwitcherContainer>
-          <img src={LightThemeSvg} alt="" />
+          <Image src={LightThemeSvg} alt="" />
           <SwitchRoot
             className="SwitchRoot"
             id="airplane-mode"
             onClick={() => {
-              onChangeTheme()
-              handleEnableDarkMode(!enableDarkMode)
+              toggleTheme()
             }}
           >
             <SwitchThumb className="SwitchThumb" />
           </SwitchRoot>
-          <img src={DarkThemeSvg} alt="" />
+          <Image src={DarkThemeSvg} alt="" />
         </ThemeSwitcherContainer>
         <HideButton onClick={onClose}>
           <EyeSlash />

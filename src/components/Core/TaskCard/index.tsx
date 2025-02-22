@@ -20,7 +20,14 @@ type TaskCardProps = {
   boardId: string
 }
 
-export function TaskCard({ task, provided, activeBoard, column, boardId, mutate }: TaskCardProps) {
+export function TaskCard({
+  task,
+  provided,
+  activeBoard,
+  column,
+  boardId,
+  mutate,
+}: TaskCardProps) {
   const { handleEnableScrollFeature } = useBoardsContext()
 
   const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false)

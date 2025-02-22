@@ -40,7 +40,8 @@ export default async function handler(
 
   if (req.method === 'PUT') {
     try {
-      const { boardId, boardName, columns } = await updateColumnsSchema.parseAsync(req.body)
+      const { boardId, boardName, columns } =
+        await updateColumnsSchema.parseAsync(req.body)
 
       const existingBoard = await prisma.board.findUnique({
         where: { id: boardId, userId },
@@ -84,7 +85,9 @@ export default async function handler(
           }
         }
 
-        const receivedColumnIds = columns.map((col) => col.id).filter(Boolean) as string[]
+        const receivedColumnIds = columns
+          .map((col) => col.id)
+          .filter(Boolean) as string[]
         const columnsToDelete = existingColumnIds.filter(
           (id) => !receivedColumnIds.includes(id),
         )

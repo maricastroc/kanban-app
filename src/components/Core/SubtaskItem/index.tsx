@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -5,7 +6,6 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { TaskProps } from '@/@types/task'
 
 import { CheckedBox, Container, Title, UncheckedBox } from './styles'
-import { useTaskContext } from '@/contexts/TasksContext'
 import { SubtaskProps } from '@/@types/subtask'
 import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
@@ -25,10 +25,8 @@ export function SubtaskItem({
   title,
   isCompleted,
   mutate,
-  handleSetIsLoading
+  handleSetIsLoading,
 }: SubtaskItemProps) {
-  const { toggleSubtaskStatus } = useTaskContext()
-
   const [isChecked, setIsChecked] = useState(isCompleted)
 
   const handleToggleSubtaskStatus = async () => {
@@ -39,13 +37,12 @@ export function SubtaskItem({
 
       const payload = {
         taskId: task.id,
-        subtaskId: id
+        subtaskId: id,
       }
 
       await api.put('/subtasks/status', payload)
 
       mutate()
-
     } catch (error) {
       handleApiError(error)
     } finally {

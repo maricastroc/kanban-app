@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
@@ -22,10 +23,17 @@ import DarkThemeSvg from '@/../public/icon-dark-theme.svg'
 import { BoardProps } from '@/@types/board'
 import { simulateDelay } from '@/utils/simulateDelay'
 import { BoardFormModal } from '../BoardFormModal'
+import { useTheme } from '@/contexts/ThemeContext'
+import { KeyedMutator } from 'swr'
+import { AxiosResponse } from 'axios'
+import Image from 'next/image'
 
 interface BoardsDetailsModalProps {
-  onChangeTheme: () => void
   onClose: () => void
+  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
+  boardsMutate: KeyedMutator<AxiosResponse<BoardProps[], any>>
+  activeBoard: BoardProps | undefined
+  boards: BoardProps[] | undefined
 }
 
 const BoardListItem = ({
@@ -33,31 +41,31 @@ const BoardListItem = ({
   activeBoard,
   handleClickBoard,
 }: {
-  board: BoardProps
-  activeBoard: BoardProps | null
+  board: BoardProps | undefined
+  activeBoard: BoardProps | undefined
   handleClickBoard: (board: BoardProps) => void
-}) => (
-  <BoardItem
-    key={board.name}
-    className={board.name === activeBoard?.name ? 'active' : ''}
-    onClick={() => handleClickBoard(board)}
-  >
-    <img src={BoardIcon} alt="" />
-    <p>{board.name}</p>
-  </BoardItem>
-)
+}) =>
+  board && (
+    <BoardItem
+      key={board?.name}
+      className={board?.name === activeBoard?.name ? 'active' : ''}
+      onClick={() => handleClickBoard(board)}
+    >
+      <Image src={BoardIcon} alt="" />
+      <p>{board?.name}</p>
+    </BoardItem>
+  )
 
 export function BoardsDetailsModal({
-  onChangeTheme,
   onClose,
+  mutate,
+  activeBoard,
+  boards,
+  boardsMutate,
 }: BoardsDetailsModalProps) {
-  const {
-    activeBoard,
-    allBoards,
-    enableDarkMode,
-    handleEnableDarkMode,
-    handleSetActiveBoard,
-  } = useBoardsContext()
+  const { handleSetActiveBoard } = useBoardsContext()
+
+  const { toggleTheme } = useTheme()
 
   const [addBoardModalOpen, setAddBoardModalOpen] = useState(false)
 
@@ -74,7 +82,7 @@ export function BoardsDetailsModal({
       <ModalOverlay className="DialogOverlay" onClick={onClose} />
       <ModalContent padding="1.5rem 0" className="DialogContent">
         <ModalTitle className="DialogTitle">
-          {`All Boards (${allBoards.length})`}
+          {`All Boards (${boards?.length || 0})`}
         </ModalTitle>
 
         <VisuallyHidden>
@@ -82,43 +90,47 @@ export function BoardsDetailsModal({
         </VisuallyHidden>
 
         <BoardsContainer>
-          {allBoards.map((board) => (
-            <BoardListItem
-              key={board.name}
-              board={board}
-              activeBoard={activeBoard}
-              handleClickBoard={handleClickBoard}
-            />
-          ))}
+          {boards &&
+            boards?.map((board) => (
+              <BoardListItem
+                key={board.name}
+                board={board}
+                activeBoard={activeBoard}
+                handleClickBoard={handleClickBoard}
+              />
+            ))}
 
           <Dialog.Root open={addBoardModalOpen}>
             <Dialog.Trigger asChild onClick={() => setAddBoardModalOpen(true)}>
               <BoardItem className="create">
-                <img src={BoardIcon} alt="" />
+                <Image src={BoardIcon} alt="" />
                 <p>+ Create New Board</p>
               </BoardItem>
             </Dialog.Trigger>
             <BoardFormModal
               isEditing={false}
+              mutate={mutate}
+              boardsMutate={boardsMutate}
+              activeBoard={activeBoard as BoardProps}
               onClose={() => setAddBoardModalOpen(false)}
             />
           </Dialog.Root>
         </BoardsContainer>
 
-        <ThemeSwitcherContainer onClick={onChangeTheme}>
-          <img src={DarkThemeSvg} alt="Dark theme" />
+        <ThemeSwitcherContainer onClick={toggleTheme}>
+          <Image src={DarkThemeSvg} alt="Dark theme" />
           <SwitchRoot
             className="SwitchRoot"
             id="airplane-mode"
             onClick={async () => {
-              handleEnableDarkMode(!enableDarkMode)
+              toggleTheme()
               await simulateDelay()
               onClose()
             }}
           >
             <SwitchThumb className="SwitchThumb" />
           </SwitchRoot>
-          <img src={LightThemeSvg} alt="Light theme" />
+          <Image src={LightThemeSvg} alt="Light theme" />
         </ThemeSwitcherContainer>
       </ModalContent>
     </Dialog.Portal>

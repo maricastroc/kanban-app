@@ -29,10 +29,15 @@ export default async function handler(
   }
 
   if (req.method === 'PUT') {
-    const { taskId, subtasks }: { taskId: string; subtasks: SubtaskUpdateData[] } = req.body
+    const {
+      taskId,
+      subtasks,
+    }: { taskId: string; subtasks: SubtaskUpdateData[] } = req.body
 
     if (!taskId || !subtasks || subtasks.length === 0) {
-      return res.status(400).json({ message: 'Task ID and subtasks with updated order are required' })
+      return res.status(400).json({
+        message: 'Task ID and subtasks with updated order are required',
+      })
     }
 
     try {
@@ -50,12 +55,14 @@ export default async function handler(
         const { id, order } = subtask
 
         await prisma.subtask.update({
-          where: { id: id },
-          data: { order: order },
+          where: { id },
+          data: { order },
         })
       }
 
-      return res.status(200).json({ message: 'Subtasks reordered successfully' })
+      return res
+        .status(200)
+        .json({ message: 'Subtasks reordered successfully' })
     } catch (error) {
       console.error(error)
       return res.status(500).json({ message: 'Internal server error' })

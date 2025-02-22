@@ -211,6 +211,7 @@ export const ThemeSwitcherContainer = styled.div`
   gap: 1.5rem;
   width: 85%;
   margin: 0 auto;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 
   svg {
     color: ${(props) => props.theme['subtitle-color']};

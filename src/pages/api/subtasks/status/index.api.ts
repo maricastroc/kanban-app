@@ -32,7 +32,9 @@ export default async function handler(
     const { taskId, subtaskId }: TaskUpdateData = req.body
 
     if (!taskId || !subtaskId) {
-      return res.status(400).json({ message: 'Task ID and Subtask ID are required' })
+      return res
+        .status(400)
+        .json({ message: 'Task ID and Subtask ID are required' })
     }
 
     try {
@@ -47,7 +49,7 @@ export default async function handler(
 
       // Encontra a subtask com o ID especificado
       const existingSubtask = existingTask.subtasks.find(
-        (sub) => sub.id === subtaskId
+        (sub) => sub.id === subtaskId,
       )
 
       if (!existingSubtask) {

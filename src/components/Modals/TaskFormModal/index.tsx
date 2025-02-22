@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { RefObject, useEffect, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -34,10 +35,7 @@ import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 
 import { SubtasksForm, SubtasksWrapper } from './styles'
 import { initialSubtasks } from '@/utils/getInitialValues'
-import {
-  MIN_SUBTASKS,
-  MIN_TITLE_LENGTH,
-} from '@/utils/constants'
+import { MIN_SUBTASKS, MIN_TITLE_LENGTH } from '@/utils/constants'
 
 import { SubtaskProps } from '@/@types/subtask'
 import { TaskProps } from '@/@types/task'
@@ -265,11 +263,14 @@ export function TaskFormModal({
 
   return (
     <Dialog.Portal>
-      <ModalOverlay className="DialogOverlay" onClick={() => {
-        onClose()
-        setSubtasks(initialSubtasks)
-        reset()
-      }} />
+      <ModalOverlay
+        className="DialogOverlay"
+        onClick={() => {
+          onClose()
+          setSubtasks(initialSubtasks)
+          reset()
+        }}
+      />
       <ModalContent padding="1.5rem 1.5rem 2rem" className="DialogContent xl">
         <ModalTitle className="DialogTitle">
           {isEditing ? 'Edit Task' : 'Add New Task'}
@@ -277,7 +278,11 @@ export function TaskFormModal({
         <VisuallyHidden>
           <Dialog.Description />
         </VisuallyHidden>
-        <FormContainer onSubmit={isEditing ? handleSubmit(editTask) : handleSubmit(createNewTask)}>
+        <FormContainer
+          onSubmit={
+            isEditing ? handleSubmit(editTask) : handleSubmit(createNewTask)
+          }
+        >
           <InputContainer>
             <CustomLabel htmlFor="title">Title</CustomLabel>
             <CustomInput

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -8,7 +9,13 @@ import { Button } from '@/components/Shared/Button'
 import { FieldsContainer } from '@/components/Shared/FieldsContainer'
 import { Field } from '@/components/Shared/Field'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
-import { Loader, ModalContent, ModalLoading, ModalOverlay, ModalTitle } from '@/styles/shared'
+import {
+  Loader,
+  ModalContent,
+  ModalLoading,
+  ModalOverlay,
+  ModalTitle,
+} from '@/styles/shared'
 import { CustomLabel } from '@/components/Shared/Label'
 import { BoardColumnProps } from '@/@types/board-column'
 import { CustomInput } from '@/components/Shared/Input'
@@ -50,7 +57,11 @@ const formSchema = z.object({
 
 export type FormData = z.infer<typeof formSchema>
 
-export function ColumnFormModal({ activeBoard, mutate, onClose }: ColumnFormModalProps) {
+export function ColumnFormModal({
+  activeBoard,
+  mutate,
+  onClose,
+}: ColumnFormModalProps) {
   useEscapeKeyHandler(onClose)
 
   const [isLoading, setIsLoading] = useState(false)
@@ -94,7 +105,7 @@ export function ColumnFormModal({ activeBoard, mutate, onClose }: ColumnFormModa
     const updatedColumns = boardColumns.filter(
       (_, index) => index !== indexToRemove,
     )
-    
+
     setBoardColumns(updatedColumns)
     setValue('columns', updatedColumns)
   }
@@ -133,7 +144,7 @@ export function ColumnFormModal({ activeBoard, mutate, onClose }: ColumnFormModa
 
       const payload = {
         columns: updatedColumns,
-        boardId: activeBoard?.id
+        boardId: activeBoard?.id,
       }
 
       const response = await api.put('/columns/edit', payload)

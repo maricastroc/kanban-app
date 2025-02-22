@@ -35,7 +35,7 @@ export default async function handler(
 
     try {
       const existingTask = await prisma.task.findUnique({
-        where: { id: id },
+        where: { id },
       })
 
       if (!existingTask) {
@@ -47,7 +47,7 @@ export default async function handler(
       })
 
       await prisma.task.delete({
-        where: { id: id },
+        where: { id },
       })
 
       return res.status(200).json({ message: 'Task successfully deleted!' })

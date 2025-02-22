@@ -26,17 +26,18 @@ import { useWindowResize } from '@/utils/useWindowResize'
 import { BoardProps } from '@/@types/board'
 import { KeyedMutator } from 'swr'
 import { AxiosResponse } from 'axios'
+import Image from 'next/image'
 
 interface HeaderProps {
-  onChangeTheme: () => void
   mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
   boardsMutate: KeyedMutator<AxiosResponse<BoardProps[], any>>
   activeBoard: BoardProps | undefined
+  boards: BoardProps[] | undefined
 }
 
 export function Header({
+  boards,
   activeBoard,
-  onChangeTheme,
   mutate,
   boardsMutate,
 }: HeaderProps) {
@@ -59,7 +60,7 @@ export function Header({
     <Container>
       <LogoContainer>
         {isSmallerThanSm && (
-          <img src={Logo} width={24} height={24} alt="Project Logo" />
+          <Image src={Logo} width={24} height={24} alt="Project Logo" />
         )}
 
         <Dialog.Root open={isBoardsDetailsModalOpen}>
@@ -74,27 +75,32 @@ export function Header({
             </BoardNameContainer>
           </Dialog.Trigger>
           <BoardsDetailsModal
-            onChangeTheme={onChangeTheme}
+            activeBoard={activeBoard}
+            boards={boards}
+            mutate={mutate}
+            boardsMutate={boardsMutate}
             onClose={() => setIsBoardsDetailsModalOpen(false)}
           />
         </Dialog.Root>
       </LogoContainer>
       <EditDeleteContainer>
-        <Dialog.Root open={isAddTaskModalOpen}>
-          <Dialog.Trigger asChild>
-            <AddTaskBtn onClick={() => setIsAddTaskModalOpen(true)}>
-              <FontAwesomeIcon icon={faPlus} />
-              <p>+ Add New Task</p>
-            </AddTaskBtn>
-          </Dialog.Trigger>
-          <TaskFormModal
-            isEditing={false}
-            boardId={activeBoard?.id || ''}
-            mutate={mutate}
-            activeBoard={activeBoard}
-            onClose={() => setIsAddTaskModalOpen(false)}
-          />
-        </Dialog.Root>
+        {activeBoard && (
+          <Dialog.Root open={isAddTaskModalOpen}>
+            <Dialog.Trigger asChild>
+              <AddTaskBtn onClick={() => setIsAddTaskModalOpen(true)}>
+                <FontAwesomeIcon icon={faPlus} />
+                <p>+ Add New Task</p>
+              </AddTaskBtn>
+            </Dialog.Trigger>
+            <TaskFormModal
+              isEditing={false}
+              boardId={activeBoard?.id || ''}
+              mutate={mutate}
+              activeBoard={activeBoard}
+              onClose={() => setIsAddTaskModalOpen(false)}
+            />
+          </Dialog.Root>
+        )}
 
         <EditDeleteWrapper>
           <Dialog.Root

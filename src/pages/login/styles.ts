@@ -56,9 +56,11 @@ export const TitleContainer = styled.div`
   justify-content: center;
   flex-direction: column;
   gap: 0.65rem;
+  color: ${(props) => props.theme['title-color']};
 
   h1 {
     font-size: 1.8rem;
+    color: ${(props) => props.theme['title-color']};
   }
 
   p {
@@ -101,6 +103,7 @@ export const FormField = styled.div`
 
   p {
     font-size: 14px;
+    color: ${(props) => props.theme['title-color']};
   }
 `
 
@@ -117,6 +120,7 @@ export const InputField = styled.input`
   background-color: transparent;
   border: 1px solid ${(props) => props.theme['border-color']};
   border-radius: 5px;
+  color: ${(props) => props.theme['secondary-color']};
   font-size: 1rem;
 
   &:-webkit-autofill {

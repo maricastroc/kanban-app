@@ -49,7 +49,7 @@ export default async function handler(
             },
           },
         },
-      })      
+      })
 
       if (activeBoard) {
         return res.status(200).json({
