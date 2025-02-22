@@ -6,7 +6,7 @@ import { ModalContent, ModalOverlay } from '@/styles/shared'
 import { LayoutContainer, StyledPickerContainer } from './styles'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
-import { useRef, useState } from 'react'
+import { RefObject, useRef, useState } from 'react'
 import { useOutsideClick } from '@/utils/useOutsideClick'
 
 interface ColorPickerModalProps {
@@ -26,7 +26,7 @@ export const ColorPickerModal = ({
 
   const statusRef = useRef<HTMLDivElement | null>(null)
 
-  useOutsideClick(statusRef, () => onClose())
+  useOutsideClick(statusRef as RefObject<HTMLElement>, () => onClose())
 
   useEscapeKeyHandler(onClose)
 
