@@ -6,10 +6,11 @@ export const SecondaryBtn = styled.button`
   align-items: center;
   justify-content: center;
   background-color: ${(props) => props.theme['primary-color']};
-  width: 48px;
-  height: 32px;
+  color: ${(props) => props.theme['button-title']};
   border: none;
-  border-radius: 16px;
+  border-radius: 22px;
+  width: 164px;
+  height: 48px;
 
   svg {
     font-size: 1rem;
@@ -17,29 +18,13 @@ export const SecondaryBtn = styled.button`
   }
 
   p {
-    display: none;
+    font-size: ${(props) => props.theme['heading-m']};
+    font-weight: 700;
+    color: ${(props) => props.theme['button-title']};
   }
 
   &:hover {
     transition: 200ms;
     background-color: ${(props) => props.theme['tertiary-hover']};
-  }
-
-  @media (min-width: 768px) {
-    gap: 1.5rem;
-    width: 164px;
-    height: 48px;
-    border-radius: 22px;
-
-    svg {
-      display: none;
-    }
-
-    p {
-      display: block;
-      font-size: ${(props) => props.theme['heading-m']};
-      color: ${(props) => props.theme['button-title']};
-      font-weight: 700;
-    }
   }
 `

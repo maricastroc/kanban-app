@@ -39,6 +39,7 @@ export const ColumnsContainer = styled.div`
   padding-bottom: 2rem;
   justify-content: initial;
   cursor: move;
+  height: 100%;
 
   &.hide-sidebar-mode {
     justify-content: center;

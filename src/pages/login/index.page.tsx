@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { NextSeo } from 'next-seo'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import Logo from '@/../public/icon.svg'
@@ -80,6 +81,8 @@ export default function Login() {
   }
 
   return (
+    <>
+    <NextSeo title="Kanban App | Login" />
     <LayoutContainer>
       <LogoWrapper>
         <Image src={Logo} width={24} height={24} alt="" />
@@ -145,5 +148,6 @@ export default function Login() {
 
       {(isLoading || isRouteLoading) && <LoadingComponent />}
     </LayoutContainer>
+    </>
   )
 }

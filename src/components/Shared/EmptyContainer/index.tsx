@@ -7,6 +7,7 @@ import { KeyedMutator } from 'swr'
 import { AxiosResponse } from 'axios'
 import { BoardProps } from '@/@types/board'
 import { Button } from '../Button'
+import { SecondaryButton } from '../SecondaryButton'
 
 interface Props {
   mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
@@ -26,7 +27,7 @@ export function EmptyContainer({ mutate, boardsMutate, activeBoard }: Props) {
         <ButtonContent>
           <Dialog.Root open={addBoardModalOpen}>
             <Dialog.Trigger asChild>
-              <Button
+              <SecondaryButton
                 title="+ Add New Board"
                 onClick={() => setAddBoardModalOpen(true)}
               />

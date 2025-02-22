@@ -22,7 +22,12 @@ export const ContentWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 25rem;
+  text-align: center;
+  width: 90%;
+
+  @media (min-width: 480px) {
+    width: 25rem;
+  }
 `
 
 export const ButtonContent = styled.div`

@@ -32,7 +32,9 @@ class MyDocument extends Document {
   render() {
     return (
       <Html>
-        <Head />
+        <Head>
+        <link rel="icon" type="image/svg" href="/icon.svg" />
+          </Head>
         <body>
           <Main />
           <NextScript />

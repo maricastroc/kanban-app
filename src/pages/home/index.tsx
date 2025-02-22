@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, RefObject } from 'react'
+import { NextSeo } from 'next-seo'
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd'
 import * as Dialog from '@radix-ui/react-dialog'
 import { BoardColumn } from '@/components/Core/BoardColumn'
@@ -61,7 +62,6 @@ export default function Home() {
   const {
     data: activeBoard,
     mutate,
-    isValidating: activeBoardValidating,
   } = useRequest<BoardProps>({
     url: '/board/get',
     method: 'GET',
@@ -70,7 +70,6 @@ export default function Home() {
   const {
     data: boards,
     mutate: boardsMutate,
-    isValidating: boardsValidating,
   } = useRequest<BoardProps[]>({
     url: '/boards',
     method: 'GET',
@@ -83,7 +82,7 @@ export default function Home() {
   ) => {
     try {
       setIsLoading(true)
-
+      
       const payload = {
         taskId,
         newColumnId,
@@ -200,6 +199,8 @@ export default function Home() {
   }, [activeBoard])
 
   return (
+    <>
+    <NextSeo title="Kanban App | Dashboard" />
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="all-columns" direction="horizontal">
         {(provided) => (
@@ -229,9 +230,7 @@ export default function Home() {
                   onMouseLeave={handleMouseUp}
                   onMouseMove={handleMouseMove}
                 >
-                  {!activeBoardValidating &&
-                    !boardsValidating &&
-                    (activeBoard ? (
+                  {activeBoard ? (
                       <>
                         {boardColumns?.map(
                           (column: BoardColumnProps, index: number) => (
@@ -277,7 +276,7 @@ export default function Home() {
                         mutate={mutate}
                         boardsMutate={boardsMutate}
                       />
-                    ))}
+                    )}
                 </ColumnsContainer>
               </Wrapper>
               {hideSidebar && (
@@ -290,9 +289,10 @@ export default function Home() {
         )}
       </Droppable>
 
-      {(isLoading || activeBoardValidating || boardsValidating) && (
+      {(isLoading) && (
         <LoadingComponent />
       )}
     </DragDropContext>
+    </>
   )
 }

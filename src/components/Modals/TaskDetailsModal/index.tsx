@@ -63,8 +63,8 @@ export function TaskDetailsModal({
 }: TaskDetailsModalProps) {
   useEscapeKeyHandler(onClose)
 
-  const subtasksCompleted = task.subtasks.filter(
-    (subtask: SubtaskProps) => subtask.isCompleted,
+  const subtasksCompleted = task?.subtasks?.filter(
+    (subtask: SubtaskProps) => subtask?.isCompleted,
   )
 
   const [isLoading, setIsLoading] = useState(false)

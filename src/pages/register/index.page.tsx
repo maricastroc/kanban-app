@@ -31,6 +31,7 @@ import { signIn } from 'next-auth/react'
 import { useTheme } from 'styled-components'
 import { useLoadingOnRouteChange } from '@/utils/useLoadingOnRouteChange'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
+import { NextSeo } from 'next-seo'
 
 const signInFormSchema = z.object({
   name: z.string().min(3, { message: 'Name is required.' }),
@@ -90,6 +91,8 @@ export default function Login() {
   }
 
   return (
+    <>
+    <NextSeo title="Kanban App | Register" />
     <LayoutContainer>
       <LogoWrapper>
         <Image src={Logo} width={24} height={24} alt="" />
@@ -175,5 +178,6 @@ export default function Login() {
 
       {(isLoading || isRouteLoading) && <LoadingComponent />}
     </LayoutContainer>
+    </>
   )
 }
