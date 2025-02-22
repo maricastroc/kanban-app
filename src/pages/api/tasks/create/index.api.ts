@@ -34,19 +34,21 @@ export default async function handler(
       boardId,
       columnId,
       title,
+      status,
       description,
       subtasks,
     }: {
       boardId: string
       columnId: string
       title: string
+      status: string
       description: string | null
       subtasks: Subtask[]
     } = req.body
 
-    if (!boardId || !columnId || !title || !subtasks) {
+    if (!boardId || !columnId || !title || !subtasks || !status) {
       return res.status(400).json({
-        message: 'BoardId, columnId, title, and subtasks are required',
+        message: 'BoardId, columnId, title, status and subtasks are required',
       })
     }
 
@@ -73,6 +75,7 @@ export default async function handler(
         data: {
           title,
           description,
+          status,
           order: taskCount + 1,
           columnId,
         },

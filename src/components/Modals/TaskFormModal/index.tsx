@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { RefObject, useRef, useState } from 'react'
+import { RefObject, useEffect, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import * as Dialog from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,7 +9,9 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import {
+  Loader,
   ModalContent,
+  ModalLoading,
   ModalOverlay,
   ModalTitle,
   SelectStatusField,
@@ -33,7 +35,6 @@ import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 import { SubtasksForm, SubtasksWrapper } from './styles'
 import { initialSubtasks } from '@/utils/getInitialValues'
 import {
-  DEFAULT_STATUS,
   MIN_SUBTASKS,
   MIN_TITLE_LENGTH,
 } from '@/utils/constants'
@@ -42,11 +43,11 @@ import { SubtaskProps } from '@/@types/subtask'
 import { TaskProps } from '@/@types/task'
 import { api } from '@/lib/axios'
 import { handleApiError } from '@/utils/handleApiError'
-import useRequest from '@/utils/useRequest'
 import { BoardProps } from '@/@types/board'
 import toast from 'react-hot-toast'
 import { AxiosResponse } from 'axios'
 import { KeyedMutator } from 'swr'
+import { Circles } from 'react-loader-spinner'
 
 const subtaskSchema = z.object({
   id: z.string(),
@@ -61,7 +62,7 @@ const formSchema = z.object({
   subtasks: z
     .array(subtaskSchema)
     .min(MIN_SUBTASKS, { message: 'At least one subtask is required' }),
-  status: z.string().min(1, { message: 'Status is required' }),
+  status: z.string(),
 })
 
 export type FormData = z.infer<typeof formSchema>
@@ -70,36 +71,33 @@ interface AddTaskModalProps {
   isEditing?: boolean
   task?: TaskProps
   boardId: string
+  activeBoard: BoardProps | undefined
   mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
   onClose: () => void
 }
 
 export function TaskFormModal({
+  activeBoard,
   onClose,
   boardId,
   mutate,
   isEditing = false,
   task,
 }: AddTaskModalProps) {
-  const { data: activeBoard } = useRequest<BoardProps>({
-    url: '/board',
-    method: 'GET',
-  })
-
-  const initialStatus = activeBoard?.columns[0]?.name || DEFAULT_STATUS
-
   const statusRef = useRef<HTMLDivElement | null>(null)
 
   const [isOptionsContainerOpen, setIsOptionsContainerOpen] = useState(false)
 
   const [columnId, setColumnId] = useState<string | undefined>()
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const [subtasks, setSubtasks] = useState<SubtaskProps[]>(
     isEditing && task?.subtasks ? task.subtasks : initialSubtasks,
   )
 
   const [status, setStatus] = useState(
-    isEditing && task?.status ? task.status : initialStatus,
+    isEditing && task?.status ? task.status : '',
   )
 
   useOutsideClick(statusRef as RefObject<HTMLElement>, () =>
@@ -122,20 +120,23 @@ export function TaskFormModal({
       id: uuidv4(),
       title: task?.title ?? '',
       description: task?.description ?? '',
-      subtasks,
       status,
+      subtasks,
     },
   })
 
   const subtasksValues = watch('subtasks')
 
-  const onSubmit = async (data: FormData) => {
+  const createNewTask = async (data: FormData) => {
     try {
+      setIsLoading(true)
+
       const payload = {
         boardId,
         title: data.title,
         description: data.description || '',
         columnId,
+        status,
         subtasks: subtasks.map((subtask, index) => ({
           ...subtask,
           order: index,
@@ -145,16 +146,51 @@ export function TaskFormModal({
       const response = await api.post('/tasks/create', payload)
 
       mutate()
-
       toast?.success(response.data.message)
-
+    } catch (error) {
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
+      setSubtasks(initialSubtasks)
       reset()
 
       setTimeout(() => {
         onClose()
       }, 500)
+    }
+  }
+
+  const editTask = async (data: FormData) => {
+    try {
+      setIsLoading(true)
+
+      const payload = {
+        taskId: task?.id,
+        boardId,
+        title: data.title,
+        description: data.description || '',
+        columnId,
+        status,
+        subtasks: subtasks.map((subtask, index) => ({
+          ...subtask,
+          order: index,
+        })),
+      }
+
+      const response = await api.put('/tasks/edit', payload)
+
+      mutate()
+      toast?.success(response.data.message)
     } catch (error) {
       handleApiError(error)
+    } finally {
+      setIsLoading(false)
+      setSubtasks(initialSubtasks)
+      reset()
+
+      setTimeout(() => {
+        onClose()
+      }, 500)
     }
   }
 
@@ -219,9 +255,21 @@ export function TaskFormModal({
     )
   }
 
+  useEffect(() => {
+    if (activeBoard) {
+      setStatus(activeBoard?.columns[0]?.name)
+      setValue('status', activeBoard?.columns[0]?.name)
+      setColumnId(activeBoard?.columns[0]?.id)
+    }
+  }, [activeBoard])
+
   return (
     <Dialog.Portal>
-      <ModalOverlay className="DialogOverlay" onClick={onClose} />
+      <ModalOverlay className="DialogOverlay" onClick={() => {
+        onClose()
+        setSubtasks(initialSubtasks)
+        reset()
+      }} />
       <ModalContent padding="1.5rem 1.5rem 2rem" className="DialogContent xl">
         <ModalTitle className="DialogTitle">
           {isEditing ? 'Edit Task' : 'Add New Task'}
@@ -229,7 +277,7 @@ export function TaskFormModal({
         <VisuallyHidden>
           <Dialog.Description />
         </VisuallyHidden>
-        <FormContainer onSubmit={handleSubmit(onSubmit)}>
+        <FormContainer onSubmit={isEditing ? handleSubmit(editTask) : handleSubmit(createNewTask)}>
           <InputContainer>
             <CustomLabel htmlFor="title">Title</CustomLabel>
             <CustomInput
@@ -301,6 +349,14 @@ export function TaskFormModal({
             variant="primary"
           />
         </FormContainer>
+
+        {isLoading && (
+          <ModalLoading>
+            <Loader>
+              <Circles color="#635FC7" height={80} width={80} />
+            </Loader>
+          </ModalLoading>
+        )}
       </ModalContent>
     </Dialog.Portal>
   )

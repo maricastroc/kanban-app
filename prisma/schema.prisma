@@ -58,6 +58,7 @@ model Task {
   id          String   @id @default(uuid())
   order       Int
   title       String
+  status      String
   description String?
   columnId    String
   column      Column   @relation(fields: [columnId], references: [id], onDelete: Cascade)

@@ -7,25 +7,30 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { Button } from '@/components/Shared/Button'
 import { FieldsContainer } from '@/components/Shared/FieldsContainer'
 import { Field } from '@/components/Shared/Field'
-import { useBoardsContext } from '@/contexts/BoardsContext'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
-import { ModalContent, ModalOverlay, ModalTitle } from '@/styles/shared'
+import { Loader, ModalContent, ModalLoading, ModalOverlay, ModalTitle } from '@/styles/shared'
 import { CustomLabel } from '@/components/Shared/Label'
 import { BoardColumnProps } from '@/@types/board-column'
-import { useTaskContext } from '@/contexts/TasksContext'
 import { CustomInput } from '@/components/Shared/Input'
 import { InputContainer } from '@/components/Shared/InputContainer'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { toast } from 'react-toastify'
 import { FormContainer } from '@/components/Shared/FormContainer'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
-import { simulateDelay } from '@/utils/simulateDelay'
+import { BoardProps } from '@/@types/board'
+import { KeyedMutator } from 'swr'
+import { AxiosResponse } from 'axios'
+import { api } from '@/lib/axios'
+import { handleApiError } from '@/utils/handleApiError'
+import toast from 'react-hot-toast'
+import { Circles } from 'react-loader-spinner'
 
 interface ColumnFormModalProps {
   onClose: () => void
+  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
+  activeBoard: BoardProps | undefined
 }
 
 const columnSchema = z.object({
@@ -45,12 +50,10 @@ const formSchema = z.object({
 
 export type FormData = z.infer<typeof formSchema>
 
-export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
+export function ColumnFormModal({ activeBoard, mutate, onClose }: ColumnFormModalProps) {
   useEscapeKeyHandler(onClose)
 
-  const { activeBoard } = useBoardsContext()
-
-  const { updateBoardColumns } = useTaskContext()
+  const [isLoading, setIsLoading] = useState(false)
 
   const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>(
     activeBoard?.columns ?? [],
@@ -58,6 +61,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
 
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
@@ -90,6 +94,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
     const updatedColumns = boardColumns.filter(
       (_, index) => index !== indexToRemove,
     )
+    
     setBoardColumns(updatedColumns)
     setValue('columns', updatedColumns)
   }
@@ -108,24 +113,44 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
     setValue('columns', updatedColumns)
   }
 
-  const handleUpdateBoardColumns = async () => {
-    const formValues = watch()
+  const handleEditColumns = async () => {
+    try {
+      setIsLoading(true)
 
-    const updatedColumns: BoardColumnProps[] = formValues.columns.map(
-      (column, index) => {
-        const existingColumn = boardColumns[index]
+      const formValues = watch()
 
-        return {
-          id: column.id,
-          name: column.name,
-          tasks: existingColumn?.tasks || [],
-        }
-      },
-    )
+      const updatedColumns: BoardColumnProps[] = formValues.columns.map(
+        (column, index) => {
+          const existingColumn = boardColumns[index]
 
-    updateBoardColumns(updatedColumns)
-    await simulateDelay()
-    onClose()
+          return {
+            id: column.id,
+            name: column.name,
+            tasks: existingColumn?.tasks || [],
+          }
+        },
+      )
+
+      const payload = {
+        columns: updatedColumns,
+        boardId: activeBoard?.id
+      }
+
+      const response = await api.put('/columns/edit', payload)
+
+      toast?.success(response.data.message)
+
+      mutate()
+    } catch (error) {
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
+      reset()
+
+      setTimeout(() => {
+        onClose()
+      }, 500)
+    }
   }
 
   const renderColumnInput = (column: BoardColumnProps, index: number) => {
@@ -160,7 +185,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
         <VisuallyHidden>
           <Dialog.Description />
         </VisuallyHidden>
-        <FormContainer onSubmit={handleSubmit(handleUpdateBoardColumns)}>
+        <FormContainer onSubmit={handleSubmit(handleEditColumns)}>
           <InputContainer>
             <CustomLabel>Name</CustomLabel>
             <CustomInput
@@ -194,6 +219,14 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
             variant="primary"
           />
         </FormContainer>
+
+        {isLoading && (
+          <ModalLoading>
+            <Loader>
+              <Circles color="#635FC7" height={80} width={80} />
+            </Loader>
+          </ModalLoading>
+        )}
       </ModalContent>
     </Dialog.Portal>
   )

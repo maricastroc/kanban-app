@@ -39,6 +39,7 @@ CREATE TABLE "tasks" (
     "id" TEXT NOT NULL,
     "order" INTEGER NOT NULL,
     "title" TEXT NOT NULL,
+    "status" TEXT NOT NULL,
     "description" TEXT,
     "columnId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -53,7 +53,14 @@ export default async function handler(
           .json({ message: 'Task is already in this column' })
       }
 
-      // 1️⃣ Ajusta os orders na coluna antiga
+      const newColumn = await prisma.column.findUnique({
+        where: { id: newColumnId },
+      })
+
+      if (!newColumn) {
+        return res.status(404).json({ message: 'Column not found' })
+      }
+
       await prisma.task.updateMany({
         where: {
           columnId: oldColumnId,
@@ -64,7 +71,6 @@ export default async function handler(
         },
       })
 
-      // 2️⃣ Ajusta os orders na nova coluna para abrir espaço para a nova task
       await prisma.task.updateMany({
         where: {
           columnId: newColumnId,
@@ -75,12 +81,12 @@ export default async function handler(
         },
       })
 
-      // 3️⃣ Move a task para a nova coluna com o novo order
       const updatedTask = await prisma.task.update({
         where: { id: taskId },
         data: {
           columnId: newColumnId,
           order: newOrder,
+          status: newColumn.name,
         },
       })
 

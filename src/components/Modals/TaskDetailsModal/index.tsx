@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { RefObject, useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faAngleDown,
@@ -17,7 +17,9 @@ import {
   ModalTitle,
 } from './styles'
 import {
+  Loader,
   ModalContent,
+  ModalLoading,
   ModalOverlay,
   SelectStatusField,
   StatusContainer,
@@ -25,7 +27,6 @@ import {
 } from '@/styles/shared'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 import { useBoardsContext } from '@/contexts/BoardsContext'
-import { useTaskContext } from '@/contexts/TasksContext'
 import { TaskProps } from '@/@types/task'
 import { SubtaskProps } from '@/@types/subtask'
 import { useOutsideClick } from '@/utils/useOutsideClick'
@@ -35,26 +36,40 @@ import { StatusSelector } from '@/components/Shared/StatusSelector'
 import { DeleteModal } from '../DeleteModal'
 import { TaskFormModal } from '../TaskFormModal'
 import { Reorder } from 'framer-motion'
+import { KeyedMutator } from 'swr'
+import { AxiosResponse } from 'axios'
+import { BoardProps } from '@/@types/board'
+import { Circles } from 'react-loader-spinner'
+import { api } from '@/lib/axios'
+import { handleApiError } from '@/utils/handleApiError'
+import toast from 'react-hot-toast'
+import { BoardColumnProps } from '@/@types/board-column'
 
 interface TaskDetailsModalProps {
   task: TaskProps
+  column: BoardColumnProps
+  activeBoard: BoardProps
+  boardId: string
+  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
   onClose: () => void
 }
 
-export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
+export function TaskDetailsModal({ task, activeBoard, column, boardId, mutate, onClose }: TaskDetailsModalProps) {
   useEscapeKeyHandler(onClose)
 
   const subtasksCompleted = task.subtasks.filter(
     (subtask: SubtaskProps) => subtask.isCompleted,
   )
 
+  const [isLoading, setIsLoading] = useState(false)
+
+  const [isReordering, setIsReordering] = useState(false)
+
   const [subtasks, setSubtasks] = useState<SubtaskProps[]>([])
 
-  const { activeBoard, enableDarkMode } = useBoardsContext()
+  const { enableDarkMode } = useBoardsContext()
 
-  const { moveTaskToColumn, reorderSubtasks } = useTaskContext()
-
-  const [status, setStatus] = useState(task.status)
+  const [status, setStatus] = useState(column.name)
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
@@ -67,13 +82,61 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
 
   const statusRef = useRef<HTMLDivElement | null>(null)
 
-  useOutsideClick(statusRef, () => closeAllModals())
+  useOutsideClick(statusRef as RefObject<HTMLElement>, () => closeAllModals())
 
   const closeAllModals = () => {
     setIsDeleteModalOpen(false)
     setIsEditModalOpen(false)
     setIsEditDeleteModalOpen(false)
     setIsStatusOptionsContainerOpen(false)
+  }
+
+  const reorderSubtaskInTask = async (taskId: string, subtasks: SubtaskProps[],) => {
+    try {
+      setIsReordering(true)
+
+      const updatedSubtasks = subtasks.map((subtask, index) => ({
+        ...subtask,
+        order: index + 1,
+      }))
+
+      const payload = {
+        taskId,
+        subtasks: updatedSubtasks,
+      }
+
+      await api.put('/subtasks/reorder', payload)
+
+      mutate()
+    } catch (error) {
+      handleApiError(error)
+    } finally {
+      setIsReordering(false)
+    }
+  }
+
+  const moveTaskToColumn = async (
+    taskId: string,
+    newColumnId: string,
+    newOrder: number
+  ) => {
+    try {
+      setIsLoading(true)
+
+      const payload = {
+        taskId,
+        newColumnId,
+        newOrder,
+      }
+
+      await api.put('/tasks/reorder', payload)
+
+      mutate()
+    } catch (error) {
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -136,8 +199,13 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
                     axis="y"
                     values={subtasks}
                     onReorder={(newOrder) => {
+                      if (isReordering) {
+                        toast.error('Please wait until the current request is completed.')
+                        return
+                      }
+
                       setSubtasks(newOrder)
-                      reorderSubtasks(task.id, newOrder)
+                      reorderSubtaskInTask(task.id, newOrder)
                     }}
                   >
                     {subtasks.map((subtask: SubtaskProps) => (
@@ -153,6 +221,8 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
                           task={task}
                           title={subtask.title}
                           isCompleted={subtask.isCompleted}
+                          handleSetIsLoading={(value: boolean) => setIsLoading(value)}
+                          mutate={mutate}
                         />
                       </Reorder.Item>
                     ))}
@@ -182,8 +252,8 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
                         key={column.name}
                         column={column}
                         status={status}
-                        handleChangeStatus={() => {
-                          moveTaskToColumn(task, column.name, status)
+                        handleChangeStatus={async () => {
+                          await moveTaskToColumn(task.id, column.id, column?.tasks?.length + 1)
                           setStatus(column.name)
                         }}
                       />
@@ -192,6 +262,14 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
                 )}
               </StatusContainer>
             </Description>
+
+            {isLoading && (
+              <ModalLoading>
+                <Loader>
+                  <Circles color="#635FC7" height={80} width={80} />
+                </Loader>
+              </ModalLoading>
+            )}
           </ModalContent>
         </Dialog.Portal>
       )}
@@ -200,6 +278,7 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
         <DeleteModal
           type="task"
           task={task}
+          mutate={mutate}
           onClose={() => {
             onClose()
             closeAllModals()
@@ -210,6 +289,9 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
       {isEditModalOpen && (
         <TaskFormModal
           isEditing
+          activeBoard={activeBoard}
+          boardId={boardId}
+          mutate={mutate}
           task={task}
           onClose={() => {
             onClose()

@@ -6,7 +6,7 @@ export const Error = styled.p`
     display: block;
     color: ${(props) => props.theme['error-color']};
     font-size: ${(props) => props.theme['body-m']};
-    font-weight: 700;
+    font-weight: 500;
     left: 75%;
   }
 `

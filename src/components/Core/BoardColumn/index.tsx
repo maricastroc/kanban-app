@@ -16,12 +16,18 @@ import { ColorPickerModal } from '@/components/Modals/ColorPickerModal'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { getTagColor } from '@/utils/getTagColor'
 import { getColumnColor, saveColumnColor } from '@/storage/colorConfig'
+import { KeyedMutator } from 'swr'
+import { AxiosResponse } from 'axios'
+import { BoardProps } from '@/@types/board'
 
 type ColumnProps = BoardColumnProps & {
   index: number
+  column: BoardColumnProps
+  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
+  activeBoard: BoardProps
 }
 
-export function BoardColumn({ name, tasks, index }: ColumnProps) {
+export function BoardColumn({ name, id, tasks, mutate, activeBoard, column, index }: ColumnProps) {
   const { handleEnableScrollFeature } = useBoardsContext()
 
   const [currentColor, setCurrentColor] = useState(
@@ -33,7 +39,7 @@ export function BoardColumn({ name, tasks, index }: ColumnProps) {
   const renderTasks = () => {
     return tasks.map((task: TaskProps, taskIndex: number) => (
       <Draggable key={task.id} draggableId={task.id} index={taskIndex}>
-        {(provided) => <TaskCard task={task} provided={provided} />}
+        {(provided) => <TaskCard column={column} activeBoard={activeBoard} boardId={id} mutate={mutate} task={task} provided={provided} />}
       </Draggable>
     ))
   }

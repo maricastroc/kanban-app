@@ -2,7 +2,7 @@
 import { prisma } from '@/lib/prisma'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
-import { buildNextAuthOptions } from '../auth/[...nextauth].api'
+import { buildNextAuthOptions } from '../../auth/[...nextauth].api'
 
 export default async function handler(
   req: NextApiRequest,
@@ -36,7 +36,11 @@ export default async function handler(
             include: {
               tasks: {
                 include: {
-                  subtasks: true,
+                  subtasks: {
+                    orderBy: {
+                      order: 'asc',
+                    },
+                  },
                 },
                 orderBy: {
                   order: 'asc',
@@ -45,7 +49,7 @@ export default async function handler(
             },
           },
         },
-      })
+      })      
 
       if (activeBoard) {
         return res.status(200).json({

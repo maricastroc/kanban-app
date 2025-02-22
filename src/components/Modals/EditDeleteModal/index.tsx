@@ -65,7 +65,7 @@ export function EditDeleteModal({
             <BoardFormModal
               isEditing
               onClose={closeEditModal}
-              board={activeBoard}
+              activeBoard={activeBoard}
               mutate={mutate}
               boardsMutate={boardsMutate}
             />
@@ -80,6 +80,7 @@ export function EditDeleteModal({
           {activeBoard && (
             <DeleteModal
               type={'board'}
+              mutate={mutate}
               onClose={closeDeleteModal}
               board={activeBoard}
             />

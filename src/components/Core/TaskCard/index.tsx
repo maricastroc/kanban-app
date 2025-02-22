@@ -6,13 +6,21 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { TaskDetailsModal } from '@/components/Modals/TaskDetailsModal'
 import { useEffect, useState } from 'react'
 import { useBoardsContext } from '@/contexts/BoardsContext'
+import { AxiosResponse } from 'axios'
+import { BoardProps } from '@/@types/board'
+import { KeyedMutator } from 'swr'
+import { BoardColumnProps } from '@/@types/board-column'
 
 type TaskCardProps = {
   task: TaskProps
+  column: BoardColumnProps
+  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
   provided: any
+  activeBoard: BoardProps
+  boardId: string
 }
 
-export function TaskCard({ task, provided }: TaskCardProps) {
+export function TaskCard({ task, provided, activeBoard, column, boardId, mutate }: TaskCardProps) {
   const { handleEnableScrollFeature } = useBoardsContext()
 
   const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false)
@@ -33,12 +41,16 @@ export function TaskCard({ task, provided }: TaskCardProps) {
         >
           <strong>{task.title}</strong>
           <p>{`${
-            task.subtasks.filter((subtask) => subtask.isCompleted).length
+            task?.subtasks?.filter((subtask) => subtask?.isCompleted)?.length
           } of ${task.subtasks.length} subtasks`}</p>
         </TaskCardContainer>
       </Dialog.Trigger>
       <TaskDetailsModal
         task={task}
+        column={column}
+        activeBoard={activeBoard}
+        boardId={boardId}
+        mutate={mutate}
         onClose={() => setIsTaskDetailsModalOpen(false)}
       />
     </Dialog.Root>

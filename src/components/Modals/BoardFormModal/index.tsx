@@ -36,7 +36,7 @@ import { KeyedMutator } from 'swr'
 import { AxiosResponse } from 'axios'
 
 interface BoardModalProps {
-  board?: BoardProps
+  activeBoard?: BoardProps
   onClose: () => void
   isEditing: boolean
   mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
@@ -64,14 +64,14 @@ const formSchema = z.object({
 export type FormData = z.infer<typeof formSchema>
 
 export function BoardFormModal({
-  board,
+  activeBoard,
   onClose,
   isEditing,
   mutate,
   boardsMutate,
 }: BoardModalProps) {
   const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>(
-    board?.columns || [
+    activeBoard?.columns || [
       { id: uuidv4(), name: 'Todo', tasks: [] },
       { id: uuidv4(), name: 'Doing', tasks: [] },
     ],
@@ -84,12 +84,13 @@ export function BoardFormModal({
     formState: { errors, isSubmitting },
     setValue,
     reset,
+    watch,
     register,
   } = useForm<FormData>({
     defaultValues: {
       id: uuidv4(),
-      name: board?.name || '',
-      columns: isEditing ? board?.columns : initialBoardColumns,
+      name: activeBoard?.name || '',
+      columns: isEditing ? activeBoard?.columns : initialBoardColumns,
     },
     resolver: zodResolver(formSchema),
   })
@@ -126,7 +127,7 @@ export function BoardFormModal({
 
     try {
       const payload = {
-        boardId: board?.id,
+        boardId: activeBoard?.id,
         name: data.name,
         columns: boardColumns,
       }
@@ -181,6 +182,47 @@ export function BoardFormModal({
     )
     setBoardColumns(updatedColumns)
     setValue('columns', updatedColumns)
+  }
+
+  const handleEditColumns = async () => {
+    try {
+      setIsLoading(true)
+
+      const formValues = watch()
+
+      const updatedColumns: BoardColumnProps[] = formValues.columns.map(
+        (column, index) => {
+          const existingColumn = boardColumns[index]
+
+          return {
+            id: column.id,
+            name: column.name,
+            tasks: existingColumn?.tasks || [],
+          }
+        },
+      )
+
+      const payload = {
+        columns: updatedColumns,
+        boardId: activeBoard?.id,
+        boardName: formValues.name,
+      }
+
+      const response = await api.put('/columns/edit', payload)
+
+      toast?.success(response.data.message)
+
+      mutate()
+    } catch (error) {
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
+      reset()
+
+      setTimeout(() => {
+        onClose()
+      }, 500)
+    }
   }
 
   const renderColumnInput = (column: BoardColumnProps, index: number) => {

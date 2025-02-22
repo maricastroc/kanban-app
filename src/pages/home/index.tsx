@@ -62,7 +62,7 @@ export default function Home({ onChangeTheme }: HomeProps) {
   }
 
   const { data: activeBoard, mutate } = useRequest<BoardProps>({
-    url: '/board',
+    url: '/board/get',
     method: 'GET',
   })
 
@@ -77,39 +77,31 @@ export default function Home({ onChangeTheme }: HomeProps) {
     newOrder: number,
   ) => {
     try {
-      setIsLoading(true)
-
       const payload = {
         taskId,
         newColumnId,
         newOrder,
       }
 
-      await api.put('/tasks/move', payload)
+      await api.put('/tasks/reorder', payload)
 
       mutate()
     } catch (error) {
       handleApiError(error)
-    } finally {
-      setIsLoading(false)
     }
   }
 
   const reorderTaskInColumn = async (taskId: string, newOrder: number) => {
     try {
-      setIsLoading(true)
-
       const payload = {
         taskId,
         newOrder,
       }
 
-      await api.put('/columns/move', payload)
+      await api.put('/columns/reorder', payload)
       mutate()
     } catch (error) {
       handleApiError(error)
-    } finally {
-      setIsLoading(false)
     }
   }
 
@@ -234,12 +226,15 @@ export default function Home({ onChangeTheme }: HomeProps) {
                   onMouseLeave={handleMouseUp}
                   onMouseMove={handleMouseMove}
                 >
-                  {boardColumns?.map(
+                  {activeBoard && boardColumns?.map(
                     (column: BoardColumnProps, index: number) => (
                       <BoardColumn
                         id={column.id}
+                        mutate={mutate}
+                        column={column}
                         key={index}
                         name={column.name}
+                        activeBoard={activeBoard}
                         tasks={column.tasks.map((task) => ({
                           ...task,
                           isDragDisabled: isLoading,
@@ -260,6 +255,8 @@ export default function Home({ onChangeTheme }: HomeProps) {
                       </Dialog.Trigger>
                       {isColumnFormModalOpen && (
                         <ColumnFormModal
+                          activeBoard={activeBoard}
+                          mutate={mutate}
                           onClose={() => setIsColumnFormModalOpen(false)}
                         />
                       )}

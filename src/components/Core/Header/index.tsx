@@ -91,6 +91,7 @@ export function Header({
             isEditing={false}
             boardId={activeBoard?.id || ''}
             mutate={mutate}
+            activeBoard={activeBoard}
             onClose={() => setIsAddTaskModalOpen(false)}
           />
         </Dialog.Root>

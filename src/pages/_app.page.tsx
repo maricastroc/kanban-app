@@ -9,8 +9,9 @@ import { TaskContextProvider } from '@/contexts/TasksContext'
 import { Toaster } from 'react-hot-toast'
 import Home from './home'
 import { getStorageTheme, saveStorageTheme } from '@/storage/themeConfig'
+import { AppProps } from 'next/app'
 
-function MyApp() {
+function MyApp({ Component, pageProps }: AppProps) {
   const activeTheme = getStorageTheme()
 
   const [enableDarkMode, setEnableDarkMode] = useState(
@@ -22,12 +23,7 @@ function MyApp() {
       <BoardsContextProvider>
         <TaskContextProvider>
           <Toaster />
-          <Home
-            onChangeTheme={() => {
-              setEnableDarkMode(!enableDarkMode)
-              saveStorageTheme(enableDarkMode ? 'LIGHT_THEME' : 'DARK_THEME')
-            }}
-          />
+          <Component {...pageProps} />
           <GlobalStyle />
         </TaskContextProvider>
       </BoardsContextProvider>

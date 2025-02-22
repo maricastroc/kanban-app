@@ -10,7 +10,7 @@ export const TaskCardContainer = styled.div`
   background-color: ${(props) => props.theme['cards-color']};
   width: 100%;
   align-items: flex-start;
-  box-shadow: 0 4px 6px rgba(54, 78, 126, 0.1);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 
   strong {

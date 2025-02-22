@@ -17,7 +17,7 @@ export const Input = styled.input`
   border-radius: 4px;
 
   &.error {
-    border: solid 2px ${(props) => props.theme['error-color']};
+    border: solid 1px ${(props) => props.theme['error-color']};
   }
 
   &.disabled {
