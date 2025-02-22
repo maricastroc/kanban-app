@@ -129,20 +129,24 @@ export function TaskDetailsModal({ task, onClose }: TaskDetailsModalProps) {
             <Description>
               <p>{task.description || 'No description'}</p>
               <CustomLabel>{`Subtasks (${subtasksCompleted.length} of ${task.subtasks.length})`}</CustomLabel>
-            
+
               {subtasks.length > 0 ? (
                 <SubtasksContainer>
-                  <Reorder.Group axis="y" values={subtasks} onReorder={(newOrder) => {
-                    setSubtasks(newOrder)
-                    reorderSubtasks(task.id, newOrder)
-                  }}>
+                  <Reorder.Group
+                    axis="y"
+                    values={subtasks}
+                    onReorder={(newOrder) => {
+                      setSubtasks(newOrder)
+                      reorderSubtasks(task.id, newOrder)
+                    }}
+                  >
                     {subtasks.map((subtask: SubtaskProps) => (
                       <Reorder.Item
                         as="div"
                         key={subtask.id}
                         value={subtask}
-                        style={{ cursor: "grab" }}
-                        whileDrag={{ cursor: "grabbing" }}
+                        style={{ cursor: 'grab' }}
+                        whileDrag={{ cursor: 'grabbing' }}
                       >
                         <SubtaskItem
                           id={subtask.id}

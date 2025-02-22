@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { z } from 'zod'
-import { buildNextAuthOptions } from '../auth/[...nextauth].api'
+import { buildNextAuthOptions } from '../../auth/[...nextauth].api'
 
 const createBoardSchema = z.object({
   name: z.string().min(3, 'Board name is required'),
@@ -80,24 +80,8 @@ export default async function handler(
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: error.errors[0].message })
       }
-      console.error(error)
-      return res.status(500).json({ message: 'Internal server error' })
-    }
-  } else if (req.method === 'GET') {
-    try {
-      const boards = await prisma.board.findMany({
-        where: {
-          userId,
-        },
-        include: {
-          columns: true,
-        },
-      })
 
-      return res.status(200).json({
-        boards,
-      })
-    } catch (error) {
+      console.error(error)
       return res.status(500).json({ message: 'Internal server error' })
     }
   } else {

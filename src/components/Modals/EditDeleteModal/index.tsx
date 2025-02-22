@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Dialog from '@radix-ui/react-dialog'
 import { ModalContent, ActionBtn } from './styles'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
@@ -5,13 +6,24 @@ import { useState } from 'react'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { DeleteModal } from '../DeleteModal'
 import { BoardFormModal } from '../BoardFormModal'
+import { BoardProps } from '@/@types/board'
+import { KeyedMutator } from 'swr'
+import { AxiosResponse } from 'axios'
 
 interface EditDeleteModalProps {
   onClose: () => void
+  activeBoard: BoardProps | undefined
+  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
+  boardsMutate: KeyedMutator<AxiosResponse<BoardProps[], any>>
 }
 
-export function EditDeleteModal({ onClose }: EditDeleteModalProps) {
-  const { activeBoard, enableDarkMode } = useBoardsContext()
+export function EditDeleteModal({
+  activeBoard,
+  mutate,
+  boardsMutate,
+  onClose,
+}: EditDeleteModalProps) {
+  const { enableDarkMode } = useBoardsContext()
 
   const [isEditModalOpen, setEditModalOpen] = useState(false)
 
@@ -54,6 +66,8 @@ export function EditDeleteModal({ onClose }: EditDeleteModalProps) {
               isEditing
               onClose={closeEditModal}
               board={activeBoard}
+              mutate={mutate}
+              boardsMutate={boardsMutate}
             />
           )}
         </Dialog.Root>

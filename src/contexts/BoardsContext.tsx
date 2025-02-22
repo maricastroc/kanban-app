@@ -33,8 +33,8 @@ interface BoardsContextData {
     newColumns: BoardColumnProps[],
   ) => void
 
-  isLoading: boolean,
-  handleSetIsLoading: (value: boolean) => void,
+  isLoading: boolean
+  handleSetIsLoading: (value: boolean) => void
 }
 
 const BoardsContext = createContext<BoardsContextData | undefined>(undefined)
@@ -238,7 +238,7 @@ export function BoardsContextProvider({
         deleteBoard,
         handleSetActiveBoard,
         isLoading,
-        handleSetIsLoading
+        handleSetIsLoading,
       }}
     >
       {children}

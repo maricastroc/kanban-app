@@ -1,9 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { prisma } from '@/lib/prisma'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { buildNextAuthOptions } from '../auth/[...nextauth].api'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   const session = await getServerSession(
     req,
     res,
@@ -24,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const activeBoard = await prisma.board.findFirst({
         where: {
-          userId: userId,
+          userId,
           isActive: true,
         },
         include: {
@@ -41,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             },
           },
         },
-      })      
+      })
 
       if (activeBoard) {
         return res.status(200).json({

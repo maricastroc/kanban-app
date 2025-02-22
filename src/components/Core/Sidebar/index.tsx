@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import {
   BoardBtn,
@@ -26,35 +27,33 @@ import { useState } from 'react'
 import { EyeSlash } from 'phosphor-react'
 import { BoardFormModal } from '@/components/Modals/BoardFormModal'
 import Image from 'next/image'
-import useRequest from '@/utils/useRequest'
 import { BoardProps } from '@/@types/board'
+import { AxiosResponse } from 'axios'
+import { KeyedMutator } from 'swr'
 
 interface SidebarProps {
   onClose: () => void
   onChangeTheme: () => void
+  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
+  boardsMutate: KeyedMutator<AxiosResponse<BoardProps[], any>>
+  handleChangeBoardStatus: (board: BoardProps) => Promise<void>
+  boards: BoardProps[] | undefined
+  activeBoard: BoardProps | undefined
 }
 
-export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
-  const {
-    allBoards,
-    enableDarkMode,
-    handleSetActiveBoard,
-    handleEnableDarkMode,
-  } = useBoardsContext()
+export function Sidebar({
+  activeBoard,
+  boards,
+  handleChangeBoardStatus,
+  onClose,
+  onChangeTheme,
+  mutate,
+  boardsMutate,
+}: SidebarProps) {
+  const { enableDarkMode, handleSetActiveBoard, handleEnableDarkMode } =
+    useBoardsContext()
 
   const [isAddBoardModalOpen, setIsAddBoardModalOpen] = useState(false)
-
-  const { data: boards, isValidating } =
-  useRequest<BoardProps[]>({
-    url: '/boards',
-    method: 'GET',
-  })
-
-  const { data: activeBoard } =
-  useRequest<BoardProps>({
-    url: '/board',
-    method: 'GET',
-  })
 
   return (
     <Container>
@@ -68,7 +67,7 @@ export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
             alt=""
           />
         </LogoWrapper>
-        <Title>{`All Boards (${boards?.length})`}</Title>
+        <Title>{`All Boards (${boards?.length || 0})`}</Title>
         <BoardsContainer>
           {boards?.map((board) => {
             return (
@@ -77,6 +76,7 @@ export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
                 className={board.name === activeBoard?.name ? 'active' : ''}
                 onClick={() => {
                   handleSetActiveBoard(board)
+                  handleChangeBoardStatus(board)
                 }}
               >
                 <img src={IconBoard} alt="" />
@@ -99,6 +99,8 @@ export function Sidebar({ onClose, onChangeTheme }: SidebarProps) {
             {isAddBoardModalOpen && (
               <BoardFormModal
                 isEditing={false}
+                mutate={mutate}
+                boardsMutate={boardsMutate}
                 onClose={() => {
                   setIsAddBoardModalOpen(false)
                 }}

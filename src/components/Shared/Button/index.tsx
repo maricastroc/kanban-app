@@ -7,7 +7,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isBigger?: boolean
 }
 
-const Button = ({ variant = 'primary', title, isBigger = false, ...props }: ButtonProps) => {
+const Button = ({
+  variant = 'primary',
+  title,
+  isBigger = false,
+  ...props
+}: ButtonProps) => {
   return (
     <Container className={`${variant} ${isBigger ? 'bigger' : ''}`} {...props}>
       <p>{title}</p>

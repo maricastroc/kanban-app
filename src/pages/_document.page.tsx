@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react'
 import Document, { Html, Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
@@ -11,7 +12,8 @@ class MyDocument extends Document {
     try {
       ctx.renderPage = () =>
         originalRenderPage({
-          enhanceApp: (App: AppType) => (props: AppProps) => sheet.collectStyles(<App {...props} />),  // Tipando 'props' como 'AppProps'
+          enhanceApp: (App: AppType) => (props: AppProps) =>
+            sheet.collectStyles(<App {...props} />),
         })
 
       const initialProps = await Document.getInitialProps(ctx)

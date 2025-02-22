@@ -27,6 +27,14 @@ export const ModalTitle = styled(RadixTitle)`
   }
 `
 
+export const ModalLoading = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+`
+
 export const ModalContent = styled(RadixContent)<{ padding?: string }>`
   display: flex;
   flex-direction: column;
@@ -141,7 +149,7 @@ export const StatusContainer = styled.div`
 `
 
 export const Loader = styled.div`
-position: fixed;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;

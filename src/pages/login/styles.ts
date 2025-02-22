@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import { ToastContainer } from 'react-toastify'
 
 export const LayoutContainer = styled.div`
   display: flex;
@@ -82,15 +81,15 @@ export const FormContainer = styled.form`
   flex-direction: column;
   gap: 1rem;
   margin-top: 2rem;
-`;
+`
 
 export const InputsContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
   margin-bottom: 0.5rem;
-  gap: 0.75rem
-`;
+  gap: 0.75rem;
+`
 
 export const FormField = styled.div`
   display: flex;
@@ -103,13 +102,13 @@ export const FormField = styled.div`
   p {
     font-size: 14px;
   }
-`;
+`
 
 export const InputContainer = styled.div`
   position: relative;
   background-color: transparent;
   width: 100%;
-`;
+`
 
 export const InputField = styled.input`
   width: 100%;
@@ -137,7 +136,7 @@ export const InputField = styled.input`
   &:focus {
     background-color: transparent;
   }
-`;
+`
 
 export const IconWrapper = styled.div`
   position: absolute;
@@ -150,7 +149,7 @@ export const IconWrapper = styled.div`
     color: ${(props) => props.theme['details-color']};
     margin-top: 0.25rem;
   }
-`;
+`
 
 export const CreateAccountContainer = styled.div`
   display: flex;

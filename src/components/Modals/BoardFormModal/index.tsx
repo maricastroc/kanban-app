@@ -1,8 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import * as Dialog from '@radix-ui/react-dialog'
 import { ColumnsContainer, ColumnsContent } from './styles'
-import { Loader, ModalContent, ModalOverlay, ModalTitle } from '@/styles/shared'
+import {
+  Loader,
+  ModalContent,
+  ModalLoading,
+  ModalOverlay,
+  ModalTitle,
+} from '@/styles/shared'
 
 import { FormContainer } from '@/components/Shared/FormContainer'
 import { InputContainer } from '@/components/Shared/InputContainer'
@@ -11,7 +18,6 @@ import { Button } from '@/components/Shared/Button'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useBoardsContext } from '@/contexts/BoardsContext'
 import { initialBoardColumns } from '@/utils/getInitialValues'
 import { FieldsContainer } from '@/components/Shared/FieldsContainer'
 import { Field } from '@/components/Shared/Field'
@@ -20,28 +26,26 @@ import { CustomLabel } from '@/components/Shared/Label'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { BoardColumnProps } from '@/@types/board-column'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
-import {
-  MIN_BOARD_NAME_LENGTH,
-  MIN_COLUMN_NAME_LENGTH,
-  MAX_COLUMNS,
-} from '@/utils/constants'
+import { MIN_BOARD_NAME_LENGTH, MAX_COLUMNS } from '@/utils/constants'
 import { BoardProps } from '@/@types/board'
 import { api } from '@/lib/axios'
 import { handleApiError } from '@/utils/handleApiError'
 import { Circles } from 'react-loader-spinner'
 import toast from 'react-hot-toast'
+import { KeyedMutator } from 'swr'
+import { AxiosResponse } from 'axios'
 
 interface BoardModalProps {
   board?: BoardProps
   onClose: () => void
   isEditing: boolean
+  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
+  boardsMutate: KeyedMutator<AxiosResponse<BoardProps[], any>>
 }
 
 const columnSchema = z.object({
   id: z.string(),
-  name: z
-    .string()
-    .min(MIN_COLUMN_NAME_LENGTH, { message: 'Column name is required' }),
+  name: z.string().min(3, { message: 'Column name is required' }),
 })
 
 const formSchema = z.object({
@@ -59,17 +63,27 @@ const formSchema = z.object({
 
 export type FormData = z.infer<typeof formSchema>
 
-export function BoardFormModal({ board, onClose, isEditing }: BoardModalProps) {
-  const { createNewBoard, editBoard, handleSetIsLoading, isLoading } = useBoardsContext()
-
+export function BoardFormModal({
+  board,
+  onClose,
+  isEditing,
+  mutate,
+  boardsMutate,
+}: BoardModalProps) {
   const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>(
-    board?.columns ?? initialBoardColumns,
+    board?.columns || [
+      { id: uuidv4(), name: 'Todo', tasks: [] },
+      { id: uuidv4(), name: 'Doing', tasks: [] },
+    ],
   )
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const {
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
+    reset,
     register,
   } = useForm<FormData>({
     defaultValues: {
@@ -80,8 +94,8 @@ export function BoardFormModal({ board, onClose, isEditing }: BoardModalProps) {
     resolver: zodResolver(formSchema),
   })
 
-  const onSubmit = async (data: FormData) => {
-    handleSetIsLoading(true)
+  const handleCreateBoard = async (data: FormData) => {
+    setIsLoading(true)
 
     try {
       const payload = {
@@ -89,17 +103,49 @@ export function BoardFormModal({ board, onClose, isEditing }: BoardModalProps) {
         columns: boardColumns,
       }
 
-      const response = await api.post('/boards', payload);
+      const response = await api.post('/board/create', payload)
+
+      toast?.success(response.data.message)
+
+      mutate()
+      boardsMutate()
+    } catch (error) {
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
+      reset()
 
       setTimeout(() => {
         onClose()
       }, 500)
+    }
+  }
+
+  const handleEditBoard = async (data: FormData) => {
+    setIsLoading(true)
+
+    try {
+      const payload = {
+        boardId: board?.id,
+        name: data.name,
+        columns: boardColumns,
+      }
+
+      const response = await api.put('/board/edit', payload)
 
       toast?.success(response.data.message)
+
+      mutate()
+      boardsMutate()
     } catch (error) {
       handleApiError(error)
     } finally {
-      handleSetIsLoading(false)
+      setIsLoading(false)
+      reset()
+
+      setTimeout(() => {
+        onClose()
+      }, 500)
     }
   }
 
@@ -170,7 +216,13 @@ export function BoardFormModal({ board, onClose, isEditing }: BoardModalProps) {
         <VisuallyHidden>
           <Dialog.Description />
         </VisuallyHidden>
-        <FormContainer onSubmit={handleSubmit(onSubmit)}>
+        <FormContainer
+          onSubmit={
+            isEditing
+              ? handleSubmit(handleEditBoard)
+              : handleSubmit(handleCreateBoard)
+          }
+        >
           <InputContainer>
             <CustomLabel htmlFor="name">Board Name</CustomLabel>
             <CustomInput
@@ -206,6 +258,14 @@ export function BoardFormModal({ board, onClose, isEditing }: BoardModalProps) {
             variant="primary"
           />
         </FormContainer>
+
+        {isLoading && (
+          <ModalLoading>
+            <Loader>
+              <Circles color="#635FC7" height={80} width={80} />
+            </Loader>
+          </ModalLoading>
+        )}
       </ModalContent>
     </Dialog.Portal>
   )

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { TaskProps } from '@/@types/task'
 import { TaskCardContainer } from './styles'
 import * as Dialog from '@radix-ui/react-dialog'

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 export function useWindowResize(breakpoint: number) {
   const [isSmallerThanBreakpoint, setIsSmallerThanBreakpoint] = useState(
-    typeof window !== 'undefined' ? window.innerWidth <= breakpoint : false
+    typeof window !== 'undefined' ? window.innerWidth <= breakpoint : false,
   )
 
   useEffect(() => {

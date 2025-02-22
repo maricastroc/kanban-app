@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { RefObject, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -26,8 +27,6 @@ import { CustomLabel } from '@/components/Shared/Label'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
 import { StatusSelector } from '@/components/Shared/StatusSelector'
 
-import { useTaskContext } from '@/contexts/TasksContext'
-import { useBoardsContext } from '@/contexts/BoardsContext'
 import { useOutsideClick } from '@/utils/useOutsideClick'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 
@@ -46,6 +45,8 @@ import { handleApiError } from '@/utils/handleApiError'
 import useRequest from '@/utils/useRequest'
 import { BoardProps } from '@/@types/board'
 import toast from 'react-hot-toast'
+import { AxiosResponse } from 'axios'
+import { KeyedMutator } from 'swr'
 
 const subtaskSchema = z.object({
   id: z.string(),
@@ -69,7 +70,7 @@ interface AddTaskModalProps {
   isEditing?: boolean
   task?: TaskProps
   boardId: string
-  mutate: any
+  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
   onClose: () => void
 }
 
@@ -80,13 +81,10 @@ export function TaskFormModal({
   isEditing = false,
   task,
 }: AddTaskModalProps) {
-  const { data: activeBoard } =
-    useRequest<BoardProps>({
-      url: '/board',
-      method: 'GET',
+  const { data: activeBoard } = useRequest<BoardProps>({
+    url: '/board',
+    method: 'GET',
   })
-
-  const { addTaskToColumn, editTask } = useTaskContext()
 
   const initialStatus = activeBoard?.columns[0]?.name || DEFAULT_STATUS
 
@@ -104,7 +102,9 @@ export function TaskFormModal({
     isEditing && task?.status ? task.status : initialStatus,
   )
 
-  useOutsideClick(statusRef as RefObject<HTMLElement>, () => setIsOptionsContainerOpen(false))
+  useOutsideClick(statusRef as RefObject<HTMLElement>, () =>
+    setIsOptionsContainerOpen(false),
+  )
 
   useEscapeKeyHandler(onClose)
 
@@ -116,7 +116,6 @@ export function TaskFormModal({
     getValues,
     watch,
     reset,
-    trigger,
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -143,11 +142,13 @@ export function TaskFormModal({
         })),
       }
 
-      const response = await api.post('/tasks/create', payload);
+      const response = await api.post('/tasks/create', payload)
 
       mutate()
 
       toast?.success(response.data.message)
+
+      reset()
 
       setTimeout(() => {
         onClose()
@@ -196,34 +197,6 @@ export function TaskFormModal({
     setSubtasks(updatedSubtasks)
 
     setValue('subtasks', updatedSubtasks)
-  }
-
-  const handleSubmitTask = async (data: FormData) => {
-    const isValid = await trigger('subtasks')
-
-    if (!isValid) {
-      toast.error('Please correct the errors before submitting the task.')
-      return
-    }
-
-    const newTask = {
-      id: uuidv4(),
-      order: 1,
-      title: data.title,
-      description: data.description || '',
-      status: status || DEFAULT_STATUS,
-      subtasks,
-    }
-
-    if (isEditing) {
-      editTask(newTask, task)
-    } else {
-      addTaskToColumn(newTask, status)
-    }
-
-    reset()
-    setSubtasks(initialSubtasks)
-    onClose()
   }
 
   const renderSubtaskInput = (index: number, subtask: SubtaskProps) => {

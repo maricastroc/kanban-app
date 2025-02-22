@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { prisma } from '@/lib/prisma'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
@@ -16,8 +17,15 @@ interface TaskUpdateData {
   subtasks?: Subtask[]
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const session = await getServerSession(req, res, buildNextAuthOptions(req, res))
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
+  const session = await getServerSession(
+    req,
+    res,
+    buildNextAuthOptions(req, res),
+  )
 
   if (!session) {
     return res.status(400).json({ message: 'Unauthorized' })
@@ -29,7 +37,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === 'PUT') {
-    const { taskId, title, description, order, columnId, subtasks }: TaskUpdateData & { taskId: string } = req.body
+    const {
+      taskId,
+      title,
+      description,
+      order,
+      columnId,
+      subtasks,
+    }: TaskUpdateData & { taskId: string } = req.body
 
     if (!taskId) {
       return res.status(400).json({ message: 'Task ID is required' })
@@ -49,7 +64,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Se mudar de coluna, recalcula o order
       if (columnId && columnId !== existingTask.columnId) {
-        const newColumnTaskCount = await prisma.task.count({ where: { columnId } })
+        const newColumnTaskCount = await prisma.task.count({
+          where: { columnId },
+        })
         updatedOrder = newColumnTaskCount + 1
       }
 
@@ -68,14 +85,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (subtasks) {
         // Remove subtasks antigas
         await prisma.subtask.deleteMany({
-          where: { taskId: taskId },
+          where: { taskId },
         })
 
         // Adiciona novas subtasks
         const newSubtasks = subtasks.map((subtask, index) => ({
           title: subtask.title,
           order: index + 1,
-          taskId: taskId,
+          taskId,
         }))
 
         if (newSubtasks.length > 0) {
@@ -83,7 +100,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       }
 
-      return res.status(200).json({ message: 'Task updated successfully', task: updatedTask })
+      return res
+        .status(200)
+        .json({ message: 'Task updated successfully', task: updatedTask })
     } catch (error) {
       console.error(error)
       return res.status(500).json({ message: 'Internal server error' })

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { TaskProps } from '@/@types/task'
 import { BoardColumnProps } from '@/@types/board-column'
 import * as Dialog from '@radix-ui/react-dialog'

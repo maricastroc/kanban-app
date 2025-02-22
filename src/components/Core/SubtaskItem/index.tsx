@@ -28,15 +28,15 @@ export function SubtaskItem({
   }
 
   return (
-      <Container style={{ marginTop: '0.5rem'}} >
-        {isChecked ? (
-          <CheckedBox onClick={() => handleToggleSubtaskStatus()}>
-            <FontAwesomeIcon icon={faCheck} />
-          </CheckedBox>
-        ) : (
-          <UncheckedBox onClick={() => handleToggleSubtaskStatus()} />
-        )}
-        <Title className={isChecked ? 'checked' : 'unchecked'}>{title}</Title>
-      </Container>
+    <Container style={{ marginTop: '0.5rem' }}>
+      {isChecked ? (
+        <CheckedBox onClick={() => handleToggleSubtaskStatus()}>
+          <FontAwesomeIcon icon={faCheck} />
+        </CheckedBox>
+      ) : (
+        <UncheckedBox onClick={() => handleToggleSubtaskStatus()} />
+      )}
+      <Title className={isChecked ? 'checked' : 'unchecked'}>{title}</Title>
+    </Container>
   )
 }

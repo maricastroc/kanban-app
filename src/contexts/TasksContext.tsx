@@ -286,43 +286,43 @@ export function TaskContextProvider({ children }: TaskContextProviderProps) {
   }
 
   function reorderTasksInColumn(columnIndex: number, newOrder: TaskProps[]) {
-    const boardIndex = findActiveBoardIndex();
-    if (boardIndex === -1) return;
-  
-    const boardsCopy = [...allBoards];
-    const boardCopy = { ...boardsCopy[boardIndex] };
-  
-    const column = boardCopy.columns[columnIndex];
-    if (!column) return;
-  
-    column.tasks = newOrder;
-  
-    boardsCopy[boardIndex] = boardCopy;
-    
-    updateBoards(boardsCopy);
-    handleSetActiveBoard(boardCopy);
+    const boardIndex = findActiveBoardIndex()
+    if (boardIndex === -1) return
+
+    const boardsCopy = [...allBoards]
+    const boardCopy = { ...boardsCopy[boardIndex] }
+
+    const column = boardCopy.columns[columnIndex]
+    if (!column) return
+
+    column.tasks = newOrder
+
+    boardsCopy[boardIndex] = boardCopy
+
+    updateBoards(boardsCopy)
+    handleSetActiveBoard(boardCopy)
   }
 
   function reorderSubtasks(taskId: string, newOrder: SubtaskProps[]) {
-    const boardIndex = findActiveBoardIndex();
-    if (boardIndex === -1) return;
-  
-    const boardsCopy = [...allBoards];
-    const boardCopy = { ...boardsCopy[boardIndex] };
-  
+    const boardIndex = findActiveBoardIndex()
+    if (boardIndex === -1) return
+
+    const boardsCopy = [...allBoards]
+    const boardCopy = { ...boardsCopy[boardIndex] }
+
     const column = boardCopy.columns.find((col) =>
       col.tasks.some((task) => task.id === taskId),
-    );
-    if (!column) return;
-  
-    const task = column.tasks.find((t) => t.id === taskId);
-    if (!task) return;
-  
-    task.subtasks = newOrder;
-  
-    boardsCopy[boardIndex] = boardCopy;
-    updateBoards(boardsCopy);
-    handleSetActiveBoard(boardCopy);
+    )
+    if (!column) return
+
+    const task = column.tasks.find((t) => t.id === taskId)
+    if (!task) return
+
+    task.subtasks = newOrder
+
+    boardsCopy[boardIndex] = boardCopy
+    updateBoards(boardsCopy)
+    handleSetActiveBoard(boardCopy)
   }
 
   return (

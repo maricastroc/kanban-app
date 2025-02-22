@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   AddTaskBtn,
@@ -21,17 +22,24 @@ import { useEffect, useState } from 'react'
 import { TaskFormModal } from '@/components/Modals/TaskFormModal'
 import { EditDeleteModal } from '@/components/Modals/EditDeleteModal'
 import { BREAKPOINT_SM } from '@/utils/constants'
-import { useBoardsContext } from '@/contexts/BoardsContext'
 import { useWindowResize } from '@/utils/useWindowResize'
-import useRequest from '@/utils/useRequest'
 import { BoardProps } from '@/@types/board'
+import { KeyedMutator } from 'swr'
+import { AxiosResponse } from 'axios'
 
 interface HeaderProps {
   onChangeTheme: () => void
-  mutate: any
+  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
+  boardsMutate: KeyedMutator<AxiosResponse<BoardProps[], any>>
+  activeBoard: BoardProps | undefined
 }
 
-export function Header({ onChangeTheme, mutate }: HeaderProps) {
+export function Header({
+  activeBoard,
+  onChangeTheme,
+  mutate,
+  boardsMutate,
+}: HeaderProps) {
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
 
   const [isBoardsDetailsModalOpen, setIsBoardsDetailsModalOpen] =
@@ -40,12 +48,6 @@ export function Header({ onChangeTheme, mutate }: HeaderProps) {
   const [isEditDeleteModalOpen, setIsEditDeleteModalOpen] = useState(false)
 
   const isSmallerThanSm = useWindowResize(BREAKPOINT_SM)
-
-  const { data: activeBoard } =
-  useRequest<BoardProps>({
-    url: '/board',
-    method: 'GET',
-})
 
   useEffect(() => {
     if (!isSmallerThanSm) {
@@ -106,7 +108,12 @@ export function Header({ onChangeTheme, mutate }: HeaderProps) {
                 />
               </EditDeleteBtn>
             </Dialog.Trigger>
-            <EditDeleteModal onClose={() => setIsEditDeleteModalOpen(false)} />
+            <EditDeleteModal
+              boardsMutate={boardsMutate}
+              mutate={mutate}
+              activeBoard={activeBoard}
+              onClose={() => setIsEditDeleteModalOpen(false)}
+            />
           </Dialog.Root>
         </EditDeleteWrapper>
       </EditDeleteContainer>

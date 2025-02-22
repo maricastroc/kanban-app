@@ -6,9 +6,20 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { handleApiError } from '@/utils/handleApiError'
-import { notyf } from '@/lib/notyf'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
-import { CreateAccountContainer, FormContainer, FormField, IconWrapper, InputContainer, InputField, InputsContainer, LayoutContainer, LoginCard, LogoWrapper, TitleContainer } from '../login/styles'
+import {
+  CreateAccountContainer,
+  FormContainer,
+  FormField,
+  IconWrapper,
+  InputContainer,
+  InputField,
+  InputsContainer,
+  LayoutContainer,
+  LoginCard,
+  LogoWrapper,
+  TitleContainer,
+} from '../login/styles'
 import { Envelope, LockKey } from 'phosphor-react'
 import { Button } from '@/components/Shared/Button'
 import { useBoardsContext } from '@/contexts/BoardsContext'
@@ -29,13 +40,11 @@ const signInFormSchema = z.object({
 type SignInFormData = z.infer<typeof signInFormSchema>
 
 export default function Login() {
-  const {
-    enableDarkMode,
-  } = useBoardsContext()
+  const { enableDarkMode } = useBoardsContext()
 
   const router = useRouter()
 
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
 
   const {
     register,
@@ -47,7 +56,7 @@ export default function Login() {
   })
 
   async function onSubmit(data: SignInFormData) {
-    setLoading(true)
+    setIsLoading(true)
 
     try {
       const response = await api.post('/profile', {
@@ -63,40 +72,42 @@ export default function Login() {
     } catch (error) {
       handleApiError(error)
     } finally {
-      setLoading(false)
+      setIsLoading(false)
     }
   }
 
   return (
     <LayoutContainer>
-            <LogoWrapper>
-          <Image src={Logo} width={24} height={24} alt="" />
-          <Image
-            src={enableDarkMode ? LogoTextLight : LogoTextDark}
-            width={112}
-            height={24}
-            alt=""
-          />
-        </LogoWrapper>
+      <LogoWrapper>
+        <Image src={Logo} width={24} height={24} alt="" />
+        <Image
+          src={enableDarkMode ? LogoTextLight : LogoTextDark}
+          width={112}
+          height={24}
+          alt=""
+        />
+      </LogoWrapper>
       <LoginCard>
         <TitleContainer>
           <h1>Create account</h1>
           <p>Let’s get you started organizing your tasks!</p>
         </TitleContainer>
-        
+
         <FormContainer onSubmit={handleSubmit(onSubmit)}>
           <InputsContainer>
-          <FormField>
+            <FormField>
               <p>Name:</p>
               <InputContainer>
                 <IconWrapper>
                   <LockKey size={16} />
                 </IconWrapper>
-                <InputField type="text" placeholder="e.g. Jon Doe" {...register('name')} />
+                <InputField
+                  type="text"
+                  placeholder="e.g. Jon Doe"
+                  {...register('name')}
+                />
               </InputContainer>
-              {errors?.name && (
-                <ErrorMessage message={errors.name.message} />
-              )}
+              {errors?.name && <ErrorMessage message={errors.name.message} />}
             </FormField>
 
             <FormField>
@@ -105,11 +116,13 @@ export default function Login() {
                 <IconWrapper>
                   <Envelope size={16} />
                 </IconWrapper>
-                <InputField type="email" placeholder="e.g. jondoe@gmail.com" {...register('email')} />
+                <InputField
+                  type="email"
+                  placeholder="e.g. jondoe@gmail.com"
+                  {...register('email')}
+                />
               </InputContainer>
-              {errors?.email && (
-                <ErrorMessage message={errors.email.message} />
-              )}
+              {errors?.email && <ErrorMessage message={errors.email.message} />}
             </FormField>
 
             <FormField>
@@ -118,7 +131,11 @@ export default function Login() {
                 <IconWrapper>
                   <LockKey size={16} />
                 </IconWrapper>
-                <InputField type="password" placeholder="Enter your password" {...register('password')} />
+                <InputField
+                  type="password"
+                  placeholder="Enter your password"
+                  {...register('password')}
+                />
               </InputContainer>
               {errors?.password && (
                 <ErrorMessage message={errors.password.message} />
@@ -126,20 +143,16 @@ export default function Login() {
             </FormField>
           </InputsContainer>
 
-            <Button
-              isBigger
-              disabled={isSubmitting || loading}
-              title="Login"
-            />
+          <Button isBigger disabled={isSubmitting || isLoading} title="Login" />
 
-            <CreateAccountContainer>
-              <p>Already have an account?</p>
-              <Link href="/login">Login</Link>
-            </CreateAccountContainer>
+          <CreateAccountContainer>
+            <p>Already have an account?</p>
+            <Link href="/login">Login</Link>
+          </CreateAccountContainer>
         </FormContainer>
       </LoginCard>
 
-      {loading && (
+      {isLoading && (
         <Loader className="overlay">
           <Circles color="#635FC7" height={80} width={80} />
         </Loader>

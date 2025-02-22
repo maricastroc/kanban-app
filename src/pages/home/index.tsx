@@ -14,7 +14,6 @@ import {
 } from './styles'
 import { BoardColumnProps } from '@/@types/board-column'
 import { useBoardsContext } from '@/contexts/BoardsContext'
-import { useTaskContext } from '@/contexts/TasksContext'
 import { BREAKPOINT_SM } from '@/utils/constants'
 import { Sidebar } from '@/components/Core/Sidebar'
 import HideSidebar from '@/../public/icon-show-sidebar.svg'
@@ -48,8 +47,9 @@ export default function Home({ onChangeTheme }: HomeProps) {
 
   const isSmallerThanSm = useWindowResize(BREAKPOINT_SM)
 
-  const { handleMouseDown, handleMouseMove, handleMouseUp } =
-    useDragScroll(columnsContainerRef as RefObject<HTMLDivElement>)
+  const { handleMouseDown, handleMouseMove, handleMouseUp } = useDragScroll(
+    columnsContainerRef as RefObject<HTMLDivElement>,
+  )
 
   const handleContainerMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement
@@ -61,23 +61,31 @@ export default function Home({ onChangeTheme }: HomeProps) {
     handleMouseDown(e)
   }
 
-  const { data: activeBoard, mutate } =
-    useRequest<BoardProps>({
-      url: '/board',
-      method: 'GET',
+  const { data: activeBoard, mutate } = useRequest<BoardProps>({
+    url: '/board',
+    method: 'GET',
   })
 
-  const moveTaskToColumn = async (taskId: string, newColumnId: string, newOrder: number) => {
+  const { data: boards, mutate: boardsMutate } = useRequest<BoardProps[]>({
+    url: '/boards',
+    method: 'GET',
+  })
+
+  const moveTaskToColumn = async (
+    taskId: string,
+    newColumnId: string,
+    newOrder: number,
+  ) => {
     try {
       setIsLoading(true)
 
       const payload = {
         taskId,
         newColumnId,
-        newOrder
+        newOrder,
       }
 
-      await api.put('/tasks/move', payload);
+      await api.put('/tasks/move', payload)
 
       mutate()
     } catch (error) {
@@ -93,10 +101,10 @@ export default function Home({ onChangeTheme }: HomeProps) {
 
       const payload = {
         taskId,
-        newOrder
+        newOrder,
       }
 
-      await api.put('/columns/move', payload);
+      await api.put('/columns/move', payload)
       mutate()
     } catch (error) {
       handleApiError(error)
@@ -110,7 +118,7 @@ export default function Home({ onChangeTheme }: HomeProps) {
 
     if (isLoading) {
       toast.error('Please wait until the current request is completed.')
-      return 
+      return
     }
 
     if (!activeBoard) {
@@ -136,7 +144,7 @@ export default function Home({ onChangeTheme }: HomeProps) {
 
     if (sourceColumnIndex === destinationColumnIndex) {
       newSourceTasks.splice(destination.index, 0, movedTask)
-  
+
       const newColumns = [...activeBoard.columns]
       newColumns[sourceColumnIndex] = {
         ...sourceColumn,
@@ -144,7 +152,7 @@ export default function Home({ onChangeTheme }: HomeProps) {
       }
 
       setBoardColumns(newColumns)
-  
+
       reorderTaskInColumn(movedTask?.id, destination?.index)
     } else {
       const newDestinationTasks = Array.from(destinationColumn.tasks)
@@ -165,11 +173,27 @@ export default function Home({ onChangeTheme }: HomeProps) {
 
       setBoardColumns(newColumns)
 
-      moveTaskToColumn(
-        movedTask?.id,
-        destinationColumn?.id,
-        destination?.index,
-      )
+      moveTaskToColumn(movedTask?.id, destinationColumn?.id, destination?.index)
+    }
+  }
+
+  const handleChangeBoardStatus = async (board: BoardProps) => {
+    try {
+      setIsLoading(true)
+
+      const payload = {
+        boardId: board.id,
+      }
+
+      await api.put('/board/status', payload)
+
+      toast?.success('Successfully changed active board!')
+
+      mutate()
+    } catch (error) {
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -189,10 +213,20 @@ export default function Home({ onChangeTheme }: HomeProps) {
                 <Sidebar
                   onClose={() => setHideSidebar(true)}
                   onChangeTheme={onChangeTheme}
+                  handleChangeBoardStatus={handleChangeBoardStatus}
+                  activeBoard={activeBoard}
+                  mutate={mutate}
+                  boards={boards}
+                  boardsMutate={boardsMutate}
                 />
               )}
               <Wrapper>
-                <Header onChangeTheme={onChangeTheme} mutate={mutate} />
+                <Header
+                  boardsMutate={boardsMutate}
+                  activeBoard={activeBoard}
+                  onChangeTheme={onChangeTheme}
+                  mutate={mutate}
+                />
                 <ColumnsContainer
                   ref={columnsContainerRef}
                   onMouseDown={handleContainerMouseDown}
@@ -200,18 +234,20 @@ export default function Home({ onChangeTheme }: HomeProps) {
                   onMouseLeave={handleMouseUp}
                   onMouseMove={handleMouseMove}
                 >
-                  {boardColumns?.map((column: BoardColumnProps, index: number) => (
-                    <BoardColumn
-                      id={column.id}
-                      key={index}
-                      name={column.name}
-                      tasks={column.tasks.map(task => ({
-                        ...task,
-                        isDragDisabled: isLoading
-                      }))}
-                      index={index}
-                    />
-                  ))}
+                  {boardColumns?.map(
+                    (column: BoardColumnProps, index: number) => (
+                      <BoardColumn
+                        id={column.id}
+                        key={index}
+                        name={column.name}
+                        tasks={column.tasks.map((task) => ({
+                          ...task,
+                          isDragDisabled: isLoading,
+                        }))}
+                        index={index}
+                      />
+                    ),
+                  )}
                   {boardColumns && boardColumns?.length < 6 && (
                     <Dialog.Root open={isColumnFormModalOpen}>
                       <Dialog.Trigger asChild>
@@ -240,6 +276,12 @@ export default function Home({ onChangeTheme }: HomeProps) {
           </LayoutContainer>
         )}
       </Droppable>
+
+      {isLoading && (
+        <Loader className="overlay">
+          <Circles color="#635FC7" height={80} width={80} />
+        </Loader>
+      )}
     </DragDropContext>
   )
 }
