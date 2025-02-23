@@ -6,6 +6,7 @@ export const LayoutContainer = styled.div`
   flex-direction: column;
   width: 100%;
   overflow: hidden;
+  min-height: 100vh;
   background-color: ${(props) => props.theme['bg-color']};
 `
 
