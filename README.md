@@ -1,40 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Kanban Task Management 
+![mockup](https://github.com/user-attachments/assets/cde9d887-fd43-4e1d-a58a-0553b111276c)
 
-## Getting Started
+## 📚 Project Description
 
-First, run the development server:
+The project consists of a fullstack kanban app for daily task management, allowing users to organize different boards, with information stored in a PostgreSQL database via Prisma. The application also includes authentication via Next OAuth, ensuring secure user access, and drag-and-drop functionality for handling the created cards.
+
+Users are able to:
+
+- View the optimal layout for the app depending on their device's screen size
+- See hover states for all interactive elements on the page
+- Create, read, update, and delete boards and tasks
+- Receive form validations when trying to create/edit boards and tasks
+- Mark subtasks as complete and move tasks between columns
+- Hide/show the board sidebar
+- Toggle the theme between light/dark modes
+- Allow users to drag and drop tasks to change their status and re-order them in a column
+
+
+## 📌 What did I learn?
+
+The project was an excellent opportunity to practice implementing the drag-and-drop feature, as well as organizing the theme in local storage while storing other information, such as boards, columns, tasks, and subtasks, in the database via Prisma and PostgreSQL. The use of contexts was essential to keep the features organized and intuitive. Additionally, I implemented authentication using Next OAuth and built the Next.js API and its endpoints, which was a great chance to practice API construction and management.
+
+## 🔍 Links
+[Preview Site](https://maricastroc-kanban-b4og7dlw1-maricastrocs-projects.vercel.app/)
+
+## 💻 My Process
+### Built with:
+
+- [Next.js](https://nextjs.org/)
+- [NextAuth.js](https://next-auth.js.org/configuration/providers/oauth)
+- [Prisma](https://www.prisma.io/)
+- [Neon](https://neon.tech/?gad_source=1&gclid=Cj0KCQiAq-u9BhCjARIsANLj-s3f2u0yUqs4SfDbXQPqXPR2a7bbNzjsi30-7sY7k3lD8TcyYiY4aD8aAoH8EALw_wcB)
+- [Typescript](https://www.typescriptlang.org/)
+- [Styled Components](https://styled-components.com/)
+- [font-awesome](https://fontawesome.com/)
+- [react-beautiful-dnd](https://www.npmjs.com/package/react-beautiful-dnd/v/11.0.2)
+- [ESLint](https://eslint.org/)
+- [Prettier](https://prettier.io/)
+
+## ℹ️ How to run the application?
+
+> Clone the repository:
+
+```bash
+git clone https://github.com/maricastroc/kanban-app
+```
+
+> Install the dependencies:
+
+```bash
+npm install
+```
+
+> Rename the .env.example file to .env and add the necessary information to it.
+
+> Start the service:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+> ⏩ Access [http://localhost:3000](http://localhost:3000) to view the web application.
