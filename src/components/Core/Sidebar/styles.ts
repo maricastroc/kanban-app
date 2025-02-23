@@ -9,12 +9,22 @@ export const Container = styled.div`
   min-width: 260px;
   background-color: ${(props) => props.theme['cards-color']};
   position: sticky;
-  overflow-y: scroll;
-  transition: min-width 0.3s ease-in-out, width 0.3s ease-in-out,
-    opacity 0.2s ease-in-out;
+  top: 0;
+  height: 100vh;
+  z-index: 100;
+  overflow-y: auto;
+  transform: translateX(0);
+  width: 260px;
+  transition: transform 0.3s ease, width 0.3s ease;
 
   &::-webkit-scrollbar {
     display: none;
+  }
+
+  &.hidden {
+    transform: translateX(-100%);
+    min-width: 0;
+    width: 0;
   }
 
   scrollbar-width: none;
@@ -24,6 +34,16 @@ export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   background-color: ${(props) => props.theme['cards-color']};
+  transform: translateX(0); /* Inicia visível */
+  transition: transform 0.3s ease;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &.hidden {
+    transform: translateX(-100%);
+  }
 `
 
 export const LogoWrapper = styled.div`

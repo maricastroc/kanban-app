@@ -30,9 +30,10 @@ import { useBoardsContext } from '@/contexts/BoardsContext'
 
 interface SidebarProps {
   onClose: () => void
+  className?: string
 }
 
-export function Sidebar({ onClose }: SidebarProps) {
+export function Sidebar({ onClose, className }: SidebarProps) {
   const { toggleTheme, enableDarkMode } = useTheme()
 
   const { handleChangeBoardStatus, activeBoard, boards } = useBoardsContext()
@@ -40,8 +41,8 @@ export function Sidebar({ onClose }: SidebarProps) {
   const [isAddBoardModalOpen, setIsAddBoardModalOpen] = useState(false)
 
   return (
-    <Container>
-      <Wrapper>
+    <Container className={className}>
+      <Wrapper className={className}>
         <LogoWrapper>
           <Image src={Logo} width={24} height={24} alt="" />
           <Image

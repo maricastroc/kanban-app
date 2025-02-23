@@ -73,10 +73,7 @@ export function EditDeleteModal({ onClose }: EditDeleteModalProps) {
                 </ActionBtn>
               </Dialog.Trigger>
               {activeBoard && (
-                <DeleteModal
-                  type={'board'}
-                  onClose={closeDeleteModal}
-                />
+                <DeleteModal type={'board'} onClose={closeDeleteModal} />
               )}
             </Dialog.Root>
           </>

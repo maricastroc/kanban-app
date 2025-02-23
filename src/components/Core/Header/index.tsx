@@ -8,6 +8,8 @@ import {
   EditDeleteContainer,
   EditDeleteWrapper,
   EditDeleteBtn,
+  LogoWrapper,
+  LogoContent,
 } from './styles'
 import Logo from '@/../public/icon.svg'
 import {
@@ -23,12 +25,21 @@ import { EditDeleteModal } from '@/components/Modals/EditDeleteModal'
 import { BREAKPOINT_SM } from '@/utils/constants'
 import { useWindowResize } from '@/utils/useWindowResize'
 import { useBoardsContext } from '@/contexts/BoardsContext'
+import LogoTextLight from '../../../../public/kanban.svg'
+import LogoTextDark from '../../../../public/kanban-dark.svg'
 import Image from 'next/image'
+import { useTheme } from 'styled-components'
 
-export function Header() {
+type Props = {
+  hideSidebar: boolean
+}
+
+export function Header({ hideSidebar }: Props) {
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
 
   const { activeBoard } = useBoardsContext()
+
+  const { enableDarkMode } = useTheme()
 
   const [isBoardsDetailsModalOpen, setIsBoardsDetailsModalOpen] =
     useState(false)
@@ -50,9 +61,31 @@ export function Header() {
           <Image src={Logo} width={24} height={24} alt="Project Logo" />
         )}
 
+        {hideSidebar && !isSmallerThanSm && (
+          <LogoContent>
+            <LogoWrapper>
+              <Image src={Logo} width={24} height={24} alt="" />
+              <Image
+                src={
+                  enableDarkMode === undefined || enableDarkMode
+                    ? LogoTextLight
+                    : LogoTextDark
+                }
+                width={112}
+                height={24}
+                className="logo"
+                alt=""
+              />
+            </LogoWrapper>
+          </LogoContent>
+        )}
+
         <Dialog.Root open={isBoardsDetailsModalOpen}>
           <Dialog.Trigger asChild>
             <BoardNameContainer
+              className={`${
+                hideSidebar && !isSmallerThanSm && 'sidebar-hidden'
+              }`}
               onClick={() =>
                 isSmallerThanSm && setIsBoardsDetailsModalOpen(true)
               }

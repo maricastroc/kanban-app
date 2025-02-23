@@ -174,11 +174,14 @@ export default function Home() {
               {...provided.droppableProps}
             >
               <BoardContent>
-                {!isSmallerThanSm && !hideSidebar && (
-                  <Sidebar onClose={() => setHideSidebar(true)} />
+                {!isSmallerThanSm && (
+                  <Sidebar
+                    className={!hideSidebar ? '' : 'hidden'}
+                    onClose={() => setHideSidebar(true)}
+                  />
                 )}
                 <Wrapper>
-                  <Header />
+                  <Header hideSidebar={hideSidebar} />
                   <ColumnsContainer
                     ref={columnsContainerRef}
                     onMouseDown={handleContainerMouseDown}

@@ -19,6 +19,26 @@ export const Container = styled.div`
     border-bottom: solid 1px ${(props) => props.theme['border-color']};
   }
 `
+
+export const LogoWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 2.3rem 0 2.5rem;
+  gap: 1.1rem;
+`
+
+export const LogoContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  padding-right: 2.5rem;
+  border-right: solid 1px ${(props) => props.theme['border-color']};
+
+  img {
+    scale: 1.1;
+  }
+`
+
 export const LogoContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -35,6 +55,10 @@ export const BoardNameContainer = styled.div`
     color: ${(props) => props.theme['primary-color']};
     font-size: 0.85rem;
     margin-top: 0.3rem;
+  }
+
+  &.sidebar-hidden {
+    padding-left: 1rem;
   }
 `
 

@@ -5,7 +5,7 @@ export const LoadingComponent = () => {
   return (
     <ModalLoading>
       <Loader>
-        <Oval secondaryColor="#635FC7" color="#635FC7" height={40} width={40} />
+        <Oval secondaryColor="#7A7A7A" color="#7A7A7A" height={40} width={40} />
       </Loader>
     </ModalLoading>
   )
