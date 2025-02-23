@@ -76,7 +76,6 @@ export function EditDeleteModal({ onClose }: EditDeleteModalProps) {
                 <DeleteModal
                   type={'board'}
                   onClose={closeDeleteModal}
-                  board={activeBoard}
                 />
               )}
             </Dialog.Root>
