@@ -84,7 +84,7 @@ export function TaskFormModal({
   const [subtasks, setSubtasks] = useState<SubtaskProps[]>(
     isEditing && task?.subtasks ? task.subtasks : initialSubtasks,
   )
-  console.log(task?.status)
+
   const [status, setStatus] = useState(
     isEditing && task?.status ? task.status : '',
   )

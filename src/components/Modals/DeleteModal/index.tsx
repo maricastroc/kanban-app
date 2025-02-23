@@ -1,7 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { ButtonsContainer, ModalDescription } from './styles'
 import { Button } from '@/components/Shared/Button'
-import { BoardProps } from '@/@types/board'
 import { ModalContent, ModalOverlay, ModalTitle } from '@/styles/shared'
 import { TaskProps } from '@/@types/task'
 import { useState } from 'react'
@@ -13,15 +12,14 @@ import { useBoardsContext } from '@/contexts/BoardsContext'
 
 interface DeleteBoardProps {
   type: 'board' | 'task'
-  board?: BoardProps | undefined
   task?: TaskProps | undefined
   onClose: () => void
 }
 
-export function DeleteModal({ type, board, task, onClose }: DeleteBoardProps) {
+export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
   const [isLoading, setIsLoading] = useState(false)
 
-  const { mutate } = useBoardsContext()
+  const { activeBoard, mutate, boardsMutate } = useBoardsContext()
 
   const handleDelete = async (id: string) => {
     try {
@@ -36,6 +34,8 @@ export function DeleteModal({ type, board, task, onClose }: DeleteBoardProps) {
       const response = await api.delete(routePath, { data: payload })
 
       mutate()
+      boardsMutate()
+
       toast?.success(response.data.message)
     } catch (error) {
       handleApiError(error)
@@ -58,7 +58,9 @@ export function DeleteModal({ type, board, task, onClose }: DeleteBoardProps) {
         <ModalDescription>
           <span>
             {`Are you sure you want to delete the ‘${
-              type === 'board' ? `${board?.name} board` : `${task?.title} task`
+              type === 'board'
+                ? `${activeBoard?.name} board`
+                : `${task?.title} task`
             }’? This action will remove all columns and tasks and cannot be reversed.`}
           </span>
         </ModalDescription>
@@ -68,8 +70,8 @@ export function DeleteModal({ type, board, task, onClose }: DeleteBoardProps) {
             title="Delete"
             variant="tertiary"
             onClick={() => {
-              if (board && type === 'board') {
-                handleDelete(board.id)
+              if (activeBoard && type === 'board') {
+                handleDelete(activeBoard.id)
               } else if (task) {
                 handleDelete(task.id)
               }

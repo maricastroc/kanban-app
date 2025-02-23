@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { buildNextAuthOptions } from '../../auth/[...nextauth].api'
 
 const deleteBoardSchema = z.object({
-  boardId: z.string().min(1, 'Board ID is required'),
+  id: z.string().min(1, 'Board ID is required'),
 })
 
 export default async function handler(
@@ -31,10 +31,10 @@ export default async function handler(
   if (req.method === 'DELETE') {
     try {
       const parsedBody = await deleteBoardSchema.parseAsync(req.body)
-      const { boardId } = parsedBody
+      const { id } = parsedBody
 
       const board = await prisma.board.findUnique({
-        where: { id: boardId, userId },
+        where: { id, userId },
       })
 
       if (!board) {
@@ -42,7 +42,7 @@ export default async function handler(
       }
 
       await prisma.board.delete({
-        where: { id: boardId },
+        where: { id },
       })
 
       return res.status(200).json({

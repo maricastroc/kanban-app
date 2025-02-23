@@ -4,7 +4,13 @@ import { api } from '@/lib/axios'
 import { handleApiError } from '@/utils/handleApiError'
 import useRequest from '@/utils/useRequest'
 import { AxiosResponse } from 'axios'
-import { createContext, ReactNode, useContext, useState } from 'react'
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { KeyedMutator } from 'swr'
 
 interface BoardsContextData {
@@ -45,6 +51,8 @@ export function BoardsContextProvider({
 
   const [enableScrollFeature, setEnableScrollFeature] = useState(false)
 
+  const [activeBoard, setActiveBoard] = useState<BoardProps | undefined>()
+
   function handleEnableScrollFeature(value: boolean) {
     setEnableScrollFeature(value)
   }
@@ -53,7 +61,7 @@ export function BoardsContextProvider({
     setIsLoading(value)
   }
 
-  const { data: activeBoard, mutate } = useRequest<BoardProps>({
+  const { data: activeBoardData, mutate } = useRequest<BoardProps>({
     url: '/board/get',
     method: 'GET',
   })
@@ -80,6 +88,18 @@ export function BoardsContextProvider({
       setIsLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (activeBoardData) {
+      setActiveBoard(activeBoardData)
+    }
+  }, [activeBoardData])
+
+  useEffect(() => {
+    if (!boards?.length) {
+      setActiveBoard(undefined)
+    }
+  }, [boards])
 
   return (
     <BoardsContext.Provider

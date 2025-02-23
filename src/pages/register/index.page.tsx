@@ -49,7 +49,7 @@ export default function Login() {
   const isRouteLoading = useLoadingOnRouteChange()
 
   const [isLoading, setIsLoading] = useState(false)
-  console.log(enableDarkMode)
+
   const {
     register,
     handleSubmit,
