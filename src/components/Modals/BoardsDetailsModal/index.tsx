@@ -117,20 +117,18 @@ export function BoardsDetailsModal({
           </Dialog.Root>
         </BoardsContainer>
 
-        <ThemeSwitcherContainer onClick={toggleTheme}>
-          <Image src={DarkThemeSvg} alt="Dark theme" />
+        <ThemeSwitcherContainer>
+          <Image src={LightThemeSvg} alt="Dark theme" />
           <SwitchRoot
             className="SwitchRoot"
             id="airplane-mode"
-            onClick={async () => {
+            onClick={() => {
               toggleTheme()
-              await simulateDelay()
-              onClose()
             }}
           >
             <SwitchThumb className="SwitchThumb" />
           </SwitchRoot>
-          <Image src={LightThemeSvg} alt="Light theme" />
+          <Image src={DarkThemeSvg} alt="Light theme" />
         </ThemeSwitcherContainer>
       </ModalContent>
     </Dialog.Portal>

@@ -29,9 +29,15 @@ import { useTheme } from '@/contexts/ThemeContext'
 import Image from 'next/image'
 import { EmptyContainer } from '@/components/Shared/EmptyContainer'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
 
 export default function Home() {
   const columnsContainerRef = useRef<HTMLDivElement | null>(null)
+
+  const { status } = useSession()
+
+  const router = useRouter()
 
   const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>()
 
@@ -59,18 +65,12 @@ export default function Home() {
     handleMouseDown(e)
   }
 
-  const {
-    data: activeBoard,
-    mutate,
-  } = useRequest<BoardProps>({
+  const { data: activeBoard, mutate } = useRequest<BoardProps>({
     url: '/board/get',
     method: 'GET',
   })
 
-  const {
-    data: boards,
-    mutate: boardsMutate,
-  } = useRequest<BoardProps[]>({
+  const { data: boards, mutate: boardsMutate } = useRequest<BoardProps[]>({
     url: '/boards',
     method: 'GET',
   })
@@ -82,7 +82,7 @@ export default function Home() {
   ) => {
     try {
       setIsLoading(true)
-      
+
       const payload = {
         taskId,
         newColumnId,
@@ -198,39 +198,48 @@ export default function Home() {
     }
   }, [activeBoard])
 
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login')
+    }
+  }, [status, router])
+
   return (
     <>
-    <NextSeo title="Kanban App | Dashboard" />
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="all-columns" direction="horizontal">
-        {(provided) => (
-          <LayoutContainer ref={provided.innerRef} {...provided.droppableProps}>
-            <BoardContent>
-              {!isSmallerThanSm && !hideSidebar && (
-                <Sidebar
-                  onClose={() => setHideSidebar(true)}
-                  handleChangeBoardStatus={handleChangeBoardStatus}
-                  activeBoard={activeBoard}
-                  mutate={mutate}
-                  boards={boards}
-                  boardsMutate={boardsMutate}
-                />
-              )}
-              <Wrapper>
-                <Header
-                  boardsMutate={boardsMutate}
-                  boards={boards}
-                  activeBoard={activeBoard}
-                  mutate={mutate}
-                />
-                <ColumnsContainer
-                  ref={columnsContainerRef}
-                  onMouseDown={handleContainerMouseDown}
-                  onMouseUp={handleMouseUp}
-                  onMouseLeave={handleMouseUp}
-                  onMouseMove={handleMouseMove}
-                >
-                  {activeBoard ? (
+      <NextSeo title="Kanban App | Dashboard" />
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="all-columns" direction="horizontal">
+          {(provided) => (
+            <LayoutContainer
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              <BoardContent>
+                {!isSmallerThanSm && !hideSidebar && (
+                  <Sidebar
+                    onClose={() => setHideSidebar(true)}
+                    handleChangeBoardStatus={handleChangeBoardStatus}
+                    activeBoard={activeBoard}
+                    mutate={mutate}
+                    boards={boards}
+                    boardsMutate={boardsMutate}
+                  />
+                )}
+                <Wrapper>
+                  <Header
+                    boardsMutate={boardsMutate}
+                    boards={boards}
+                    activeBoard={activeBoard}
+                    mutate={mutate}
+                  />
+                  <ColumnsContainer
+                    ref={columnsContainerRef}
+                    onMouseDown={handleContainerMouseDown}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                    onMouseMove={handleMouseMove}
+                  >
+                    {activeBoard ? (
                       <>
                         {boardColumns?.map(
                           (column: BoardColumnProps, index: number) => (
@@ -277,22 +286,20 @@ export default function Home() {
                         boardsMutate={boardsMutate}
                       />
                     )}
-                </ColumnsContainer>
-              </Wrapper>
-              {hideSidebar && (
-                <ShowSidebarBtn onClick={() => setHideSidebar(false)}>
-                  <Image src={HideSidebar} alt="" />
-                </ShowSidebarBtn>
-              )}
-            </BoardContent>
-          </LayoutContainer>
-        )}
-      </Droppable>
+                  </ColumnsContainer>
+                </Wrapper>
+                {hideSidebar && (
+                  <ShowSidebarBtn onClick={() => setHideSidebar(false)}>
+                    <Image src={HideSidebar} alt="" />
+                  </ShowSidebarBtn>
+                )}
+              </BoardContent>
+            </LayoutContainer>
+          )}
+        </Droppable>
 
-      {(isLoading) && (
-        <LoadingComponent />
-      )}
-    </DragDropContext>
+        {isLoading && <LoadingComponent />}
+      </DragDropContext>
     </>
   )
 }

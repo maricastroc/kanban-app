@@ -10,6 +10,8 @@ export const Container = styled.div`
   background-color: ${(props) => props.theme['cards-color']};
   position: sticky;
   overflow-y: scroll;
+  transition: min-width 0.3s ease-in-out, width 0.3s ease-in-out,
+    opacity 0.2s ease-in-out;
 
   &::-webkit-scrollbar {
     display: none;

@@ -33,8 +33,8 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
-        <link rel="icon" type="image/svg" href="/icon.svg" />
-          </Head>
+          <link rel="icon" type="image/svg" href="/icon.svg" />
+        </Head>
         <body>
           <Main />
           <NextScript />

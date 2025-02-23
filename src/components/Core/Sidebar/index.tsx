@@ -107,7 +107,7 @@ export function Sidebar({
       </Wrapper>
       <OptionsContainer>
         <ThemeSwitcherContainer>
-          <Image src={LightThemeSvg} alt="" />
+          <Image src={DarkThemeSvg} alt="" />
           <SwitchRoot
             className="SwitchRoot"
             id="airplane-mode"
@@ -117,7 +117,7 @@ export function Sidebar({
           >
             <SwitchThumb className="SwitchThumb" />
           </SwitchRoot>
-          <Image src={DarkThemeSvg} alt="" />
+          <Image src={LightThemeSvg} alt="" />
         </ThemeSwitcherContainer>
         <HideButton onClick={onClose}>
           <EyeSlash />

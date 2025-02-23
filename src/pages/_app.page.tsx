@@ -7,34 +7,37 @@ import { BoardsContextProvider } from '@/contexts/BoardsContext'
 import { TaskContextProvider } from '@/contexts/TasksContext'
 import { Toaster } from 'react-hot-toast'
 import { AppProps } from 'next/app'
+import { SessionProvider } from 'next-auth/react'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ThemeProvider>
-      <ThemeContext.Consumer>
-        {(context) => {
-          if (!context) {
-            return null
-          }
+    <SessionProvider>
+      <ThemeProvider>
+        <ThemeContext.Consumer>
+          {(context) => {
+            if (!context) {
+              return null
+            }
 
-          const { enableDarkMode } = context
+            const { enableDarkMode } = context
 
-          return (
-            <StyledThemeProvider
-              theme={enableDarkMode ? darkTheme : lightTheme}
-            >
-              <BoardsContextProvider>
-                <TaskContextProvider>
-                  <Toaster />
-                  <Component {...pageProps} />
-                  <GlobalStyle />
-                </TaskContextProvider>
-              </BoardsContextProvider>
-            </StyledThemeProvider>
-          )
-        }}
-      </ThemeContext.Consumer>
-    </ThemeProvider>
+            return (
+              <StyledThemeProvider
+                theme={enableDarkMode ? darkTheme : lightTheme}
+              >
+                <BoardsContextProvider>
+                  <TaskContextProvider>
+                    <Toaster />
+                    <Component {...pageProps} />
+                    <GlobalStyle />
+                  </TaskContextProvider>
+                </BoardsContextProvider>
+              </StyledThemeProvider>
+            )
+          }}
+        </ThemeContext.Consumer>
+      </ThemeProvider>
+    </SessionProvider>
   )
 }
 

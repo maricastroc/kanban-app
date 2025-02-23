@@ -6,7 +6,6 @@ import { BoardFormModal } from '@/components/Modals/BoardFormModal'
 import { KeyedMutator } from 'swr'
 import { AxiosResponse } from 'axios'
 import { BoardProps } from '@/@types/board'
-import { Button } from '../Button'
 import { SecondaryButton } from '../SecondaryButton'
 
 interface Props {
