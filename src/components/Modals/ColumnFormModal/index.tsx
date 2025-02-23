@@ -8,7 +8,13 @@ import { Button } from '@/components/Shared/Button'
 import { FieldsContainer } from '@/components/Shared/FieldsContainer'
 import { Field } from '@/components/Shared/Field'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
-import { ModalContent, ModalOverlay, ModalTitle } from '@/styles/shared'
+import {
+  CloseButton,
+  HeaderContent,
+  ModalContent,
+  ModalOverlay,
+  ModalTitle,
+} from '@/styles/shared'
 import { CustomLabel } from '@/components/Shared/Label'
 import { BoardColumnProps } from '@/@types/board-column'
 import { CustomInput } from '@/components/Shared/Input'
@@ -24,6 +30,8 @@ import { handleApiError } from '@/utils/handleApiError'
 import toast from 'react-hot-toast'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { useBoardsContext } from '@/contexts/BoardsContext'
+import { faX } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 interface ColumnFormModalProps {
   onClose: () => void
@@ -179,7 +187,12 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
     <Dialog.Portal>
       <ModalOverlay className="DialogOverlay" onClick={() => onClose()} />
       <ModalContent className="DialogContent">
-        <ModalTitle className="DialogTitle">Add New Column</ModalTitle>
+        <HeaderContent>
+          <ModalTitle className="DialogTitle">{'Add New Column'}</ModalTitle>
+          <CloseButton onClick={onClose}>
+            <FontAwesomeIcon icon={faX} />
+          </CloseButton>
+        </HeaderContent>
         <VisuallyHidden>
           <Dialog.Description />
         </VisuallyHidden>

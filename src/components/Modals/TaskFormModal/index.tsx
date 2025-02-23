@@ -3,12 +3,14 @@ import { RefObject, useEffect, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import * as Dialog from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons'
+import { faAngleDown, faAngleUp, faX } from '@fortawesome/free-solid-svg-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import {
+  CloseButton,
+  HeaderContent,
   ModalContent,
   ModalOverlay,
   ModalTitle,
@@ -228,9 +230,14 @@ export function TaskFormModal({
         }}
       />
       <ModalContent padding="1.5rem 1.5rem 2rem" className="DialogContent xl">
-        <ModalTitle className="DialogTitle">
-          {isEditing ? 'Edit Task' : 'Add New Task'}
-        </ModalTitle>
+        <HeaderContent>
+          <ModalTitle className="DialogTitle">
+            {isEditing ? 'Edit Task' : 'Add New Task'}
+          </ModalTitle>
+          <CloseButton onClick={onClose}>
+            <FontAwesomeIcon icon={faX} />
+          </CloseButton>
+        </HeaderContent>
         <VisuallyHidden>
           <Dialog.Description />
         </VisuallyHidden>

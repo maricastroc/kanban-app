@@ -22,7 +22,15 @@ import { CustomInput } from '@/components/Shared/Input'
 import { CustomLabel } from '@/components/Shared/Label'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
 import { ColumnsContainer, ColumnsContent } from './styles'
-import { ModalContent, ModalOverlay, ModalTitle } from '@/styles/shared'
+import {
+  CloseButton,
+  HeaderContent,
+  ModalContent,
+  ModalOverlay,
+  ModalTitle,
+} from '@/styles/shared'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faX } from '@fortawesome/free-solid-svg-icons'
 
 interface BoardModalProps {
   onClose: () => void
@@ -71,7 +79,7 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
   } = useForm<FormData>({
     defaultValues: {
       id: uuidv4(),
-      name: activeBoard?.name || '',
+      name: isEditing ? activeBoard?.name : '',
       columns: isEditing ? activeBoard?.columns : initialBoardColumns,
     },
     resolver: zodResolver(formSchema),
@@ -193,9 +201,14 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
         className="DialogContent"
         aria-describedby={undefined}
       >
-        <ModalTitle className="DialogTitle">
-          {isEditing ? 'Edit Board' : 'Add New Board'}
-        </ModalTitle>
+        <HeaderContent>
+          <ModalTitle className="DialogTitle">
+            {isEditing ? 'Edit Board' : 'Add New Board'}
+          </ModalTitle>
+          <CloseButton onClick={onClose}>
+            <FontAwesomeIcon icon={faX} />
+          </CloseButton>
+        </HeaderContent>
         <VisuallyHidden>
           <Dialog.Description />
         </VisuallyHidden>

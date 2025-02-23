@@ -4,6 +4,7 @@ import {
   Overlay as RadixOverlay,
   Content as RadixContent,
   Title as RadixTitle,
+  Close as RadixClose,
 } from '@radix-ui/react-dialog'
 
 export const ModalOverlay = styled(RadixOverlay)`
@@ -16,11 +17,32 @@ export const ModalOverlay = styled(RadixOverlay)`
   background-color: rgba(10, 10, 10, 0.7);
 `
 
+export const HeaderContent = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 0.8rem;
+`
+
+export const CloseButton = styled(RadixClose)`
+  font-size: 1rem;
+  color: ${(props) => props.theme['subtitle-color']};
+  background-color: transparent;
+  padding: 0.2rem;
+  border: none;
+  cursor: pointer;
+  transition: 200ms;
+
+  &:hover {
+    color: ${(props) => props.theme['title-color']};
+  }
+`
+
 export const ModalTitle = styled(RadixTitle)`
   font-size: ${(props) => props.theme['heading-l']};
   font-weight: 700;
   max-width: 100%;
-  margin-bottom: 0.8rem;
 
   &.delete {
     color: ${(props) => props.theme['error-color']};
