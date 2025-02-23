@@ -30,8 +30,12 @@ export const LogoWrapper = styled.div`
   display: flex;
   margin: 2.3rem 0 2.5rem;
   align-items: center;
-  gap: 1rem;
+  gap: 1.1rem;
   padding-left: 1.7rem;
+
+  img {
+    scale: 1.1;
+  }
 `
 
 export const Title = styled.h3`

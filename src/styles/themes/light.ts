@@ -19,6 +19,8 @@ export const lightTheme = {
 
   'button-title': '#FFFFFF',
 
+  'text-color': '#282828',
+
   'details-color': '#635FC7',
   'subtitle-color': '#828FA3',
   'border-color': '#E4EBFA',

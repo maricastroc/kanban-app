@@ -18,10 +18,7 @@ export const useTheme = () => {
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [enableDarkMode, setEnableDarkMode] = useState(() => {
-    if (typeof window === 'undefined') return true
-    return localStorage.getItem('theme') !== 'LIGHT_THEME'
-  })
+  const [enableDarkMode, setEnableDarkMode] = useState(true)
 
   const toggleTheme = () => {
     setEnableDarkMode((prev) => {

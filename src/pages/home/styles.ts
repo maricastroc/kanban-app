@@ -62,7 +62,7 @@ export const AddColumnContainer = styled.div`
   align-items: center;
   justify-content: center;
   min-width: 17.5rem;
-  height: 100%;
+  height: 100vh;
   margin-top: 2.4rem;
   border-radius: 8px;
 

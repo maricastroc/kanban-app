@@ -4,7 +4,6 @@ import { lightTheme } from '@/styles/themes/light'
 import { darkTheme } from '@/styles/themes/dark'
 import { GlobalStyle } from '@/styles/global'
 import { BoardsContextProvider } from '@/contexts/BoardsContext'
-import { TaskContextProvider } from '@/contexts/TasksContext'
 import { Toaster } from 'react-hot-toast'
 import { AppProps } from 'next/app'
 import { SessionProvider } from 'next-auth/react'
@@ -26,11 +25,9 @@ function MyApp({ Component, pageProps }: AppProps) {
                 theme={enableDarkMode ? darkTheme : lightTheme}
               >
                 <BoardsContextProvider>
-                  <TaskContextProvider>
-                    <Toaster />
-                    <Component {...pageProps} />
-                    <GlobalStyle />
-                  </TaskContextProvider>
+                  <Toaster />
+                  <Component {...pageProps} />
+                  <GlobalStyle />
                 </BoardsContextProvider>
               </StyledThemeProvider>
             )

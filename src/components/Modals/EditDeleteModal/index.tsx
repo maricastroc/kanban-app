@@ -1,32 +1,23 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Dialog from '@radix-ui/react-dialog'
 import { ModalContent, ActionBtn, LogoutBtn } from './styles'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { useState } from 'react'
 import { DeleteModal } from '../DeleteModal'
 import { BoardFormModal } from '../BoardFormModal'
-import { BoardProps } from '@/@types/board'
-import { KeyedMutator } from 'swr'
-import { AxiosResponse } from 'axios'
 import { useTheme } from '@/contexts/ThemeContext'
 import { SignOut } from 'phosphor-react'
 import { signOut } from 'next-auth/react'
 import toast from 'react-hot-toast'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 
 interface EditDeleteModalProps {
   onClose: () => void
-  activeBoard: BoardProps | undefined
-  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
-  boardsMutate: KeyedMutator<AxiosResponse<BoardProps[], any>>
 }
 
-export function EditDeleteModal({
-  activeBoard,
-  mutate,
-  boardsMutate,
-  onClose,
-}: EditDeleteModalProps) {
+export function EditDeleteModal({ onClose }: EditDeleteModalProps) {
   const { enableDarkMode } = useTheme()
+
+  const { activeBoard } = useBoardsContext()
 
   const [isEditModalOpen, setEditModalOpen] = useState(false)
 
@@ -72,13 +63,7 @@ export function EditDeleteModal({
                 </ActionBtn>
               </Dialog.Trigger>
               {activeBoard && (
-                <BoardFormModal
-                  isEditing
-                  onClose={closeEditModal}
-                  activeBoard={activeBoard}
-                  mutate={mutate}
-                  boardsMutate={boardsMutate}
-                />
+                <BoardFormModal isEditing onClose={closeEditModal} />
               )}
             </Dialog.Root>
             <Dialog.Root open={isDeleteModalOpen}>
@@ -90,7 +75,6 @@ export function EditDeleteModal({
               {activeBoard && (
                 <DeleteModal
                   type={'board'}
-                  mutate={mutate}
                   onClose={closeDeleteModal}
                   board={activeBoard}
                 />

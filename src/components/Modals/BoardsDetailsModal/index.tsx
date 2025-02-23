@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
-
 import {
   ModalTitle,
   BoardsContainer,
@@ -11,29 +9,20 @@ import {
   SwitchRoot,
   SwitchThumb,
 } from './styles'
-
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 import { ModalContent, ModalOverlay } from '@/styles/shared'
-
 import BoardIcon from '@/../public/icon-board.svg'
 import LightThemeSvg from '@/../public/icon-light-theme.svg'
 import DarkThemeSvg from '@/../public/icon-dark-theme.svg'
-
 import { BoardProps } from '@/@types/board'
 import { simulateDelay } from '@/utils/simulateDelay'
 import { BoardFormModal } from '../BoardFormModal'
 import { useTheme } from '@/contexts/ThemeContext'
-import { KeyedMutator } from 'swr'
-import { AxiosResponse } from 'axios'
 import Image from 'next/image'
 
 interface BoardsDetailsModalProps {
   onClose: () => void
-  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
-  boardsMutate: KeyedMutator<AxiosResponse<BoardProps[], any>>
-  activeBoard: BoardProps | undefined
-  boards: BoardProps[] | undefined
 }
 
 const BoardListItem = ({
@@ -56,23 +45,17 @@ const BoardListItem = ({
     </BoardItem>
   )
 
-export function BoardsDetailsModal({
-  onClose,
-  mutate,
-  activeBoard,
-  boards,
-  boardsMutate,
-}: BoardsDetailsModalProps) {
-  const { handleSetActiveBoard } = useBoardsContext()
-
+export function BoardsDetailsModal({ onClose }: BoardsDetailsModalProps) {
   const { toggleTheme } = useTheme()
+
+  const { activeBoard, boards, handleChangeBoardStatus } = useBoardsContext()
 
   const [addBoardModalOpen, setAddBoardModalOpen] = useState(false)
 
   useEscapeKeyHandler(onClose)
 
   const handleClickBoard = async (board: BoardProps) => {
-    handleSetActiveBoard(board)
+    handleChangeBoardStatus(board)
     await simulateDelay()
     onClose()
   }
@@ -109,9 +92,6 @@ export function BoardsDetailsModal({
             </Dialog.Trigger>
             <BoardFormModal
               isEditing={false}
-              mutate={mutate}
-              boardsMutate={boardsMutate}
-              activeBoard={activeBoard as BoardProps}
               onClose={() => setAddBoardModalOpen(false)}
             />
           </Dialog.Root>

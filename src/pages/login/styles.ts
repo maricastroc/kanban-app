@@ -64,7 +64,7 @@ export const TitleContainer = styled.div`
   }
 
   p {
-    color: ${(props) => props.theme['details-color']};
+    color: ${(props) => props.theme['subtitle-color']};
     font-size: 0.95rem;
     line-height: 1.25rem;
   }
@@ -120,12 +120,12 @@ export const InputField = styled.input`
   background-color: transparent;
   border: 1px solid ${(props) => props.theme['border-color']};
   border-radius: 5px;
-  color: ${(props) => props.theme['secondary-color']};
+  color: ${(props) => props.theme['text-color']};
   font-size: 1rem;
 
   &:-webkit-autofill {
     background-color: transparent !important;
-    color: ${(props) => props.theme['secondary-color']} !important;
+    color: ${(props) => props.theme['text-color']} !important;
     box-shadow: 0 0 0px 1000px transparent inset !important;
   }
 
@@ -167,11 +167,11 @@ export const CreateAccountContainer = styled.div`
     background-color: transparent;
     text-decoration: none;
     border: none;
-    color: ${(props) => props.theme['primary-hover']};
+    color: ${(props) => props.theme['primary-color']};
     transition: 200ms;
 
     &:hover {
-      color: ${(props) => props.theme['secondary-hover']};
+      color: ${(props) => props.theme['primary-hover']};
     }
   }
 

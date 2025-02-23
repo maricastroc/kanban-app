@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   AddTaskBtn,
@@ -23,25 +22,13 @@ import { TaskFormModal } from '@/components/Modals/TaskFormModal'
 import { EditDeleteModal } from '@/components/Modals/EditDeleteModal'
 import { BREAKPOINT_SM } from '@/utils/constants'
 import { useWindowResize } from '@/utils/useWindowResize'
-import { BoardProps } from '@/@types/board'
-import { KeyedMutator } from 'swr'
-import { AxiosResponse } from 'axios'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 import Image from 'next/image'
 
-interface HeaderProps {
-  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
-  boardsMutate: KeyedMutator<AxiosResponse<BoardProps[], any>>
-  activeBoard: BoardProps | undefined
-  boards: BoardProps[] | undefined
-}
-
-export function Header({
-  boards,
-  activeBoard,
-  mutate,
-  boardsMutate,
-}: HeaderProps) {
+export function Header() {
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
+
+  const { activeBoard } = useBoardsContext()
 
   const [isBoardsDetailsModalOpen, setIsBoardsDetailsModalOpen] =
     useState(false)
@@ -75,10 +62,6 @@ export function Header({
             </BoardNameContainer>
           </Dialog.Trigger>
           <BoardsDetailsModal
-            activeBoard={activeBoard}
-            boards={boards}
-            mutate={mutate}
-            boardsMutate={boardsMutate}
             onClose={() => setIsBoardsDetailsModalOpen(false)}
           />
         </Dialog.Root>
@@ -94,9 +77,6 @@ export function Header({
             </Dialog.Trigger>
             <TaskFormModal
               isEditing={false}
-              boardId={activeBoard?.id || ''}
-              mutate={mutate}
-              activeBoard={activeBoard}
               onClose={() => setIsAddTaskModalOpen(false)}
             />
           </Dialog.Root>
@@ -115,12 +95,7 @@ export function Header({
                 />
               </EditDeleteBtn>
             </Dialog.Trigger>
-            <EditDeleteModal
-              boardsMutate={boardsMutate}
-              mutate={mutate}
-              activeBoard={activeBoard}
-              onClose={() => setIsEditDeleteModalOpen(false)}
-            />
+            <EditDeleteModal onClose={() => setIsEditDeleteModalOpen(false)} />
           </Dialog.Root>
         </EditDeleteWrapper>
       </EditDeleteContainer>

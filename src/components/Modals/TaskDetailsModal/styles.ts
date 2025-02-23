@@ -85,12 +85,8 @@ export const OptionsModal = styled.div`
   gap: 0.7rem;
   top: 2.5rem;
   right: 0;
-  width: 8rem;
-  background-color: ${(props) => props.theme['cards-color']};
-
-  &.dark {
-    border: solid 1px ${(props) => props.theme['border-color']};
-  }
+  width: 10rem;
+  background-color: ${(props) => props.theme['bg-color']};
 
   &.light {
     box-shadow: 0 4px 6px rgba(54, 78, 126, 0.1);
@@ -101,7 +97,6 @@ export const OptionsModal = styled.div`
     background-color: transparent;
     border: none;
     font-size: ${(props) => props.theme['heading-m']};
-    font-weight: 700;
 
     &.edit {
       color: ${(props) => props.theme['subtitle-color']};

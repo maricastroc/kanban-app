@@ -76,7 +76,7 @@ export const ModalContent = styled(RadixContent)<{ padding?: string }>`
     height: auto;
     overflow: auto;
     max-height: auto;
-    width: clamp(300px, 90vw, 25rem);
+    width: clamp(300px, 90vw, 28rem);
   }
 
   @keyframes scaleIn {

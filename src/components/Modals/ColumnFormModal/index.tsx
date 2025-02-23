@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -20,18 +19,14 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { FormContainer } from '@/components/Shared/FormContainer'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
-import { BoardProps } from '@/@types/board'
-import { KeyedMutator } from 'swr'
-import { AxiosResponse } from 'axios'
 import { api } from '@/lib/axios'
 import { handleApiError } from '@/utils/handleApiError'
 import toast from 'react-hot-toast'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 
 interface ColumnFormModalProps {
   onClose: () => void
-  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
-  activeBoard: BoardProps | undefined
 }
 
 const columnSchema = z.object({
@@ -51,12 +46,10 @@ const formSchema = z.object({
 
 export type FormData = z.infer<typeof formSchema>
 
-export function ColumnFormModal({
-  activeBoard,
-  mutate,
-  onClose,
-}: ColumnFormModalProps) {
+export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
   useEscapeKeyHandler(onClose)
+
+  const { activeBoard, mutate } = useBoardsContext()
 
   const [isLoading, setIsLoading] = useState(false)
 

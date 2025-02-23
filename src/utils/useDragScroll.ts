@@ -45,6 +45,16 @@ export function useDragScroll(
     }
   }
 
+  const handleContainerMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement
+
+    if (target.closest('.task-card') || target.closest('.modal')) {
+      return
+    }
+
+    handleMouseDown(e)
+  }
+
   return {
     isDragging,
     startX,
@@ -52,5 +62,6 @@ export function useDragScroll(
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
+    handleContainerMouseDown,
   }
 }

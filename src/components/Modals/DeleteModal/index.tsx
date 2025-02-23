@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Dialog from '@radix-ui/react-dialog'
 import { ButtonsContainer, ModalDescription } from './styles'
 import { Button } from '@/components/Shared/Button'
@@ -9,26 +8,20 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
-import { KeyedMutator } from 'swr'
-import { AxiosResponse } from 'axios'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 
 interface DeleteBoardProps {
   type: 'board' | 'task'
   board?: BoardProps | undefined
   task?: TaskProps | undefined
-  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
   onClose: () => void
 }
 
-export function DeleteModal({
-  type,
-  board,
-  task,
-  onClose,
-  mutate,
-}: DeleteBoardProps) {
+export function DeleteModal({ type, board, task, onClose }: DeleteBoardProps) {
   const [isLoading, setIsLoading] = useState(false)
+
+  const { mutate } = useBoardsContext()
 
   const handleDelete = async (id: string) => {
     try {

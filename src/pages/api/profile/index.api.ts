@@ -246,6 +246,13 @@ export default async function handler(
           },
         })
 
+        await prisma.theme.create({
+          data: {
+            userId: newUser.id,
+            isDarkMode: true,
+          },
+        })
+
         return res.status(201).json({
           user: newUser,
           message: 'User successfully created!',

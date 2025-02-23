@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { RefObject, useEffect, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
@@ -39,11 +38,9 @@ import { SubtaskProps } from '@/@types/subtask'
 import { TaskProps } from '@/@types/task'
 import { api } from '@/lib/axios'
 import { handleApiError } from '@/utils/handleApiError'
-import { BoardProps } from '@/@types/board'
 import toast from 'react-hot-toast'
-import { AxiosResponse } from 'axios'
-import { KeyedMutator } from 'swr'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 
 const subtaskSchema = z.object({
   id: z.string(),
@@ -66,21 +63,17 @@ export type FormData = z.infer<typeof formSchema>
 interface AddTaskModalProps {
   isEditing?: boolean
   task?: TaskProps
-  boardId: string
-  activeBoard: BoardProps | undefined
-  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
   onClose: () => void
 }
 
 export function TaskFormModal({
-  activeBoard,
   onClose,
-  boardId,
-  mutate,
   isEditing = false,
   task,
 }: AddTaskModalProps) {
   const statusRef = useRef<HTMLDivElement | null>(null)
+
+  const { activeBoard, mutate } = useBoardsContext()
 
   const [isOptionsContainerOpen, setIsOptionsContainerOpen] = useState(false)
 
@@ -91,7 +84,7 @@ export function TaskFormModal({
   const [subtasks, setSubtasks] = useState<SubtaskProps[]>(
     isEditing && task?.subtasks ? task.subtasks : initialSubtasks,
   )
-
+  console.log(task?.status)
   const [status, setStatus] = useState(
     isEditing && task?.status ? task.status : '',
   )
@@ -123,12 +116,12 @@ export function TaskFormModal({
 
   const subtasksValues = watch('subtasks')
 
-  const createNewTask = async (data: FormData) => {
+  const handleSubmitTask = async (data: FormData) => {
     try {
       setIsLoading(true)
 
       const payload = {
-        boardId,
+        boardId: activeBoard?.id,
         title: data.title,
         description: data.description || '',
         columnId,
@@ -139,54 +132,19 @@ export function TaskFormModal({
         })),
       }
 
-      const response = await api.post('/tasks/create', payload)
+      const response = isEditing
+        ? await api.put('/tasks/edit', { ...payload, taskId: task?.id })
+        : await api.post('/tasks/create', payload)
 
       mutate()
-      toast?.success(response.data.message)
+      toast.success(response.data.message)
     } catch (error) {
       handleApiError(error)
     } finally {
       setIsLoading(false)
       setSubtasks(initialSubtasks)
       reset()
-
-      setTimeout(() => {
-        onClose()
-      }, 500)
-    }
-  }
-
-  const editTask = async (data: FormData) => {
-    try {
-      setIsLoading(true)
-
-      const payload = {
-        taskId: task?.id,
-        boardId,
-        title: data.title,
-        description: data.description || '',
-        columnId,
-        status,
-        subtasks: subtasks.map((subtask, index) => ({
-          ...subtask,
-          order: index,
-        })),
-      }
-
-      const response = await api.put('/tasks/edit', payload)
-
-      mutate()
-      toast?.success(response.data.message)
-    } catch (error) {
-      handleApiError(error)
-    } finally {
-      setIsLoading(false)
-      setSubtasks(initialSubtasks)
-      reset()
-
-      setTimeout(() => {
-        onClose()
-      }, 500)
+      setTimeout(onClose, 500)
     }
   }
 
@@ -252,12 +210,12 @@ export function TaskFormModal({
   }
 
   useEffect(() => {
-    if (activeBoard) {
+    if (activeBoard && !isEditing) {
       setStatus(activeBoard?.columns[0]?.name)
       setValue('status', activeBoard?.columns[0]?.name)
       setColumnId(activeBoard?.columns[0]?.id)
     }
-  }, [activeBoard])
+  }, [activeBoard, isEditing])
 
   return (
     <Dialog.Portal>
@@ -276,11 +234,7 @@ export function TaskFormModal({
         <VisuallyHidden>
           <Dialog.Description />
         </VisuallyHidden>
-        <FormContainer
-          onSubmit={
-            isEditing ? handleSubmit(editTask) : handleSubmit(createNewTask)
-          }
-        >
+        <FormContainer onSubmit={handleSubmit(handleSubmitTask)}>
           <InputContainer>
             <CustomLabel htmlFor="title">Title</CustomLabel>
             <CustomInput

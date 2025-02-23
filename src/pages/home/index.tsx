@@ -18,12 +18,8 @@ import { BREAKPOINT_SM } from '@/utils/constants'
 import { Sidebar } from '@/components/Core/Sidebar'
 import HideSidebar from '@/../public/icon-show-sidebar.svg'
 import { useWindowResize } from '@/utils/useWindowResize'
-import { useDragScroll } from '@/utils/useDragScroll'
 import { ColumnFormModal } from '@/components/Modals/ColumnFormModal'
-import useRequest from '@/utils/useRequest'
-import { BoardProps } from '@/@types/board'
 import { api } from '@/lib/axios'
-import toast from 'react-hot-toast'
 import { handleApiError } from '@/utils/handleApiError'
 import { useTheme } from '@/contexts/ThemeContext'
 import Image from 'next/image'
@@ -31,17 +27,24 @@ import { EmptyContainer } from '@/components/Shared/EmptyContainer'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
+import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useDragScroll } from '@/utils/useDragScroll'
 
 export default function Home() {
   const columnsContainerRef = useRef<HTMLDivElement | null>(null)
 
   const { status } = useSession()
 
+  const { isLoading, activeBoard, boards, mutate } = useBoardsContext()
+
+  const { handleMouseMove, handleMouseUp, handleContainerMouseDown } =
+    useDragScroll(columnsContainerRef as RefObject<HTMLDivElement>)
+
   const router = useRouter()
 
   const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>()
 
-  const [isLoading, setIsLoading] = useState(false)
+  const [isReordering, setIsReordering] = useState(false)
 
   const { enableDarkMode } = useTheme()
 
@@ -51,37 +54,13 @@ export default function Home() {
 
   const isSmallerThanSm = useWindowResize(BREAKPOINT_SM)
 
-  const { handleMouseDown, handleMouseMove, handleMouseUp } = useDragScroll(
-    columnsContainerRef as RefObject<HTMLDivElement>,
-  )
-
-  const handleContainerMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement
-
-    if (target.closest('.task-card') || target.closest('.modal')) {
-      return
-    }
-
-    handleMouseDown(e)
-  }
-
-  const { data: activeBoard, mutate } = useRequest<BoardProps>({
-    url: '/board/get',
-    method: 'GET',
-  })
-
-  const { data: boards, mutate: boardsMutate } = useRequest<BoardProps[]>({
-    url: '/boards',
-    method: 'GET',
-  })
-
   const moveTaskToColumn = async (
     taskId: string,
     newColumnId: string,
     newOrder: number,
   ) => {
     try {
-      setIsLoading(true)
+      setIsReordering(true)
 
       const payload = {
         taskId,
@@ -95,7 +74,7 @@ export default function Home() {
     } catch (error) {
       handleApiError(error)
     } finally {
-      setIsLoading(false)
+      setIsReordering(false)
     }
   }
 
@@ -172,26 +151,6 @@ export default function Home() {
     }
   }
 
-  const handleChangeBoardStatus = async (board: BoardProps) => {
-    try {
-      setIsLoading(true)
-
-      const payload = {
-        boardId: board.id,
-      }
-
-      await api.put('/board/status', payload)
-
-      toast?.success('Successfully changed active board!')
-
-      mutate()
-    } catch (error) {
-      handleApiError(error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   useEffect(() => {
     if (activeBoard) {
       setBoardColumns(activeBoard.columns)
@@ -216,22 +175,10 @@ export default function Home() {
             >
               <BoardContent>
                 {!isSmallerThanSm && !hideSidebar && (
-                  <Sidebar
-                    onClose={() => setHideSidebar(true)}
-                    handleChangeBoardStatus={handleChangeBoardStatus}
-                    activeBoard={activeBoard}
-                    mutate={mutate}
-                    boards={boards}
-                    boardsMutate={boardsMutate}
-                  />
+                  <Sidebar onClose={() => setHideSidebar(true)} />
                 )}
                 <Wrapper>
-                  <Header
-                    boardsMutate={boardsMutate}
-                    boards={boards}
-                    activeBoard={activeBoard}
-                    mutate={mutate}
-                  />
+                  <Header />
                   <ColumnsContainer
                     ref={columnsContainerRef}
                     onMouseDown={handleContainerMouseDown}
@@ -245,11 +192,9 @@ export default function Home() {
                           (column: BoardColumnProps, index: number) => (
                             <BoardColumn
                               id={column.id}
-                              mutate={mutate}
                               column={column}
                               key={index}
                               name={column.name}
-                              activeBoard={activeBoard}
                               tasks={column.tasks.map((task) => ({
                                 ...task,
                                 isDragDisabled: isLoading,
@@ -271,8 +216,6 @@ export default function Home() {
                             </Dialog.Trigger>
                             {isColumnFormModalOpen && (
                               <ColumnFormModal
-                                activeBoard={activeBoard}
-                                mutate={mutate}
                                 onClose={() => setIsColumnFormModalOpen(false)}
                               />
                             )}
@@ -280,11 +223,7 @@ export default function Home() {
                         )}
                       </>
                     ) : (
-                      <EmptyContainer
-                        activeBoard={activeBoard}
-                        mutate={mutate}
-                        boardsMutate={boardsMutate}
-                      />
+                      boards && <EmptyContainer />
                     )}
                   </ColumnsContainer>
                 </Wrapper>
@@ -298,7 +237,7 @@ export default function Home() {
           )}
         </Droppable>
 
-        {isLoading && <LoadingComponent />}
+        {(isLoading || isReordering || !boards) && <LoadingComponent />}
       </DragDropContext>
     </>
   )

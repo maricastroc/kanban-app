@@ -1,33 +1,20 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TaskProps } from '@/@types/task'
 import { TaskCardContainer } from './styles'
 import * as Dialog from '@radix-ui/react-dialog'
 import { TaskDetailsModal } from '@/components/Modals/TaskDetailsModal'
 import { useEffect, useState } from 'react'
 import { useBoardsContext } from '@/contexts/BoardsContext'
-import { AxiosResponse } from 'axios'
-import { BoardProps } from '@/@types/board'
-import { KeyedMutator } from 'swr'
 import { BoardColumnProps } from '@/@types/board-column'
 
 type TaskCardProps = {
   task: TaskProps
   column: BoardColumnProps
-  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
   provided: any
-  activeBoard: BoardProps
-  boardId: string
 }
 
-export function TaskCard({
-  task,
-  provided,
-  activeBoard,
-  column,
-  boardId,
-  mutate,
-}: TaskCardProps) {
+export function TaskCard({ task, provided, column }: TaskCardProps) {
   const { handleEnableScrollFeature } = useBoardsContext()
 
   const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false)
@@ -55,9 +42,6 @@ export function TaskCard({
       <TaskDetailsModal
         task={task}
         column={column}
-        activeBoard={activeBoard}
-        boardId={boardId}
-        mutate={mutate}
         onClose={() => setIsTaskDetailsModalOpen(false)}
       />
     </Dialog.Root>

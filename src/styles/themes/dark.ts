@@ -19,6 +19,8 @@ export const darkTheme = {
 
   'button-title': '#FFFFFF',
 
+  'text-color': '#E4EBFA',
+
   'details-color': '#E4EBFA',
   'subtitle-color': '#828FA3',
   'border-color': '#3E3F4E',

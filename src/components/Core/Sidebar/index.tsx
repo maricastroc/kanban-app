@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   BoardBtn,
   BoardsContainer,
@@ -26,29 +25,17 @@ import { useState } from 'react'
 import { EyeSlash } from 'phosphor-react'
 import { BoardFormModal } from '@/components/Modals/BoardFormModal'
 import Image from 'next/image'
-import { BoardProps } from '@/@types/board'
-import { AxiosResponse } from 'axios'
-import { KeyedMutator } from 'swr'
 import { useTheme } from '@/contexts/ThemeContext'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 
 interface SidebarProps {
   onClose: () => void
-  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
-  boardsMutate: KeyedMutator<AxiosResponse<BoardProps[], any>>
-  handleChangeBoardStatus: (board: BoardProps) => Promise<void>
-  boards: BoardProps[] | undefined
-  activeBoard: BoardProps | undefined
 }
 
-export function Sidebar({
-  activeBoard,
-  boards,
-  handleChangeBoardStatus,
-  onClose,
-  mutate,
-  boardsMutate,
-}: SidebarProps) {
+export function Sidebar({ onClose }: SidebarProps) {
   const { toggleTheme, enableDarkMode } = useTheme()
+
+  const { handleChangeBoardStatus, activeBoard, boards } = useBoardsContext()
 
   const [isAddBoardModalOpen, setIsAddBoardModalOpen] = useState(false)
 
@@ -61,6 +48,7 @@ export function Sidebar({
             src={enableDarkMode ? LogoTextLight : LogoTextDark}
             width={112}
             height={24}
+            className="logo"
             alt=""
           />
         </LogoWrapper>
@@ -95,8 +83,6 @@ export function Sidebar({
             {isAddBoardModalOpen && (
               <BoardFormModal
                 isEditing={false}
-                mutate={mutate}
-                boardsMutate={boardsMutate}
                 onClose={() => {
                   setIsAddBoardModalOpen(false)
                 }}

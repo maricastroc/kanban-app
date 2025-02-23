@@ -12,14 +12,10 @@ export const ModalContent = styled(RadixContent)`
   gap: 0.8rem;
   top: 5rem;
   right: 0.7rem;
-  width: 10rem;
+  width: 12rem;
   z-index: 10;
-  background-color: ${(props) => props.theme['cards-color']};
+  background-color: ${(props) => props.theme['bg-color']};
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-
-  &.dark {
-    border: solid 1px ${(props) => props.theme['border-color']};
-  }
 
   &.light {
     box-shadow: 0 4px 6px rgba(54, 78, 126, 0.1);
@@ -36,7 +32,6 @@ export const ActionBtn = styled.button`
   border: none;
   font-size: ${(props) => props.theme['heading-m']};
   color: ${(props) => props.theme['subtitle-color']};
-  font-weight: 700;
 
   &.edit {
     color: ${(props) => props.theme['subtitle-color']};
@@ -61,7 +56,6 @@ export const LogoutBtn = styled.button`
   border: none;
   font-size: ${(props) => props.theme['heading-m']};
   color: ${(props) => props.theme['subtitle-color']};
-  font-weight: 700;
   width: 100%;
   border-top: solid 1px ${(props) => props.theme['border-color']};
   padding-top: 0.75rem;

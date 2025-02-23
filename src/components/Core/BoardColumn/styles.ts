@@ -39,7 +39,7 @@ export const TasksContainer = styled.div`
   padding-bottom: 2rem;
 
   @media (min-width: 1024px) {
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
 `
 

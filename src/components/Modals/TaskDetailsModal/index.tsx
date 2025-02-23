@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { RefObject, useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -26,39 +25,31 @@ import {
 } from '@/styles/shared'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useTheme } from '@/contexts/ThemeContext'
 import { TaskProps } from '@/@types/task'
 import { SubtaskProps } from '@/@types/subtask'
+import { BoardColumnProps } from '@/@types/board-column'
 import { useOutsideClick } from '@/utils/useOutsideClick'
 import { CustomLabel } from '@/components/Shared/Label'
 import { SubtaskItem } from '@/components/Core/SubtaskItem'
 import { StatusSelector } from '@/components/Shared/StatusSelector'
+import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { DeleteModal } from '../DeleteModal'
 import { TaskFormModal } from '../TaskFormModal'
 import { Reorder } from 'framer-motion'
-import { KeyedMutator } from 'swr'
-import { AxiosResponse } from 'axios'
-import { BoardProps } from '@/@types/board'
 import { api } from '@/lib/axios'
 import { handleApiError } from '@/utils/handleApiError'
 import toast from 'react-hot-toast'
-import { BoardColumnProps } from '@/@types/board-column'
-import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 
 interface TaskDetailsModalProps {
   task: TaskProps
   column: BoardColumnProps
-  activeBoard: BoardProps
-  boardId: string
-  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
   onClose: () => void
 }
 
 export function TaskDetailsModal({
   task,
-  activeBoard,
   column,
-  boardId,
-  mutate,
   onClose,
 }: TaskDetailsModalProps) {
   useEscapeKeyHandler(onClose)
@@ -73,7 +64,9 @@ export function TaskDetailsModal({
 
   const [subtasks, setSubtasks] = useState<SubtaskProps[]>([])
 
-  const { enableDarkMode } = useBoardsContext()
+  const { activeBoard, mutate } = useBoardsContext()
+
+  const { enableDarkMode } = useTheme()
 
   const [status, setStatus] = useState(column.name)
 
@@ -235,7 +228,6 @@ export function TaskDetailsModal({
                           handleSetIsLoading={(value: boolean) =>
                             setIsLoading(value)
                           }
-                          mutate={mutate}
                         />
                       </Reorder.Item>
                     ))}
@@ -290,7 +282,6 @@ export function TaskDetailsModal({
         <DeleteModal
           type="task"
           task={task}
-          mutate={mutate}
           onClose={() => {
             onClose()
             closeAllModals()
@@ -301,9 +292,6 @@ export function TaskDetailsModal({
       {isEditModalOpen && (
         <TaskFormModal
           isEditing
-          activeBoard={activeBoard}
-          boardId={boardId}
-          mutate={mutate}
           task={task}
           onClose={() => {
             onClose()

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,14 +8,11 @@ import { CheckedBox, Container, Title, UncheckedBox } from './styles'
 import { SubtaskProps } from '@/@types/subtask'
 import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
-import { KeyedMutator } from 'swr'
-import { AxiosResponse } from 'axios'
-import { BoardProps } from '@/@types/board'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 
 interface SubtaskItemProps extends SubtaskProps {
   task: TaskProps
   handleSetIsLoading: (value: boolean) => void
-  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
 }
 
 export function SubtaskItem({
@@ -24,10 +20,11 @@ export function SubtaskItem({
   task,
   title,
   isCompleted,
-  mutate,
   handleSetIsLoading,
 }: SubtaskItemProps) {
   const [isChecked, setIsChecked] = useState(isCompleted)
+
+  const { mutate } = useBoardsContext()
 
   const handleToggleSubtaskStatus = async () => {
     setIsChecked((prev) => !prev)

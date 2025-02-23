@@ -3,18 +3,9 @@ import { ButtonContent, Container, ContentWrapper } from './styles'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useState } from 'react'
 import { BoardFormModal } from '@/components/Modals/BoardFormModal'
-import { KeyedMutator } from 'swr'
-import { AxiosResponse } from 'axios'
-import { BoardProps } from '@/@types/board'
 import { SecondaryButton } from '../SecondaryButton'
 
-interface Props {
-  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
-  boardsMutate: KeyedMutator<AxiosResponse<BoardProps[], any>>
-  activeBoard: BoardProps | undefined
-}
-
-export function EmptyContainer({ mutate, boardsMutate, activeBoard }: Props) {
+export function EmptyContainer() {
   const [addBoardModalOpen, setAddBoardModalOpen] = useState(false)
 
   return (
@@ -33,9 +24,6 @@ export function EmptyContainer({ mutate, boardsMutate, activeBoard }: Props) {
             </Dialog.Trigger>
             <BoardFormModal
               isEditing={false}
-              mutate={mutate}
-              boardsMutate={boardsMutate}
-              activeBoard={activeBoard as BoardProps}
               onClose={() => setAddBoardModalOpen(false)}
             />
           </Dialog.Root>
