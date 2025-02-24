@@ -1,11 +1,11 @@
 import { Loader, ModalLoading } from '@/styles/shared'
-import { Oval } from 'react-loader-spinner'
+import { ThreeDots } from 'react-loading-icons'
 
 export const LoadingComponent = () => {
   return (
     <ModalLoading>
       <Loader>
-        <Oval secondaryColor="#7A7A7A" color="#7A7A7A" height={40} width={40} />
+        <ThreeDots height={'12px'} className="animate-spin" />
       </Loader>
     </ModalLoading>
   )

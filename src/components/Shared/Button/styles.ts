@@ -11,8 +11,7 @@ export const Container = styled.button`
   border: none;
 
   &.bigger {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    height: 2.7rem;
 
     p {
       font-size: 14px;

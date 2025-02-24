@@ -7,6 +7,7 @@ export const Container = styled.div`
   align-items: flex-start;
   min-width: 17.5rem;
   max-width: 17.5rem;
+  height: 100%;
   width: 100%;
 `
 
@@ -37,6 +38,7 @@ export const TasksContainer = styled.div`
   gap: 1.25rem;
   width: 100%;
   padding-bottom: 2rem;
+  height: 100%;
 
   @media (min-width: 1024px) {
     gap: 1.25rem;
@@ -49,6 +51,6 @@ export const EmptyTasksContainer = styled.div`
   gap: 1.25rem;
   width: 100%;
   border: dashed 2px ${(props) => props.theme['border-color']};
-  height: 100vh;
+  height: 100%;
   border-radius: 8px;
 `

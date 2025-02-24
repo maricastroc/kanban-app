@@ -155,6 +155,21 @@ export const IconWrapper = styled.div`
   }
 `
 
+export const PasswordIconWrapper = styled.button`
+  position: absolute;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+
+  svg {
+    color: ${(props) => props.theme['details-color']};
+    margin-top: 0.25rem;
+  }
+`
+
 export const CreateAccountContainer = styled.div`
   display: flex;
   align-items: center;
@@ -162,6 +177,10 @@ export const CreateAccountContainer = styled.div`
   justify-content: center;
   gap: 0.5rem;
   width: 100%;
+
+  p {
+    color: ${(props) => props.theme['subtitle-color']};
+  }
 
   a {
     background-color: transparent;

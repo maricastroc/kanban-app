@@ -20,7 +20,7 @@ import {
   LogoWrapper,
   TitleContainer,
 } from '../login/styles'
-import { Envelope, LockKey } from 'phosphor-react'
+import { Envelope, LockKey, User } from 'phosphor-react'
 import { Button } from '@/components/Shared/Button'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -119,7 +119,7 @@ export default function Login() {
                 <p>Name:</p>
                 <InputContainer>
                   <IconWrapper>
-                    <LockKey size={16} />
+                    <User size={16} />
                   </IconWrapper>
                   <InputField
                     type="text"

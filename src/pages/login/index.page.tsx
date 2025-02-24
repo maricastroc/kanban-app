@@ -21,9 +21,10 @@ import {
   LayoutContainer,
   LoginCard,
   LogoWrapper,
+  PasswordIconWrapper,
   TitleContainer,
 } from './styles'
-import { Envelope, LockKey } from 'phosphor-react'
+import { Envelope, Eye, EyeSlash, LockKey } from 'phosphor-react'
 import { Button } from '@/components/Shared/Button'
 import Image from 'next/image'
 import { toast } from 'react-hot-toast'
@@ -45,6 +46,8 @@ export default function Login() {
   const { status } = useSession()
 
   const [isLoading, setIsLoading] = useState(false)
+
+  const [showPassword, setShowPassword] = useState(false)
 
   const isRouteLoading = useLoadingOnRouteChange()
 
@@ -136,10 +139,16 @@ export default function Login() {
                     <LockKey size={16} />
                   </IconWrapper>
                   <InputField
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="Enter your password"
                     {...register('password')}
                   />
+                  <PasswordIconWrapper
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeSlash size={16} /> : <Eye size={16} />}
+                  </PasswordIconWrapper>
                 </InputContainer>
                 {errors?.password && (
                   <ErrorMessage message={errors.password.message} />

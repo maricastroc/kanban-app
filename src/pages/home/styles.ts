@@ -39,6 +39,7 @@ export const ColumnsContainer = styled.div`
   gap: 1.5rem;
   padding-bottom: 2rem;
   justify-content: initial;
+  align-items: stretch;
   cursor: move;
   height: 100%;
 
@@ -63,7 +64,7 @@ export const AddColumnContainer = styled.div`
   align-items: center;
   justify-content: center;
   min-width: 17.5rem;
-  height: 100vh;
+  height: auto;
   margin-top: 2.4rem;
   border-radius: 8px;
 
