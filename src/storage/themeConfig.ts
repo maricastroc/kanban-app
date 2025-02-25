@@ -1,7 +1,7 @@
 const THEME_STORAGE = '@kanban:themes'
 
 function getParsedTheme(storageKey: string, defaultValue: string) {
-  if (typeof window === 'undefined') return defaultValue // 🚀 Garante que está no cliente
+  if (typeof window === 'undefined') return defaultValue
 
   const savedData = localStorage.getItem(storageKey)
   try {
