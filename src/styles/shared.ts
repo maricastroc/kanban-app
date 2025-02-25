@@ -74,7 +74,7 @@ export const ModalContent = styled(RadixContent)<{ padding?: string }>`
   transform: translate(-50%, -50%);
   width: clamp(300px, 90vw, 33rem);
   border-radius: 8px;
-  z-index: 9999;
+  z-index: 9998;
   animation: scaleIn 0.5s ease-out forwards;
 
   &:focus {
@@ -176,9 +176,45 @@ export const Loader = styled.div`
   left: 0;
   width: 100%;
   min-height: 100vh;
+  height: 100%;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
+  flex-grow: 1;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 9999;
+`
+
+export const UncheckedBox = styled.button`
+  cursor: pointer;
+  min-width: 16px;
+  min-height: 16px;
+  background-color: ${(props) => props.theme['cards-color']};
+  border: solid 1px ${(props) => props.theme['border-color']};
+  border-radius: 3;
+
+  &:focus {
+    box-shadow: none;
+  }
+`
+
+export const CheckedBox = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  min-width: 16px;
+  min-height: 16px;
+  background-color: ${(props) => props.theme['primary-color']};
+  border: none;
+  border-radius: 3;
+
+  svg {
+    color: ${(props) => props.theme['button-title']};
+    font-size: 0.7rem;
+  }
+
+  &:focus {
+    box-shadow: none;
+  }
 `

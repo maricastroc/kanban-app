@@ -4,11 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { TaskProps } from '@/@types/task'
 
-import { CheckedBox, Container, Title, UncheckedBox } from './styles'
+import { Container, Title } from './styles'
 import { SubtaskProps } from '@/@types/subtask'
 import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
 import { useBoardsContext } from '@/contexts/BoardsContext'
+import { CheckedBox, UncheckedBox } from '@/styles/shared'
 
 interface SubtaskItemProps extends SubtaskProps {
   task: TaskProps

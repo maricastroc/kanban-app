@@ -1,8 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { RefObject, useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faAngleDown,
   faAngleUp,
+  faCheck,
   faEllipsisVertical,
 } from '@fortawesome/free-solid-svg-icons'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -15,13 +17,18 @@ import {
   OptionsBtn,
   EmptySubtask,
   ModalTitle,
+  TagContainer,
+  TagName,
+  TagsContainer,
 } from './styles'
 import {
+  CheckedBox,
   ModalContent,
   ModalOverlay,
   SelectStatusField,
   StatusContainer,
   StatusSelectorContainer,
+  UncheckedBox,
 } from '@/styles/shared'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 import { useBoardsContext } from '@/contexts/BoardsContext'
@@ -40,6 +47,10 @@ import { Reorder } from 'framer-motion'
 import { api } from '@/lib/axios'
 import { handleApiError } from '@/utils/handleApiError'
 import toast from 'react-hot-toast'
+import { TagProps } from '@/@types/tag'
+import useRequest from '@/utils/useRequest'
+import { Circle, TagsTitle } from '../TagsModal/styles'
+import { tagColors } from '@/components/Shared/SelectInput'
 
 interface TaskDetailsModalProps {
   task: TaskProps
@@ -53,6 +64,11 @@ export function TaskDetailsModal({
   onClose,
 }: TaskDetailsModalProps) {
   useEscapeKeyHandler(onClose)
+
+  const { data: tags } = useRequest<TagProps[]>({
+    url: '/tags',
+    method: 'GET',
+  })
 
   const subtasksCompleted = task?.subtasks?.filter(
     (subtask: SubtaskProps) => subtask?.isCompleted,
@@ -75,6 +91,8 @@ export function TaskDetailsModal({
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
   const [isEditDeleteModalOpen, setIsEditDeleteModalOpen] = useState(false)
+
+  const [associatedTags, setAssociatedTags] = useState<TagProps[]>([])
 
   const [isStatusOptionsContainerOpen, setIsStatusOptionsContainerOpen] =
     useState(false)
@@ -141,11 +159,55 @@ export function TaskDetailsModal({
     }
   }
 
+  const handleToggleTagStatus = async (tagToUpdate: TagProps) => {
+    try {
+      setIsLoading(true)
+
+      if (associatedTags.some((tag) => tag.id === tagToUpdate.id)) {
+        const response = await api.delete(`/tasks/tags`, {
+          data: { taskId: task.id, tagId: tagToUpdate.id },
+        })
+
+        toast?.success(response.data.message)
+        mutate()
+
+        setAssociatedTags(
+          associatedTags.filter((tag) => tag.id !== tagToUpdate.id),
+        )
+      } else {
+        const response = await api.post(`/tasks/tags`, {
+          tagId: tagToUpdate.id,
+          taskId: task.id,
+        })
+
+        toast?.success(response.data.message)
+        mutate()
+
+        setAssociatedTags([...associatedTags, tagToUpdate])
+      }
+    } catch (error) {
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   useEffect(() => {
     if (task?.subtasks.length) {
       setSubtasks(task.subtasks)
     }
   }, [task.subtasks])
+
+  useEffect(() => {
+    if (task?.tags && tags) {
+      const associatedTags = task.tags
+        .filter((taskTag) => tags.some((tag) => tag.id === taskTag.tagId))
+        .map((taskTag) => tags.find((tag) => tag.id === taskTag.tagId))
+        .filter((tag) => tag !== undefined)
+
+      setAssociatedTags(associatedTags)
+    }
+  }, [tags])
 
   return (
     <>
@@ -237,6 +299,40 @@ export function TaskDetailsModal({
                 <EmptySubtask>No subtasks.</EmptySubtask>
               )}
 
+              <TagsContainer>
+                <TagsTitle>Tags</TagsTitle>
+                {tags &&
+                  tags.length > 0 &&
+                  tags.map((item) => {
+                    const tagColor = tagColors.find(
+                      (tag) => tag.name === item.color,
+                    )?.color
+                    const isChecked = associatedTags.some(
+                      (tag) => tag.id === item.id,
+                    )
+
+                    return (
+                      <TagContainer key={item.id}>
+                        {isChecked ? (
+                          <CheckedBox
+                            onClick={() => handleToggleTagStatus(item)}
+                          >
+                            <FontAwesomeIcon icon={faCheck} />
+                          </CheckedBox>
+                        ) : (
+                          <UncheckedBox
+                            onClick={() => handleToggleTagStatus(item)}
+                          />
+                        )}
+                        <TagName>
+                          <p>{item.name}</p>
+                          <Circle color={tagColor as string} />
+                        </TagName>
+                      </TagContainer>
+                    )
+                  })}
+              </TagsContainer>
+
               <StatusContainer>
                 <CustomLabel>Current Status</CustomLabel>
                 <SelectStatusField
@@ -272,9 +368,9 @@ export function TaskDetailsModal({
                 )}
               </StatusContainer>
             </Description>
-
-            {isLoading && <LoadingComponent />}
           </ModalContent>
+
+          {isLoading && <LoadingComponent />}
         </Dialog.Portal>
       )}
 

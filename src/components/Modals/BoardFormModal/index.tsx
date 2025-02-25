@@ -248,9 +248,9 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
             variant="primary"
           />
         </FormContainer>
-
-        {isLoading && <LoadingComponent />}
       </ModalContent>
+
+      {isLoading && <LoadingComponent />}
     </Dialog.Portal>
   )
 }

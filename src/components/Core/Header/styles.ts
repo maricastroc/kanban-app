@@ -91,7 +91,7 @@ export const EditDeleteContainer = styled.div`
   }
 `
 
-export const AddTaskBtn = styled.button`
+export const ActionBtn = styled.button`
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -101,6 +101,7 @@ export const AddTaskBtn = styled.button`
   height: 32px;
   border: none;
   border-radius: 16px;
+  margin-right: 0.65rem;
 
   svg {
     font-size: 1rem;
@@ -116,11 +117,26 @@ export const AddTaskBtn = styled.button`
     background-color: ${(props) => props.theme['tertiary-hover']};
   }
 
+  &.secondary {
+    margin-right: 0.7rem;
+
+    &:hover {
+      transition: 200ms;
+      background-color: ${(props) => props.theme['title-color']};
+
+      p,
+      svg {
+        color: ${(props) => props.theme['primary-color']};
+      }
+    }
+  }
+
   @media (min-width: 768px) {
     gap: 1.5rem;
     width: 164px;
     height: 48px;
     border-radius: 22px;
+    margin-right: 0;
 
     svg {
       display: none;
@@ -131,6 +147,22 @@ export const AddTaskBtn = styled.button`
       font-size: ${(props) => props.theme['heading-m']};
       color: ${(props) => props.theme['button-title']};
       font-weight: 700;
+    }
+
+    &.secondary {
+      background-color: transparent;
+      border: solid 1px ${(props) => props.theme['primary-color']};
+      gap: 0.5rem;
+      padding-right: 0;
+
+      p {
+        color: ${(props) => props.theme['primary-hover']};
+      }
+
+      svg {
+        display: block;
+        color: ${(props) => props.theme['primary-hover']};
+      }
     }
   }
 `
@@ -162,6 +194,12 @@ export const EditDeleteBtn = styled.button`
 `
 
 export const EditDeleteWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+`
+
+export const EditTagBtn = styled.div`
   display: flex;
   flex-direction: column;
   cursor: pointer;

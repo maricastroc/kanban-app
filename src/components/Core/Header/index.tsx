@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-  AddTaskBtn,
+  ActionBtn,
   BoardName,
   BoardNameContainer,
   Container,
@@ -16,6 +16,7 @@ import {
   faAngleDown,
   faEllipsisVertical,
   faPlus,
+  faTag,
 } from '@fortawesome/free-solid-svg-icons'
 import * as Dialog from '@radix-ui/react-dialog'
 import { BoardsDetailsModal } from '@/components/Modals/BoardsDetailsModal'
@@ -29,6 +30,7 @@ import LogoTextLight from '../../../../public/kanban.svg'
 import LogoTextDark from '../../../../public/kanban-dark.svg'
 import Image from 'next/image'
 import { useTheme } from 'styled-components'
+import { TagsModal } from '@/components/Modals/TagsModal'
 
 type Props = {
   hideSidebar: boolean
@@ -36,6 +38,8 @@ type Props = {
 
 export function Header({ hideSidebar }: Props) {
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
+
+  const [isEditTagsModalOpen, setIsEditTagsModalOpen] = useState(false)
 
   const { activeBoard } = useBoardsContext()
 
@@ -100,13 +104,26 @@ export function Header({ hideSidebar }: Props) {
         </Dialog.Root>
       </LogoContainer>
       <EditDeleteContainer>
+        <Dialog.Root open={isEditTagsModalOpen}>
+          <Dialog.Trigger asChild>
+            <ActionBtn
+              className="secondary"
+              onClick={() => setIsEditTagsModalOpen(true)}
+            >
+              <FontAwesomeIcon icon={faTag} />
+              <p>Edit Tags</p>
+            </ActionBtn>
+          </Dialog.Trigger>
+          <TagsModal onClose={() => setIsEditTagsModalOpen(false)} />
+        </Dialog.Root>
+
         {activeBoard && (
           <Dialog.Root open={isAddTaskModalOpen}>
             <Dialog.Trigger asChild>
-              <AddTaskBtn onClick={() => setIsAddTaskModalOpen(true)}>
+              <ActionBtn onClick={() => setIsAddTaskModalOpen(true)}>
                 <FontAwesomeIcon icon={faPlus} />
                 <p>+ Add New Task</p>
-              </AddTaskBtn>
+              </ActionBtn>
             </Dialog.Trigger>
             <TaskFormModal
               isEditing={false}

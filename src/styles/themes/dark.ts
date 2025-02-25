@@ -20,6 +20,7 @@ export const darkTheme = {
   'button-title': '#FFFFFF',
 
   'text-color': '#E4EBFA',
+  'select-color': '#282828',
 
   'details-color': '#E4EBFA',
   'subtitle-color': '#828FA3',
@@ -29,6 +30,9 @@ export const darkTheme = {
   'scroll-color': '#3E3F4E',
 
   'light-bg-color': '#FFFFFF',
+
+  'completed-color': '#50b26e',
+  'overdue-color': '#d14b4b',
 
   ...baseFontSizes,
 }

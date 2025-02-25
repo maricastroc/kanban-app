@@ -20,6 +20,10 @@ export const lightTheme = {
   'button-title': '#FFFFFF',
 
   'text-color': '#282828',
+  'select-color': '#282828',
+
+  'completed-color': '#76ce95',
+  'overdue-color': '#ea5e5e',
 
   'details-color': '#635FC7',
   'subtitle-color': '#828FA3',

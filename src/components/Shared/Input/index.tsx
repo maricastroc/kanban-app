@@ -3,12 +3,19 @@ import { Input as StyledInput } from './styles'
 
 interface CustomInputProps extends InputHTMLAttributes<HTMLInputElement> {
   hasError?: boolean
+  isTransparent?: boolean
 }
 
 const CustomInput = React.forwardRef<HTMLInputElement, CustomInputProps>(
-  ({ hasError = false, ...rest }, ref) => {
+  ({ hasError = false, isTransparent = false, ...rest }, ref) => {
     return (
-      <StyledInput ref={ref} className={hasError ? 'error' : ''} {...rest} />
+      <StyledInput
+        ref={ref}
+        className={`${hasError ? 'error' : ''} ${
+          isTransparent ? 'transparent' : ''
+        }`}
+        {...rest}
+      />
     )
   },
 )

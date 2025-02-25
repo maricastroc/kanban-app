@@ -230,9 +230,9 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
             variant="primary"
           />
         </FormContainer>
-
-        {isLoading && <LoadingComponent />}
       </ModalContent>
+
+      {isLoading && <LoadingComponent />}
     </Dialog.Portal>
   )
 }

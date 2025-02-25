@@ -16,6 +16,7 @@ model User {
   avatarUrl        String?
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
+  tags             Tag[]
 
   accounts          Account[]
   sessions          Session[]
@@ -54,6 +55,35 @@ model Column {
   @@map("columns")
 }
 
+model Tag {
+  id      String  @id @default(uuid())
+  name    String
+  color   String
+  userId  String
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks   TaskTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@unique([name, color, userId])
+  @@map("tags")
+}
+
+model TaskTag {
+  taskId String
+  tagId  String
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@id([taskId, tagId])
+  @@map("task_tags")
+}
+
 model Task {
   id          String   @id @default(uuid())
   order       Int
@@ -63,9 +93,11 @@ model Task {
   columnId    String
   column      Column   @relation(fields: [columnId], references: [id], onDelete: Cascade)
   subtasks    Subtask[]
+  tags        TaskTag[] // Relação com tags
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  dueDate   DateTime?
 
   @@index([columnId])
   @@map("tasks")

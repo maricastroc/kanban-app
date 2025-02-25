@@ -9,6 +9,7 @@ export const Container = styled.button`
   border-radius: 18px;
   padding: 0.7rem;
   border: none;
+  height: 2.4rem;
 
   &.bigger {
     height: 2.7rem;
@@ -34,7 +35,8 @@ export const Container = styled.button`
   &.secondary {
     background-color: ${(props) => `${props.theme['secondary-color']}`};
 
-    p {
+    p,
+    svg {
       color: ${(props) => props.theme['primary-color']};
     }
 

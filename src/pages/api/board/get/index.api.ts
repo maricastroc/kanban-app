@@ -41,6 +41,11 @@ export default async function handler(
                       order: 'asc',
                     },
                   },
+                  tags: {
+                    include: {
+                      tag: true, // Incluindo as informações da tag associada
+                    },
+                  },
                 },
                 orderBy: {
                   order: 'asc',

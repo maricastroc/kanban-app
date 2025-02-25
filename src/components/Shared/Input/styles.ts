@@ -15,6 +15,10 @@ export const Input = styled.input`
     border: solid 1px ${(props) => props.theme['error-color']};
   }
 
+  &.transparent {
+    background-color: transparent;
+  }
+
   &.disabled {
     cursor: not-allowed;
     opacity: 0.5;

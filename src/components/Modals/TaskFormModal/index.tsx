@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { RefObject, useEffect, useRef, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
+import DatePicker from 'react-datepicker'
 import * as Dialog from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleDown, faAngleUp, faX } from '@fortawesome/free-solid-svg-icons'
@@ -32,7 +33,12 @@ import { StatusSelector } from '@/components/Shared/StatusSelector'
 import { useOutsideClick } from '@/utils/useOutsideClick'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 
-import { SubtasksForm, SubtasksWrapper } from './styles'
+import {
+  StyledDatePickerWrapper,
+  SubtasksForm,
+  SubtasksWrapper,
+  TagsContainer,
+} from './styles'
 import { initialSubtasks } from '@/utils/getInitialValues'
 import { MIN_SUBTASKS, MIN_TITLE_LENGTH } from '@/utils/constants'
 
@@ -58,6 +64,7 @@ const formSchema = z.object({
     .array(subtaskSchema)
     .min(MIN_SUBTASKS, { message: 'At least one subtask is required' }),
   status: z.string(),
+  dueDate: z.date().optional(),
 })
 
 export type FormData = z.infer<typeof formSchema>
@@ -111,6 +118,7 @@ export function TaskFormModal({
       id: uuidv4(),
       title: task?.title ?? '',
       description: task?.description ?? '',
+      dueDate: task?.dueDate ?? undefined,
       status,
       subtasks,
     },
@@ -128,6 +136,7 @@ export function TaskFormModal({
         description: data.description || '',
         columnId,
         status,
+        dueDate: data.dueDate || undefined,
         subtasks: subtasks.map((subtask, index) => ({
           ...subtask,
           order: index,
@@ -262,6 +271,22 @@ export function TaskFormModal({
             {<ErrorMessage message={errors.description?.message} />}
           </InputContainer>
 
+          <InputContainer>
+            <CustomLabel htmlFor="dueDate">Due Date</CustomLabel>
+
+            <StyledDatePickerWrapper>
+              <DatePicker
+                placeholderText="dd/mm/yyyy"
+                customInput={<CustomInput />}
+                selected={watch('dueDate')}
+                dateFormat="dd/MM/yyyy"
+                onChange={(date) => setValue('dueDate', date as Date)}
+              />
+            </StyledDatePickerWrapper>
+
+            {<ErrorMessage message={errors.dueDate?.message} />}
+          </InputContainer>
+
           <SubtasksForm>
             <CustomLabel>Subtasks</CustomLabel>
             <SubtasksWrapper>
@@ -277,6 +302,8 @@ export function TaskFormModal({
               onClick={handleAddSubtask}
             />
           </SubtasksForm>
+
+          <TagsContainer></TagsContainer>
 
           <StatusContainer>
             <CustomLabel>Status</CustomLabel>
@@ -313,9 +340,9 @@ export function TaskFormModal({
             variant="primary"
           />
         </FormContainer>
-
-        {isLoading && <LoadingComponent />}
       </ModalContent>
+
+      {isLoading && <LoadingComponent />}
     </Dialog.Portal>
   )
 }

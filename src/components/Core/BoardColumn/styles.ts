@@ -9,6 +9,11 @@ export const Container = styled.div`
   max-width: 17.5rem;
   height: 100%;
   width: 100%;
+  margin-bottom: 2.5rem;
+
+  &.empty {
+    margin-bottom: 0;
+  }
 `
 
 export const TagContainer = styled.div`

@@ -3,18 +3,15 @@ import { prisma } from '@/lib/prisma'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { buildNextAuthOptions } from '../../auth/[...nextauth].api'
-
-interface Subtask {
-  title: string
-  order: number
-}
+import { SubtaskProps } from '@/@types/subtask'
 
 interface TaskUpdateData {
   title?: string
   description?: string | null
   order?: number
   columnId?: string
-  subtasks?: Subtask[]
+  subtasks?: SubtaskProps[]
+  dueDate?: string | null
 }
 
 export default async function handler(
@@ -44,6 +41,7 @@ export default async function handler(
       order,
       columnId,
       subtasks,
+      dueDate,
     }: TaskUpdateData & { taskId: string } = req.body
 
     if (!taskId) {
@@ -62,7 +60,6 @@ export default async function handler(
 
       let updatedOrder = order
 
-      // Se mudar de coluna, recalcula o order
       if (columnId && columnId !== existingTask.columnId) {
         const newColumnTaskCount = await prisma.task.count({
           where: { columnId },
@@ -70,7 +67,6 @@ export default async function handler(
         updatedOrder = newColumnTaskCount + 1
       }
 
-      // Atualiza a task
       const updatedTask = await prisma.task.update({
         where: { id: taskId },
         data: {
@@ -78,20 +74,19 @@ export default async function handler(
           description,
           order: updatedOrder,
           columnId,
+          dueDate: dueDate ? new Date(dueDate) : null,
         },
       })
 
-      // Se subtasks foram enviadas, atualiza-as
       if (subtasks) {
-        // Remove subtasks antigas
         await prisma.subtask.deleteMany({
           where: { taskId },
         })
 
-        // Adiciona novas subtasks
         const newSubtasks = subtasks.map((subtask, index) => ({
           title: subtask.title,
           order: index + 1,
+          isCompleted: subtask.isCompleted,
           taskId,
         }))
 

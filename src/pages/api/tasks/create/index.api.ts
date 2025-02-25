@@ -37,6 +37,7 @@ export default async function handler(
       status,
       description,
       subtasks,
+      dueDate, // Adicionado o campo opcional
     }: {
       boardId: string
       columnId: string
@@ -44,12 +45,23 @@ export default async function handler(
       status: string
       description: string | null
       subtasks: Subtask[]
+      dueDate?: string // Definido como opcional
     } = req.body
 
     if (!boardId || !columnId || !title || !subtasks || !status) {
       return res.status(400).json({
         message: 'BoardId, columnId, title, status and subtasks are required',
       })
+    }
+
+    // Validação opcional da data (se fornecida)
+    let formattedDueDate: Date | null = null
+    if (dueDate) {
+      const parsedDate = new Date(dueDate)
+      if (isNaN(parsedDate.getTime())) {
+        return res.status(400).json({ message: 'Invalid dueDate format' })
+      }
+      formattedDueDate = parsedDate
     }
 
     try {
@@ -78,6 +90,7 @@ export default async function handler(
           status,
           order: taskCount + 1,
           columnId,
+          dueDate: formattedDueDate, // Salva a data, se fornecida
         },
       })
 

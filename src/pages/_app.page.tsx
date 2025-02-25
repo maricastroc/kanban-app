@@ -7,6 +7,7 @@ import { BoardsContextProvider } from '@/contexts/BoardsContext'
 import { Toaster } from 'react-hot-toast'
 import { AppProps } from 'next/app'
 import { SessionProvider } from 'next-auth/react'
+import 'react-datepicker/dist/react-datepicker.css'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

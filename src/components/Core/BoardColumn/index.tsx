@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react'
 import { ColorPickerModal } from '@/components/Modals/ColorPickerModal'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { getTagColor } from '@/utils/getTagColor'
-import { getColumnColor, saveColumnColor } from '@/storage/colorConfig'
+import { saveColumnColor } from '@/storage/colorConfig'
 
 type ColumnProps = BoardColumnProps & {
   index: number
@@ -24,9 +24,7 @@ type ColumnProps = BoardColumnProps & {
 export function BoardColumn({ name, tasks, column, index }: ColumnProps) {
   const { handleEnableScrollFeature } = useBoardsContext()
 
-  const [currentColor, setCurrentColor] = useState(
-    getColumnColor(index) || getTagColor(index),
-  )
+  const [currentColor, setCurrentColor] = useState(getTagColor(index))
 
   const [isColorPickerModalOpen, setIsColorPickerModalOpen] = useState(false)
 
@@ -49,17 +47,13 @@ export function BoardColumn({ name, tasks, column, index }: ColumnProps) {
   }, [currentColor, index])
 
   return (
-    <Container>
+    <Container className={`${column?.tasks?.length > 0 ? '' : 'empty'}`}>
       <Dialog.Root
         open={isColorPickerModalOpen}
         onOpenChange={setIsColorPickerModalOpen}
       >
         <Dialog.Trigger asChild>
           <TagContainer>
-            <button
-              style={{ backgroundColor: currentColor }}
-              onClick={() => setIsColorPickerModalOpen(!isColorPickerModalOpen)}
-            />
             <p>{`${name} (${tasks.length})`}</p>
           </TagContainer>
         </Dialog.Trigger>
