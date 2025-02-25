@@ -25,7 +25,7 @@ export const tagColors = [
   { color: '#4875b7', name: 'Blue' },
   { color: '#b57474', name: 'Rose Red' },
   { color: '#f8a5d7', name: 'Soft Pink' },
-  { color: '#d6655f', name: 'Vivid Red' },
+  { color: '#ce524e', name: 'Vivid Red' },
 ]
 
 interface SelectInputProps {
