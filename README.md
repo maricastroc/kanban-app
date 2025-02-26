@@ -15,6 +15,8 @@ Users are able to:
 - Hide/show the board sidebar
 - Toggle the theme between light/dark modes
 - Allow users to drag and drop tasks to change their status and re-order them in a column
+- Set due dates for tasks, with automatic status updates
+- Add tags to tasks for better organization and categorization
 
 
 ## 📌 What did I learn?
