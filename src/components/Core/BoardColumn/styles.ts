@@ -7,9 +7,8 @@ export const Container = styled.div`
   align-items: flex-start;
   min-width: 17.5rem;
   max-width: 17.5rem;
-  height: 100%;
+  min-height: auto;
   width: 100%;
-  margin-bottom: 2.5rem;
 
   &.empty {
     margin-bottom: 0;
@@ -42,7 +41,6 @@ export const TasksContainer = styled.div`
   flex-direction: column;
   gap: 1.25rem;
   width: 100%;
-  padding-bottom: 2rem;
   height: 100%;
 
   @media (min-width: 1024px) {

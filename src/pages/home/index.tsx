@@ -195,6 +195,7 @@ export default function Home() {
                       onMouseUp={handleMouseUp}
                       onMouseLeave={handleMouseUp}
                       onMouseMove={handleMouseMove}
+                      className={hideSidebar ? 'hide-sidebar-mode' : ''}
                     >
                       {activeBoard ? (
                         <>

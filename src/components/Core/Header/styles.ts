@@ -16,7 +16,14 @@ export const Container = styled.div`
     justify-content: space-between;
     height: 6rem;
     padding: 2rem;
+    margin-left: 260px;
+    width: auto;
     border-bottom: solid 1px ${(props) => props.theme['border-color']};
+
+    &.hide-sidebar-mode {
+      margin-left: 0;
+      width: 100%;
+    }
   }
 `
 
@@ -42,7 +49,7 @@ export const LogoContent = styled.div`
 export const LogoContainer = styled.div`
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.5rem;
 `
 
 export const BoardNameContainer = styled.div`
@@ -65,12 +72,21 @@ export const BoardNameContainer = styled.div`
 export const BoardName = styled.h1`
   font-size: ${(props) => props.theme['heading-l']};
   font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 30vw;
+
+  @media (min-width: 420px) {
+    max-width: 42vw;
+    margin-right: 0.5rem;
+  }
 
   @media (min-width: 768px) {
     font-size: ${(props) => props.theme['heading-xl']};
   }
 
-  @media (min-width: 1023px) {
+  @media (min-width: 920px) {
     font-size: ${(props) => props.theme['heading-xxl']};
   }
 `
@@ -86,7 +102,7 @@ export const EditDeleteContainer = styled.div`
     font-size: 1.5rem;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 920px) {
     gap: 1rem;
   }
 `
@@ -131,7 +147,7 @@ export const ActionBtn = styled.button`
     }
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 920px) {
     gap: 1.5rem;
     width: 164px;
     height: 48px;

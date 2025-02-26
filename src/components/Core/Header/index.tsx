@@ -59,7 +59,7 @@ export function Header({ hideSidebar }: Props) {
   }, [isSmallerThanSm])
 
   return (
-    <Container>
+    <Container className={hideSidebar ? 'hide-sidebar-mode' : ''}>
       <LogoContainer>
         {isSmallerThanSm && (
           <Image src={Logo} width={24} height={24} alt="Project Logo" />

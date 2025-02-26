@@ -6,14 +6,15 @@ export const LayoutContainer = styled.div`
   flex-direction: column;
   width: 100%;
   overflow: hidden;
-  min-height: 100vh;
+  height: 100%;
   background-color: ${(props) => props.theme['bg-color']};
 `
 
 export const BoardContent = styled.div`
   display: flex;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
+  height: 100%;
   overflow: hidden;
 `
 
@@ -21,6 +22,7 @@ export const Wrapper = styled.div`
   display: flex;
   width: 100%;
   height: 100%;
+  min-height: 100vh;
   overflow-x: scroll;
   flex-direction: column;
 
@@ -37,19 +39,21 @@ export const ColumnsContainer = styled.div`
   overflow-x: scroll;
   padding: 1.5rem 2.1rem 0;
   gap: 1.5rem;
+  flex-grow: 1;
   padding-bottom: 2rem;
   justify-content: initial;
   align-items: stretch;
   cursor: move;
   height: 100%;
 
-  &.hide-sidebar-mode {
-    justify-content: center;
-  }
-
   @media (min-width: 768px) {
     padding: 1.5rem;
-    height: 100vh;
+    min-height: 100%;
+    margin-left: 260px;
+
+    &.hide-sidebar-mode {
+      margin-left: 0;
+    }
   }
 
   @media (min-width: 1024px) {
@@ -132,7 +136,7 @@ export const ShowSidebarBtn = styled.button`
   border: none;
   border-top-right-radius: 22px;
   border-bottom-right-radius: 22px;
-  position: absolute;
+  position: fixed;
   z-index: 9999;
   background-color: ${(props) => props.theme['primary-color']};
   width: 56px;

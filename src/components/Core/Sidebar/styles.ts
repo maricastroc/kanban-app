@@ -8,7 +8,7 @@ export const Container = styled.div`
   border-right: solid 1px ${(props) => props.theme['border-color']};
   min-width: 260px;
   background-color: ${(props) => props.theme['cards-color']};
-  position: sticky;
+  position: fixed;
   top: 0;
   height: 100vh;
   z-index: 100;
