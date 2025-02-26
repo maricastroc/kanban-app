@@ -33,6 +33,8 @@ import { useDragScroll } from '@/utils/useDragScroll'
 export default function Home() {
   const columnsContainerRef = useRef<HTMLDivElement | null>(null)
 
+  const [isClient, setIsClient] = useState(false)
+
   const { status } = useSession()
 
   const { isLoading, activeBoard, boards, mutate } = useBoardsContext()
@@ -163,10 +165,15 @@ export default function Home() {
     }
   }, [status, router])
 
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
   return (
     <>
       <NextSeo title="Kanban App | Dashboard" />
-      <DragDropContext onDragEnd={onDragEnd}>
+      {isClient && (
+        <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="all-columns" direction="horizontal">
           {(provided) => (
             <LayoutContainer
@@ -242,6 +249,7 @@ export default function Home() {
 
         {(isLoading || isReordering || !boards) && <LoadingComponent />}
       </DragDropContext>
+      )}
     </>
   )
 }
