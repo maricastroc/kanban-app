@@ -35,7 +35,7 @@ export const ColumnsContainer = styled.div`
   display: flex;
   width: 100%;
   overflow-x: scroll;
-  padding: 1.5rem 1rem 0;
+  padding: 1.5rem 2.1rem 0;
   gap: 1.5rem;
   padding-bottom: 2rem;
   justify-content: initial;
