@@ -84,6 +84,12 @@ export const InfoItem = styled.div`
       color: ${(props) => props.theme['completed-color']};
     }
   }
+
+  &.due_soon {
+    svg {
+      color: ${(props) => props.theme['due-soon-color']};
+    }
+  }
 `
 
 export const ProgressWrapper = styled.div`

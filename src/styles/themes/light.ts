@@ -9,6 +9,8 @@ export const lightTheme = {
   'secondary-color': '#EFEFF9',
   'secondary-hover': '#DCDBFA',
 
+  'tags-btn-color': '#635FC7',
+
   'tertiary-hover': '#A8A4FF',
 
   'sidebar-btn-color': '#635FC7',
@@ -22,8 +24,9 @@ export const lightTheme = {
   'text-color': '#282828',
   'select-color': '#282828',
 
-  'completed-color': '#76ce95',
-  'overdue-color': '#ea5e5e',
+  'completed-color': '#67E2AE',
+  'overdue-color': '#ce524e',
+  'due-soon-color': '#e8b442',
 
   'details-color': '#635FC7',
   'subtitle-color': '#828FA3',

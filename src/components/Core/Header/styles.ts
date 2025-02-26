@@ -126,7 +126,7 @@ export const ActionBtn = styled.button`
 
       p,
       svg {
-        color: ${(props) => props.theme['primary-color']};
+        color: ${(props) => props.theme['tags-btn-color']};
       }
     }
   }
@@ -156,12 +156,12 @@ export const ActionBtn = styled.button`
       margin-right: 0;
 
       p {
-        color: ${(props) => props.theme['primary-hover']};
+        color: ${(props) => props.theme['tags-btn-color']};
       }
 
       svg {
         display: block;
-        color: ${(props) => props.theme['primary-hover']};
+        color: ${(props) => props.theme['tags-btn-color']};
       }
     }
   }

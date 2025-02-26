@@ -61,7 +61,7 @@ export const BoardItem = styled.button`
 
   &.create {
     p {
-      color: ${(props) => props.theme['primary-color']};
+      color: ${(props) => props.theme['tags-btn-color']};
     }
 
     img {

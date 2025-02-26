@@ -10,6 +10,7 @@ export const getDueStatus = (
 
   const allSubtasksCompleted =
     subtasks.length > 0 && subtasks.every((st) => st.isCompleted)
+
   if (allSubtasksCompleted) return 'completed'
 
   const diffInDays = Math.ceil(
@@ -17,7 +18,7 @@ export const getDueStatus = (
   )
 
   if (diffInDays < 0) return 'overdue'
-  if (diffInDays === 1) return 'due_soon'
+  if (diffInDays === 1 || diffInDays === 0) return 'due_soon'
 
   return ''
 }

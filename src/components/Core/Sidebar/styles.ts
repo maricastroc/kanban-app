@@ -146,7 +146,7 @@ export const CreateBoardBtn = styled.button`
   text-align: left;
 
   p {
-    color: ${(props) => props.theme['primary-color']};
+    color: ${(props) => props.theme['tags-btn-color']};
     font-size: ${(props) => props.theme['heading-m']};
     font-weight: 700;
   }

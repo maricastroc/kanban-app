@@ -6,6 +6,8 @@ export const darkTheme = {
   'primary-color': '#635FC7',
   'primary-hover': '#A8A4FF',
 
+  'tags-btn-color': '#A8A4FF',
+
   'secondary-color': '#FFFFFF',
   'secondary-hover': '#DCDBFA',
 
@@ -33,6 +35,7 @@ export const darkTheme = {
 
   'completed-color': '#67E2AE',
   'overdue-color': '#ce524e',
+  'due-soon-color': '#e8b442',
 
   ...baseFontSizes,
 }
