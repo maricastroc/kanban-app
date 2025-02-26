@@ -29,23 +29,23 @@ const tagSchema = z.object({
 type FormData = z.infer<typeof tagSchema>
 
 interface Props {
-  onClose: () => void
   currentTags: TagProps[] | undefined
   isSubmitting: boolean
-  handleIsSubmitting: (value: boolean) => void
   isEdit?: boolean
   tag?: TagProps
+  onClose: () => void
+  handleIsSubmitting: (value: boolean) => void
   tagsMutate: KeyedMutator<AxiosResponse<TagProps[], any>>
 }
 
 export function TagForm({
   tag,
   currentTags,
+  isSubmitting,
+  isEdit = false,
   tagsMutate,
   onClose,
   handleIsSubmitting,
-  isSubmitting,
-  isEdit = false,
 }: Props) {
   const { mutate } = useBoardsContext()
 

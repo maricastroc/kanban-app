@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { buildNextAuthOptions } from '../../auth/[...nextauth].api'
+import { TagProps } from '@/@types/tag'
 import { SubtaskProps } from '@/@types/subtask'
 
 interface TaskUpdateData {
@@ -12,6 +13,7 @@ interface TaskUpdateData {
   columnId?: string
   subtasks?: SubtaskProps[]
   dueDate?: string | null
+  tags?: TagProps[] // Adicionando tags ao corpo da requisição
 }
 
 export default async function handler(
@@ -42,6 +44,7 @@ export default async function handler(
       columnId,
       subtasks,
       dueDate,
+      tags,
     }: TaskUpdateData & { taskId: string } = req.body
 
     if (!taskId) {
@@ -51,7 +54,7 @@ export default async function handler(
     try {
       const existingTask = await prisma.task.findUnique({
         where: { id: taskId },
-        include: { subtasks: true },
+        include: { subtasks: true, tags: true },
       })
 
       if (!existingTask) {
@@ -95,9 +98,38 @@ export default async function handler(
         }
       }
 
-      return res
-        .status(200)
-        .json({ message: 'Task updated successfully', task: updatedTask })
+      if (tags) {
+        const tagNames = tags.map((tag) => tag.name)
+
+        const existingTags = await prisma.tag.findMany({
+          where: {
+            userId,
+            name: {
+              in: tagNames,
+            },
+          },
+        })
+
+        const taskTagsData = existingTags.map((tag) => ({
+          taskId,
+          tagId: tag.id,
+        }))
+
+        await prisma.taskTag.deleteMany({
+          where: { taskId },
+        })
+
+        if (taskTagsData.length > 0) {
+          await prisma.taskTag.createMany({
+            data: taskTagsData,
+          })
+        }
+      }
+
+      return res.status(200).json({
+        message: 'Task and tags updated successfully',
+        task: updatedTask,
+      })
     } catch (error) {
       console.error(error)
       return res.status(500).json({ message: 'Internal server error' })

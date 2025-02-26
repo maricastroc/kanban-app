@@ -17,9 +17,8 @@ import {
   OptionsBtn,
   EmptySubtask,
   ModalTitle,
-  TagContainer,
-  TagName,
   TagsContainer,
+  TagMark,
 } from './styles'
 import {
   CheckedBox,
@@ -28,6 +27,8 @@ import {
   SelectStatusField,
   StatusContainer,
   StatusSelectorContainer,
+  TagContainer,
+  TagName,
   UncheckedBox,
 } from '@/styles/shared'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
@@ -49,7 +50,7 @@ import { handleApiError } from '@/utils/handleApiError'
 import toast from 'react-hot-toast'
 import { TagProps } from '@/@types/tag'
 import useRequest from '@/utils/useRequest'
-import { Circle, TagsTitle } from '../TagsModal/styles'
+import { TagsTitle } from '../TagsModal/styles'
 import { tagColors } from '@/components/Shared/SelectInput'
 
 interface TaskDetailsModalProps {
@@ -65,24 +66,11 @@ export function TaskDetailsModal({
 }: TaskDetailsModalProps) {
   useEscapeKeyHandler(onClose)
 
-  const { data: tags } = useRequest<TagProps[]>({
-    url: '/tags',
-    method: 'GET',
-  })
-
-  const subtasksCompleted = task?.subtasks?.filter(
-    (subtask: SubtaskProps) => subtask?.isCompleted,
-  )
-
   const [isLoading, setIsLoading] = useState(false)
 
   const [isReordering, setIsReordering] = useState(false)
 
   const [subtasks, setSubtasks] = useState<SubtaskProps[]>([])
-
-  const { activeBoard, mutate } = useBoardsContext()
-
-  const { enableDarkMode } = useTheme()
 
   const [status, setStatus] = useState(column.name)
 
@@ -96,6 +84,19 @@ export function TaskDetailsModal({
 
   const [isStatusOptionsContainerOpen, setIsStatusOptionsContainerOpen] =
     useState(false)
+
+  const { data: tags } = useRequest<TagProps[]>({
+    url: '/tags',
+    method: 'GET',
+  })
+
+  const subtasksCompleted = task?.subtasks?.filter(
+    (subtask: SubtaskProps) => subtask?.isCompleted,
+  )
+
+  const { activeBoard, mutate } = useBoardsContext()
+
+  const { enableDarkMode } = useTheme()
 
   const statusRef = useRef<HTMLDivElement | null>(null)
 
@@ -307,6 +308,7 @@ export function TaskDetailsModal({
                     const tagColor = tagColors.find(
                       (tag) => tag.name === item.color,
                     )?.color
+
                     const isChecked = associatedTags.some(
                       (tag) => tag.id === item.id,
                     )
@@ -326,7 +328,7 @@ export function TaskDetailsModal({
                         )}
                         <TagName>
                           <p>{item.name}</p>
-                          <Circle color={tagColor as string} />
+                          <TagMark color={tagColor as string} />
                         </TagName>
                       </TagContainer>
                     )

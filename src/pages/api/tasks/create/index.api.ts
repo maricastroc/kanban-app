@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth'
 import { buildNextAuthOptions } from '../../auth/[...nextauth].api'
+import { TagProps } from '@/@types/tag'
 
 interface Subtask {
   title: string
@@ -37,7 +38,8 @@ export default async function handler(
       status,
       description,
       subtasks,
-      dueDate, // Adicionado o campo opcional
+      dueDate,
+      tags,
     }: {
       boardId: string
       columnId: string
@@ -45,7 +47,8 @@ export default async function handler(
       status: string
       description: string | null
       subtasks: Subtask[]
-      dueDate?: string // Definido como opcional
+      dueDate?: string
+      tags: TagProps[]
     } = req.body
 
     if (!boardId || !columnId || !title || !subtasks || !status) {
@@ -90,7 +93,7 @@ export default async function handler(
           status,
           order: taskCount + 1,
           columnId,
-          dueDate: formattedDueDate, // Salva a data, se fornecida
+          dueDate: formattedDueDate,
         },
       })
 
@@ -104,6 +107,30 @@ export default async function handler(
         await prisma.subtask.createMany({
           data: subtasksData,
         })
+      }
+
+      if (tags && tags.length > 0) {
+        const tagNames = tags.map((tag) => tag.name)
+
+        const existingTags = await prisma.tag.findMany({
+          where: {
+            userId,
+            name: {
+              in: tagNames,
+            },
+          },
+        })
+
+        const taskTagsData = existingTags.map((tag) => ({
+          taskId: createdTask.id,
+          tagId: tag.id,
+        }))
+
+        if (taskTagsData.length > 0) {
+          await prisma.taskTag.createMany({
+            data: taskTagsData,
+          })
+        }
       }
 
       return res

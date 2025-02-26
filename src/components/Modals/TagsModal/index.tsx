@@ -10,6 +10,7 @@ import {
   HeaderContent,
   ModalOverlay,
   ModalTitle,
+  TagContainer,
 } from '@/styles/shared'
 
 import { Button } from '@/components/Shared/Button'
@@ -20,7 +21,6 @@ import {
   DeleteTagContainer,
   EmptyWarning,
   ModalContent,
-  TagContainer,
   TagName,
   TagsContainer,
   TagsTitle,
@@ -44,13 +44,13 @@ interface Props {
 export function TagsModal({ onClose }: Props) {
   const [isLoading, setIsLoading] = useState(false)
 
-  const { mutate } = useBoardsContext()
-
   const [isTagFormOpen, setIsTagFormOpen] = useState(false)
 
   const [isDeleteTagWarningOpen, setIsDeleteTagWarningOpen] = useState(false)
 
   const [selectedTag, setSelectedTag] = useState<TagProps | null>(null)
+
+  const { mutate } = useBoardsContext()
 
   const { data: tags, mutate: tagsMutate } = useRequest<TagProps[]>({
     url: '/tags',

@@ -4,12 +4,18 @@ import { v4 as uuidv4 } from 'uuid'
 import DatePicker from 'react-datepicker'
 import * as Dialog from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleDown, faAngleUp, faX } from '@fortawesome/free-solid-svg-icons'
+import {
+  faAngleDown,
+  faAngleUp,
+  faCheck,
+  faX,
+} from '@fortawesome/free-solid-svg-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import {
+  CheckedBox,
   CloseButton,
   HeaderContent,
   ModalContent,
@@ -18,6 +24,9 @@ import {
   SelectStatusField,
   StatusContainer,
   StatusSelectorContainer,
+  TagContainer,
+  TagName,
+  UncheckedBox,
 } from '@/styles/shared'
 import { FormContainer } from '@/components/Shared/FormContainer'
 import { InputContainer } from '@/components/Shared/InputContainer'
@@ -49,6 +58,11 @@ import { handleApiError } from '@/utils/handleApiError'
 import toast from 'react-hot-toast'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { useBoardsContext } from '@/contexts/BoardsContext'
+import { TagProps } from '@/@types/tag'
+import { tagColors } from '@/components/Shared/SelectInput'
+import useRequest from '@/utils/useRequest'
+import { TagsTitle } from '../TagsModal/styles'
+import { TagMark } from '../TaskDetailsModal/styles'
 
 const subtaskSchema = z.object({
   id: z.string(),
@@ -90,6 +104,8 @@ export function TaskFormModal({
 
   const [isLoading, setIsLoading] = useState(false)
 
+  const [taskTags, setTaskTags] = useState<TagProps[]>([])
+
   const [subtasks, setSubtasks] = useState<SubtaskProps[]>(
     isEditing && task?.subtasks ? task.subtasks : initialSubtasks,
   )
@@ -103,6 +119,11 @@ export function TaskFormModal({
   )
 
   useEscapeKeyHandler(onClose)
+
+  const { data: tags } = useRequest<TagProps[]>({
+    url: '/tags',
+    method: 'GET',
+  })
 
   const {
     register,
@@ -141,6 +162,7 @@ export function TaskFormModal({
           ...subtask,
           order: index,
         })),
+        tags: taskTags,
       }
 
       const response = isEditing
@@ -155,6 +177,7 @@ export function TaskFormModal({
       setIsLoading(false)
       setSubtasks(initialSubtasks)
       reset()
+      setTaskTags([])
       setTimeout(onClose, 500)
     }
   }
@@ -232,6 +255,19 @@ export function TaskFormModal({
     }
   }, [activeBoard, isEditing])
 
+  useEffect(() => {
+    if (isEditing && task?.tags) {
+      const taskTags = tags?.filter((tag) => {
+        return tag.id
+      })
+
+      const matchedTags = taskTags?.filter((taskTag) => {
+        return task?.tags.some((tag) => tag.tagId === taskTag.id)
+      })
+
+      setTaskTags(matchedTags as TagProps[])
+    }
+  }, [isEditing, task?.tags, tags])
   return (
     <Dialog.Portal>
       <ModalOverlay
@@ -239,6 +275,7 @@ export function TaskFormModal({
         onClick={() => {
           onClose()
           setSubtasks(initialSubtasks)
+          setTaskTags([])
           reset()
         }}
       />
@@ -247,7 +284,14 @@ export function TaskFormModal({
           <ModalTitle className="DialogTitle">
             {isEditing ? 'Edit Task' : 'Add New Task'}
           </ModalTitle>
-          <CloseButton onClick={onClose}>
+          <CloseButton
+            onClick={() => {
+              onClose()
+              setSubtasks(initialSubtasks)
+              setTaskTags([])
+              reset()
+            }}
+          >
             <FontAwesomeIcon icon={faX} />
           </CloseButton>
         </HeaderContent>
@@ -308,7 +352,46 @@ export function TaskFormModal({
             />
           </SubtasksForm>
 
-          <TagsContainer></TagsContainer>
+          <TagsContainer>
+            <TagsTitle>Tags</TagsTitle>
+            {tags &&
+              tags.length > 0 &&
+              tags.map((item) => {
+                const tagColor = tagColors.find(
+                  (tag) => tag.name === item.color,
+                )?.color
+
+                const isChecked = taskTags.some((tag) => tag.id === item.id)
+
+                return (
+                  <TagContainer key={item.id}>
+                    {isChecked ? (
+                      <CheckedBox
+                        type="button"
+                        onClick={() =>
+                          setTaskTags(
+                            taskTags.filter((tag) => tag.id !== item.id),
+                          )
+                        }
+                      >
+                        <FontAwesomeIcon icon={faCheck} />
+                      </CheckedBox>
+                    ) : (
+                      <UncheckedBox
+                        type="button"
+                        onClick={() => {
+                          setTaskTags([...taskTags, item])
+                        }}
+                      />
+                    )}
+                    <TagName>
+                      <p>{item.name}</p>
+                      <TagMark color={tagColor as string} />
+                    </TagName>
+                  </TagContainer>
+                )
+              })}
+          </TagsContainer>
 
           <StatusContainer>
             <CustomLabel>Status</CustomLabel>

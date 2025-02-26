@@ -218,3 +218,33 @@ export const CheckedBox = styled.button`
     box-shadow: none;
   }
 `
+
+export const TagContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem;
+  background-color: ${(props) => props.theme['bg-color']};
+  border-radius: 8px;
+  width: 100%;
+
+  p {
+    color: ${(props) => props.theme['details-color']};
+    font-size: 0.85rem;
+  }
+`
+
+export const TagName = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  gap: 0.5rem;
+
+  p {
+    font-size: 0.75rem;
+    margin-left: 1rem;
+    font-weight: 700;
+    color: ${(props) => props.theme['title-color']};
+  }
+`

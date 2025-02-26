@@ -162,32 +162,22 @@ export const EmptyWarning = styled.p`
 
 export const TagsTitle = styled.p`
   text-align: left;
-  color: ${(props) => props.theme['details-color']};
-  font-size: 0.8rem;
+  font-size: ${(props) => props.theme['body-m']};
   font-weight: 700;
+  color: ${(props) => props.theme['title-color']};
   margin-bottom: 0.35rem;
-`
-
-export const TagContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: transparent;
-  padding: 0.7rem 0.6rem;
-  border: 2px solid ${(props) => props.theme['border-color']};
-  border-radius: 4px;
-  width: 100%;
-
-  p {
-    color: ${(props) => props.theme['details-color']};
-    font-size: 0.85rem;
-  }
 `
 
 export const TagName = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
+
+  p {
+    font-size: ${(props) => props.theme['body-m']};
+    font-weight: 700;
+    color: ${(props) => props.theme['title-color']};
+  }
 `
 
 export const ActionsContainer = styled.div`
