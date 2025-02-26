@@ -57,6 +57,7 @@ export const BoardNameContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
+  margin-right: 0.5rem;
 
   svg {
     color: ${(props) => props.theme['primary-color']};
@@ -79,7 +80,6 @@ export const BoardName = styled.h1`
 
   @media (min-width: 420px) {
     max-width: 42vw;
-    margin-right: 0.5rem;
   }
 
   @media (min-width: 768px) {
