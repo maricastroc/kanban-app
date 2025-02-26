@@ -42,7 +42,22 @@ export default async function handler(
           return res.status(404).json({ message: 'Tag not found' })
         }
 
-        // Atualiza a tag existente
+        const duplicateTag = await prisma.tag.findFirst({
+          where: {
+            name,
+            userId: existingTag.userId,
+            NOT: {
+              id,
+            },
+          },
+        })
+
+        if (duplicateTag) {
+          return res
+            .status(400)
+            .json({ message: 'A tag with this name already exists' })
+        }
+
         const updatedTag = await prisma.tag.update({
           where: { id },
           data: {
@@ -55,7 +70,19 @@ export default async function handler(
           .status(200)
           .json({ message: 'Tag updated successfully', tag: updatedTag })
       } else {
-        // Criação de nova tag
+        const existingTag = await prisma.tag.findFirst({
+          where: {
+            name,
+            userId: String(userId),
+          },
+        })
+
+        if (existingTag) {
+          return res
+            .status(400)
+            .json({ message: 'A tag with this name already exists' })
+        }
+
         const newTag = await prisma.tag.create({
           data: {
             name,

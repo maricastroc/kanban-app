@@ -47,7 +47,6 @@ export default async function handler(
         return res.status(404).json({ message: 'Task not found' })
       }
 
-      // Extrair as tags da resposta (taskWithTags.tags será um array de objetos TaskTag)
       const tags = taskWithTags.tags.map((taskTag) => taskTag.tag)
 
       return res.status(200).json({ tags })
@@ -65,7 +64,6 @@ export default async function handler(
     }
 
     try {
-      // Verifica se a tarefa existe
       const task = await prisma.task.findUnique({
         where: { id: taskId },
       })
@@ -74,7 +72,6 @@ export default async function handler(
         return res.status(404).json({ message: 'Task not found' })
       }
 
-      // Verifica se a tag existe
       const tag = await prisma.tag.findUnique({
         where: { id: tagId },
       })
@@ -83,7 +80,6 @@ export default async function handler(
         return res.status(404).json({ message: 'Tag not found' })
       }
 
-      // Associa a tag à tarefa na tabela TaskTag
       const taskTag = await prisma.taskTag.create({
         data: {
           taskId,
@@ -113,7 +109,6 @@ export default async function handler(
     }
 
     try {
-      // Verifica se a tarefa existe
       const task = await prisma.task.findUnique({
         where: { id: taskId },
       })
@@ -122,7 +117,6 @@ export default async function handler(
         return res.status(404).json({ message: 'Task not found' })
       }
 
-      // Verifica se a tag existe
       const tag = await prisma.tag.findUnique({
         where: { id: tagId },
       })
@@ -131,7 +125,6 @@ export default async function handler(
         return res.status(404).json({ message: 'Tag not found' })
       }
 
-      // Exclui a associação entre a tarefa e a tag na tabela TaskTag
       const deletedTaskTag = await prisma.taskTag.delete({
         where: {
           taskId_tagId: {

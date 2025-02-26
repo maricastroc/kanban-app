@@ -26,7 +26,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { api } from '@/lib/axios'
 import toast from 'react-hot-toast'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useTheme } from 'styled-components'
 import { useLoadingOnRouteChange } from '@/utils/useLoadingOnRouteChange'
@@ -43,6 +43,8 @@ type SignInFormData = z.infer<typeof signInFormSchema>
 
 export default function Login() {
   const { enableDarkMode } = useTheme()
+
+  const [isClient, setIsClient] = useState(false)
 
   const router = useRouter()
 
@@ -90,96 +92,104 @@ export default function Login() {
     }
   }
 
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
   return (
     <>
       <NextSeo title="Kanban App | Register" />
-      <LayoutContainer>
-        <LogoWrapper>
-          <Image src={Logo} width={24} height={24} alt="" />
-          <Image
-            src={
-              enableDarkMode === undefined || enableDarkMode
-                ? LogoTextLight
-                : LogoTextDark
-            }
-            width={112}
-            height={24}
-            alt=""
-          />
-        </LogoWrapper>
-        <LoginCard>
-          <TitleContainer>
-            <h1>Create account</h1>
-            <p>Let’s get you started organizing your tasks!</p>
-          </TitleContainer>
-
-          <FormContainer onSubmit={handleSubmit(onSubmit)}>
-            <InputsContainer>
-              <FormField>
-                <p>Name:</p>
-                <InputContainer>
-                  <IconWrapper>
-                    <User size={16} />
-                  </IconWrapper>
-                  <InputField
-                    type="text"
-                    placeholder="e.g. Jon Doe"
-                    {...register('name')}
-                  />
-                </InputContainer>
-                {errors?.name && <ErrorMessage message={errors.name.message} />}
-              </FormField>
-
-              <FormField>
-                <p>E-mail:</p>
-                <InputContainer>
-                  <IconWrapper>
-                    <Envelope size={16} />
-                  </IconWrapper>
-                  <InputField
-                    type="email"
-                    placeholder="e.g. jondoe@gmail.com"
-                    {...register('email')}
-                  />
-                </InputContainer>
-                {errors?.email && (
-                  <ErrorMessage message={errors.email.message} />
-                )}
-              </FormField>
-
-              <FormField>
-                <p>Password:</p>
-                <InputContainer>
-                  <IconWrapper>
-                    <LockKey size={16} />
-                  </IconWrapper>
-                  <InputField
-                    type="password"
-                    placeholder="Enter your password"
-                    {...register('password')}
-                  />
-                </InputContainer>
-                {errors?.password && (
-                  <ErrorMessage message={errors.password.message} />
-                )}
-              </FormField>
-            </InputsContainer>
-
-            <Button
-              isBigger
-              disabled={isSubmitting || isLoading}
-              title="Sign Up"
+      {isClient && (
+        <LayoutContainer>
+          <LogoWrapper>
+            <Image src={Logo} width={24} height={24} alt="" />
+            <Image
+              src={
+                enableDarkMode === undefined || enableDarkMode
+                  ? LogoTextLight
+                  : LogoTextDark
+              }
+              width={112}
+              height={24}
+              alt=""
             />
+          </LogoWrapper>
+          <LoginCard>
+            <TitleContainer>
+              <h1>Create account</h1>
+              <p>Let’s get you started organizing your tasks!</p>
+            </TitleContainer>
 
-            <CreateAccountContainer>
-              <p>Already have an account?</p>
-              <Link href="/login">Login</Link>
-            </CreateAccountContainer>
-          </FormContainer>
-        </LoginCard>
+            <FormContainer onSubmit={handleSubmit(onSubmit)}>
+              <InputsContainer>
+                <FormField>
+                  <p>Name:</p>
+                  <InputContainer>
+                    <IconWrapper>
+                      <User size={16} />
+                    </IconWrapper>
+                    <InputField
+                      type="text"
+                      placeholder="e.g. Jon Doe"
+                      {...register('name')}
+                    />
+                  </InputContainer>
+                  {errors?.name && (
+                    <ErrorMessage message={errors.name.message} />
+                  )}
+                </FormField>
 
-        {(isLoading || isRouteLoading) && <LoadingComponent />}
-      </LayoutContainer>
+                <FormField>
+                  <p>E-mail:</p>
+                  <InputContainer>
+                    <IconWrapper>
+                      <Envelope size={16} />
+                    </IconWrapper>
+                    <InputField
+                      type="email"
+                      placeholder="e.g. jondoe@gmail.com"
+                      {...register('email')}
+                    />
+                  </InputContainer>
+                  {errors?.email && (
+                    <ErrorMessage message={errors.email.message} />
+                  )}
+                </FormField>
+
+                <FormField>
+                  <p>Password:</p>
+                  <InputContainer>
+                    <IconWrapper>
+                      <LockKey size={16} />
+                    </IconWrapper>
+                    <InputField
+                      type="password"
+                      placeholder="Enter your password"
+                      {...register('password')}
+                    />
+                  </InputContainer>
+                  {errors?.password && (
+                    <ErrorMessage message={errors.password.message} />
+                  )}
+                </FormField>
+              </InputsContainer>
+
+              <Button
+                isBigger
+                disabled={isSubmitting || isLoading}
+                title="Sign Up"
+              />
+
+              <CreateAccountContainer>
+                <p>Already have an account?</p>
+                <Link href="/login">Login</Link>
+              </CreateAccountContainer>
+            </FormContainer>
+          </LoginCard>
+
+          {(isLoading || isRouteLoading) && <LoadingComponent />}
+        </LayoutContainer>
+      )}
     </>
   )
 }

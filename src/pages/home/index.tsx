@@ -174,81 +174,83 @@ export default function Home() {
       <NextSeo title="Kanban App | Dashboard" />
       {isClient && (
         <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="all-columns" direction="horizontal">
-          {(provided) => (
-            <LayoutContainer
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-            >
-              <BoardContent>
-                {!isSmallerThanSm && (
-                  <Sidebar
-                    className={!hideSidebar ? '' : 'hidden'}
-                    onClose={() => setHideSidebar(true)}
-                  />
-                )}
-                <Wrapper>
-                  <Header hideSidebar={hideSidebar} />
-                  <ColumnsContainer
-                    ref={columnsContainerRef}
-                    onMouseDown={handleContainerMouseDown}
-                    onMouseUp={handleMouseUp}
-                    onMouseLeave={handleMouseUp}
-                    onMouseMove={handleMouseMove}
-                  >
-                    {activeBoard ? (
-                      <>
-                        {boardColumns?.map(
-                          (column: BoardColumnProps, index: number) => (
-                            <BoardColumn
-                              id={column.id}
-                              column={column}
-                              key={index}
-                              name={column.name}
-                              tasks={column.tasks.map((task) => ({
-                                ...task,
-                                isDragDisabled: isLoading,
-                              }))}
-                              index={index}
-                            />
-                          ),
-                        )}
-
-                        {boardColumns && boardColumns?.length < 6 && (
-                          <Dialog.Root open={isColumnFormModalOpen}>
-                            <Dialog.Trigger asChild>
-                              <AddColumnContainer
-                                className={enableDarkMode ? 'dark' : 'light'}
-                                onClick={() => setIsColumnFormModalOpen(true)}
-                              >
-                                <AddColumnBtn>+ New Column</AddColumnBtn>
-                              </AddColumnContainer>
-                            </Dialog.Trigger>
-                            {isColumnFormModalOpen && (
-                              <ColumnFormModal
-                                onClose={() => setIsColumnFormModalOpen(false)}
+          <Droppable droppableId="all-columns" direction="horizontal">
+            {(provided) => (
+              <LayoutContainer
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                <BoardContent>
+                  {!isSmallerThanSm && (
+                    <Sidebar
+                      className={!hideSidebar ? '' : 'hidden'}
+                      onClose={() => setHideSidebar(true)}
+                    />
+                  )}
+                  <Wrapper>
+                    <Header hideSidebar={hideSidebar} />
+                    <ColumnsContainer
+                      ref={columnsContainerRef}
+                      onMouseDown={handleContainerMouseDown}
+                      onMouseUp={handleMouseUp}
+                      onMouseLeave={handleMouseUp}
+                      onMouseMove={handleMouseMove}
+                    >
+                      {activeBoard ? (
+                        <>
+                          {boardColumns?.map(
+                            (column: BoardColumnProps, index: number) => (
+                              <BoardColumn
+                                id={column.id}
+                                column={column}
+                                key={index}
+                                name={column.name}
+                                tasks={column.tasks.map((task) => ({
+                                  ...task,
+                                  isDragDisabled: isLoading,
+                                }))}
+                                index={index}
                               />
-                            )}
-                          </Dialog.Root>
-                        )}
-                      </>
-                    ) : (
-                      boards && <EmptyContainer />
-                    )}
-                  </ColumnsContainer>
-                </Wrapper>
-                {hideSidebar && (
-                  <ShowSidebarBtn onClick={() => setHideSidebar(false)}>
-                    <Image src={HideSidebar} alt="" />
-                  </ShowSidebarBtn>
-                )}
-              </BoardContent>
-            </LayoutContainer>
-          )}
-        </Droppable>
+                            ),
+                          )}
 
-        {(isLoading || isReordering || !boards) && <LoadingComponent />}
-      </DragDropContext>
+                          {boardColumns && boardColumns?.length < 6 && (
+                            <Dialog.Root open={isColumnFormModalOpen}>
+                              <Dialog.Trigger asChild>
+                                <AddColumnContainer
+                                  className={enableDarkMode ? 'dark' : 'light'}
+                                  onClick={() => setIsColumnFormModalOpen(true)}
+                                >
+                                  <AddColumnBtn>+ New Column</AddColumnBtn>
+                                </AddColumnContainer>
+                              </Dialog.Trigger>
+                              {isColumnFormModalOpen && (
+                                <ColumnFormModal
+                                  onClose={() =>
+                                    setIsColumnFormModalOpen(false)
+                                  }
+                                />
+                              )}
+                            </Dialog.Root>
+                          )}
+                        </>
+                      ) : (
+                        boards && <EmptyContainer />
+                      )}
+                    </ColumnsContainer>
+                  </Wrapper>
+                  {hideSidebar && (
+                    <ShowSidebarBtn onClick={() => setHideSidebar(false)}>
+                      <Image src={HideSidebar} alt="" />
+                    </ShowSidebarBtn>
+                  )}
+                </BoardContent>
+              </LayoutContainer>
+            )}
+          </Droppable>
+
+          {(isLoading || isReordering || !boards) && <LoadingComponent />}
+        </DragDropContext>
       )}
     </>
   )

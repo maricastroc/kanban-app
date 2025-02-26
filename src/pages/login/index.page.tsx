@@ -43,6 +43,8 @@ type SignInFormData = z.infer<typeof signInFormSchema>
 export default function Login() {
   const { enableDarkMode } = useTheme()
 
+  const [isClient, setIsClient] = useState(false)
+
   const { status } = useSession()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -91,86 +93,96 @@ export default function Login() {
     }
   }, [status, router])
 
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
   return (
     <>
       <NextSeo title="Kanban App | Login" />
-      <LayoutContainer>
-        <LogoWrapper>
-          <Image src={Logo} width={24} height={24} alt="" />
-          <Image
-            src={
-              enableDarkMode === undefined || enableDarkMode
-                ? LogoTextLight
-                : LogoTextDark
-            }
-            height={24}
-            alt=""
-          />
-        </LogoWrapper>
-        <LoginCard>
-          <TitleContainer>
-            <h1>Login</h1>
-            <p>Add your details below to get back into the app</p>
-          </TitleContainer>
-
-          <FormContainer onSubmit={handleSubmit(onSubmit)}>
-            <InputsContainer>
-              <FormField>
-                <p>E-mail:</p>
-                <InputContainer>
-                  <IconWrapper>
-                    <Envelope size={16} />
-                  </IconWrapper>
-                  <InputField
-                    type="email"
-                    placeholder="e.g. jondoe@gmail.com"
-                    {...register('email')}
-                  />
-                </InputContainer>
-                {errors?.email && (
-                  <ErrorMessage message={errors.email.message} />
-                )}
-              </FormField>
-
-              <FormField>
-                <p>Password:</p>
-                <InputContainer>
-                  <IconWrapper>
-                    <LockKey size={16} />
-                  </IconWrapper>
-                  <InputField
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter your password"
-                    {...register('password')}
-                  />
-                  <PasswordIconWrapper
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeSlash size={16} /> : <Eye size={16} />}
-                  </PasswordIconWrapper>
-                </InputContainer>
-                {errors?.password && (
-                  <ErrorMessage message={errors.password.message} />
-                )}
-              </FormField>
-            </InputsContainer>
-
-            <Button
-              isBigger
-              disabled={isSubmitting || isLoading}
-              title="Login"
+      {isClient && (
+        <LayoutContainer>
+          <LogoWrapper>
+            <Image src={Logo} width={24} height={24} alt="" />
+            <Image
+              src={
+                enableDarkMode === undefined || enableDarkMode
+                  ? LogoTextLight
+                  : LogoTextDark
+              }
+              height={24}
+              alt=""
             />
+          </LogoWrapper>
+          <LoginCard>
+            <TitleContainer>
+              <h1>Login</h1>
+              <p>Add your details below to get back into the app</p>
+            </TitleContainer>
 
-            <CreateAccountContainer>
-              <p>Don&apos;t have an account?</p>
-              <Link href="/register">Create account</Link>
-            </CreateAccountContainer>
-          </FormContainer>
-        </LoginCard>
+            <FormContainer onSubmit={handleSubmit(onSubmit)}>
+              <InputsContainer>
+                <FormField>
+                  <p>E-mail:</p>
+                  <InputContainer>
+                    <IconWrapper>
+                      <Envelope size={16} />
+                    </IconWrapper>
+                    <InputField
+                      type="email"
+                      placeholder="e.g. jondoe@gmail.com"
+                      {...register('email')}
+                    />
+                  </InputContainer>
+                  {errors?.email && (
+                    <ErrorMessage message={errors.email.message} />
+                  )}
+                </FormField>
 
-        {(isLoading || isRouteLoading) && <LoadingComponent />}
-      </LayoutContainer>
+                <FormField>
+                  <p>Password:</p>
+                  <InputContainer>
+                    <IconWrapper>
+                      <LockKey size={16} />
+                    </IconWrapper>
+                    <InputField
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Enter your password"
+                      {...register('password')}
+                    />
+                    <PasswordIconWrapper
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeSlash size={16} />
+                      ) : (
+                        <Eye size={16} />
+                      )}
+                    </PasswordIconWrapper>
+                  </InputContainer>
+                  {errors?.password && (
+                    <ErrorMessage message={errors.password.message} />
+                  )}
+                </FormField>
+              </InputsContainer>
+
+              <Button
+                isBigger
+                disabled={isSubmitting || isLoading}
+                title="Login"
+              />
+
+              <CreateAccountContainer>
+                <p>Don&apos;t have an account?</p>
+                <Link href="/register">Create account</Link>
+              </CreateAccountContainer>
+            </FormContainer>
+          </LoginCard>
+
+          {(isLoading || isRouteLoading) && <LoadingComponent />}
+        </LayoutContainer>
+      )}
     </>
   )
 }

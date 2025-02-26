@@ -164,7 +164,7 @@ export function TagsModal({ onClose }: Props) {
         {!isTagFormOpen &&
           !isDeleteTagWarningOpen &&
           tags &&
-          tags?.length < 6 && (
+          tags?.length < 8 && (
             <Button
               title={'Add New Tag'}
               type="button"
