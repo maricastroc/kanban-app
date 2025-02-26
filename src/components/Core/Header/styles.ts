@@ -126,7 +126,7 @@ export const ActionBtn = styled.button`
 
       p,
       svg {
-        color: ${(props) => props.theme['tags-btn-color']};
+        color: ${(props) => props.theme['primary-color']};
       }
     }
   }

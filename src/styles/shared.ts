@@ -168,6 +168,7 @@ export const StatusContainer = styled.div`
   flex-direction: column;
   width: 100%;
   margin-top: 1rem;
+  margin-bottom: 0.5rem;
 `
 
 export const Loader = styled.div`

@@ -92,6 +92,9 @@ export default async function handler(
         include: {
           columns: true,
         },
+        orderBy: {
+          createdAt: 'desc',
+        },
       })
 
       return res.status(200).json({

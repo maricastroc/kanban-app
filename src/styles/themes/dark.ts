@@ -35,7 +35,7 @@ export const darkTheme = {
 
   'completed-color': '#67E2AE',
   'overdue-color': '#ce524e',
-  'due-soon-color': '#e8b442',
+  'due-soon-color': '#fcc447',
 
   ...baseFontSizes,
 }
