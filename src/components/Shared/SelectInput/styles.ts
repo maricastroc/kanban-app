@@ -25,6 +25,7 @@ export const Trigger = styled(SelectTrigger)`
   border: solid 2px ${(props) => props.theme['border-color']};
   border-radius: 4px;
   padding: 0.5rem 1rem;
+  cursor: pointer;
 `
 
 export const Value = styled(SelectValue)`
@@ -61,7 +62,7 @@ export const Icon = styled(SelectIcon)`
 export const Content = styled(SelectContent)`
   z-index: 10000;
   width: 250px;
-  height: 10rem;
+  height: 15rem;
   overflow-y: scroll;
   margin-top: 0.25rem;
   background-color: ${(props) => props.theme['bg-color']};

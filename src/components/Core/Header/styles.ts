@@ -118,7 +118,7 @@ export const ActionBtn = styled.button`
   }
 
   &.secondary {
-    margin-right: 0.7rem;
+    margin-right: 0.5rem;
 
     &:hover {
       transition: 200ms;
@@ -153,7 +153,7 @@ export const ActionBtn = styled.button`
       background-color: transparent;
       border: solid 1px ${(props) => props.theme['primary-color']};
       gap: 0.5rem;
-      padding-right: 0;
+      margin-right: 0;
 
       p {
         color: ${(props) => props.theme['primary-hover']};

@@ -114,7 +114,7 @@ export function TagForm({
       </SelectWrapper>
 
       <Button
-        title={isEdit ? 'Edit Tag' : 'Create Tag'}
+        title={isEdit ? 'Save Changes' : 'Add New Tag'}
         type="submit"
         disabled={isSubmitting}
       />

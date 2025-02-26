@@ -176,7 +176,10 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
           defaultValue={column.name}
           placeholder="e.g. New Column"
           onChange={(e) => handleChangeColumn(index, e.target.value)}
-          onClick={() => handleRemoveColumn(index)}
+          onClick={() => {
+            const existingColumn = activeBoard?.columns?.some(boardColumn => boardColumn.id === column.id);
+            !existingColumn && handleRemoveColumn(index)
+          }}
         />
         {<ErrorMessage message={error} />}
       </FieldsContainer>
@@ -218,6 +221,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
             {boardColumns.length < 6 && (
               <Button
                 variant="secondary"
+                type='button'
                 title="+ Add New Column"
                 onClick={handleAddColumn}
               />

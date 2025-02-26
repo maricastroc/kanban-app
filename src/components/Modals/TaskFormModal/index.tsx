@@ -118,7 +118,7 @@ export function TaskFormModal({
       id: uuidv4(),
       title: task?.title ?? '',
       description: task?.description ?? '',
-      dueDate: task?.dueDate ?? undefined,
+      dueDate: task?.dueDate ? new Date(task.dueDate) : undefined,
       status,
       subtasks,
     },
@@ -212,7 +212,7 @@ export function TaskFormModal({
           btnVariant={subtasks.length > 1 ? '' : 'disabled'}
           onChange={(e) => handleChangeSubtask(index, e.target.value)}
           onClick={() => {
-            handleRemoveSubtask(index)
+            subtasks?.length > 1 ? handleRemoveSubtask(index) : toast.error('Task must have at least one subtask.')
           }}
         />
         {error && <ErrorMessage message={error} />}
@@ -298,6 +298,7 @@ export function TaskFormModal({
             </SubtasksWrapper>
             <Button
               variant="secondary"
+              type='button'
               title="+ Add New Subtask"
               onClick={handleAddSubtask}
             />

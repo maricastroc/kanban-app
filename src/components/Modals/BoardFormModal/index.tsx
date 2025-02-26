@@ -186,7 +186,13 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
           defaultValue={column.name}
           placeholder="e.g. New Column"
           onChange={(e) => handleChangeColumn(index, e.target.value)}
-          onClick={() => handleRemoveColumn(index)}
+          onClick={() => {
+            if (boardColumns?.length > 1) {
+              handleRemoveColumn(index)
+            } else {
+              toast.error('Board needs to have at least one column.')
+            }
+          }}
         />
         {<ErrorMessage message={error} />}
       </FieldsContainer>
@@ -235,6 +241,7 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
             {boardColumns.length < MAX_COLUMNS && (
               <Button
                 variant="secondary"
+                type='button'
                 title="+ Add New Column"
                 onClick={handleAddColumn}
               />
