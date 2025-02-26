@@ -212,7 +212,11 @@ export function TaskFormModal({
           btnVariant={subtasks.length > 1 ? '' : 'disabled'}
           onChange={(e) => handleChangeSubtask(index, e.target.value)}
           onClick={() => {
-            subtasks?.length > 1 ? handleRemoveSubtask(index) : toast.error('Task must have at least one subtask.')
+            if (subtasks?.length > 1) {
+              handleRemoveSubtask(index)
+            } else {
+              toast.error('Task must have at least one subtask.')
+            }
           }}
         />
         {error && <ErrorMessage message={error} />}
@@ -298,7 +302,7 @@ export function TaskFormModal({
             </SubtasksWrapper>
             <Button
               variant="secondary"
-              type='button'
+              type="button"
               title="+ Add New Subtask"
               onClick={handleAddSubtask}
             />
