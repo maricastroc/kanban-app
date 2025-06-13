@@ -13,7 +13,7 @@ export function handleApiError(error: unknown) {
     ) {
       errorMessage = Object.values(error.response.data.message).join(', ')
     }
-console.log(error)
+    console.log(error)
     toast?.error(errorMessage)
   } else {
     console.log(error)

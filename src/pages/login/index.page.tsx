@@ -1,6 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react'
 import { NextSeo } from 'next-seo'
-import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import Logo from '@/../public/icon.svg'
 import LogoTextLight from '@/../public/kanban.svg'
@@ -44,7 +44,7 @@ type SignInFormData = z.infer<typeof signInFormSchema>
 export default function Login() {
   const { enableDarkMode } = useTheme()
 
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -90,15 +90,15 @@ export default function Login() {
     }
   }
 
-useEffect(() => {
-  const token = localStorage.getItem('auth_token');
+  useEffect(() => {
+    const token = localStorage.getItem('auth_token')
 
-  if (token) {
-    router.replace('/');
-  } else {
-    setIsCheckingAuth(false);
-  }
-}, []);
+    if (token) {
+      router.replace('/')
+    } else {
+      setIsCheckingAuth(false)
+    }
+  }, [])
 
   return (
     <>

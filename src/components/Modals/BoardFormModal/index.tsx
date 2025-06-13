@@ -38,12 +38,12 @@ interface BoardModalProps {
 }
 
 const columnSchema = z.object({
-id: z.number().or(z.string()),
+  id: z.number().or(z.string()),
   name: z.string().min(3, { message: 'Column name is required' }),
 })
 
 const formSchema = z.object({
-id: z.number().or(z.string()),
+  id: z.number().or(z.string()),
   name: z
     .string()
     .min(MIN_BOARD_NAME_LENGTH, { message: 'Board title is required' }),
@@ -58,7 +58,8 @@ id: z.number().or(z.string()),
 export type FormData = z.infer<typeof formSchema>
 
 export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
-  const { activeBoard, boardsMutate, handleChangeActiveBoard } = useBoardsContext()
+  const { activeBoard, boardsMutate, handleChangeActiveBoard } =
+    useBoardsContext()
 
   const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>(
     activeBoard?.columns || [

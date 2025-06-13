@@ -1,6 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BoardProps } from '@/@types/board'
-import { api } from '@/lib/axios'
-import { handleApiError } from '@/utils/handleApiError'
 import useRequest from '@/utils/useRequest'
 import { AxiosResponse } from 'axios'
 import {
@@ -62,7 +61,6 @@ export function BoardsContextProvider({
     setIsLoading(value)
   }
 
-  // Lê boards do localStorage ao montar (só no client)
   useEffect(() => {
     if (typeof window === 'undefined') return
 
@@ -85,7 +83,6 @@ export function BoardsContextProvider({
     }
   }, [])
 
-  // SWR para buscar boards (com fallback para não revalidar na montagem)
   const {
     data: boardsData,
     mutate: boardsMutate,
@@ -97,11 +94,9 @@ export function BoardsContextProvider({
     },
     {
       revalidateOnFocus: false,
-      // fallbackData: boards ?? undefined // opcional, se seu useRequest aceitar fallbackData
     },
   )
 
-  // SWR para buscar activeBoard
   const {
     data: activeBoardData,
     mutate: activeBoardMutate,
@@ -113,11 +108,9 @@ export function BoardsContextProvider({
     },
     {
       revalidateOnFocus: false,
-      // fallbackData: activeBoard ?? undefined
     },
   )
 
-  // Atualiza estado e localStorage quando boards chegam da API
   useEffect(() => {
     if (boardsData?.boards) {
       setBoards(boardsData.boards)
@@ -125,7 +118,6 @@ export function BoardsContextProvider({
     }
   }, [boardsData])
 
-  // Atualiza estado e localStorage quando activeBoard chega da API
   useEffect(() => {
     if (activeBoardData?.board) {
       setActiveBoard(activeBoardData.board)
@@ -133,11 +125,10 @@ export function BoardsContextProvider({
     }
   }, [activeBoardData])
 
-  // Função para trocar activeBoard manualmente (ex: clique do usuário)
   const handleChangeActiveBoard = async (board: BoardProps) => {
     setActiveBoard(board)
     localStorage.setItem('activeBoard', JSON.stringify(board))
-    // Aqui você pode querer disparar uma revalidação do activeBoard também
+
     await activeBoardMutate()
   }
 

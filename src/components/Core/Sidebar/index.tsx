@@ -39,23 +39,24 @@ interface SidebarProps {
 export function Sidebar({ onClose, className }: SidebarProps) {
   const { toggleTheme, enableDarkMode } = useTheme()
 
-  const { handleChangeActiveBoard, handleSetIsLoading, activeBoard, boards, } = useBoardsContext()
+  const { handleChangeActiveBoard, handleSetIsLoading, activeBoard, boards } =
+    useBoardsContext()
 
   const [isAddBoardModalOpen, setIsAddBoardModalOpen] = useState(false)
 
-const handleActivateBoard = async (board: BoardProps) => {
-  try {
-    handleSetIsLoading(true)
+  const handleActivateBoard = async (board: BoardProps) => {
+    try {
+      handleSetIsLoading(true)
 
-    const response = await api.patch(`boards/${board.id}/activate`)
-    
-    handleChangeActiveBoard(response.data.data.board)
-  } catch (error) {
-    handleApiError(error)
-  } finally {
-    handleSetIsLoading(false)
+      const response = await api.patch(`boards/${board.id}/activate`)
+
+      handleChangeActiveBoard(response.data.data.board)
+    } catch (error) {
+      handleApiError(error)
+    } finally {
+      handleSetIsLoading(false)
+    }
   }
-}
 
   return (
     <Container className={className}>

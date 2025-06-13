@@ -38,14 +38,14 @@ interface ColumnFormModalProps {
 }
 
 const columnSchema = z.object({
-id: z.number().or(z.string()),
+  id: z.number().or(z.string()),
   name: z.string().min(3, {
     message: 'Column Name must have at least three characters',
   }),
 })
 
 const formSchema = z.object({
-id: z.number().or(z.string()),
+  id: z.number().or(z.string()),
   name: z.string().min(3, { message: 'Title is required' }),
   columns: z
     .array(columnSchema)

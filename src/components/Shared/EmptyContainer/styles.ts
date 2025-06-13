@@ -39,4 +39,3 @@ export const ButtonContent = styled.div`
     color: ${(props) => props.theme['details-color']};
   }
 `
-

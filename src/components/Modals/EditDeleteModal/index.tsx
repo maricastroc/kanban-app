@@ -6,7 +6,6 @@ import { DeleteModal } from '../DeleteModal'
 import { BoardFormModal } from '../BoardFormModal'
 import { useTheme } from '@/contexts/ThemeContext'
 import { SignOut } from 'phosphor-react'
-import { signOut } from 'next-auth/react'
 import toast from 'react-hot-toast'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { api } from '@/lib/axios'
@@ -46,20 +45,19 @@ export function EditDeleteModal({ onClose }: EditDeleteModalProps) {
     onClose()
   }
 
-const handleLogout = async () => {
-  try {
-    await api.get('/logout')
-    
-    localStorage.removeItem('auth_token')
-    
-    toast.success('See you soon!')
+  const handleLogout = async () => {
+    try {
+      await api.get('/logout')
 
-    route.push('/login')
+      localStorage.removeItem('auth_token')
 
-  } catch (error) {
-    handleApiError(error)
+      toast.success('See you soon!')
+
+      route.push('/login')
+    } catch (error) {
+      handleApiError(error)
+    }
   }
-}
   return (
     <Dialog.Portal>
       <Dialog.Overlay onClick={onClose} />

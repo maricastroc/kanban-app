@@ -2,12 +2,7 @@ import { RefObject, useRef, useState } from 'react'
 import DatePicker from 'react-datepicker'
 import * as Dialog from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faAngleDown,
-  faAngleUp,
-  faX,
-} from '@fortawesome/free-solid-svg-icons'
-import { z } from 'zod'
+import { faAngleDown, faAngleUp, faX } from '@fortawesome/free-solid-svg-icons'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import {
   CloseButton,
@@ -38,34 +33,12 @@ import {
   SubtasksForm,
   SubtasksWrapper,
 } from './styles'
-import { MIN_SUBTASKS, MIN_TITLE_LENGTH } from '@/utils/constants'
 
 import { SubtaskProps } from '@/@types/subtask'
 import { TaskProps } from '@/@types/task'
 import toast from 'react-hot-toast'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
-import { TagProps } from '@/@types/tag'
-import useRequest from '@/utils/useRequest'
 import { useTaskForm } from '@/hooks/useTaskForm'
-
-const subtaskSchema = z.object({
-id: z.number().or(z.string()),
-  name: z.string().min(3, { message: 'Subtask title must have at least 3 characters' }),
-  is_completed: z.boolean(),
-})
-
-const formSchema = z.object({
-id: z.number().or(z.string()),
-  name: z.string().min(MIN_TITLE_LENGTH, { message: 'Title is required' }),
-  description: z.string().optional(),
-  subtasks: z
-    .array(subtaskSchema)
-    .min(MIN_SUBTASKS, { message: 'At least one subtask is required' }),
-  status: z.string(),
-  dueDate: z.date().optional(),
-})
-
-export type FormData = z.infer<typeof formSchema>
 
 interface AddTaskModalProps {
   isEditing?: boolean
@@ -79,7 +52,7 @@ export function TaskFormModal({
   task,
 }: AddTaskModalProps) {
   const statusRef = useRef<HTMLDivElement | null>(null)
-  
+
   const [isOptionsContainerOpen, setIsOptionsContainerOpen] = useState(false)
 
   const {
@@ -101,7 +74,7 @@ export function TaskFormModal({
   } = useTaskForm({ isEditing, task, onClose })
 
   useOutsideClick(statusRef as RefObject<HTMLElement>, () =>
-    setIsOptionsContainerOpen(false)
+    setIsOptionsContainerOpen(false),
   )
 
   useEscapeKeyHandler(onClose)
@@ -147,11 +120,11 @@ export function TaskFormModal({
             <FontAwesomeIcon icon={faX} />
           </CloseButton>
         </HeaderContent>
-        
+
         <VisuallyHidden>
           <Dialog.Description />
         </VisuallyHidden>
-        
+
         <FormContainer onSubmit={handleSubmit(handleSubmitTask)}>
           <InputContainer>
             <CustomLabel htmlFor="title">Title</CustomLabel>
@@ -196,7 +169,12 @@ export function TaskFormModal({
                 </div>
               ))}
 
-                          {<ErrorMessage style={{ marginTop: '-0.5rem' }} message={errors?.subtasks?.message} />}
+              {
+                <ErrorMessage
+                  style={{ marginTop: '-0.5rem' }}
+                  message={errors?.subtasks?.message}
+                />
+              }
             </SubtasksWrapper>
             <Button
               variant="secondary"
@@ -206,7 +184,7 @@ export function TaskFormModal({
             />
           </SubtasksForm>
 
-          {/*<TagsContainer>
+          {/* <TagsContainer>
             <TagsTitle>Tags</TagsTitle>
             {tags?.map((item) => {
               const tagColor = tagColors.find(tag => tag.name === item.color)?.color
@@ -234,13 +212,13 @@ export function TaskFormModal({
                 </TagContainer>
               )
             })}
-          </TagsContainer>*/}
+          </TagsContainer> */}
 
           <StatusContainer>
             <CustomLabel>Status</CustomLabel>
             <SelectStatusField
               className={isOptionsContainerOpen ? 'active' : ''}
-              onClick={() => setIsOptionsContainerOpen(prev => !prev)}
+              onClick={() => setIsOptionsContainerOpen((prev) => !prev)}
             >
               <p>{status}</p>
               <FontAwesomeIcon

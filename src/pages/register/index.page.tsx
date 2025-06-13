@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useRouter } from 'next/router'
 import Logo from '@/../public/icon.svg'
 import LogoTextLight from '@/../public/kanban.svg'
@@ -27,7 +28,6 @@ import Link from 'next/link'
 import { api } from '@/lib/axios'
 import toast from 'react-hot-toast'
 import { useEffect, useState } from 'react'
-import { signIn } from 'next-auth/react'
 import { useTheme } from 'styled-components'
 import { useLoadingOnRouteChange } from '@/utils/useLoadingOnRouteChange'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
@@ -44,7 +44,7 @@ type SignInFormData = z.infer<typeof signInFormSchema>
 export default function Login() {
   const { enableDarkMode } = useTheme()
 
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
 
   const router = useRouter()
 
@@ -66,16 +66,16 @@ export default function Login() {
 
     try {
       const response = await api.post('/register', {
-      name: data.name,
-      email: data.email,
-      password: data.password,
-      password_confirmation: data.password,
-    })
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        password_confirmation: data.password,
+      })
 
-    if (response.data) {
-      toast.success(response.data.message)
-      router.push('/login')
-    }
+      if (response.data) {
+        toast.success(response.data.message)
+        router.push('/login')
+      }
     } catch (error) {
       handleApiError(error)
     } finally {
@@ -83,15 +83,15 @@ export default function Login() {
     }
   }
 
-useEffect(() => {
-  const token = localStorage.getItem('auth_token');
+  useEffect(() => {
+    const token = localStorage.getItem('auth_token')
 
-  if (token) {
-    router.replace('/');
-  } else {
-    setIsCheckingAuth(false);
-  }
-}, []);
+    if (token) {
+      router.replace('/')
+    } else {
+      setIsCheckingAuth(false)
+    }
+  }, [])
 
   return (
     <>

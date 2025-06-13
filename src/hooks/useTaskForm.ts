@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { handleApiError } from '@/utils/handleApiError'
 import { toast } from 'react-toastify'
-import { TagProps } from '@/@types/tag'
 import { SubtaskProps } from '@/@types/subtask'
 import { MIN_SUBTASKS, MIN_TITLE_LENGTH } from '@/utils/constants'
 import { z } from 'zod'
@@ -26,14 +25,19 @@ const initialSubtasks = [
 ]
 
 const subtaskSchema = z.object({
-id: z.number().or(z.string()),
+  id: z.number().or(z.string()),
   name: z.string().min(1, { message: 'Subtask title is required' }),
   is_completed: z.boolean(),
 })
 
-export const useTaskForm = ({ isEditing = false, task, onClose }: AddTaskModalProps) => {
-  const { activeBoard, activeBoardMutate, handleChangeActiveBoard } = useBoardsContext()
-  
+export const useTaskForm = ({
+  isEditing = false,
+  task,
+  onClose,
+}: AddTaskModalProps) => {
+  const { activeBoard, activeBoardMutate, handleChangeActiveBoard } =
+    useBoardsContext()
+
   const [isLoading, setIsLoading] = useState(false)
 
   const [columnId, setColumnId] = useState<string | number | undefined>()
@@ -41,48 +45,57 @@ export const useTaskForm = ({ isEditing = false, task, onClose }: AddTaskModalPr
   const [taskTags, setTaskTags] = useState<TaskTagProps[]>([])
 
   const [subtasks, setSubtasks] = useState<SubtaskProps[]>(
-    isEditing && task?.subtasks ? task.subtasks : initialSubtasks
+    isEditing && task?.subtasks ? task.subtasks : initialSubtasks,
   )
-  const [status, setStatus] = useState(isEditing && task?.status ? task.status : '')
+  const [status, setStatus] = useState(
+    isEditing && task?.status ? task.status : '',
+  )
 
-const formSchema = z
-  .object({
-    id: z.number().or(z.string()),
-    name: z.string().min(MIN_TITLE_LENGTH, { message: 'Title is required' }),
-    description: z.string().optional(),
-    subtasks: z
-      .array(subtaskSchema)
-      .min(MIN_SUBTASKS, { message: 'At least one subtask is required' }),
-    status: z.string(),
-    dueDate: z.date().optional(),
-  })
-  // Validação de nomes únicos das subtasks aplicada no objeto inteiro:
-  .refine((data) => {
-    const names = data.subtasks.map(s => s.name.trim().toLowerCase())
-    const uniqueNames = new Set(names)
-    return uniqueNames.size === names.length
-  }, {
-    message: 'Subtask names must be unique',
-    path: ['subtasks'], // aqui o erro vai para errors.subtasks.message mesmo
-  })
-  .refine((data) => {
-    if (!activeBoard) return true
-
-    const column = activeBoard.columns.find((col) => col.name === data.status)
-    if (!column) return true
-
-    const taskAlreadyExists = column.tasks?.some((t) => {
-      const isSameName = t.name.trim().toLowerCase() === data.name.trim().toLowerCase()
-      const isSameTask = isEditing && t.uuid === task?.uuid
-      return isSameName && !isSameTask
+  const formSchema = z
+    .object({
+      id: z.number().or(z.string()),
+      name: z.string().min(MIN_TITLE_LENGTH, { message: 'Title is required' }),
+      description: z.string().optional(),
+      subtasks: z
+        .array(subtaskSchema)
+        .min(MIN_SUBTASKS, { message: 'At least one subtask is required' }),
+      status: z.string(),
+      dueDate: z.date().optional(),
     })
+    .refine(
+      (data) => {
+        const names = data.subtasks.map((s) => s.name.trim().toLowerCase())
+        const uniqueNames = new Set(names)
+        return uniqueNames.size === names.length
+      },
+      {
+        message: 'Subtask names must be unique',
+        path: ['subtasks'],
+      },
+    )
+    .refine(
+      (data) => {
+        if (!activeBoard) return true
 
-    return !taskAlreadyExists
-  }, {
-    message: 'A task with this name already exists in this column',
-    path: ['name'],
-  })
+        const column = activeBoard.columns.find(
+          (col) => col.name === data.status,
+        )
+        if (!column) return true
 
+        const taskAlreadyExists = column.tasks?.some((t) => {
+          const isSameName =
+            t.name.trim().toLowerCase() === data.name.trim().toLowerCase()
+          const isSameTask = isEditing && t.uuid === task?.uuid
+          return isSameName && !isSameTask
+        })
+
+        return !taskAlreadyExists
+      },
+      {
+        message: 'A task with this name already exists in this column',
+        path: ['name'],
+      },
+    )
 
   type TaskFormData = z.infer<typeof formSchema>
 
@@ -125,30 +138,39 @@ const formSchema = z
     setValue('subtasks', updatedSubtasks)
   }, [subtasks, setValue])
 
-  const handleChangeSubtask = useCallback((index: number, newValue: string) => {
-    const updatedSubtasks = subtasksValues.map((task, i) =>
-      i === index ? { ...task, name: newValue } : task
-    )
-    setSubtasks(updatedSubtasks)
-    setValue('subtasks', updatedSubtasks)
-  }, [subtasksValues, setValue])
+  const handleChangeSubtask = useCallback(
+    (index: number, newValue: string) => {
+      const updatedSubtasks = subtasksValues.map((task, i) =>
+        i === index ? { ...task, name: newValue } : task,
+      )
+      setSubtasks(updatedSubtasks)
+      setValue('subtasks', updatedSubtasks)
+    },
+    [subtasksValues, setValue],
+  )
 
-  const handleRemoveSubtask = useCallback((indexToRemove: number) => {
-    const updatedSubtasks = getValues('subtasks').filter(
-      (_, index) => index !== indexToRemove
-    )
-    setSubtasks(updatedSubtasks)
-    setValue('subtasks', updatedSubtasks)
-  }, [getValues, setValue])
+  const handleRemoveSubtask = useCallback(
+    (indexToRemove: number) => {
+      const updatedSubtasks = getValues('subtasks').filter(
+        (_, index) => index !== indexToRemove,
+      )
+      setSubtasks(updatedSubtasks)
+      setValue('subtasks', updatedSubtasks)
+    },
+    [getValues, setValue],
+  )
 
-  const handleChangeStatus = useCallback((newStatus: string, columnId?: string | number) => {
-    setStatus(newStatus)
-    setValue('status', newStatus)
-    if (columnId) setColumnId(columnId)
-  }, [setValue])
+  const handleChangeStatus = useCallback(
+    (newStatus: string, columnId?: string | number) => {
+      setStatus(newStatus)
+      setValue('status', newStatus)
+      if (columnId) setColumnId(columnId)
+    },
+    [setValue],
+  )
 
   const handleSubmitTask = async (data: TaskFormData) => {
-    let fakeTaskId = uuidv4()
+    const fakeTaskId = uuidv4()
 
     try {
       setIsLoading(true)
@@ -156,9 +178,10 @@ const formSchema = z
 
       if (!activeBoard) return
 
-      const updatedBoard = isEditing && task 
-        ? handleEditTaskOptimistic(data, fakeTaskId)
-        : handleCreateTaskOptimistic(data, fakeTaskId)
+      const updatedBoard =
+        isEditing && task
+          ? handleEditTaskOptimistic(data)
+          : handleCreateTaskOptimistic(data, fakeTaskId)
 
       handleChangeActiveBoard(updatedBoard as BoardProps)
 
@@ -181,9 +204,10 @@ const formSchema = z
       activeBoardMutate()
     } catch (error) {
       if (activeBoard) {
-        const cleanedBoard = isEditing && task
-          ? activeBoard
-          : handleCleanupFailedCreation(fakeTaskId)
+        const cleanedBoard =
+          isEditing && task
+            ? activeBoard
+            : handleCleanupFailedCreation(fakeTaskId)
         handleChangeActiveBoard(cleanedBoard as BoardProps)
       }
       handleApiError(error)
@@ -194,18 +218,21 @@ const formSchema = z
     }
   }
 
-  const handleEditTaskOptimistic = (data: TaskFormData, fakeTaskId: string) => {
+  const handleEditTaskOptimistic = (data: TaskFormData) => {
     if (!task) return activeBoard
-    
+
     return {
       ...activeBoard,
       columns: activeBoard?.columns.map((column) => {
-        const filteredTasks = column.tasks?.filter(t => t.uuid !== task.uuid) || []
+        const filteredTasks =
+          column.tasks?.filter((t) => t.uuid !== task.uuid) || []
 
         if (column.name === task.status && column.name === status) {
-          const originalIndex = column.tasks?.findIndex(t => t.uuid === task.uuid)
+          const originalIndex = column.tasks?.findIndex(
+            (t) => t.uuid === task.uuid,
+          )
           const updatedTask = createOptimisticTask(data, task.uuid as string)
-          
+
           if (originalIndex !== undefined && originalIndex >= 0) {
             filteredTasks.splice(originalIndex, 0, updatedTask)
           } else {
@@ -218,7 +245,10 @@ const formSchema = z
         if (column.name === status && task.status !== status) {
           return {
             ...column,
-            tasks: [createOptimisticTask(data, task?.uuid as string), ...(column.tasks || [])],
+            tasks: [
+              createOptimisticTask(data, task?.uuid as string),
+              ...(column.tasks || []),
+            ],
           }
         }
 
@@ -227,14 +257,20 @@ const formSchema = z
     }
   }
 
-  const handleCreateTaskOptimistic = (data: TaskFormData, fakeTaskId: string) => {
+  const handleCreateTaskOptimistic = (
+    data: TaskFormData,
+    fakeTaskId: string,
+  ) => {
     return {
       ...activeBoard,
-      columns: activeBoard?.columns.map(column => {
+      columns: activeBoard?.columns.map((column) => {
         if (column.name === status) {
           return {
             ...column,
-            tasks: [...(column.tasks || []), createOptimisticTask(data, fakeTaskId)],
+            tasks: [
+              ...(column.tasks || []),
+              createOptimisticTask(data, fakeTaskId),
+            ],
           }
         }
         return column
@@ -249,16 +285,16 @@ const formSchema = z
     description: data.description,
     status,
     isOptimistic: true,
-    subtasks: subtasks.map(subtask => ({ ...subtask })),
+    subtasks: subtasks.map((subtask) => ({ ...subtask })),
     tags: taskTags,
   })
 
   const handleCleanupFailedCreation = (fakeTaskId: string) => {
     return {
       ...activeBoard,
-      columns: activeBoard?.columns.map(column => ({
+      columns: activeBoard?.columns.map((column) => ({
         ...column,
-        tasks: column.tasks?.filter(t => t.uuid !== fakeTaskId) || [],
+        tasks: column.tasks?.filter((t) => t.uuid !== fakeTaskId) || [],
       })),
     }
   }
