@@ -3,14 +3,12 @@ import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { handleApiError } from '@/utils/handleApiError'
-import { toast } from 'react-toastify'
 import { SubtaskProps } from '@/@types/subtask'
 import { MIN_SUBTASKS, MIN_TITLE_LENGTH } from '@/utils/constants'
 import { z } from 'zod'
 import { api } from '@/lib/axios'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { TaskProps } from '@/@types/task'
-import { BoardProps } from '@/@types/board'
 import { TaskTagProps } from '@/@types/task-tag'
 
 interface AddTaskModalProps {
@@ -35,10 +33,8 @@ export const useTaskForm = ({
   task,
   onClose,
 }: AddTaskModalProps) => {
-  const { activeBoard, activeBoardMutate, handleChangeActiveBoard } =
+  const { activeBoard, activeBoardMutate, handleSetIsLoading } =
     useBoardsContext()
-
-  const [isLoading, setIsLoading] = useState(false)
 
   const [columnId, setColumnId] = useState<string | number | undefined>()
 
@@ -170,20 +166,11 @@ export const useTaskForm = ({
   )
 
   const handleSubmitTask = async (data: TaskFormData) => {
-    const fakeTaskId = uuidv4()
-
     try {
-      setIsLoading(true)
+      handleSetIsLoading(true)
       onClose()
 
       if (!activeBoard) return
-
-      const updatedBoard =
-        isEditing && task
-          ? handleEditTaskOptimistic(data)
-          : handleCreateTaskOptimistic(data, fakeTaskId)
-
-      handleChangeActiveBoard(updatedBoard as BoardProps)
 
       const payload = {
         name: data.name,
@@ -201,130 +188,12 @@ export const useTaskForm = ({
         ? api.put(`/tasks/${task?.uuid}`, payload)
         : api.post('/tasks', payload))
 
-      activeBoardMutate()
+      await activeBoardMutate()
     } catch (error) {
-      if (activeBoard) {
-        const cleanedBoard =
-          isEditing && task
-            ? activeBoard
-            : handleCleanupFailedCreation(fakeTaskId)
-        handleChangeActiveBoard(cleanedBoard as BoardProps)
-      }
       handleApiError(error)
-      toast.error(isEditing ? 'Erro ao atualizar task' : 'Erro ao criar task')
     } finally {
-      setIsLoading(false)
+      handleSetIsLoading(false)
       resetForm()
-    }
-  }
-
-  const handleEditTaskOptimistic = (data: TaskFormData) => {
-    if (!task) return activeBoard
-
-    return {
-      ...activeBoard,
-      columns: activeBoard?.columns.map((column) => {
-        const filteredTasks =
-          column.tasks?.filter((t) => t.uuid !== task.uuid) || []
-
-        if (column.name === task.status && column.name === status) {
-          const originalIndex = column.tasks?.findIndex(
-            (t) => t.uuid === task.uuid,
-          )
-          const updatedTask = createOptimisticTask(data, task.uuid as string)
-
-          if (originalIndex !== undefined && originalIndex >= 0) {
-            filteredTasks.splice(originalIndex, 0, updatedTask)
-          } else {
-            filteredTasks.push(updatedTask)
-          }
-
-          return { ...column, tasks: filteredTasks }
-        }
-
-        if (column.name === status && task.status !== status) {
-          return {
-            ...column,
-            tasks: [
-              createOptimisticTask(data, task?.uuid as string),
-              ...(column.tasks || []),
-            ],
-          }
-        }
-
-        return { ...column, tasks: filteredTasks }
-      }),
-    }
-  }
-
-  const handleCreateTaskOptimistic = (
-    data: TaskFormData,
-    fakeTaskId: string,
-  ) => {
-    return {
-      ...activeBoard,
-      columns: activeBoard?.columns.map((column) => {
-        if (column.name === status) {
-          return {
-            ...column,
-            tasks: [
-              ...(column.tasks || []),
-              createOptimisticTask(data, fakeTaskId),
-            ],
-          }
-        }
-        return column
-      }),
-    }
-  }
-
-  const handleDeleteTaskOptimistic = async () => {
-    if (!task || !activeBoard) return
-
-    const updatedBoard = {
-      ...activeBoard,
-      columns: activeBoard.columns.map((column) => {
-        if (column.name !== task.status) return column
-
-        return {
-          ...column,
-          tasks: column.tasks?.filter((t) => t.uuid !== task.uuid) || [],
-        }
-      }),
-    }
-
-    handleChangeActiveBoard(updatedBoard)
-
-    try {
-      await api.delete(`/tasks/${task.uuid}`)
-      activeBoardMutate()
-
-      onClose()
-    } catch (error) {
-      handleChangeActiveBoard(activeBoard)
-      handleApiError(error)
-      toast.error('Erro ao deletar tarefa')
-    }
-  }
-
-  const createOptimisticTask = (data: TaskFormData, taskId: string) => ({
-    id: taskId,
-    uuid: taskId,
-    name: data.name,
-    description: data.description,
-    status,
-    isOptimistic: true,
-    subtasks: subtasks.map((subtask) => ({ ...subtask })),
-    tags: taskTags,
-  })
-
-  const handleCleanupFailedCreation = (fakeTaskId: string) => {
-    return {
-      ...activeBoard,
-      columns: activeBoard?.columns.map((column) => ({
-        ...column,
-        tasks: column.tasks?.filter((t) => t.uuid !== fakeTaskId) || [],
-      })),
     }
   }
 
@@ -346,7 +215,6 @@ export const useTaskForm = ({
     status,
     subtasks,
     taskTags,
-    isLoading,
     activeBoard,
     setValue,
     resetForm,
@@ -355,7 +223,6 @@ export const useTaskForm = ({
     handleRemoveSubtask,
     handleChangeStatus,
     handleSubmitTask,
-    handleDeleteTaskOptimistic,
     setTaskTags,
     watch,
   }

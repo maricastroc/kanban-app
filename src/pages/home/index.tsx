@@ -55,7 +55,7 @@ export default function Home() {
   const isSmallerThanSm = useWindowResize(BREAKPOINT_SM)
 
   const [isApiProcessing, setIsApiProcessing] = useState(false)
-
+  console.log(activeBoard)
   const moveTaskToColumn = async (
     task: TaskProps,
     newColumnId: string,
@@ -114,10 +114,10 @@ export default function Home() {
 
       // Envia a requisição para o servidor em segundo plano
       const payload = {
-        new_column_id: newColumnId,
-        new_order: newOrder,
+        new_column_id: Number(newColumnId),
+        new_order: Number(newOrder),
       }
-
+      console.log(task)
       await api.put(`tasks/${task?.id}/move`, payload)
 
       // Se a API retornar sucesso, atualiza o estado novamente para garantir sincronia
@@ -145,7 +145,7 @@ export default function Home() {
 
       const column = originalColumns[columnIndex]
       const tasks = Array.from(column.tasks)
-
+      console.log(tasks)
       const oldIndex = tasks.findIndex((t) => t.id === task.id)
       if (oldIndex === -1) return
 
@@ -178,7 +178,7 @@ export default function Home() {
 
   const onDragEnd = (result: DropResult) => {
     const { destination, source } = result
-
+    console.log(activeBoard, isApiProcessing)
     if (isApiProcessing) {
       return
     }

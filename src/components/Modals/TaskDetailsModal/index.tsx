@@ -145,8 +145,8 @@ export function TaskDetailsModal({
       setIsLoading(true)
 
       const payload = {
-        new_column_id: newColumnId,
-        new_order: newOrder,
+        new_column_id: Number(newColumnId),
+        new_order: Number(newOrder),
       }
 
       await api.put(`tasks/${task?.id}/move`, payload)
@@ -271,7 +271,7 @@ export function TaskDetailsModal({
                       }
 
                       setSubtasks(newOrder)
-                      reorderSubtaskInTask(task.id, newOrder)
+                      reorderSubtaskInTask(task?.id as string, newOrder)
                     }}
                   >
                     {subtasks.map((subtask: SubtaskProps) => (

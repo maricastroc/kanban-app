@@ -56,7 +56,7 @@ export function TagsModal({ onClose }: Props) {
     url: '/tags',
     method: 'GET',
   })
-  console.log(tags)
+
   const onDelete = async () => {
     try {
       setIsLoading(true)
@@ -74,7 +74,7 @@ export function TagsModal({ onClose }: Props) {
       setIsLoading(false)
     }
   }
-  console.log(!tags?.length)
+
   return (
     <Dialog.Portal>
       <ModalOverlay

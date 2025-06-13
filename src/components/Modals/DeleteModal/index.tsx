@@ -4,7 +4,6 @@ import { Button } from '@/components/Shared/Button'
 import { ModalContent, ModalOverlay, ModalTitle } from '@/styles/shared'
 import { TaskProps } from '@/@types/task'
 import { useState } from 'react'
-import toast from 'react-hot-toast'
 import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
@@ -19,29 +18,10 @@ interface DeleteBoardProps {
 export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
   const [isLoading, setIsLoading] = useState(false)
 
-  const { activeBoard, activeBoardMutate, handleChangeActiveBoard } =
-    useBoardsContext()
+  const { activeBoard, activeBoardMutate } = useBoardsContext()
 
   const handleDelete = async (uuid: number | string) => {
     if (!activeBoard) return
-
-    const previousBoard = structuredClone(activeBoard)
-
-    if (type === 'task' && task) {
-      const optimisticBoard = {
-        ...activeBoard,
-        columns: activeBoard.columns.map((column) => {
-          if (column.name !== task.status) return column
-
-          return {
-            ...column,
-            tasks: column.tasks?.filter((t) => t.id !== task.id) || [],
-          }
-        }),
-      }
-
-      handleChangeActiveBoard(optimisticBoard)
-    }
 
     try {
       setIsLoading(true)
@@ -52,14 +32,10 @@ export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
 
       await activeBoardMutate()
     } catch (error) {
-      if (type === 'task') {
-        handleChangeActiveBoard(previousBoard)
-      }
-
       handleApiError(error)
-      toast.error('Erro ao deletar')
     } finally {
       setIsLoading(false)
+
       setTimeout(() => {
         onClose()
       }, 500)
