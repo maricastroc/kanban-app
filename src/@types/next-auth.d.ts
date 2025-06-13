@@ -10,6 +10,7 @@ declare module 'next-auth' {
   }
 
   interface Session {
+    accessToken?: {} | null
     user: UserProps
   }
 }

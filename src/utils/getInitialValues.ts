@@ -16,8 +16,8 @@ export const initialBoardColumns = [
 export const initialSubtasks = [
   {
     id: uuidv4(),
-    title: '',
-    isCompleted: false,
+    name: '',
+    is_completed: false,
     order: 1,
   },
 ]

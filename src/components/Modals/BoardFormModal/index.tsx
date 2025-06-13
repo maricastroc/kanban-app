@@ -38,12 +38,12 @@ interface BoardModalProps {
 }
 
 const columnSchema = z.object({
-  id: z.string(),
+id: z.number().or(z.string()),
   name: z.string().min(3, { message: 'Column name is required' }),
 })
 
 const formSchema = z.object({
-  id: z.string(),
+id: z.number().or(z.string()),
   name: z
     .string()
     .min(MIN_BOARD_NAME_LENGTH, { message: 'Board title is required' }),
@@ -58,7 +58,7 @@ const formSchema = z.object({
 export type FormData = z.infer<typeof formSchema>
 
 export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
-  const { activeBoard, boardsMutate, mutate } = useBoardsContext()
+  const { activeBoard, boardsMutate, handleChangeActiveBoard } = useBoardsContext()
 
   const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>(
     activeBoard?.columns || [
@@ -78,7 +78,7 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
     register,
   } = useForm<FormData>({
     defaultValues: {
-      id: uuidv4(),
+      id: isEditing ? activeBoard?.id : uuidv4(),
       name: isEditing ? activeBoard?.name : '',
       columns: isEditing ? activeBoard?.columns : initialBoardColumns,
     },
@@ -121,13 +121,14 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
       }
 
       const response = isEditing
-        ? await api.put('/board/edit', payload)
-        : await api.post('/board/create', payload)
+        ? await api.put(`boards/${activeBoard?.uuid}`, payload)
+        : await api.post('/boards', payload)
 
       toast?.success(response.data.message)
 
-      mutate()
-      boardsMutate()
+      handleChangeActiveBoard(response.data.data.board)
+
+      await boardsMutate()
     } catch (error) {
       handleApiError(error)
     } finally {

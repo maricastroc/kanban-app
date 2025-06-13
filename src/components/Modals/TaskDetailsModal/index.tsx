@@ -91,10 +91,10 @@ export function TaskDetailsModal({
   })
 
   const subtasksCompleted = task?.subtasks?.filter(
-    (subtask: SubtaskProps) => subtask?.isCompleted,
+    (subtask: SubtaskProps) => subtask?.is_completed,
   )
 
-  const { activeBoard, mutate } = useBoardsContext()
+  const { activeBoard, activeBoardMutate } = useBoardsContext()
 
   const { enableDarkMode } = useTheme()
 
@@ -128,7 +128,7 @@ export function TaskDetailsModal({
 
       await api.put('/subtasks/reorder', payload)
 
-      mutate()
+      await activeBoardMutate()
     } catch (error) {
       handleApiError(error)
     } finally {
@@ -137,7 +137,7 @@ export function TaskDetailsModal({
   }
 
   const moveTaskToColumn = async (
-    taskId: string,
+    task: TaskProps,
     newColumnId: string,
     newOrder: number,
   ) => {
@@ -145,14 +145,13 @@ export function TaskDetailsModal({
       setIsLoading(true)
 
       const payload = {
-        taskId,
-        newColumnId,
-        newOrder,
+        new_column_id: newColumnId,
+        new_order: newOrder,
       }
 
-      await api.put('/tasks/reorder', payload)
+      await api.put(`tasks/${task?.id}/move`, payload)
 
-      mutate()
+      await activeBoardMutate()
     } catch (error) {
       handleApiError(error)
     } finally {
@@ -170,7 +169,7 @@ export function TaskDetailsModal({
         })
 
         toast?.success(response.data.message)
-        mutate()
+        await activeBoardMutate()
 
         setAssociatedTags(
           associatedTags.filter((tag) => tag.id !== tagToUpdate.id),
@@ -182,7 +181,7 @@ export function TaskDetailsModal({
         })
 
         toast?.success(response.data.message)
-        mutate()
+        await activeBoardMutate()
 
         setAssociatedTags([...associatedTags, tagToUpdate])
       }
@@ -194,7 +193,7 @@ export function TaskDetailsModal({
   }
 
   useEffect(() => {
-    if (task?.subtasks.length) {
+    if (task?.subtasks && task?.subtasks?.length) {
       setSubtasks(task.subtasks)
     }
   }, [task.subtasks])
@@ -226,7 +225,7 @@ export function TaskDetailsModal({
             className="DialogContent smaller"
           >
             <LayoutContainer>
-              <ModalTitle>{task.title}</ModalTitle>
+              <ModalTitle>{task.name}</ModalTitle>
               <OptionsContainer>
                 <OptionsBtn
                   onClick={() =>
@@ -286,8 +285,8 @@ export function TaskDetailsModal({
                         <SubtaskItem
                           id={subtask.id}
                           task={task}
-                          title={subtask.title}
-                          isCompleted={subtask.isCompleted}
+                          name={subtask.name}
+                          is_completed={subtask.is_completed}
                           handleSetIsLoading={(value: boolean) =>
                             setIsLoading(value)
                           }
@@ -357,8 +356,8 @@ export function TaskDetailsModal({
                         status={status}
                         handleChangeStatus={async () => {
                           await moveTaskToColumn(
-                            task.id,
-                            column.id,
+                            task,
+                            column.id as string,
                             column?.tasks?.length + 1,
                           )
 

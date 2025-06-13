@@ -27,6 +27,9 @@ import { BoardFormModal } from '@/components/Modals/BoardFormModal'
 import Image from 'next/image'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useBoardsContext } from '@/contexts/BoardsContext'
+import { handleApiError } from '@/utils/handleApiError'
+import { api } from '@/lib/axios'
+import { BoardProps } from '@/@types/board'
 
 interface SidebarProps {
   onClose: () => void
@@ -36,9 +39,23 @@ interface SidebarProps {
 export function Sidebar({ onClose, className }: SidebarProps) {
   const { toggleTheme, enableDarkMode } = useTheme()
 
-  const { handleChangeBoardStatus, activeBoard, boards } = useBoardsContext()
+  const { handleChangeActiveBoard, handleSetIsLoading, activeBoard, boards, } = useBoardsContext()
 
   const [isAddBoardModalOpen, setIsAddBoardModalOpen] = useState(false)
+
+const handleActivateBoard = async (board: BoardProps) => {
+  try {
+    handleSetIsLoading(true)
+
+    const response = await api.patch(`boards/${board.id}/activate`)
+    
+    handleChangeActiveBoard(response.data.data.board)
+  } catch (error) {
+    handleApiError(error)
+  } finally {
+    handleSetIsLoading(false)
+  }
+}
 
   return (
     <Container className={className}>
@@ -61,7 +78,7 @@ export function Sidebar({ onClose, className }: SidebarProps) {
                 key={board.name}
                 className={board.name === activeBoard?.name ? 'active' : ''}
                 onClick={() => {
-                  handleChangeBoardStatus(board)
+                  handleActivateBoard(board)
                 }}
               >
                 <Image src={IconBoard} alt="" />

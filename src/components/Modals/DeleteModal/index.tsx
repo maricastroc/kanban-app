@@ -19,7 +19,7 @@ interface DeleteBoardProps {
 export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
   const [isLoading, setIsLoading] = useState(false)
 
-  const { activeBoard, mutate, boardsMutate } = useBoardsContext()
+  const { activeBoard, boardsMutate } = useBoardsContext()
 
   const handleDelete = async (id: string) => {
     try {
@@ -33,7 +33,6 @@ export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
 
       const response = await api.delete(routePath, { data: payload })
 
-      mutate()
       boardsMutate()
 
       toast?.success(response.data.message)
@@ -60,7 +59,7 @@ export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
             {`Are you sure you want to delete the ‘${
               type === 'board'
                 ? `${activeBoard?.name} board`
-                : `${task?.title} task`
+                : `${task?.name} task`
             }’? This action will remove all columns and tasks and cannot be reversed.`}
           </span>
         </ModalDescription>

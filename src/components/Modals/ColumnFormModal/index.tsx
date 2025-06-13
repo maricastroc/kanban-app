@@ -38,14 +38,14 @@ interface ColumnFormModalProps {
 }
 
 const columnSchema = z.object({
-  id: z.string(),
+id: z.number().or(z.string()),
   name: z.string().min(3, {
     message: 'Column Name must have at least three characters',
   }),
 })
 
 const formSchema = z.object({
-  id: z.string(),
+id: z.number().or(z.string()),
   name: z.string().min(3, { message: 'Title is required' }),
   columns: z
     .array(columnSchema)
@@ -139,10 +139,9 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
 
       const payload = {
         columns: updatedColumns,
-        boardId: activeBoard?.id,
       }
 
-      const response = await api.put('/columns/edit', payload)
+      const response = await api.put(`boards/${activeBoard?.uuid}`, payload)
 
       toast?.success(response.data.message)
 

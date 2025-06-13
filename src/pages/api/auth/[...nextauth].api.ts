@@ -6,6 +6,7 @@ import { PrismaAdapter } from '@/lib/auth/prisma-adapter'
 import { prisma } from '@/lib/prisma'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 export function buildNextAuthOptions(
   req: NextApiRequest | NextPageContext['req'],
@@ -92,6 +93,18 @@ export function buildNextAuthOptions(
           token.name = user.name
           token.email = user.email
           token.avatarUrl = (user as User & { avatarUrl: string }).avatarUrl
+
+          // Gera um JWT assinado com as infos do usuário
+          token.accessToken = jwt.sign(
+            {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              avatarUrl: token.avatarUrl,
+            },
+            process.env.JWT_SECRET ?? 'default_secret',
+            { expiresIn: '7d' },
+          )
         }
         return token
       },
@@ -103,6 +116,8 @@ export function buildNextAuthOptions(
             email: token.email as string,
             avatarUrl: token.avatarUrl as string,
           }
+          // Passa o JWT real para o cliente
+          session.accessToken = token.accessToken as string
         }
         return session
       },

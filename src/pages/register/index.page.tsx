@@ -44,7 +44,7 @@ type SignInFormData = z.infer<typeof signInFormSchema>
 export default function Login() {
   const { enableDarkMode } = useTheme()
 
-  const [isClient, setIsClient] = useState(false)
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   const router = useRouter()
 
@@ -65,26 +65,17 @@ export default function Login() {
     setIsLoading(true)
 
     try {
-      const response = await api.post('/profile', {
-        email: data.email,
-        password: data.password,
-        name: data.name,
-      })
+      const response = await api.post('/register', {
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      password_confirmation: data.password,
+    })
 
+    if (response.data) {
       toast.success(response.data.message)
-
-      const signInResponse = await signIn('credentials', {
-        email: data.email,
-        password: data.password,
-        redirect: false,
-      })
-
-      if (signInResponse?.error) {
-        toast.error('Error logging in automatically. Please log in manually.')
-      } else {
-        toast.success('Welcome to the Kanban App!')
-        router.push('/')
-      }
+      router.push('/login')
+    }
     } catch (error) {
       handleApiError(error)
     } finally {
@@ -92,14 +83,20 @@ export default function Login() {
     }
   }
 
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
+useEffect(() => {
+  const token = localStorage.getItem('auth_token');
+
+  if (token) {
+    router.replace('/');
+  } else {
+    setIsCheckingAuth(false);
+  }
+}, []);
 
   return (
     <>
       <NextSeo title="Kanban App | Register" />
-      {isClient && (
+      {!isCheckingAuth && (
         <LayoutContainer>
           <LogoWrapper>
             <Image src={Logo} width={24} height={24} alt="" />

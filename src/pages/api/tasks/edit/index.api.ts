@@ -87,9 +87,9 @@ export default async function handler(
         })
 
         const newSubtasks = subtasks.map((subtask, index) => ({
-          title: subtask.title,
+          name: subtask.name,
           order: index + 1,
-          isCompleted: subtask.isCompleted,
+          is_completed: subtask.is_completed,
           taskId,
         }))
 

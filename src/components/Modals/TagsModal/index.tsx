@@ -50,13 +50,13 @@ export function TagsModal({ onClose }: Props) {
 
   const [selectedTag, setSelectedTag] = useState<TagProps | null>(null)
 
-  const { mutate } = useBoardsContext()
+  const { activeBoardMutate } = useBoardsContext()
 
   const { data: tags, mutate: tagsMutate } = useRequest<TagProps[]>({
     url: '/tags',
     method: 'GET',
   })
-
+console.log(tags)
   const onDelete = async () => {
     try {
       setIsLoading(true)
@@ -66,7 +66,7 @@ export function TagsModal({ onClose }: Props) {
       toast.success(response.data.message)
       setIsDeleteTagWarningOpen(false)
 
-      mutate()
+      activeBoardMutate()
       tagsMutate()
     } catch (error) {
       handleApiError(error)
@@ -74,7 +74,8 @@ export function TagsModal({ onClose }: Props) {
       setIsLoading(false)
     }
   }
-
+console.log(
+          !tags?.length)
   return (
     <Dialog.Portal>
       <ModalOverlay
@@ -163,8 +164,8 @@ export function TagsModal({ onClose }: Props) {
 
         {!isTagFormOpen &&
           !isDeleteTagWarningOpen &&
-          tags &&
-          tags?.length < 8 && (
+          (!!tags &&
+          tags?.length < 8 || !tags?.length) && (
             <Button
               title={'Add New Tag'}
               type="button"

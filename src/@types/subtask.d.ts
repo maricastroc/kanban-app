@@ -1,6 +1,7 @@
 export interface SubtaskProps {
-  id: string
-  title: string
-  isCompleted: boolean
+  uuid?: string
+  id: string | number
+  name: string
+  is_completed: boolean
   key?: string
 }

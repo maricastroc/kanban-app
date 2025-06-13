@@ -19,13 +19,13 @@ interface SubtaskItemProps extends SubtaskProps {
 export function SubtaskItem({
   id,
   task,
-  title,
-  isCompleted,
+  name,
+  is_completed,
   handleSetIsLoading,
 }: SubtaskItemProps) {
-  const [isChecked, setIsChecked] = useState(isCompleted)
+  const [isChecked, setIsChecked] = useState(is_completed)
 
-  const { mutate } = useBoardsContext()
+  const { boardsMutate } = useBoardsContext()
 
   const handleToggleSubtaskStatus = async () => {
     setIsChecked((prev) => !prev)
@@ -40,7 +40,7 @@ export function SubtaskItem({
 
       await api.put('/subtasks/status', payload)
 
-      mutate()
+      boardsMutate()
     } catch (error) {
       handleApiError(error)
     } finally {
@@ -57,7 +57,7 @@ export function SubtaskItem({
       ) : (
         <UncheckedBox onClick={() => handleToggleSubtaskStatus()} />
       )}
-      <Title className={isChecked ? 'checked' : 'unchecked'}>{title}</Title>
+      <Title className={isChecked ? 'checked' : 'unchecked'}>{name}</Title>
     </Container>
   )
 }

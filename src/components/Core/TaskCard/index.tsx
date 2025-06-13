@@ -44,7 +44,7 @@ export function TaskCard({ task, provided, column }: TaskCardProps) {
           {...(isTaskDetailsModalOpen ? {} : provided.draggableProps)}
           {...(isTaskDetailsModalOpen ? {} : provided.dragHandleProps)}
         >
-          {task?.tags.length > 0 && (
+          {task?.tags && task?.tags?.length > 0 && (
             <TagsContainer>
               {task.tags.map((item) => {
                 const tagColor = tagColors.find(
@@ -56,13 +56,13 @@ export function TaskCard({ task, provided, column }: TaskCardProps) {
               })}
             </TagsContainer>
           )}
-          <strong>{task.title}</strong>
+          <strong>{task.name}</strong>
 
           <InfoContent>
             <InfoItem>
               <FontAwesomeIcon icon={faList} />
               <p>{`${
-                task?.subtasks?.filter((subtask) => subtask?.isCompleted)
+                task?.subtasks?.filter((subtask) => subtask?.is_completed)
                   ?.length
               } of ${task?.subtasks?.length}`}</p>
             </InfoItem>

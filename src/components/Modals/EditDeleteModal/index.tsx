@@ -9,6 +9,9 @@ import { SignOut } from 'phosphor-react'
 import { signOut } from 'next-auth/react'
 import toast from 'react-hot-toast'
 import { useBoardsContext } from '@/contexts/BoardsContext'
+import { api } from '@/lib/axios'
+import { handleApiError } from '@/utils/handleApiError'
+import { useRouter } from 'next/router'
 
 interface EditDeleteModalProps {
   onClose: () => void
@@ -16,6 +19,8 @@ interface EditDeleteModalProps {
 
 export function EditDeleteModal({ onClose }: EditDeleteModalProps) {
   const { enableDarkMode } = useTheme()
+
+  const route = useRouter()
 
   const { activeBoard } = useBoardsContext()
 
@@ -41,11 +46,20 @@ export function EditDeleteModal({ onClose }: EditDeleteModalProps) {
     onClose()
   }
 
-  const handleLogout = async () => {
-    await signOut({ callbackUrl: '/login' })
-    toast?.success('See you soon!')
-  }
+const handleLogout = async () => {
+  try {
+    await api.get('/logout')
+    
+    localStorage.removeItem('auth_token')
+    
+    toast.success('See you soon!')
 
+    route.push('/login')
+
+  } catch (error) {
+    handleApiError(error)
+  }
+}
   return (
     <Dialog.Portal>
       <Dialog.Overlay onClick={onClose} />

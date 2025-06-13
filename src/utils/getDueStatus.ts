@@ -1,6 +1,6 @@
 export const getDueStatus = (
   date: string | Date,
-  subtasks: { isCompleted: boolean }[],
+  subtasks: { is_completed: boolean }[],
 ): string => {
   const parsedDate = date instanceof Date ? date : new Date(date)
   const today = new Date()
@@ -9,7 +9,7 @@ export const getDueStatus = (
   parsedDate.setHours(0, 0, 0, 0)
 
   const allSubtasksCompleted =
-    subtasks.length > 0 && subtasks.every((st) => st.isCompleted)
+    subtasks.length > 0 && subtasks.every((st) => st.is_completed)
 
   if (allSubtasksCompleted) return 'completed'
 

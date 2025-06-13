@@ -30,7 +30,7 @@ export function BoardColumn({ name, tasks, column, index }: ColumnProps) {
 
   const renderTasks = () => {
     return tasks.map((task: TaskProps, taskIndex: number) => (
-      <Draggable key={task.id} draggableId={task.id} index={taskIndex}>
+      <Draggable key={String(task.id)} draggableId={String(task.id)} index={taskIndex}>
         {(provided) => (
           <TaskCard column={column} task={task} provided={provided} />
         )}

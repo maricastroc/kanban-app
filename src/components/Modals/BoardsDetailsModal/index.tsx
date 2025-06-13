@@ -48,18 +48,17 @@ const BoardListItem = ({
 export function BoardsDetailsModal({ onClose }: BoardsDetailsModalProps) {
   const { toggleTheme } = useTheme()
 
-  const { activeBoard, boards, handleChangeBoardStatus } = useBoardsContext()
+  const { activeBoard, boards, handleChangeActiveBoard } = useBoardsContext()
 
   const [addBoardModalOpen, setAddBoardModalOpen] = useState(false)
 
   useEscapeKeyHandler(onClose)
 
   const handleClickBoard = async (board: BoardProps) => {
-    handleChangeBoardStatus(board)
+    handleChangeActiveBoard(board)
     await simulateDelay()
     onClose()
   }
-
   return (
     <Dialog.Portal>
       <ModalOverlay className="DialogOverlay" onClick={onClose} />

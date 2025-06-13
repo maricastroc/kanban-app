@@ -1,21 +1,15 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { RefObject, useEffect, useRef, useState } from 'react'
-import { v4 as uuidv4 } from 'uuid'
+import { RefObject, useRef, useState } from 'react'
 import DatePicker from 'react-datepicker'
 import * as Dialog from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faAngleDown,
   faAngleUp,
-  faCheck,
   faX,
 } from '@fortawesome/free-solid-svg-icons'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import {
-  CheckedBox,
   CloseButton,
   HeaderContent,
   ModalContent,
@@ -24,9 +18,6 @@ import {
   SelectStatusField,
   StatusContainer,
   StatusSelectorContainer,
-  TagContainer,
-  TagName,
-  UncheckedBox,
 } from '@/styles/shared'
 import { FormContainer } from '@/components/Shared/FormContainer'
 import { InputContainer } from '@/components/Shared/InputContainer'
@@ -46,33 +37,26 @@ import {
   StyledDatePickerWrapper,
   SubtasksForm,
   SubtasksWrapper,
-  TagsContainer,
 } from './styles'
-import { initialSubtasks } from '@/utils/getInitialValues'
 import { MIN_SUBTASKS, MIN_TITLE_LENGTH } from '@/utils/constants'
 
 import { SubtaskProps } from '@/@types/subtask'
 import { TaskProps } from '@/@types/task'
-import { api } from '@/lib/axios'
-import { handleApiError } from '@/utils/handleApiError'
 import toast from 'react-hot-toast'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
-import { useBoardsContext } from '@/contexts/BoardsContext'
 import { TagProps } from '@/@types/tag'
-import { tagColors } from '@/components/Shared/SelectInput'
 import useRequest from '@/utils/useRequest'
-import { TagsTitle } from '../TagsModal/styles'
-import { TagMark } from '../TaskDetailsModal/styles'
+import { useTaskForm } from '@/hooks/useTaskForm'
 
 const subtaskSchema = z.object({
-  id: z.string(),
-  title: z.string().min(1, { message: 'Subtask title is required' }),
-  isCompleted: z.boolean(),
+id: z.number().or(z.string()),
+  name: z.string().min(3, { message: 'Subtask title must have at least 3 characters' }),
+  is_completed: z.boolean(),
 })
 
 const formSchema = z.object({
-  id: z.string(),
-  title: z.string().min(MIN_TITLE_LENGTH, { message: 'Title is required' }),
+id: z.number().or(z.string()),
+  name: z.string().min(MIN_TITLE_LENGTH, { message: 'Title is required' }),
   description: z.string().optional(),
   subtasks: z
     .array(subtaskSchema)
@@ -95,143 +79,42 @@ export function TaskFormModal({
   task,
 }: AddTaskModalProps) {
   const statusRef = useRef<HTMLDivElement | null>(null)
-
-  const { activeBoard, mutate } = useBoardsContext()
-
+  
   const [isOptionsContainerOpen, setIsOptionsContainerOpen] = useState(false)
-
-  const [columnId, setColumnId] = useState<string | undefined>()
-
-  const [isLoading, setIsLoading] = useState(false)
-
-  const [taskTags, setTaskTags] = useState<TagProps[]>([])
-
-  const [subtasks, setSubtasks] = useState<SubtaskProps[]>(
-    isEditing && task?.subtasks ? task.subtasks : initialSubtasks,
-  )
-
-  const [status, setStatus] = useState(
-    isEditing && task?.status ? task.status : '',
-  )
-
-  useOutsideClick(statusRef as RefObject<HTMLElement>, () =>
-    setIsOptionsContainerOpen(false),
-  )
-
-  useEscapeKeyHandler(onClose)
-
-  const { data: tags } = useRequest<TagProps[]>({
-    url: '/tags',
-    method: 'GET',
-  })
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    errors,
+    status,
+    subtasks,
+    isLoading,
+    activeBoard,
     setValue,
-    getValues,
+    resetForm,
+    handleAddSubtask,
+    handleChangeSubtask,
+    handleRemoveSubtask,
+    handleChangeStatus,
+    handleSubmitTask,
     watch,
-    reset,
-  } = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      id: uuidv4(),
-      title: task?.title ?? '',
-      description: task?.description ?? '',
-      dueDate: task?.dueDate ? new Date(task.dueDate) : undefined,
-      status,
-      subtasks,
-    },
-  })
+  } = useTaskForm({ isEditing, task, onClose })
 
-  const subtasksValues = watch('subtasks')
-
-  const handleSubmitTask = async (data: FormData) => {
-    try {
-      setIsLoading(true)
-
-      const payload = {
-        boardId: activeBoard?.id,
-        title: data.title,
-        description: data.description || '',
-        columnId,
-        status,
-        dueDate: data.dueDate || undefined,
-        subtasks: subtasks.map((subtask, index) => ({
-          ...subtask,
-          order: index,
-        })),
-        tags: taskTags,
-      }
-
-      const response = isEditing
-        ? await api.put('/tasks/edit', { ...payload, taskId: task?.id })
-        : await api.post('/tasks/create', payload)
-
-      mutate()
-      toast.success(response.data.message)
-    } catch (error) {
-      handleApiError(error)
-    } finally {
-      setIsLoading(false)
-      setSubtasks(initialSubtasks)
-      reset()
-      setTaskTags([])
-      setTimeout(onClose, 500)
-    }
-  }
-
-  const handleAddSubtask = () => {
-    const newSubtask: SubtaskProps = {
-      id: uuidv4(),
-      title: '',
-      isCompleted: false,
-    }
-
-    const updatedSubtasks = [...subtasks, newSubtask]
-
-    setSubtasks(updatedSubtasks)
-    setValue('subtasks', updatedSubtasks)
-  }
-
-  const handleChangeSubtask = (index: number, newValue: string) => {
-    const updatedSubtasks = subtasksValues.map((task, i) =>
-      i === index ? { ...task, title: newValue } : task,
-    )
-
-    setSubtasks(updatedSubtasks)
-    setValue('subtasks', updatedSubtasks)
-  }
-
-  const handleChangeStatus = (newStatus: string) => {
-    setStatus(newStatus)
-    setValue('status', newStatus)
+  useOutsideClick(statusRef as RefObject<HTMLElement>, () =>
     setIsOptionsContainerOpen(false)
-  }
+  )
 
-  const handleSetColumnId = (value: string) => {
-    setColumnId(value)
-  }
-
-  const handleRemoveSubtask = (indexToRemove: number) => {
-    const updatedSubtasks = getValues('subtasks').filter(
-      (_, index) => index !== indexToRemove,
-    )
-    setSubtasks(updatedSubtasks)
-
-    setValue('subtasks', updatedSubtasks)
-  }
+  useEscapeKeyHandler(onClose)
 
   const renderSubtaskInput = (index: number, subtask: SubtaskProps) => {
-    const error = errors.subtasks?.[index]?.title?.message
+    const error = errors.subtasks?.[index]?.name?.message
 
     return (
       <FieldsContainer>
         <Field
           hasError={!!error}
           placeholder="e.g. Make coffee"
-          defaultValue={subtask.title}
+          defaultValue={subtask.name}
           btnVariant={subtasks.length > 1 ? '' : 'disabled'}
           onChange={(e) => handleChangeSubtask(index, e.target.value)}
           onClick={() => {
@@ -247,66 +130,37 @@ export function TaskFormModal({
     )
   }
 
-  useEffect(() => {
-    if (activeBoard && !isEditing) {
-      setStatus(activeBoard?.columns[0]?.name)
-      setValue('status', activeBoard?.columns[0]?.name)
-      setColumnId(activeBoard?.columns[0]?.id)
-    }
-  }, [activeBoard, isEditing])
+  const handleClose = () => {
+    onClose()
+    resetForm()
+  }
 
-  useEffect(() => {
-    if (isEditing && task?.tags) {
-      const taskTags = tags?.filter((tag) => {
-        return tag.id
-      })
-
-      const matchedTags = taskTags?.filter((taskTag) => {
-        return task?.tags.some((tag) => tag.tagId === taskTag.id)
-      })
-
-      setTaskTags(matchedTags as TagProps[])
-    }
-  }, [isEditing, task?.tags, tags])
   return (
     <Dialog.Portal>
-      <ModalOverlay
-        className="DialogOverlay"
-        onClick={() => {
-          onClose()
-          setSubtasks(initialSubtasks)
-          setTaskTags([])
-          reset()
-        }}
-      />
+      <ModalOverlay className="DialogOverlay" onClick={handleClose} />
       <ModalContent padding="1.5rem 1.5rem 2rem" className="DialogContent xl">
         <HeaderContent>
           <ModalTitle className="DialogTitle">
             {isEditing ? 'Edit Task' : 'Add New Task'}
           </ModalTitle>
-          <CloseButton
-            onClick={() => {
-              onClose()
-              setSubtasks(initialSubtasks)
-              setTaskTags([])
-              reset()
-            }}
-          >
+          <CloseButton onClick={handleClose}>
             <FontAwesomeIcon icon={faX} />
           </CloseButton>
         </HeaderContent>
+        
         <VisuallyHidden>
           <Dialog.Description />
         </VisuallyHidden>
+        
         <FormContainer onSubmit={handleSubmit(handleSubmitTask)}>
           <InputContainer>
             <CustomLabel htmlFor="title">Title</CustomLabel>
             <CustomInput
-              hasError={!!errors.title}
+              hasError={!!errors.name}
               placeholder="e.g. Take coffee break"
-              {...register('title')}
+              {...register('name')}
             />
-            {<ErrorMessage message={errors.title?.message} />}
+            {<ErrorMessage message={errors.name?.message} />}
           </InputContainer>
 
           <InputContainer>
@@ -321,7 +175,6 @@ export function TaskFormModal({
 
           <InputContainer>
             <CustomLabel htmlFor="dueDate">Due Date</CustomLabel>
-
             <StyledDatePickerWrapper>
               <DatePicker
                 placeholderText="dd/mm/yyyy"
@@ -331,7 +184,6 @@ export function TaskFormModal({
                 onChange={(date) => setValue('dueDate', date as Date)}
               />
             </StyledDatePickerWrapper>
-
             {<ErrorMessage message={errors.dueDate?.message} />}
           </InputContainer>
 
@@ -339,10 +191,12 @@ export function TaskFormModal({
             <CustomLabel>Subtasks</CustomLabel>
             <SubtasksWrapper>
               {subtasks.map((subtask, index) => (
-                <div key={`${subtask.title}-${index}`}>
+                <div key={`${subtask.name}-${index}`}>
                   {renderSubtaskInput(index, subtask)}
                 </div>
               ))}
+
+                          {<ErrorMessage style={{ marginTop: '-0.5rem' }} message={errors?.subtasks?.message} />}
             </SubtasksWrapper>
             <Button
               variant="secondary"
@@ -352,52 +206,41 @@ export function TaskFormModal({
             />
           </SubtasksForm>
 
-          <TagsContainer>
+          {/*<TagsContainer>
             <TagsTitle>Tags</TagsTitle>
-            {tags &&
-              tags.length > 0 &&
-              tags.map((item) => {
-                const tagColor = tagColors.find(
-                  (tag) => tag.name === item.color,
-                )?.color
+            {tags?.map((item) => {
+              const tagColor = tagColors.find(tag => tag.name === item.color)?.color
+              const isChecked = taskTags.some(tag => tag.id === item.id)
 
-                const isChecked = taskTags.some((tag) => tag.id === item.id)
-
-                return (
-                  <TagContainer key={item.id}>
-                    {isChecked ? (
-                      <CheckedBox
-                        type="button"
-                        onClick={() =>
-                          setTaskTags(
-                            taskTags.filter((tag) => tag.id !== item.id),
-                          )
-                        }
-                      >
-                        <FontAwesomeIcon icon={faCheck} />
-                      </CheckedBox>
-                    ) : (
-                      <UncheckedBox
-                        type="button"
-                        onClick={() => {
-                          setTaskTags([...taskTags, item])
-                        }}
-                      />
-                    )}
-                    <TagName>
-                      <p>{item.name}</p>
-                      <TagMark color={tagColor as string} />
-                    </TagName>
-                  </TagContainer>
-                )
-              })}
-          </TagsContainer>
+              return (
+                <TagContainer key={item.id}>
+                  {isChecked ? (
+                    <CheckedBox
+                      type="button"
+                      onClick={() => setTaskTags(taskTags.filter(tag => tag.id !== item.id))}
+                    >
+                      <FontAwesomeIcon icon={faCheck} />
+                    </CheckedBox>
+                  ) : (
+                    <UncheckedBox
+                      type="button"
+                      onClick={() => setTaskTags([...taskTags, item])}
+                    />
+                  )}
+                  <TagName>
+                    <p>{item.name}</p>
+                    <TagMark color={tagColor as string} />
+                  </TagName>
+                </TagContainer>
+              )
+            })}
+          </TagsContainer>*/}
 
           <StatusContainer>
             <CustomLabel>Status</CustomLabel>
             <SelectStatusField
               className={isOptionsContainerOpen ? 'active' : ''}
-              onClick={() => setIsOptionsContainerOpen((prev) => !prev)}
+              onClick={() => setIsOptionsContainerOpen(prev => !prev)}
             >
               <p>{status}</p>
               <FontAwesomeIcon
@@ -412,8 +255,8 @@ export function TaskFormModal({
                     column={column}
                     status={status}
                     handleChangeStatus={() => {
-                      handleChangeStatus(column.name)
-                      handleSetColumnId(column.id || '')
+                      handleChangeStatus(column.name, column.id)
+                      setIsOptionsContainerOpen(false)
                     }}
                   />
                 ))}

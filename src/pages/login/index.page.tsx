@@ -32,6 +32,7 @@ import Link from 'next/link'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useLoadingOnRouteChange } from '@/utils/useLoadingOnRouteChange'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
+import { api } from '@/lib/axios'
 
 const signInFormSchema = z.object({
   email: z.string().min(3, { message: 'E-mail is required.' }),
@@ -43,9 +44,7 @@ type SignInFormData = z.infer<typeof signInFormSchema>
 export default function Login() {
   const { enableDarkMode } = useTheme()
 
-  const [isClient, setIsClient] = useState(false)
-
-  const { status } = useSession()
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -68,17 +67,21 @@ export default function Login() {
     setIsLoading(true)
 
     try {
-      const response = await signIn('credentials', {
+      const response = await api.post('login', {
         email: data.email,
         password: data.password,
         redirect: false,
       })
 
-      if (response?.error) {
-        toast.error(response?.error)
-      } else {
-        toast?.success('Welcome to the Kanban App!')
+      const token = response.data.token
+
+      if (token) {
+        localStorage.setItem('auth_token', token)
+
+        toast.success('Welcome to Kanban App!')
         router.push('/')
+      } else {
+        toast.error('No token returned.')
       }
     } catch (error) {
       handleApiError(error)
@@ -87,20 +90,20 @@ export default function Login() {
     }
   }
 
-  useEffect(() => {
-    if (status !== 'unauthenticated') {
-      router.push('/')
-    }
-  }, [status, router])
+useEffect(() => {
+  const token = localStorage.getItem('auth_token');
 
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
+  if (token) {
+    router.replace('/');
+  } else {
+    setIsCheckingAuth(false);
+  }
+}, []);
 
   return (
     <>
       <NextSeo title="Kanban App | Login" />
-      {isClient && (
+      {!isCheckingAuth && (
         <LayoutContainer>
           <LogoWrapper>
             <Image src={Logo} width={24} height={24} alt="" />

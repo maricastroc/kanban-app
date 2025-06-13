@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BoardProps } from '@/@types/board'
 import { api } from '@/lib/axios'
 import { handleApiError } from '@/utils/handleApiError'
@@ -19,13 +18,16 @@ interface BoardsContextData {
 
   isLoading: boolean
   handleSetIsLoading: (value: boolean) => void
-  handleChangeBoardStatus: (value: BoardProps) => Promise<void>
+  handleChangeActiveBoard: (value: BoardProps) => Promise<void>
 
   activeBoard: BoardProps | undefined
-  boards: BoardProps[] | undefined
+  boards: BoardProps[] | null
 
-  mutate: KeyedMutator<AxiosResponse<BoardProps, any>>
-  boardsMutate: KeyedMutator<AxiosResponse<BoardProps[], any>>
+  isValidatingBoards: boolean
+  isValidatingActiveBoard: boolean
+
+  boardsMutate: KeyedMutator<AxiosResponse<{ boards: BoardProps[] }, any>>
+  activeBoardMutate: KeyedMutator<AxiosResponse<{ board: BoardProps }, any>>
 }
 
 const BoardsContext = createContext<BoardsContextData | undefined>(undefined)
@@ -48,9 +50,8 @@ export function BoardsContextProvider({
   children,
 }: BoardsContextProviderProps) {
   const [isLoading, setIsLoading] = useState(false)
-
   const [enableScrollFeature, setEnableScrollFeature] = useState(false)
-
+  const [boards, setBoards] = useState<BoardProps[] | null>(null)
   const [activeBoard, setActiveBoard] = useState<BoardProps | undefined>()
 
   function handleEnableScrollFeature(value: boolean) {
@@ -61,45 +62,84 @@ export function BoardsContextProvider({
     setIsLoading(value)
   }
 
-  const { data: activeBoardData, mutate } = useRequest<BoardProps>({
-    url: '/board/get',
-    method: 'GET',
-  })
-
-  const { data: boards, mutate: boardsMutate } = useRequest<BoardProps[]>({
-    url: '/boards',
-    method: 'GET',
-  })
-
-  const handleChangeBoardStatus = async (board: BoardProps) => {
-    try {
-      setIsLoading(true)
-
-      const payload = {
-        boardId: board.id,
-      }
-
-      await api.put('/board/status', payload)
-
-      mutate()
-    } catch (error) {
-      handleApiError(error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
+  // Lê boards do localStorage ao montar (só no client)
   useEffect(() => {
-    if (activeBoardData) {
-      setActiveBoard(activeBoardData)
+    if (typeof window === 'undefined') return
+
+    const storedBoards = localStorage.getItem('boards')
+    if (storedBoards) {
+      try {
+        setBoards(JSON.parse(storedBoards))
+      } catch {
+        localStorage.removeItem('boards')
+      }
+    }
+
+    const storedActiveBoard = localStorage.getItem('activeBoard')
+    if (storedActiveBoard) {
+      try {
+        setActiveBoard(JSON.parse(storedActiveBoard))
+      } catch {
+        localStorage.removeItem('activeBoard')
+      }
+    }
+  }, [])
+
+  // SWR para buscar boards (com fallback para não revalidar na montagem)
+  const {
+    data: boardsData,
+    mutate: boardsMutate,
+    isValidating: isValidatingBoards,
+  } = useRequest<{ boards: BoardProps[] }>(
+    {
+      url: '/boards',
+      method: 'GET',
+    },
+    {
+      revalidateOnFocus: false,
+      // fallbackData: boards ?? undefined // opcional, se seu useRequest aceitar fallbackData
+    },
+  )
+
+  // SWR para buscar activeBoard
+  const {
+    data: activeBoardData,
+    mutate: activeBoardMutate,
+    isValidating: isValidatingActiveBoard,
+  } = useRequest<{ board: BoardProps }>(
+    {
+      url: '/boards/active',
+      method: 'GET',
+    },
+    {
+      revalidateOnFocus: false,
+      // fallbackData: activeBoard ?? undefined
+    },
+  )
+
+  // Atualiza estado e localStorage quando boards chegam da API
+  useEffect(() => {
+    if (boardsData?.boards) {
+      setBoards(boardsData.boards)
+      localStorage.setItem('boards', JSON.stringify(boardsData.boards))
+    }
+  }, [boardsData])
+
+  // Atualiza estado e localStorage quando activeBoard chega da API
+  useEffect(() => {
+    if (activeBoardData?.board) {
+      setActiveBoard(activeBoardData.board)
+      localStorage.setItem('activeBoard', JSON.stringify(activeBoardData.board))
     }
   }, [activeBoardData])
 
-  useEffect(() => {
-    if (!boards?.length) {
-      setActiveBoard(undefined)
-    }
-  }, [boards])
+  // Função para trocar activeBoard manualmente (ex: clique do usuário)
+  const handleChangeActiveBoard = async (board: BoardProps) => {
+    setActiveBoard(board)
+    localStorage.setItem('activeBoard', JSON.stringify(board))
+    // Aqui você pode querer disparar uma revalidação do activeBoard também
+    await activeBoardMutate()
+  }
 
   return (
     <BoardsContext.Provider
@@ -108,11 +148,13 @@ export function BoardsContextProvider({
         handleEnableScrollFeature,
         isLoading,
         handleSetIsLoading,
-        handleChangeBoardStatus,
+        handleChangeActiveBoard,
         activeBoard,
         boards,
-        mutate,
+        isValidatingBoards,
+        isValidatingActiveBoard,
         boardsMutate,
+        activeBoardMutate,
       }}
     >
       {children}

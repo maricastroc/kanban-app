@@ -16,7 +16,7 @@ import {
 import { BoardColumnProps } from '@/@types/board-column'
 import { BREAKPOINT_SM } from '@/utils/constants'
 import { Sidebar } from '@/components/Core/Sidebar'
-import HideSidebar from '@/../public/icon-show-sidebar.svg'
+import HideSidebar from '../../../public/icon-show-sidebar.svg'
 import { useWindowResize } from '@/utils/useWindowResize'
 import { ColumnFormModal } from '@/components/Modals/ColumnFormModal'
 import { api } from '@/lib/axios'
@@ -29,15 +29,19 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { useDragScroll } from '@/utils/useDragScroll'
+import { getToken } from "next-auth/jwt"
+import { TaskProps } from '@/@types/task'
+import toast from 'react-hot-toast'
+
 
 export default function Home() {
   const columnsContainerRef = useRef<HTMLDivElement | null>(null)
 
-  const [isClient, setIsClient] = useState(false)
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
-  const { status } = useSession()
+  const { data: session, status } = useSession()
 
-  const { isLoading, activeBoard, boards, mutate } = useBoardsContext()
+  const { isLoading, activeBoard, activeBoardMutate, isValidatingActiveBoard } = useBoardsContext()
 
   const { handleMouseMove, handleMouseUp, handleContainerMouseDown } =
     useDragScroll(columnsContainerRef as RefObject<HTMLDivElement>)
@@ -45,8 +49,6 @@ export default function Home() {
   const router = useRouter()
 
   const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>()
-
-  const [isReordering, setIsReordering] = useState(false)
 
   const { enableDarkMode } = useTheme()
 
@@ -56,46 +58,129 @@ export default function Home() {
 
   const isSmallerThanSm = useWindowResize(BREAKPOINT_SM)
 
-  const moveTaskToColumn = async (
-    taskId: string,
-    newColumnId: string,
-    newOrder: number,
-  ) => {
-    try {
-      setIsReordering(true)
+  const [isApiProcessing, setIsApiProcessing] = useState(false);
 
-      const payload = {
-        taskId,
-        newColumnId,
-        newOrder,
-      }
+const moveTaskToColumn = async (
+  task: TaskProps,
+  newColumnId: string,
+  newOrder: number,
+) => {
+    setIsApiProcessing(true)
 
-      await api.put('/tasks/reorder', payload)
-
-      mutate()
-    } catch (error) {
-      handleApiError(error)
-    } finally {
-      setIsReordering(false)
-    }
+  if (!activeBoard) {
+      return
   }
 
-  const reorderTaskInColumn = async (taskId: string, newOrder: number) => {
-    try {
-      const payload = {
-        taskId,
-        newOrder,
-      }
-
-      await api.put('/columns/reorder', payload)
-      mutate()
-    } catch (error) {
-      handleApiError(error)
+  const originalColumns = [...activeBoard.columns];
+  
+  try {
+    if (isValidatingActiveBoard || isApiProcessing || !task?.id || !newColumnId) {
+      return
     }
+
+    const sourceColumnIndex = originalColumns.findIndex(col => 
+      col.tasks.some(t => String(t.id) === String(task.id))
+    );
+    const destinationColumnIndex = originalColumns.findIndex(col => 
+      String(col.id) === String(newColumnId)
+    );
+
+    if (sourceColumnIndex === -1 || destinationColumnIndex === -1) return;
+    
+    const sourceColumn = originalColumns[sourceColumnIndex];
+    const updatedSourceTasks = sourceColumn.tasks.filter(t => t.id !== task.id);
+    
+    // Adiciona a task na nova coluna na posição correta
+    const destinationColumn = originalColumns[destinationColumnIndex];
+    const updatedDestinationTasks = [...destinationColumn.tasks];
+    updatedDestinationTasks.splice(newOrder, 0, task);
+    
+    // Atualiza o estado local imediatamente
+    const updatedColumns = [...originalColumns];
+    updatedColumns[sourceColumnIndex] = {
+      ...sourceColumn,
+      tasks: updatedSourceTasks,
+    };
+
+    updatedColumns[destinationColumnIndex] = {
+      ...destinationColumn,
+      tasks: updatedDestinationTasks,
+    };
+    
+    setBoardColumns(updatedColumns);
+    
+    // Envia a requisição para o servidor em segundo plano
+    const payload = {
+      new_column_id: newColumnId,
+      new_order: newOrder,
+    };
+    
+    await api.put(`tasks/${task?.id}/move`, payload);
+    
+    // Se a API retornar sucesso, atualiza o estado novamente para garantir sincronia
+    await activeBoardMutate();
+    
+  } catch (error) {
+    setBoardColumns(originalColumns);
+    handleApiError(error);
+  } finally {
+    setIsApiProcessing(false);
   }
+};
+
+  const reorderTaskInColumn = async (task: TaskProps, newOrder: number) => {
+  if (!activeBoard) return
+
+  setIsApiProcessing(true)
+
+  const originalColumns = [...activeBoard.columns]
+
+  try {
+    const columnIndex = originalColumns.findIndex(col =>
+      col.tasks.some(t => t.id === task.id)
+    )
+    if (columnIndex === -1) return
+
+    const column = originalColumns[columnIndex]
+    const tasks = Array.from(column.tasks)
+
+    const oldIndex = tasks.findIndex(t => t.id === task.id)
+    if (oldIndex === -1) return
+
+    const [movedTask] = tasks.splice(oldIndex, 1)
+
+    tasks.splice(newOrder, 0, movedTask)
+
+    const newColumns = [...originalColumns]
+    newColumns[columnIndex] = {
+      ...column,
+      tasks,
+    }
+
+    setBoardColumns(newColumns)
+
+    const payload = {
+      new_order: newOrder,
+    }
+
+    await api.put(`tasks/${task.id}/reorder`, payload)
+
+    await activeBoardMutate()
+  } catch (error) {
+    setBoardColumns(originalColumns)
+    handleApiError(error)
+  } finally {
+    setIsApiProcessing(false)
+  }
+}
 
   const onDragEnd = (result: DropResult) => {
     const { destination, source } = result
+
+if (isApiProcessing) {
+    return;
+  }
+
 
     if (!activeBoard) {
       return
@@ -119,39 +204,23 @@ export default function Home() {
     const [movedTask] = newSourceTasks.splice(source.index, 1)
 
     if (sourceColumnIndex === destinationColumnIndex) {
-      newSourceTasks.splice(destination.index, 0, movedTask)
-
-      const newColumns = [...activeBoard.columns]
-      newColumns[sourceColumnIndex] = {
-        ...sourceColumn,
-        tasks: newSourceTasks,
-      }
-
-      setBoardColumns(newColumns)
-
-      reorderTaskInColumn(movedTask?.id, destination?.index)
+      reorderTaskInColumn(movedTask, destination?.index)
     } else {
-      const newDestinationTasks = Array.from(destinationColumn.tasks)
-
-      newDestinationTasks.splice(destination.index, 0, movedTask)
-
-      const newColumns = [...activeBoard?.columns]
-
-      newColumns[sourceColumnIndex] = {
-        ...sourceColumn,
-        tasks: newSourceTasks,
-      }
-
-      newColumns[destinationColumnIndex] = {
-        ...destinationColumn,
-        tasks: newDestinationTasks,
-      }
-
-      setBoardColumns(newColumns)
-
-      moveTaskToColumn(movedTask?.id, destinationColumn?.id, destination?.index)
+      moveTaskToColumn(
+        movedTask,
+        String(destinationColumn?.id),
+        destination?.index
+      )
     }
   }
+
+  useEffect(() => {
+    const token = localStorage.getItem('auth_token')
+
+    if (!token) {
+      router.push('/login')
+    }
+  }, [])
 
   useEffect(() => {
     if (activeBoard) {
@@ -159,20 +228,20 @@ export default function Home() {
     }
   }, [activeBoard])
 
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login')
-    }
-  }, [status, router])
+useEffect(() => {
+  const token = localStorage.getItem('auth_token');
 
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
+  if (!token) {
+    router.replace('/login');
+  } else {
+    setIsCheckingAuth(false);
+  }
+}, []);
 
   return (
     <>
       <NextSeo title="Kanban App | Dashboard" />
-      {isClient && (
+      {!isCheckingAuth && (
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="all-columns" direction="horizontal">
             {(provided) => (
@@ -208,7 +277,7 @@ export default function Home() {
                                 name={column.name}
                                 tasks={column.tasks.map((task) => ({
                                   ...task,
-                                  isDragDisabled: isLoading,
+                                  isDragDisabled: isLoading || isApiProcessing,
                                 }))}
                                 index={index}
                               />
@@ -236,7 +305,7 @@ export default function Home() {
                           )}
                         </>
                       ) : (
-                        boards && <EmptyContainer />
+                        <EmptyContainer />
                       )}
                     </ColumnsContainer>
                   </Wrapper>
@@ -250,7 +319,7 @@ export default function Home() {
             )}
           </Droppable>
 
-          {(isLoading || isReordering || !boards) && <LoadingComponent />}
+          {isLoading && <LoadingComponent />}
         </DragDropContext>
       )}
     </>

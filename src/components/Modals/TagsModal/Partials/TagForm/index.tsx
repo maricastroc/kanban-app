@@ -47,7 +47,7 @@ export function TagForm({
   onClose,
   handleIsSubmitting,
 }: Props) {
-  const { mutate } = useBoardsContext()
+  const { activeBoardMutate } = useBoardsContext()
 
   const {
     handleSubmit,
@@ -79,7 +79,7 @@ export function TagForm({
       toast.success(response.data.message)
       reset()
       tagsMutate()
-      mutate()
+      activeBoardMutate()
 
       setTimeout(onClose, 500)
     } catch (error) {
