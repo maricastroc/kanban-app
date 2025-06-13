@@ -278,6 +278,35 @@ export const useTaskForm = ({
     }
   }
 
+  const handleDeleteTaskOptimistic = async () => {
+    if (!task || !activeBoard) return
+
+    const updatedBoard = {
+      ...activeBoard,
+      columns: activeBoard.columns.map((column) => {
+        if (column.name !== task.status) return column
+
+        return {
+          ...column,
+          tasks: column.tasks?.filter((t) => t.uuid !== task.uuid) || [],
+        }
+      }),
+    }
+
+    handleChangeActiveBoard(updatedBoard)
+
+    try {
+      await api.delete(`/tasks/${task.uuid}`)
+      activeBoardMutate()
+
+      onClose()
+    } catch (error) {
+      handleChangeActiveBoard(activeBoard)
+      handleApiError(error)
+      toast.error('Erro ao deletar tarefa')
+    }
+  }
+
   const createOptimisticTask = (data: TaskFormData, taskId: string) => ({
     id: taskId,
     uuid: taskId,
@@ -326,6 +355,7 @@ export const useTaskForm = ({
     handleRemoveSubtask,
     handleChangeStatus,
     handleSubmitTask,
+    handleDeleteTaskOptimistic,
     setTaskTags,
     watch,
   }

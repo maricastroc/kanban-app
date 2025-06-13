@@ -119,11 +119,11 @@ export function BoardsContextProvider({
   }, [boardsData])
 
   useEffect(() => {
-    if (activeBoardData?.board) {
+    if (activeBoardData?.board && !activeBoard) {
       setActiveBoard(activeBoardData.board)
       localStorage.setItem('activeBoard', JSON.stringify(activeBoardData.board))
     }
-  }, [activeBoardData])
+  }, [activeBoardData, activeBoard])
 
   const handleChangeActiveBoard = async (board: BoardProps) => {
     setActiveBoard(board)

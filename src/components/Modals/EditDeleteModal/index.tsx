@@ -50,6 +50,8 @@ export function EditDeleteModal({ onClose }: EditDeleteModalProps) {
       await api.get('/logout')
 
       localStorage.removeItem('auth_token')
+      localStorage.removeItem('activeBoard')
+      localStorage.removeItem('boards')
 
       toast.success('See you soon!')
 
