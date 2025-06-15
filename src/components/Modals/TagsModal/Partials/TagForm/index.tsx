@@ -21,7 +21,7 @@ import { AxiosResponse } from 'axios'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 
 const tagSchema = z.object({
-  id: z.string().optional(),
+  id: z.number().or(z.string()).nullable(),
   name: z.string().min(3, { message: 'Name is required' }),
   color: z.string().min(3, { message: 'Color is required' }),
 })
@@ -35,7 +35,7 @@ interface Props {
   tag?: TagProps
   onClose: () => void
   handleIsSubmitting: (value: boolean) => void
-  tagsMutate: KeyedMutator<AxiosResponse<TagProps[], any>>
+  tagsMutate: KeyedMutator<AxiosResponse<{ tags: TagProps[] }, any>>
 }
 
 export function TagForm({
@@ -60,7 +60,7 @@ export function TagForm({
     defaultValues: {
       name: tag?.name || '',
       color: tag?.color || '',
-      id: tag?.id || undefined,
+      id: tag?.id || null,
     },
   })
 
@@ -69,8 +69,7 @@ export function TagForm({
       handleIsSubmitting(true)
 
       const response = isEdit
-        ? await api.post(`/tags`, {
-            id: data.id,
+        ? await api.put(`/tags/${data.id}`, {
             name: data.name,
             color: data.color,
           })
@@ -88,7 +87,7 @@ export function TagForm({
       handleIsSubmitting(false)
     }
   }
-
+  console.log(errors)
   return (
     <FormContainer onSubmit={handleSubmit(onSubmit)}>
       <InputContainer>

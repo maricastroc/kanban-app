@@ -1,5 +1,5 @@
 export interface TagProps {
-  id?: string
+  id: string | number | null
   name: string
   color: string
   user_id: string

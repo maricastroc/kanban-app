@@ -33,7 +33,7 @@ export function TaskCard({ task, provided, column }: TaskCardProps) {
   useEffect(() => {
     handleEnableScrollFeature(!isTaskDetailsModalOpen)
   }, [isTaskDetailsModalOpen])
-
+  console.log(task)
   return (
     <Dialog.Root open={isTaskDetailsModalOpen}>
       <Dialog.Trigger asChild>
@@ -48,10 +48,13 @@ export function TaskCard({ task, provided, column }: TaskCardProps) {
             <TagsContainer>
               {task.tags.map((item) => {
                 const tagColor = tagColors.find(
-                  (tag) => tag.name === item.tag.color,
+                  (tag) => tag.name === item.color,
                 )?.color
                 return (
-                  <Tag key={item.id} style={{ backgroundColor: tagColor }} />
+                  <Tag
+                    key={item.id}
+                    style={{ backgroundColor: `${tagColor}` }}
+                  />
                 )
               })}
             </TagsContainer>

@@ -4,4 +4,5 @@ export interface SubtaskProps {
   name: string
   is_completed: boolean
   key?: string
+  order?: number
 }

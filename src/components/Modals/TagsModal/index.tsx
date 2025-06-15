@@ -52,7 +52,9 @@ export function TagsModal({ onClose }: Props) {
 
   const { activeBoardMutate } = useBoardsContext()
 
-  const { data: tags, mutate: tagsMutate } = useRequest<TagProps[]>({
+  const { data, mutate: tagsMutate } = useRequest<{
+    tags: TagProps[]
+  }>({
     url: '/tags',
     method: 'GET',
   })
@@ -107,8 +109,8 @@ export function TagsModal({ onClose }: Props) {
         {!isTagFormOpen && !isDeleteTagWarningOpen && (
           <TagsContainer>
             <TagsTitle>Tags</TagsTitle>
-            {tags?.length ? (
-              tags?.map((item, index) => {
+            {data?.tags?.length ? (
+              data?.tags?.map((item, index) => {
                 const tagColor = tagColors.find(
                   (tag) => tag.name === item.color,
                 )?.color
@@ -151,7 +153,7 @@ export function TagsModal({ onClose }: Props) {
 
         {isTagFormOpen && (
           <TagForm
-            currentTags={tags}
+            currentTags={data?.tags}
             tagsMutate={tagsMutate}
             isSubmitting={isLoading}
             handleIsSubmitting={(value: boolean) => setIsLoading(value)}
@@ -163,7 +165,7 @@ export function TagsModal({ onClose }: Props) {
 
         {!isTagFormOpen &&
           !isDeleteTagWarningOpen &&
-          ((!!tags && tags?.length < 8) || !tags?.length) && (
+          ((!!data?.tags && data?.tags?.length < 8) || !data?.tags?.length) && (
             <Button
               title={'Add New Tag'}
               type="button"

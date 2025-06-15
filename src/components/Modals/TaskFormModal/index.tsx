@@ -2,9 +2,15 @@ import { RefObject, useRef, useState } from 'react'
 import DatePicker from 'react-datepicker'
 import * as Dialog from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleDown, faAngleUp, faX } from '@fortawesome/free-solid-svg-icons'
+import {
+  faAngleDown,
+  faAngleUp,
+  faCheck,
+  faX,
+} from '@fortawesome/free-solid-svg-icons'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import {
+  CheckedBox,
   CloseButton,
   HeaderContent,
   ModalContent,
@@ -13,6 +19,8 @@ import {
   SelectStatusField,
   StatusContainer,
   StatusSelectorContainer,
+  TagContainer,
+  UncheckedBox,
 } from '@/styles/shared'
 import { FormContainer } from '@/components/Shared/FormContainer'
 import { InputContainer } from '@/components/Shared/InputContainer'
@@ -32,6 +40,7 @@ import {
   StyledDatePickerWrapper,
   SubtasksForm,
   SubtasksWrapper,
+  TagsContainer,
 } from './styles'
 
 import { SubtaskProps } from '@/@types/subtask'
@@ -40,6 +49,11 @@ import toast from 'react-hot-toast'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { useTaskForm } from '@/hooks/useTaskForm'
 import { useBoardsContext } from '@/contexts/BoardsContext'
+import { TagName, TagsTitle } from '../TagsModal/styles'
+import { TagMark } from '../TaskDetailsModal/styles'
+import { tagColors } from '@/components/Shared/SelectInput'
+import useRequest from '@/utils/useRequest'
+import { TagProps } from '@/@types/tag'
 
 interface AddTaskModalProps {
   isEditing?: boolean
@@ -57,6 +71,13 @@ export function TaskFormModal({
   const { isLoading } = useBoardsContext()
 
   const [isOptionsContainerOpen, setIsOptionsContainerOpen] = useState(false)
+
+  const { data } = useRequest<{
+    tags: TagProps[]
+  }>({
+    url: '/tags',
+    method: 'GET',
+  })
 
   const {
     register,
@@ -186,35 +207,34 @@ export function TaskFormModal({
             />
           </SubtasksForm>
 
-          {/* <TagsContainer>
+          <TagsContainer>
             <TagsTitle>Tags</TagsTitle>
-            {tags?.map((item) => {
-              const tagColor = tagColors.find(tag => tag.name === item.color)?.color
-              const isChecked = taskTags.some(tag => tag.id === item.id)
+            {data?.tags?.map((item) => {
+              const isChecked = task?.tags?.some((tag) => tag.id === item.id)
+              const tagColor = tagColors.find(
+                (tag) => tag.name === item.color,
+              )?.color
 
               return (
                 <TagContainer key={item.id}>
                   {isChecked ? (
-                    <CheckedBox
-                      type="button"
-                      onClick={() => setTaskTags(taskTags.filter(tag => tag.id !== item.id))}
-                    >
+                    <CheckedBox type="button" onClick={() => console.log('')}>
                       <FontAwesomeIcon icon={faCheck} />
                     </CheckedBox>
                   ) : (
                     <UncheckedBox
                       type="button"
-                      onClick={() => setTaskTags([...taskTags, item])}
+                      onClick={() => console.log('')}
                     />
                   )}
                   <TagName>
-                    <p>{item.name}</p>
                     <TagMark color={tagColor as string} />
+                    <p>{item.name}</p>
                   </TagName>
                 </TagContainer>
               )
             })}
-          </TagsContainer> */}
+          </TagsContainer>
 
           <StatusContainer>
             <CustomLabel>Status</CustomLabel>

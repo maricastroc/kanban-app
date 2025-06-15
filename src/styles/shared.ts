@@ -223,7 +223,8 @@ export const CheckedBox = styled.button`
 export const TagContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 0.7rem;
+  justify-content: flex-start;
   padding: 0.85rem;
   background-color: ${(props) => props.theme['bg-color']};
   border-radius: 8px;

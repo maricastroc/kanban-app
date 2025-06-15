@@ -5,4 +5,6 @@ export interface TaskTagProps {
   tagId: string
   taskId: string
   tag: TagProps
+  name: string
+  color: string
 }

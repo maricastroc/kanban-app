@@ -80,12 +80,12 @@ export function TaskDetailsModal({
 
   const [isEditDeleteModalOpen, setIsEditDeleteModalOpen] = useState(false)
 
-  const [associatedTags, setAssociatedTags] = useState<TagProps[]>([])
-
   const [isStatusOptionsContainerOpen, setIsStatusOptionsContainerOpen] =
     useState(false)
 
-  const { data: tags } = useRequest<TagProps[]>({
+  const { data } = useRequest<{
+    tags: TagProps[]
+  }>({
     url: '/tags',
     method: 'GET',
   })
@@ -159,31 +159,24 @@ export function TaskDetailsModal({
     }
   }
 
-  const handleToggleTagStatus = async (tagToUpdate: TagProps) => {
+  const handleToggleTagStatus = async (
+    tagToUpdate: TagProps,
+    isChecked: boolean,
+  ) => {
     try {
       setIsLoading(true)
 
-      if (associatedTags.some((tag) => tag.id === tagToUpdate.id)) {
-        const response = await api.delete(`/tasks/tags`, {
-          data: { taskId: task.id, tagId: tagToUpdate.id },
-        })
+      const { id: taskId } = task
+      const { id: tagId } = tagToUpdate
 
-        toast?.success(response.data.message)
+      if (isChecked) {
+        await api.delete(`/tasks/${taskId}/tags/${tagId}`)
+
         await activeBoardMutate()
-
-        setAssociatedTags(
-          associatedTags.filter((tag) => tag.id !== tagToUpdate.id),
-        )
       } else {
-        const response = await api.post(`/tasks/tags`, {
-          tagId: tagToUpdate.id,
-          taskId: task.id,
-        })
+        await api.post(`/tasks/${taskId}/tags/${tagId}`)
 
-        toast?.success(response.data.message)
         await activeBoardMutate()
-
-        setAssociatedTags([...associatedTags, tagToUpdate])
       }
     } catch (error) {
       handleApiError(error)
@@ -197,17 +190,6 @@ export function TaskDetailsModal({
       setSubtasks(task.subtasks)
     }
   }, [task.subtasks])
-
-  useEffect(() => {
-    if (task?.tags && tags) {
-      const associatedTags = task.tags
-        .filter((taskTag) => tags.some((tag) => tag.id === taskTag.tagId))
-        .map((taskTag) => tags.find((tag) => tag.id === taskTag.tagId))
-        .filter((tag) => tag !== undefined)
-
-      setAssociatedTags(associatedTags)
-    }
-  }, [tags])
 
   return (
     <>
@@ -271,7 +253,7 @@ export function TaskDetailsModal({
                       }
 
                       setSubtasks(newOrder)
-                      reorderSubtaskInTask(task?.id as string, newOrder)
+                      reorderSubtaskInTask(task.id as string, newOrder)
                     }}
                   >
                     {subtasks.map((subtask: SubtaskProps) => (
@@ -284,9 +266,8 @@ export function TaskDetailsModal({
                       >
                         <SubtaskItem
                           id={subtask.id}
-                          task={task}
                           name={subtask.name}
-                          is_completed={subtask.is_completed}
+                          isCompleted={subtask.is_completed}
                           handleSetIsLoading={(value: boolean) =>
                             setIsLoading(value)
                           }
@@ -301,14 +282,14 @@ export function TaskDetailsModal({
 
               <TagsContainer>
                 <TagsTitle>Tags</TagsTitle>
-                {tags &&
-                  tags.length > 0 &&
-                  tags.map((item) => {
+                {data?.tags &&
+                  data?.tags.length > 0 &&
+                  data?.tags.map((item) => {
                     const tagColor = tagColors.find(
                       (tag) => tag.name === item.color,
                     )?.color
 
-                    const isChecked = associatedTags.some(
+                    const isChecked = task?.tags?.some(
                       (tag) => tag.id === item.id,
                     )
 
@@ -316,13 +297,13 @@ export function TaskDetailsModal({
                       <TagContainer key={item.id}>
                         {isChecked ? (
                           <CheckedBox
-                            onClick={() => handleToggleTagStatus(item)}
+                            onClick={() => handleToggleTagStatus(item, true)}
                           >
                             <FontAwesomeIcon icon={faCheck} />
                           </CheckedBox>
                         ) : (
                           <UncheckedBox
-                            onClick={() => handleToggleTagStatus(item)}
+                            onClick={() => handleToggleTagStatus(item, false)}
                           />
                         )}
                         <TagName>

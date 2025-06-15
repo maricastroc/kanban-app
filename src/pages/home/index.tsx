@@ -51,7 +51,7 @@ export default function Home() {
   }, [activeBoard])
 
   if (isCheckingAuth) return null
-  console.log(isColumnFormModalOpen)
+
   return (
     <>
       <NextSeo title="Kanban App | Dashboard" />

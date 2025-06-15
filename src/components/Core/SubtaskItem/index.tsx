@@ -2,30 +2,29 @@ import { useState } from 'react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
-import { TaskProps } from '@/@types/task'
 
 import { Container, Title } from './styles'
-import { SubtaskProps } from '@/@types/subtask'
 import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { CheckedBox, UncheckedBox } from '@/styles/shared'
 
-interface SubtaskItemProps extends SubtaskProps {
-  task: TaskProps
+interface SubtaskItemProps {
+  id: string | number
+  name: string
+  isCompleted: boolean
   handleSetIsLoading: (value: boolean) => void
 }
 
 export function SubtaskItem({
   id,
-  task,
   name,
-  is_completed,
+  isCompleted,
   handleSetIsLoading,
 }: SubtaskItemProps) {
-  const [isChecked, setIsChecked] = useState(is_completed)
+  const [isChecked, setIsChecked] = useState(isCompleted)
 
-  const { boardsMutate } = useBoardsContext()
+  const { activeBoardMutate } = useBoardsContext()
 
   const handleToggleSubtaskStatus = async () => {
     setIsChecked((prev) => !prev)
@@ -33,14 +32,9 @@ export function SubtaskItem({
     try {
       handleSetIsLoading(true)
 
-      const payload = {
-        taskId: task.id,
-        subtaskId: id,
-      }
+      await api.patch(`/subtasks/${id}/toggle-completion`)
 
-      await api.put('/subtasks/status', payload)
-
-      boardsMutate()
+      await activeBoardMutate()
     } catch (error) {
       handleApiError(error)
     } finally {
