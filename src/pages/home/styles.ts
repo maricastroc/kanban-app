@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import { ToastContainer } from 'react-toastify'
 
 export const LayoutContainer = styled.div`
   display: flex;
@@ -59,72 +58,6 @@ export const ColumnsContainer = styled.div`
   @media (min-width: 1024px) {
     padding: 2rem;
     gap: 2rem;
-  }
-`
-
-export const AddColumnContainer = styled.div`
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 17.5rem;
-  height: auto;
-  margin-top: 2.4rem;
-  border-radius: 8px;
-
-  &.dark {
-    background: linear-gradient(
-      to bottom,
-      rgba(130, 143, 163, 0.075),
-      rgba(130, 143, 163, 0)
-    );
-  }
-
-  &.light {
-    background: linear-gradient(180deg, #e9effa, rgba(233, 239, 250, 0.5));
-  }
-
-  &:hover {
-    h2 {
-      color: ${(props) => props.theme['primary-color']};
-      transition: 200ms;
-    }
-  }
-`
-
-export const AddColumnBtn = styled.button`
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  border: none;
-  font-size: clamp(1.2rem, 3vw, 1.5rem);
-  color: ${(props) => props.theme['subtitle-color']};
-  font-weight: 700;
-`
-
-export const StyledToastContainer = styled(ToastContainer)`
-  & .Toastify__toast {
-    background-color: ${(props) => props.theme['bg-color']};
-    color: ${(props) => props.theme['details-color']};
-    border-radius: 4px;
-    font-family: 'Plus Jakarta Sans';
-    font-size: 0.85rem;
-    line-height: 1.5;
-  }
-
-  & .Toastify__close-button {
-    color: ${(props) => props.theme['title-color']};
-  }
-
-  & .Toastify__toast-body svg {
-    fill: ${(props) => props.theme['primary-color']};
-    font-size: 0.5rem;
-  }
-
-  & .Toastify__progress-bar {
-    background-color: ${(props) => props.theme['primary-color']};
   }
 `
 

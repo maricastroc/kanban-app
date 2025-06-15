@@ -26,7 +26,7 @@ export const Container = styled.button`
       color: ${(props) => props.theme['button-title']};
     }
 
-    &:hover {
+    &:not([disabled]):hover {
       background-color: ${(props) => props.theme['primary-hover']};
       transition: 200ms;
     }
@@ -40,7 +40,7 @@ export const Container = styled.button`
       color: ${(props) => props.theme['primary-color']};
     }
 
-    &:hover {
+    &:not([disabled]):hover {
       background-color: ${(props) => `${props.theme['secondary-hover']}`};
       transition: 200ms;
     }
@@ -53,7 +53,7 @@ export const Container = styled.button`
       color: ${(props) => props.theme['button-title']};
     }
 
-    &:hover {
+    &:not([disabled]):hover {
       background-color: ${(props) => props.theme['error-hover']};
       transition: 200ms;
     }

@@ -29,7 +29,7 @@ export function TaskCard({ task, provided, column }: TaskCardProps) {
   const { handleEnableScrollFeature } = useBoardsContext()
 
   const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false)
-  console.log(task?.due_date)
+
   useEffect(() => {
     handleEnableScrollFeature(!isTaskDetailsModalOpen)
   }, [isTaskDetailsModalOpen])

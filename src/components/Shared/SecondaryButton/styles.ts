@@ -23,7 +23,7 @@ export const SecondaryBtn = styled.button`
     color: ${(props) => props.theme['button-title']};
   }
 
-  &:hover {
+  &:not([disabled]):hover {
     transition: 200ms;
     background-color: ${(props) => props.theme['tertiary-hover']};
   }
