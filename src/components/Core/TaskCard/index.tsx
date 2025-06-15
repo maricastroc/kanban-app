@@ -29,7 +29,7 @@ export function TaskCard({ task, provided, column }: TaskCardProps) {
   const { handleEnableScrollFeature } = useBoardsContext()
 
   const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false)
-
+  console.log(task?.due_date)
   useEffect(() => {
     handleEnableScrollFeature(!isTaskDetailsModalOpen)
   }, [isTaskDetailsModalOpen])
@@ -67,12 +67,12 @@ export function TaskCard({ task, provided, column }: TaskCardProps) {
               } of ${task?.subtasks?.length}`}</p>
             </InfoItem>
 
-            {task?.dueDate && (
+            {task?.due_date && (
               <InfoItem
-                className={`${getDueStatus(task.dueDate, task.subtasks)}`}
+                className={`${getDueStatus(task.due_date, task.subtasks)}`}
               >
                 <FontAwesomeIcon icon={faClock} />
-                <p>{formatDate(task.dueDate)}</p>
+                <p>{formatDate(task.due_date)}</p>
               </InfoItem>
             )}
           </InfoContent>

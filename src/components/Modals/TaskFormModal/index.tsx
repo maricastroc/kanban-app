@@ -39,6 +39,7 @@ import { TaskProps } from '@/@types/task'
 import toast from 'react-hot-toast'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { useTaskForm } from '@/hooks/useTaskForm'
+import { useBoardsContext } from '@/contexts/BoardsContext'
 
 interface AddTaskModalProps {
   isEditing?: boolean
@@ -53,6 +54,8 @@ export function TaskFormModal({
 }: AddTaskModalProps) {
   const statusRef = useRef<HTMLDivElement | null>(null)
 
+  const { isLoading } = useBoardsContext()
+
   const [isOptionsContainerOpen, setIsOptionsContainerOpen] = useState(false)
 
   const {
@@ -61,7 +64,6 @@ export function TaskFormModal({
     errors,
     status,
     subtasks,
-    isLoading,
     activeBoard,
     setValue,
     resetForm,
@@ -147,17 +149,17 @@ export function TaskFormModal({
           </InputContainer>
 
           <InputContainer>
-            <CustomLabel htmlFor="dueDate">Due Date</CustomLabel>
+            <CustomLabel htmlFor="due_date">Due Date</CustomLabel>
             <StyledDatePickerWrapper>
               <DatePicker
                 placeholderText="dd/mm/yyyy"
                 customInput={<CustomInput />}
-                selected={watch('dueDate')}
+                selected={watch('due_date')}
                 dateFormat="dd/MM/yyyy"
-                onChange={(date) => setValue('dueDate', date as Date)}
+                onChange={(date) => setValue('due_date', date as Date)}
               />
             </StyledDatePickerWrapper>
-            {<ErrorMessage message={errors.dueDate?.message} />}
+            {<ErrorMessage message={errors.due_date?.message} />}
           </InputContainer>
 
           <SubtasksForm>
@@ -233,7 +235,7 @@ export function TaskFormModal({
                     column={column}
                     status={status}
                     handleChangeStatus={() => {
-                      handleChangeStatus(column.name, column.id)
+                      handleChangeStatus(column.name, column.id as string)
                       setIsOptionsContainerOpen(false)
                     }}
                   />

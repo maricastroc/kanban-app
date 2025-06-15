@@ -2,6 +2,7 @@ import axios from 'axios'
 
 export const api = axios.create({
   baseURL: 'https://kanban-api-production-6d84.up.railway.app/api/',
+  // baseURL: 'http://localhost:8000/api/',
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',

@@ -56,7 +56,7 @@ export const useTaskForm = ({
         .array(subtaskSchema)
         .min(MIN_SUBTASKS, { message: 'At least one subtask is required' }),
       status: z.string(),
-      dueDate: z.date().optional(),
+      due_date: z.date().optional(),
     })
     .refine(
       (data) => {
@@ -109,7 +109,7 @@ export const useTaskForm = ({
       id: uuidv4(),
       name: task?.name ?? '',
       description: task?.description ?? '',
-      dueDate: task?.dueDate ? new Date(task.dueDate) : undefined,
+      due_date: task?.due_date ? new Date(task.due_date) : undefined,
       status,
       subtasks,
     },
@@ -175,6 +175,7 @@ export const useTaskForm = ({
       const payload = {
         name: data.name,
         description: data.description || '',
+        due_date: data.due_date,
         column_id: columnId,
         status,
         subtasks: subtasks.map((subtask, index) => ({
@@ -203,7 +204,7 @@ export const useTaskForm = ({
       if (initialColumn) {
         setStatus(initialColumn.name)
         setValue('status', initialColumn.name)
-        setColumnId(initialColumn.id)
+        setColumnId(initialColumn.id as string)
       }
     }
   }, [activeBoard, isEditing, setValue])

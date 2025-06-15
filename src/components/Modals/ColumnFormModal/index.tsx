@@ -1,13 +1,15 @@
 import { useState } from 'react'
-import { v4 as uuidv4 } from 'uuid'
 
 import { LayoutContainer, ColumnContent } from './styles'
 import * as Dialog from '@radix-ui/react-dialog'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { faX } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import toast from 'react-hot-toast'
 
-import { Button } from '@/components/Shared/Button'
-import { FieldsContainer } from '@/components/Shared/FieldsContainer'
-import { Field } from '@/components/Shared/Field'
-import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 import {
   CloseButton,
   HeaderContent,
@@ -15,38 +17,39 @@ import {
   ModalOverlay,
   ModalTitle,
 } from '@/styles/shared'
-import { CustomLabel } from '@/components/Shared/Label'
+
+import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
+import { handleApiError } from '@/utils/handleApiError'
 import { BoardColumnProps } from '@/@types/board-column'
+import { useBoardsContext } from '@/contexts/BoardsContext'
+import { api } from '@/lib/axios'
+
+import { Button } from '@/components/Shared/Button'
+import { FieldsContainer } from '@/components/Shared/FieldsContainer'
+import { Field } from '@/components/Shared/Field'
+import { CustomLabel } from '@/components/Shared/Label'
 import { CustomInput } from '@/components/Shared/Input'
 import { InputContainer } from '@/components/Shared/InputContainer'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { FormContainer } from '@/components/Shared/FormContainer'
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
-import { api } from '@/lib/axios'
-import { handleApiError } from '@/utils/handleApiError'
-import toast from 'react-hot-toast'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
-import { useBoardsContext } from '@/contexts/BoardsContext'
-import { faX } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 interface ColumnFormModalProps {
   onClose: () => void
 }
 
 const columnSchema = z.object({
-  id: z.number().or(z.string()),
+  id: z.number().or(z.string()).nullable(),
   name: z.string().min(3, {
     message: 'Column Name must have at least three characters',
   }),
 })
 
 const formSchema = z.object({
-  id: z.number().or(z.string()),
-  name: z.string().min(3, { message: 'Title is required' }),
+  id: z.number().or(z.string()).nullable(),
+  name: z
+    .string()
+    .min(3, { message: 'Title must have at least three characters' }),
   columns: z
     .array(columnSchema)
     .min(1, { message: 'At least one column is required' }),
@@ -57,7 +60,7 @@ export type FormData = z.infer<typeof formSchema>
 export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
   useEscapeKeyHandler(onClose)
 
-  const { activeBoard, mutate } = useBoardsContext()
+  const { activeBoard, activeBoardMutate } = useBoardsContext()
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -74,7 +77,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
     watch,
   } = useForm<FormData>({
     defaultValues: {
-      id: activeBoard?.id,
+      id: activeBoard?.id || null,
       name: activeBoard?.name,
       columns: activeBoard?.columns,
     },
@@ -84,7 +87,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
   useEscapeKeyHandler(onClose)
 
   const handleAddColumn = () => {
-    const newColumn = { id: uuidv4(), name: '', tasks: [] }
+    const newColumn = { id: null, name: '', tasks: [] }
     const updatedColumns = [...boardColumns, newColumn]
 
     setBoardColumns(updatedColumns)
@@ -145,7 +148,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
 
       toast?.success(response.data.message)
 
-      mutate()
+      await activeBoardMutate()
     } catch (error) {
       handleApiError(error)
     } finally {

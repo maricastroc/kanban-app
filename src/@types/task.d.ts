@@ -9,6 +9,6 @@ export interface TaskProps {
   description?: string
   status: string
   subtasks: SubtaskProps[]
-  dueDate?: Date
+  due_date?: Date
   tags?: TaskTagProps[]
 }

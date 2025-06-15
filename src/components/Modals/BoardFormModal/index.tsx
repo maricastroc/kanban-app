@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { v4 as uuidv4 } from 'uuid'
 import * as Dialog from '@radix-ui/react-dialog'
 import { api } from '@/lib/axios'
 import toast from 'react-hot-toast'
@@ -38,12 +37,12 @@ interface BoardModalProps {
 }
 
 const columnSchema = z.object({
-  id: z.number().or(z.string()),
+  id: z.number().or(z.string()).nullable(),
   name: z.string().min(3, { message: 'Column name is required' }),
 })
 
 const formSchema = z.object({
-  id: z.number().or(z.string()),
+  id: z.number().or(z.string()).nullable(),
   name: z
     .string()
     .min(MIN_BOARD_NAME_LENGTH, { message: 'Board title is required' }),
@@ -63,8 +62,8 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
 
   const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>(
     activeBoard?.columns || [
-      { id: uuidv4(), name: 'Todo', tasks: [] },
-      { id: uuidv4(), name: 'Doing', tasks: [] },
+      { id: null, name: 'Todo', tasks: [] },
+      { id: null, name: 'Doing', tasks: [] },
     ],
   )
 
@@ -79,7 +78,7 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
     register,
   } = useForm<FormData>({
     defaultValues: {
-      id: isEditing ? activeBoard?.id : uuidv4(),
+      id: isEditing ? activeBoard?.id : null,
       name: isEditing ? activeBoard?.name : '',
       columns: isEditing ? activeBoard?.columns : initialBoardColumns,
     },
@@ -143,7 +142,7 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
   }
 
   const handleAddColumn = () => {
-    const newColumn = { id: uuidv4(), name: '', tasks: [] }
+    const newColumn = { id: null, name: '', tasks: [] }
     const updatedColumns = [...boardColumns, newColumn]
     setBoardColumns(updatedColumns)
     setValue('columns', updatedColumns)
