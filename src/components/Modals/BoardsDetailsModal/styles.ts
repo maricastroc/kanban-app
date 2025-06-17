@@ -1,20 +1,6 @@
 import styled from 'styled-components'
 
-import { Title as RadixTitle } from '@radix-ui/react-dialog'
-
 import { Root as RadixRoot, Thumb as RadixThumb } from '@radix-ui/react-switch'
-
-export const ModalTitle = styled(RadixTitle)`
-  display: flex;
-  justify-content: flex-start;
-  padding: 0 1.5rem;
-  width: 100%;
-  font-size: ${(props) => props.theme['heading-s']};
-  font-weight: 700;
-  color: ${(props) => props.theme['subtitle-color']};
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-`
 
 export const BoardsContainer = styled.div`
   display: flex;

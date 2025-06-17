@@ -24,6 +24,10 @@ export const Input = styled.input`
     cursor: not-allowed;
     color: ${(props) => props.theme['subtitle-color']};
   }
+
+  &:focus {
+    border: solid 2px ${(props) => props.theme['primary-color']};
+  }
 `
 
 export const DeleteFieldBtn = styled.button`

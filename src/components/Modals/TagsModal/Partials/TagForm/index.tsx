@@ -87,7 +87,7 @@ export function TagForm({
       handleIsSubmitting(false)
     }
   }
-  console.log(errors)
+
   return (
     <FormContainer onSubmit={handleSubmit(onSubmit)}>
       <InputContainer>

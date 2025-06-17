@@ -13,6 +13,6 @@ export const CheckInput = ({ isChecked, ...rest }: Props) => {
       <FontAwesomeIcon icon={faCheck} />
     </CheckedBox>
   ) : (
-    <UncheckedBox type="button" />
+    <UncheckedBox type="button" {...rest} />
   )
 }

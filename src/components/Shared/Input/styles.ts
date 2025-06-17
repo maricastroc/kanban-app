@@ -39,6 +39,6 @@ export const Input = styled.input`
   }
 
   &:focus {
-    background-color: transparent;
+    border: solid 2px ${(props) => props.theme['primary-color']};
   }
 `

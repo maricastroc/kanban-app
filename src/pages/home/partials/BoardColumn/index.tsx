@@ -1,16 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { TaskProps } from '@/@types/task'
-import { BoardColumnProps } from '@/@types/board-column'
-import * as Dialog from '@radix-ui/react-dialog'
-import { TaskCard } from '../TaskCard'
+import { useEffect, useState } from 'react'
 import { Droppable, Draggable } from 'react-beautiful-dnd'
+import * as Dialog from '@radix-ui/react-dialog'
+import { BoardColumnProps } from '@/@types/board-column'
+import { TaskCard } from '../TaskCard'
 import {
   Container,
   EmptyTasksContainer,
   TagContainer,
   TasksContainer,
 } from './styles'
-import { useEffect, useState } from 'react'
 import { ColorPickerModal } from '@/components/Modals/ColorPickerModal'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { getTagColor } from '@/utils/getTagColor'
@@ -28,8 +27,16 @@ export function BoardColumn({ name, tasks, column, index }: ColumnProps) {
 
   const [isColorPickerModalOpen, setIsColorPickerModalOpen] = useState(false)
 
-  const renderTasks = () => {
-    return tasks.map((task: TaskProps, taskIndex: number) => (
+  useEffect(() => {
+    handleEnableScrollFeature(!isColorPickerModalOpen)
+  }, [isColorPickerModalOpen])
+
+  useEffect(() => {
+    saveColumnColor(index, currentColor)
+  }, [currentColor, index])
+
+  const renderTaskCards = () =>
+    tasks.map((task, taskIndex) => (
       <Draggable
         key={String(task.id)}
         draggableId={String(task.id)}
@@ -40,18 +47,11 @@ export function BoardColumn({ name, tasks, column, index }: ColumnProps) {
         )}
       </Draggable>
     ))
-  }
 
-  useEffect(() => {
-    handleEnableScrollFeature(!isColorPickerModalOpen)
-  }, [isColorPickerModalOpen])
-
-  useEffect(() => {
-    saveColumnColor(index, currentColor)
-  }, [currentColor, index])
+  const isEmpty = column?.tasks?.length === 0
 
   return (
-    <Container className={`${column?.tasks?.length > 0 ? '' : 'empty'}`}>
+    <Container className={isEmpty ? 'empty' : ''}>
       <Dialog.Root
         open={isColorPickerModalOpen}
         onOpenChange={setIsColorPickerModalOpen}
@@ -71,9 +71,9 @@ export function BoardColumn({ name, tasks, column, index }: ColumnProps) {
       <Droppable droppableId={index.toString()} type="CARD">
         {(provided) => (
           <TasksContainer ref={provided.innerRef} {...provided.droppableProps}>
-            {renderTasks()}
+            {renderTaskCards()}
             {provided.placeholder}
-            {tasks.length === 0 && <EmptyTasksContainer />}
+            {isEmpty && <EmptyTasksContainer />}
           </TasksContainer>
         )}
       </Droppable>

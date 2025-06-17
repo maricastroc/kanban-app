@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TaskProps } from '@/@types/task'
+import { useEffect, useState } from 'react'
+import * as Dialog from '@radix-ui/react-dialog'
 import {
   InfoContent,
   InfoItem,
@@ -8,16 +9,15 @@ import {
   TagsContainer,
   TaskCardContainer,
 } from './styles'
-import * as Dialog from '@radix-ui/react-dialog'
 import { TaskDetailsModal } from '@/components/Modals/TaskDetailsModal'
-import { useEffect, useState } from 'react'
+import { tagColors } from '@/components/Shared/SelectInput'
+import { TaskProps } from '@/@types/task'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { BoardColumnProps } from '@/@types/board-column'
 import { formatDate } from '@/utils/formatDate'
+import { getDueStatus } from '@/utils/getDueStatus'
 import { faClock, faList } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { getDueStatus } from '@/utils/getDueStatus'
-import { tagColors } from '@/components/Shared/SelectInput'
 
 type TaskCardProps = {
   task: TaskProps
@@ -33,7 +33,7 @@ export function TaskCard({ task, provided, column }: TaskCardProps) {
   useEffect(() => {
     handleEnableScrollFeature(!isTaskDetailsModalOpen)
   }, [isTaskDetailsModalOpen])
-  console.log(task)
+
   return (
     <Dialog.Root open={isTaskDetailsModalOpen}>
       <Dialog.Trigger asChild>

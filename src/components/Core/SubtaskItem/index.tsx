@@ -1,13 +1,9 @@
 import { useState } from 'react'
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheck } from '@fortawesome/free-solid-svg-icons'
-
 import { Container, Title } from './styles'
 import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
 import { useBoardsContext } from '@/contexts/BoardsContext'
-import { CheckedBox, UncheckedBox } from '@/styles/shared'
+import { CheckInput } from '@/components/Shared/CheckInput'
 
 interface SubtaskItemProps {
   id: string | number
@@ -44,13 +40,10 @@ export function SubtaskItem({
 
   return (
     <Container style={{ marginTop: '0.5rem' }}>
-      {isChecked ? (
-        <CheckedBox onClick={() => handleToggleSubtaskStatus()}>
-          <FontAwesomeIcon icon={faCheck} />
-        </CheckedBox>
-      ) : (
-        <UncheckedBox onClick={() => handleToggleSubtaskStatus()} />
-      )}
+      <CheckInput
+        isChecked={isChecked}
+        onClick={() => handleToggleSubtaskStatus()}
+      />
       <Title className={isChecked ? 'checked' : 'unchecked'}>{name}</Title>
     </Container>
   )

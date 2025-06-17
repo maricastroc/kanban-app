@@ -267,7 +267,7 @@ export function TaskDetailsModal({
               <TagsSection
                 taskTags={task.tags}
                 onCheckedClick={(item) => handleToggleTagStatus(item, true)}
-                onUncheckedClick={(item) => handleToggleTagStatus(item, true)}
+                onUncheckedClick={(item) => handleToggleTagStatus(item, false)}
               />
 
               <StatusContainer>
