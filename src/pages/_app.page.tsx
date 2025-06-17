@@ -26,7 +26,26 @@ function MyApp({ Component, pageProps }: AppProps) {
                 theme={enableDarkMode ? darkTheme : lightTheme}
               >
                 <BoardsContextProvider>
-                  <Toaster />
+                  <Toaster
+                    toastOptions={{
+                      style: {
+                        backgroundColor: '#20212C',
+                        color: '#fff',
+                      },
+                      success: {
+                        style: {
+                          backgroundColor: '#20212C',
+                          color: '#fff',
+                        },
+                      },
+                      error: {
+                        style: {
+                          backgroundColor: '#20212C',
+                          color: '#fff',
+                        },
+                      },
+                    }}
+                  />
                   <Component {...pageProps} />
                   <GlobalStyle />
                 </BoardsContextProvider>

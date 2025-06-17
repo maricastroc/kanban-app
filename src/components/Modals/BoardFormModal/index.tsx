@@ -121,7 +121,7 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
       }
 
       const response = isEditing
-        ? await api.put(`boards/${activeBoard?.uuid}`, payload)
+        ? await api.put(`boards/${activeBoard?.id}`, payload)
         : await api.post('/boards', payload)
 
       toast?.success(response.data.message)
@@ -129,15 +129,15 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
       handleChangeActiveBoard(response.data.data.board)
 
       await boardsMutate()
+
+      setTimeout(() => {
+        onClose()
+      }, 500)
     } catch (error) {
       handleApiError(error)
     } finally {
       setIsLoading(false)
       reset()
-
-      setTimeout(() => {
-        onClose()
-      }, 500)
     }
   }
 

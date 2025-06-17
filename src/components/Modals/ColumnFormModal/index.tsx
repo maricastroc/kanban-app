@@ -144,7 +144,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
         columns: updatedColumns,
       }
 
-      const response = await api.put(`boards/${activeBoard?.uuid}`, payload)
+      const response = await api.put(`boards/${activeBoard?.id}`, payload)
 
       toast?.success(response.data.message)
 

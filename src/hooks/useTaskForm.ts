@@ -1,13 +1,14 @@
-import { v4 as uuidv4 } from 'uuid'
 import { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { handleApiError } from '@/utils/handleApiError'
-import { SubtaskProps } from '@/@types/subtask'
-import { MIN_SUBTASKS, MIN_TITLE_LENGTH } from '@/utils/constants'
+import { v4 as uuidv4 } from 'uuid'
 import { z } from 'zod'
+
 import { api } from '@/lib/axios'
 import { useBoardsContext } from '@/contexts/BoardsContext'
+import { handleApiError } from '@/utils/handleApiError'
+import { MIN_SUBTASKS, MIN_TITLE_LENGTH } from '@/utils/constants'
+import { SubtaskProps } from '@/@types/subtask'
 import { TaskProps } from '@/@types/task'
 import { TaskTagProps } from '@/@types/task-tag'
 
@@ -17,7 +18,7 @@ interface AddTaskModalProps {
   onClose: () => void
 }
 
-const initialSubtasks = [
+const initialSubtasks: SubtaskProps[] = [
   { id: uuidv4(), name: '', is_completed: false },
   { id: uuidv4(), name: '', is_completed: false },
 ]
@@ -38,11 +39,12 @@ export const useTaskForm = ({
 
   const [columnId, setColumnId] = useState<string | number | undefined>()
 
-  const [taskTags, setTaskTags] = useState<TaskTagProps[]>([])
+  const [taskTags, setTaskTags] = useState<TaskTagProps[]>(task?.tags || [])
 
   const [subtasks, setSubtasks] = useState<SubtaskProps[]>(
     isEditing && task?.subtasks ? task.subtasks : initialSubtasks,
   )
+
   const [status, setStatus] = useState(
     isEditing && task?.status ? task.status : '',
   )
@@ -61,35 +63,11 @@ export const useTaskForm = ({
     .refine(
       (data) => {
         const names = data.subtasks.map((s) => s.name.trim().toLowerCase())
-        const uniqueNames = new Set(names)
-        return uniqueNames.size === names.length
+        return new Set(names).size === names.length
       },
       {
         message: 'Subtask names must be unique',
         path: ['subtasks'],
-      },
-    )
-    .refine(
-      (data) => {
-        if (!activeBoard) return true
-
-        const column = activeBoard.columns.find(
-          (col) => col.name === data.status,
-        )
-        if (!column) return true
-
-        const taskAlreadyExists = column.tasks?.some((t) => {
-          const isSameName =
-            t.name.trim().toLowerCase() === data.name.trim().toLowerCase()
-          const isSameTask = isEditing && t.uuid === task?.uuid
-          return isSameName && !isSameTask
-        })
-
-        return !taskAlreadyExists
-      },
-      {
-        message: 'A task with this name already exists in this column',
-        path: ['name'],
       },
     )
 
@@ -117,41 +95,39 @@ export const useTaskForm = ({
 
   const subtasksValues = watch('subtasks')
 
-  const resetForm = useCallback(() => {
-    setSubtasks(initialSubtasks)
-    setTaskTags([])
-    reset()
-  }, [reset])
-
   const handleAddSubtask = useCallback(() => {
     const newSubtask: SubtaskProps = {
       id: uuidv4(),
       name: '',
       is_completed: false,
     }
-    const updatedSubtasks = [...subtasks, newSubtask]
-    setSubtasks(updatedSubtasks)
-    setValue('subtasks', updatedSubtasks)
+
+    const updated = [...subtasks, newSubtask]
+
+    setSubtasks(updated)
+    setValue('subtasks', updated)
   }, [subtasks, setValue])
 
   const handleChangeSubtask = useCallback(
     (index: number, newValue: string) => {
-      const updatedSubtasks = subtasksValues.map((task, i) =>
-        i === index ? { ...task, name: newValue } : task,
+      const updated = subtasksValues.map((s, i) =>
+        i === index ? { ...s, name: newValue } : s,
       )
-      setSubtasks(updatedSubtasks)
-      setValue('subtasks', updatedSubtasks)
+
+      setSubtasks(updated)
+      setValue('subtasks', updated)
     },
     [subtasksValues, setValue],
   )
 
   const handleRemoveSubtask = useCallback(
     (indexToRemove: number) => {
-      const updatedSubtasks = getValues('subtasks').filter(
-        (_, index) => index !== indexToRemove,
+      const updated = getValues('subtasks').filter(
+        (_, i) => i !== indexToRemove,
       )
-      setSubtasks(updatedSubtasks)
-      setValue('subtasks', updatedSubtasks)
+
+      setSubtasks(updated)
+      setValue('subtasks', updated)
     },
     [getValues, setValue],
   )
@@ -160,6 +136,7 @@ export const useTaskForm = ({
     (newStatus: string, columnId?: string | number) => {
       setStatus(newStatus)
       setValue('status', newStatus)
+
       if (columnId) setColumnId(columnId)
     },
     [setValue],
@@ -168,7 +145,6 @@ export const useTaskForm = ({
   const handleSubmitTask = async (data: TaskFormData) => {
     try {
       handleSetIsLoading(true)
-      onClose()
 
       if (!activeBoard) return
 
@@ -182,19 +158,20 @@ export const useTaskForm = ({
           ...subtask,
           order: index,
         })),
-        tags: taskTags,
+        tags: taskTags.map((tag) => Number(tag.id)),
       }
 
       await (isEditing
-        ? api.put(`/tasks/${task?.uuid}`, payload)
+        ? api.put(`/tasks/${task?.id}`, payload)
         : api.post('/tasks', payload))
 
       await activeBoardMutate()
+      resetForm()
+      onClose()
     } catch (error) {
       handleApiError(error)
     } finally {
       handleSetIsLoading(false)
-      resetForm()
     }
   }
 
@@ -208,6 +185,12 @@ export const useTaskForm = ({
       }
     }
   }, [activeBoard, isEditing, setValue])
+
+  const resetForm = useCallback(() => {
+    setSubtasks(initialSubtasks)
+    setTaskTags([])
+    reset()
+  }, [reset])
 
   return {
     register,

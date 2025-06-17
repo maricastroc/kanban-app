@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faAngleDown,
   faAngleUp,
-  faCheck,
   faEllipsisVertical,
 } from '@fortawesome/free-solid-svg-icons'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -17,19 +16,13 @@ import {
   OptionsBtn,
   EmptySubtask,
   ModalTitle,
-  TagsContainer,
-  TagMark,
 } from './styles'
 import {
-  CheckedBox,
   ModalContent,
   ModalOverlay,
   SelectStatusField,
   StatusContainer,
   StatusSelectorContainer,
-  TagContainer,
-  TagName,
-  UncheckedBox,
 } from '@/styles/shared'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 import { useBoardsContext } from '@/contexts/BoardsContext'
@@ -49,9 +42,7 @@ import { api } from '@/lib/axios'
 import { handleApiError } from '@/utils/handleApiError'
 import toast from 'react-hot-toast'
 import { TagProps } from '@/@types/tag'
-import useRequest from '@/utils/useRequest'
-import { TagsTitle } from '../TagsModal/styles'
-import { tagColors } from '@/components/Shared/SelectInput'
+import { TagsSection } from '@/components/Shared/TagsSection'
 
 interface TaskDetailsModalProps {
   task: TaskProps
@@ -82,13 +73,6 @@ export function TaskDetailsModal({
 
   const [isStatusOptionsContainerOpen, setIsStatusOptionsContainerOpen] =
     useState(false)
-
-  const { data } = useRequest<{
-    tags: TagProps[]
-  }>({
-    url: '/tags',
-    method: 'GET',
-  })
 
   const subtasksCompleted = task?.subtasks?.filter(
     (subtask: SubtaskProps) => subtask?.is_completed,
@@ -280,40 +264,11 @@ export function TaskDetailsModal({
                 <EmptySubtask>No subtasks.</EmptySubtask>
               )}
 
-              <TagsContainer>
-                <TagsTitle>Tags</TagsTitle>
-                {data?.tags &&
-                  data?.tags.length > 0 &&
-                  data?.tags.map((item) => {
-                    const tagColor = tagColors.find(
-                      (tag) => tag.name === item.color,
-                    )?.color
-
-                    const isChecked = task?.tags?.some(
-                      (tag) => tag.id === item.id,
-                    )
-
-                    return (
-                      <TagContainer key={item.id}>
-                        {isChecked ? (
-                          <CheckedBox
-                            onClick={() => handleToggleTagStatus(item, true)}
-                          >
-                            <FontAwesomeIcon icon={faCheck} />
-                          </CheckedBox>
-                        ) : (
-                          <UncheckedBox
-                            onClick={() => handleToggleTagStatus(item, false)}
-                          />
-                        )}
-                        <TagName>
-                          <p>{item.name}</p>
-                          <TagMark color={tagColor as string} />
-                        </TagName>
-                      </TagContainer>
-                    )
-                  })}
-              </TagsContainer>
+              <TagsSection
+                taskTags={task.tags}
+                onCheckedClick={(item) => handleToggleTagStatus(item, true)}
+                onUncheckedClick={(item) => handleToggleTagStatus(item, true)}
+              />
 
               <StatusContainer>
                 <CustomLabel>Current Status</CustomLabel>

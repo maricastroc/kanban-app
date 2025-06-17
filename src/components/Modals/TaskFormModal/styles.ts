@@ -89,11 +89,3 @@ export const SubtasksWrapper = styled.div`
   gap: 0.75rem;
   margin-bottom: 1.5rem;
 `
-
-export const TagsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 0.4rem;
-  padding: 1rem 0 0;
-`

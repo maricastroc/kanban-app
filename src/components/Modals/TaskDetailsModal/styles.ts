@@ -119,22 +119,3 @@ export const EmptySubtask = styled.p`
   line-height: 1.4rem;
   margin-top: 0.5rem;
 `
-
-export const TagsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 0.4rem;
-  padding: 0 0 1rem;
-`
-
-export const TagMark = styled.div<{ color: string }>`
-  width: 30px;
-  height: 10px;
-  border-radius: 8px;
-  background-color: ${(props) => props.color};
-
-  &.title {
-    margin-top: -0.2rem;
-  }
-`

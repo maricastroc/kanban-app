@@ -8,6 +8,7 @@ import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { useBoardsContext } from '@/contexts/BoardsContext'
+import toast from 'react-hot-toast'
 
 interface DeleteBoardProps {
   type: 'board' | 'task'
@@ -20,15 +21,19 @@ export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
 
   const { activeBoard, activeBoardMutate } = useBoardsContext()
 
-  const handleDelete = async (uuid: number | string) => {
+  const handleDelete = async (id: number | string) => {
     if (!activeBoard) return
 
     try {
       setIsLoading(true)
 
-      const routePath = type === 'board' ? `/boards/${uuid}` : `/tasks/${uuid}`
+      const routePath = type === 'board' ? `/boards/${id}` : `/tasks/${id}`
 
-      await api.delete(routePath)
+      const response = await api.delete(routePath)
+
+      if (response?.data) {
+        toast.success(response.data.message)
+      }
 
       await activeBoardMutate()
     } catch (error) {
@@ -65,9 +70,9 @@ export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
             variant="tertiary"
             onClick={() => {
               if (activeBoard && type === 'board') {
-                handleDelete(activeBoard.uuid as string)
+                handleDelete(activeBoard.id as string)
               } else if (task) {
-                handleDelete(task.uuid as string)
+                handleDelete(task.id as string)
               }
             }}
           />
