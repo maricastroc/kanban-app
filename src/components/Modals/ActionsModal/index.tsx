@@ -12,11 +12,11 @@ import { api } from '@/lib/axios'
 import { handleApiError } from '@/utils/handleApiError'
 import { useRouter } from 'next/router'
 
-interface EditDeleteModalProps {
+interface Props {
   onClose: () => void
 }
 
-export function EditDeleteModal({ onClose }: EditDeleteModalProps) {
+export function ActionsModal({ onClose }: Props) {
   const { enableDarkMode } = useTheme()
 
   const route = useRouter()

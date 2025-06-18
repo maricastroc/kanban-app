@@ -68,7 +68,7 @@ export const ModalContent = styled(RadixContent)<{
   justify-content: flex-start;
   align-items: flex-start;
   padding: ${(props) => props.padding || '1.5rem'};
-  padding: ${(props) => props.height || '90vh'};
+  height: ${(props) => props.height || '90vh'};
   max-height: ${(props) => props.maxHeight || '30rem'};
   background-color: ${(props) => props.theme['cards-color']};
   border: none;

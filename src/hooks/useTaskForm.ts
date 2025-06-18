@@ -11,10 +11,12 @@ import { MIN_SUBTASKS, MIN_TITLE_LENGTH } from '@/utils/constants'
 import { SubtaskProps } from '@/@types/subtask'
 import { TaskProps } from '@/@types/task'
 import { TaskTagProps } from '@/@types/task-tag'
+import { BoardColumnProps } from '@/@types/board-column'
 
 interface AddTaskModalProps {
   isEditing?: boolean
   task?: TaskProps
+  column?: BoardColumnProps
   onClose: () => void
 }
 
@@ -32,12 +34,15 @@ const subtaskSchema = z.object({
 export const useTaskForm = ({
   isEditing = false,
   task,
+  column,
   onClose,
 }: AddTaskModalProps) => {
   const { activeBoard, activeBoardMutate, handleSetIsLoading } =
     useBoardsContext()
 
-  const [columnId, setColumnId] = useState<string | number | undefined>()
+  const [columnId, setColumnId] = useState<string | number | undefined>(
+    column?.id || undefined,
+  )
 
   const [taskTags, setTaskTags] = useState<TaskTagProps[]>(task?.tags || [])
 
@@ -45,9 +50,7 @@ export const useTaskForm = ({
     isEditing && task?.subtasks ? task.subtasks : initialSubtasks,
   )
 
-  const [status, setStatus] = useState(
-    isEditing && task?.status ? task.status : '',
-  )
+  const [status, setStatus] = useState(column?.name || '')
 
   const formSchema = z
     .object({
@@ -132,15 +135,15 @@ export const useTaskForm = ({
     [getValues, setValue],
   )
 
-  const handleChangeStatus = useCallback(
-    (newStatus: string, columnId?: string | number) => {
-      setStatus(newStatus)
-      setValue('status', newStatus)
-
-      if (columnId) setColumnId(columnId)
-    },
-    [setValue],
-  )
+  const handleChangeStatus = (
+    newStatus: string,
+    columnToEditId?: string | number,
+  ) => {
+    setStatus(newStatus)
+    setValue('status', newStatus)
+    console.log(columnToEditId)
+    if (columnToEditId) setColumnId(columnToEditId)
+  }
 
   const handleSubmitTask = async (data: TaskFormData) => {
     try {
@@ -174,7 +177,7 @@ export const useTaskForm = ({
       handleSetIsLoading(false)
     }
   }
-
+  console.log(columnId)
   useEffect(() => {
     if (activeBoard && !isEditing) {
       const initialColumn = activeBoard.columns[0]

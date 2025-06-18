@@ -22,7 +22,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { BoardsDetailsModal } from '@/components/Modals/BoardsDetailsModal'
 import { useEffect, useState } from 'react'
 import { TaskFormModal } from '@/components/Modals/TaskFormModal'
-import { EditDeleteModal } from '@/components/Modals/EditDeleteModal'
+import { ActionsModal } from '@/components/Modals/ActionsModal'
 import { BREAKPOINT_SM } from '@/utils/constants'
 import { useWindowResize } from '@/utils/useWindowResize'
 import { useBoardsContext } from '@/contexts/BoardsContext'
@@ -48,7 +48,7 @@ export function Header({ hideSidebar }: Props) {
   const [isBoardsDetailsModalOpen, setIsBoardsDetailsModalOpen] =
     useState(false)
 
-  const [isEditDeleteModalOpen, setIsEditDeleteModalOpen] = useState(false)
+  const [isActionsModalOpen, setIsActionsModalOpen] = useState(false)
 
   const isSmallerThanSm = useWindowResize(BREAKPOINT_SM)
 
@@ -134,18 +134,18 @@ export function Header({ hideSidebar }: Props) {
 
         <EditDeleteWrapper>
           <Dialog.Root
-            open={isEditDeleteModalOpen}
-            onOpenChange={setIsEditDeleteModalOpen}
+            open={isActionsModalOpen}
+            onOpenChange={setIsActionsModalOpen}
           >
             <Dialog.Trigger asChild>
               <EditDeleteBtn>
                 <FontAwesomeIcon
                   icon={faEllipsisVertical}
-                  onClick={() => setIsEditDeleteModalOpen(false)}
+                  onClick={() => setIsActionsModalOpen(false)}
                 />
               </EditDeleteBtn>
             </Dialog.Trigger>
-            <EditDeleteModal onClose={() => setIsEditDeleteModalOpen(false)} />
+            <ActionsModal onClose={() => setIsActionsModalOpen(false)} />
           </Dialog.Root>
         </EditDeleteWrapper>
       </EditDeleteContainer>

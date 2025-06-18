@@ -185,3 +185,68 @@ export const Loader = styled.div`
   align-items: center;
   z-index: 9999;
 `
+
+export const UncheckedBox = styled.button`
+  cursor: pointer;
+  min-width: 16px;
+  min-height: 16px;
+  background-color: ${(props) => props.theme['cards-color']};
+  border: solid 1px ${(props) => props.theme['border-color']};
+  border-radius: 3;
+
+  &:focus {
+    box-shadow: none;
+  }
+`
+
+export const CheckedBox = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  min-width: 16px;
+  min-height: 16px;
+  background-color: ${(props) => props.theme['primary-color']};
+  border: none;
+  border-radius: 3;
+
+  svg {
+    color: ${(props) => props.theme['button-title']};
+    font-size: 0.7rem;
+  }
+
+  &:focus {
+    box-shadow: none;
+  }
+`
+
+export const TagContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  justify-content: flex-start;
+  padding: 0.85rem;
+  background-color: ${(props) => props.theme['bg-color']};
+  border-radius: 8px;
+  width: 100%;
+
+  p {
+    color: ${(props) => props.theme['details-color']};
+    font-size: 0.85rem;
+  }
+`
+
+export const TagName = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  gap: 0.5rem;
+
+  p {
+    font-size: 0.75rem;
+    margin-left: 1rem;
+    font-weight: 700;
+    color: ${(props) => props.theme['title-color']};
+  }
+`

@@ -1,48 +1,28 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { RefObject, useEffect, useRef, useState } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faAngleDown,
-  faAngleUp,
-  faEllipsisVertical,
-} from '@fortawesome/free-solid-svg-icons'
-import * as Dialog from '@radix-ui/react-dialog'
-import {
-  Description,
-  LayoutContainer,
-  SubtasksContainer,
-  OptionsModal,
-  OptionsContainer,
-  OptionsBtn,
-  EmptySubtask,
-  ModalTitle,
-} from './styles'
-import {
-  ModalContent,
-  ModalOverlay,
-  SelectStatusField,
-  StatusContainer,
-  StatusSelectorContainer,
-} from '@/styles/shared'
-import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
-import { useBoardsContext } from '@/contexts/BoardsContext'
-import { useTheme } from '@/contexts/ThemeContext'
+import { api } from '@/lib/axios'
+
 import { TaskProps } from '@/@types/task'
 import { SubtaskProps } from '@/@types/subtask'
 import { BoardColumnProps } from '@/@types/board-column'
+import { TagProps } from '@/@types/tag'
+
+import { Description } from './styles'
+
+import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 import { useOutsideClick } from '@/utils/useOutsideClick'
-import { CustomLabel } from '@/components/Core/Label'
-import { SubtaskItem } from '@/components/Core/SubtaskItem'
-import { StatusSelector } from '@/components/Shared/StatusSelector'
-import { LoadingComponent } from '@/components/Shared/LoadingComponent'
+import { handleApiError } from '@/utils/handleApiError'
+import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useTheme } from '@/contexts/ThemeContext'
+
 import { DeleteModal } from '../DeleteModal'
 import { TaskFormModal } from '../TaskFormModal'
-import { Reorder } from 'framer-motion'
-import { api } from '@/lib/axios'
-import { handleApiError } from '@/utils/handleApiError'
-import toast from 'react-hot-toast'
-import { TagProps } from '@/@types/tag'
 import { TagsSection } from '@/components/Shared/TagsSection'
+import { CustomLabel } from '@/components/Core/Label'
+import { BaseModal } from '../BaseModal'
+import { Header } from './partials/Header'
+import { SubtasksSection } from './partials/SubtasksSection'
+import { StatusSection } from './partials/StatusSection'
 
 interface TaskDetailsModalProps {
   task: TaskProps
@@ -69,14 +49,13 @@ export function TaskDetailsModal({
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
-  const [isEditDeleteModalOpen, setIsEditDeleteModalOpen] = useState(false)
+  const [isActionsModalOpen, setIsActionsModalOpen] = useState(false)
 
-  const [isStatusOptionsContainerOpen, setIsStatusOptionsContainerOpen] =
-    useState(false)
+  const [isOptionsOpen, setIsOptionsOpen] = useState(false)
 
-  const subtasksCompleted = task?.subtasks?.filter(
-    (subtask: SubtaskProps) => subtask?.is_completed,
-  )
+  const completedCount = task?.subtasks?.reduce((acc, subtask) => {
+    return subtask?.is_completed ? acc + 1 : acc
+  }, 0)
 
   const { activeBoard, activeBoardMutate } = useBoardsContext()
 
@@ -89,8 +68,8 @@ export function TaskDetailsModal({
   const closeAllModals = () => {
     setIsDeleteModalOpen(false)
     setIsEditModalOpen(false)
-    setIsEditDeleteModalOpen(false)
-    setIsStatusOptionsContainerOpen(false)
+    setIsActionsModalOpen(false)
+    setIsOptionsOpen(false)
   }
 
   const reorderSubtaskInTask = async (
@@ -155,13 +134,11 @@ export function TaskDetailsModal({
 
       if (isChecked) {
         await api.delete(`/tasks/${taskId}/tags/${tagId}`)
-
-        await activeBoardMutate()
       } else {
         await api.post(`/tasks/${taskId}/tags/${tagId}`)
-
-        await activeBoardMutate()
       }
+
+      await activeBoardMutate()
     } catch (error) {
       handleApiError(error)
     } finally {
@@ -178,137 +155,62 @@ export function TaskDetailsModal({
   return (
     <>
       {!isDeleteModalOpen && !isEditModalOpen && (
-        <Dialog.Portal>
-          <ModalOverlay
-            className="DialogOverlay"
-            onClick={() => {
-              closeAllModals()
-              onClose()
-            }}
+        <BaseModal
+          hasHeader={false}
+          isLoading={isLoading}
+          padding="1.5rem 1.5rem 3rem"
+          onClose={onClose}
+          title={task.name}
+        >
+          <Header
+            enableDarkMode={enableDarkMode}
+            taskName={task.name}
+            isActionsModalOpen={isActionsModalOpen}
+            onToggleEditModal={(value) => setIsEditModalOpen(value)}
+            onToggleDeleteModal={(value) => setIsDeleteModalOpen(value)}
+            onToggleActionsModal={(value) => setIsActionsModalOpen(value)}
           />
-          <ModalContent
-            padding="1.5rem 1.5rem 3rem"
-            className="DialogContent smaller"
-          >
-            <LayoutContainer>
-              <ModalTitle>{task.name}</ModalTitle>
-              <OptionsContainer>
-                <OptionsBtn
-                  onClick={() =>
-                    setIsEditDeleteModalOpen(!isEditDeleteModalOpen)
-                  }
-                >
-                  <FontAwesomeIcon icon={faEllipsisVertical} />
-                </OptionsBtn>
-                {isEditDeleteModalOpen && (
-                  <OptionsModal className={enableDarkMode ? 'dark' : 'light'}>
-                    <button
-                      className="edit"
-                      onClick={() => setIsEditModalOpen(true)}
-                    >
-                      Edit Task
-                    </button>
-                    <button
-                      className="delete"
-                      onClick={() => setIsDeleteModalOpen(true)}
-                    >
-                      Delete Task
-                    </button>
-                  </OptionsModal>
-                )}
-              </OptionsContainer>
-            </LayoutContainer>
 
-            <Description>
-              <p>{task.description || 'No description'}</p>
-              <CustomLabel>{`Subtasks (${subtasksCompleted?.length} of ${task?.subtasks?.length})`}</CustomLabel>
+          <Description>
+            <p>{task.description || 'No description'}</p>
+            <CustomLabel>
+              {`Subtasks (${completedCount} of ${task?.subtasks?.length})`}
+            </CustomLabel>
 
-              {subtasks.length > 0 ? (
-                <SubtasksContainer>
-                  <Reorder.Group
-                    axis="y"
-                    values={subtasks}
-                    onReorder={(newOrder) => {
-                      if (isReordering) {
-                        toast.error(
-                          'Please wait until the current request is completed.',
-                        )
-                        return
-                      }
+            <SubtasksSection
+              taskId={task.id}
+              handleSetIsLoading={(value) => setIsLoading(value)}
+              reorderSubtaskInTask={reorderSubtaskInTask}
+              isReordering={isReordering}
+              subtasks={subtasks}
+              handleSetSubtasks={(value) => setSubtasks(value)}
+            />
 
-                      setSubtasks(newOrder)
-                      reorderSubtaskInTask(task.id as string, newOrder)
-                    }}
-                  >
-                    {subtasks.map((subtask: SubtaskProps) => (
-                      <Reorder.Item
-                        as="div"
-                        key={subtask.id}
-                        value={subtask}
-                        style={{ cursor: 'grab' }}
-                        whileDrag={{ cursor: 'grabbing' }}
-                      >
-                        <SubtaskItem
-                          id={subtask.id}
-                          name={subtask.name}
-                          isCompleted={subtask.is_completed}
-                          handleSetIsLoading={(value: boolean) =>
-                            setIsLoading(value)
-                          }
-                        />
-                      </Reorder.Item>
-                    ))}
-                  </Reorder.Group>
-                </SubtasksContainer>
-              ) : (
-                <EmptySubtask>No subtasks.</EmptySubtask>
-              )}
+            <TagsSection
+              taskTags={task.tags}
+              onCheckedClick={(item) => handleToggleTagStatus(item, true)}
+              onUncheckedClick={(item) => handleToggleTagStatus(item, false)}
+            />
 
-              <TagsSection
-                taskTags={task.tags}
-                onCheckedClick={(item) => handleToggleTagStatus(item, true)}
-                onUncheckedClick={(item) => handleToggleTagStatus(item, false)}
-              />
+            <StatusSection
+              activeBoard={activeBoard}
+              statusRef={statusRef}
+              handleChangeStatus={async (column: BoardColumnProps) => {
+                await moveTaskToColumn(
+                  task,
+                  column.id as string,
+                  column?.tasks?.length,
+                )
 
-              <StatusContainer>
-                <CustomLabel>Current Status</CustomLabel>
-                <SelectStatusField
-                  className={isEditDeleteModalOpen ? 'active' : ''}
-                  onClick={() => setIsStatusOptionsContainerOpen(true)}
-                >
-                  <p>{status}</p>
-                  <FontAwesomeIcon
-                    icon={
-                      isStatusOptionsContainerOpen ? faAngleUp : faAngleDown
-                    }
-                  />
-                </SelectStatusField>
-                {isStatusOptionsContainerOpen && (
-                  <StatusSelectorContainer ref={statusRef}>
-                    {activeBoard?.columns?.map((column) => (
-                      <StatusSelector
-                        key={column.name}
-                        column={column}
-                        status={status}
-                        handleChangeStatus={async () => {
-                          await moveTaskToColumn(
-                            task,
-                            column.id as string,
-                            column?.tasks?.length + 1,
-                          )
-
-                          setStatus(column.name)
-                        }}
-                      />
-                    ))}
-                  </StatusSelectorContainer>
-                )}
-              </StatusContainer>
-            </Description>
-          </ModalContent>
-
-          {isLoading && <LoadingComponent />}
-        </Dialog.Portal>
+                setStatus(column.name)
+              }}
+              isOpen={isOptionsOpen}
+              isActive={isActionsModalOpen}
+              status={status}
+              onToggleOpen={() => setIsOptionsOpen(true)}
+            />
+          </Description>
+        </BaseModal>
       )}
 
       {isDeleteModalOpen && (
@@ -325,6 +227,7 @@ export function TaskDetailsModal({
       {isEditModalOpen && (
         <TaskFormModal
           isEditing
+          column={column}
           task={task}
           onClose={() => {
             onClose()

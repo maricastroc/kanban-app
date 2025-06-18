@@ -13,13 +13,14 @@ import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 
 interface Props {
-  title: string
+  title?: string
   children: ReactNode
   padding?: string
   height?: string
   maxHeight?: string
   titlePadding?: string
   isLoading?: boolean
+  hasHeader?: boolean
   onClose: () => void
 }
 
@@ -31,6 +32,7 @@ export const BaseModal = ({
   height,
   maxHeight,
   isLoading,
+  hasHeader = true,
   onClose,
 }: Props) => {
   return (
@@ -42,12 +44,14 @@ export const BaseModal = ({
         maxHeight={maxHeight}
         height={height}
       >
-        <HeaderContent padding={titlePadding}>
-          <ModalTitle className="DialogTitle">{title}</ModalTitle>
-          <CloseButton onClick={onClose}>
-            <FontAwesomeIcon icon={faX} />
-          </CloseButton>
-        </HeaderContent>
+        {hasHeader && (
+          <HeaderContent padding={titlePadding}>
+            <ModalTitle className="DialogTitle">{title}</ModalTitle>
+            <CloseButton onClick={onClose}>
+              <FontAwesomeIcon icon={faX} />
+            </CloseButton>
+          </HeaderContent>
+        )}
 
         <VisuallyHidden>
           <Dialog.Description />

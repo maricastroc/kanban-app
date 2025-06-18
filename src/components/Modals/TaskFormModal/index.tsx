@@ -1,19 +1,12 @@
 import { RefObject, useRef, useState } from 'react'
 import DatePicker from 'react-datepicker'
-import * as Dialog from '@radix-ui/react-dialog'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleDown, faAngleUp, faX } from '@fortawesome/free-solid-svg-icons'
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import toast from 'react-hot-toast'
 import {
-  CloseButton,
-  HeaderContent,
-  ModalContent,
-  ModalOverlay,
-  ModalTitle,
-  SelectStatusField,
-  StatusContainer,
-  StatusSelectorContainer,
-} from '@/styles/shared'
+  StyledDatePickerWrapper,
+  SubtasksForm,
+  SubtasksWrapper,
+} from './styles'
+
 import { FormContainer } from '@/components/Core/FormContainer'
 import { InputContainer } from '@/components/Core/InputContainer'
 import { Button } from '@/components/Core/Button'
@@ -23,26 +16,21 @@ import { CustomTextarea } from '@/components/Core/TextArea'
 import { CustomInput } from '@/components/Core/Input'
 import { CustomLabel } from '@/components/Core/Label'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
-import { StatusSelector } from '@/components/Shared/StatusSelector'
+import { TagsSection } from '@/components/Shared/TagsSection'
+import { BaseModal } from '../BaseModal'
 
 import { useOutsideClick } from '@/utils/useOutsideClick'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 
-import {
-  StyledDatePickerWrapper,
-  SubtasksForm,
-  SubtasksWrapper,
-} from './styles'
-
 import { SubtaskProps } from '@/@types/subtask'
 import { TaskProps } from '@/@types/task'
-import toast from 'react-hot-toast'
-import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { useTaskForm } from '@/hooks/useTaskForm'
 import { useBoardsContext } from '@/contexts/BoardsContext'
-import { TagsSection } from '@/components/Shared/TagsSection'
+import { StatusSection } from '../TaskDetailsModal/partials/StatusSection'
+import { BoardColumnProps } from '@/@types/board-column'
 
 interface AddTaskModalProps {
+  column: BoardColumnProps
   isEditing?: boolean
   task?: TaskProps
   onClose: () => void
@@ -50,6 +38,7 @@ interface AddTaskModalProps {
 
 export function TaskFormModal({
   onClose,
+  column,
   isEditing = false,
   task,
 }: AddTaskModalProps) {
@@ -76,7 +65,7 @@ export function TaskFormModal({
     handleChangeStatus,
     handleSubmitTask,
     watch,
-  } = useTaskForm({ isEditing, task, onClose })
+  } = useTaskForm({ isEditing, column, task, onClose })
 
   useOutsideClick(statusRef as RefObject<HTMLElement>, () =>
     setIsOptionsContainerOpen(false),
@@ -114,127 +103,100 @@ export function TaskFormModal({
   }
 
   return (
-    <Dialog.Portal>
-      <ModalOverlay className="DialogOverlay" onClick={handleClose} />
-      <ModalContent padding="1.5rem 1.5rem 2rem" className="DialogContent xl">
-        <HeaderContent>
-          <ModalTitle className="DialogTitle">
-            {isEditing ? 'Edit Task' : 'Add New Task'}
-          </ModalTitle>
-          <CloseButton onClick={handleClose}>
-            <FontAwesomeIcon icon={faX} />
-          </CloseButton>
-        </HeaderContent>
+    <BaseModal
+      isLoading={isLoading}
+      onClose={handleClose}
+      title={isEditing ? 'Edit Task' : 'Add New Task'}
+      padding="1.5rem 1.5rem 2rem"
+    >
+      <FormContainer onSubmit={handleSubmit(handleSubmitTask)}>
+        <InputContainer>
+          <CustomLabel htmlFor="title">Title</CustomLabel>
+          <CustomInput
+            hasError={!!errors.name}
+            placeholder="e.g. Take coffee break"
+            {...register('name')}
+          />
+          {<ErrorMessage message={errors.name?.message} />}
+        </InputContainer>
 
-        <VisuallyHidden>
-          <Dialog.Description />
-        </VisuallyHidden>
+        <InputContainer>
+          <CustomLabel htmlFor="description">Description</CustomLabel>
+          <CustomTextarea
+            hasError={!!errors.description}
+            placeholder="e.g. Task description"
+            {...register('description')}
+          />
+          {<ErrorMessage message={errors.description?.message} />}
+        </InputContainer>
 
-        <FormContainer onSubmit={handleSubmit(handleSubmitTask)}>
-          <InputContainer>
-            <CustomLabel htmlFor="title">Title</CustomLabel>
-            <CustomInput
-              hasError={!!errors.name}
-              placeholder="e.g. Take coffee break"
-              {...register('name')}
+        <InputContainer>
+          <CustomLabel htmlFor="due_date">Due Date</CustomLabel>
+          <StyledDatePickerWrapper>
+            <DatePicker
+              placeholderText="dd/mm/yyyy"
+              customInput={<CustomInput />}
+              selected={watch('due_date')}
+              dateFormat="dd/MM/yyyy"
+              onChange={(date) => setValue('due_date', date as Date)}
             />
-            {<ErrorMessage message={errors.name?.message} />}
-          </InputContainer>
+          </StyledDatePickerWrapper>
+          {<ErrorMessage message={errors.due_date?.message} />}
+        </InputContainer>
 
-          <InputContainer>
-            <CustomLabel htmlFor="description">Description</CustomLabel>
-            <CustomTextarea
-              hasError={!!errors.description}
-              placeholder="e.g. Task description"
-              {...register('description')}
-            />
-            {<ErrorMessage message={errors.description?.message} />}
-          </InputContainer>
+        <SubtasksForm>
+          <CustomLabel>Subtasks</CustomLabel>
+          <SubtasksWrapper>
+            {subtasks.map((subtask, index) => (
+              <div key={`${subtask.name}-${index}`}>
+                {renderSubtaskInput(index, subtask)}
+              </div>
+            ))}
 
-          <InputContainer>
-            <CustomLabel htmlFor="due_date">Due Date</CustomLabel>
-            <StyledDatePickerWrapper>
-              <DatePicker
-                placeholderText="dd/mm/yyyy"
-                customInput={<CustomInput />}
-                selected={watch('due_date')}
-                dateFormat="dd/MM/yyyy"
-                onChange={(date) => setValue('due_date', date as Date)}
+            {
+              <ErrorMessage
+                style={{ marginTop: '-0.5rem' }}
+                message={errors?.subtasks?.message}
               />
-            </StyledDatePickerWrapper>
-            {<ErrorMessage message={errors.due_date?.message} />}
-          </InputContainer>
-
-          <SubtasksForm>
-            <CustomLabel>Subtasks</CustomLabel>
-            <SubtasksWrapper>
-              {subtasks.map((subtask, index) => (
-                <div key={`${subtask.name}-${index}`}>
-                  {renderSubtaskInput(index, subtask)}
-                </div>
-              ))}
-
-              {
-                <ErrorMessage
-                  style={{ marginTop: '-0.5rem' }}
-                  message={errors?.subtasks?.message}
-                />
-              }
-            </SubtasksWrapper>
-            <Button
-              variant="secondary"
-              type="button"
-              title="+ Add New Subtask"
-              onClick={handleAddSubtask}
-            />
-          </SubtasksForm>
-
-          <TagsSection
-            taskTags={taskTags}
-            onCheckedClick={(tag) =>
-              setTaskTags((prev) => prev.filter((t) => t.id !== tag.id))
             }
-            onUncheckedClick={(tag) => setTaskTags((prev) => [...prev, tag])}
-          />
-
-          <StatusContainer>
-            <CustomLabel>Status</CustomLabel>
-            <SelectStatusField
-              className={isOptionsContainerOpen ? 'active' : ''}
-              onClick={() => setIsOptionsContainerOpen((prev) => !prev)}
-            >
-              <p>{status}</p>
-              <FontAwesomeIcon
-                icon={isOptionsContainerOpen ? faAngleUp : faAngleDown}
-              />
-            </SelectStatusField>
-            {isOptionsContainerOpen && (
-              <StatusSelectorContainer ref={statusRef}>
-                {activeBoard?.columns?.map((column) => (
-                  <StatusSelector
-                    key={column.name}
-                    column={column}
-                    status={status}
-                    handleChangeStatus={() => {
-                      handleChangeStatus(column.name, column.id as string)
-                      setIsOptionsContainerOpen(false)
-                    }}
-                  />
-                ))}
-              </StatusSelectorContainer>
-            )}
-            {<ErrorMessage message={errors.status?.message} />}
-          </StatusContainer>
-
+          </SubtasksWrapper>
           <Button
-            title={isEditing ? 'Edit Task' : 'Create Task'}
-            type="submit"
-            variant="primary"
+            variant="secondary"
+            type="button"
+            title="+ Add New Subtask"
+            onClick={handleAddSubtask}
           />
-        </FormContainer>
-      </ModalContent>
+        </SubtasksForm>
 
-      {isLoading && <LoadingComponent />}
-    </Dialog.Portal>
+        <TagsSection
+          taskTags={taskTags}
+          onCheckedClick={(tag) =>
+            setTaskTags((prev) => prev.filter((t) => t.id !== tag.id))
+          }
+          onUncheckedClick={(tag) => setTaskTags((prev) => [...prev, tag])}
+        />
+
+        <StatusSection
+          statusRef={statusRef}
+          activeBoard={activeBoard}
+          handleChangeStatus={async (column) => {
+            handleChangeStatus(column.name, column.id as string)
+            setIsOptionsContainerOpen(false)
+          }}
+          isOpen={isOptionsContainerOpen}
+          isActive={isOptionsContainerOpen}
+          status={status}
+          onToggleOpen={() => setIsOptionsContainerOpen(true)}
+        />
+
+        {<ErrorMessage message={errors.status?.message} />}
+
+        <Button
+          title={isEditing ? 'Edit Task' : 'Create Task'}
+          type="submit"
+          variant="primary"
+        />
+      </FormContainer>
+    </BaseModal>
   )
 }

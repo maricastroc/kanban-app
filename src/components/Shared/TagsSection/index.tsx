@@ -29,7 +29,8 @@ export const TagsSection = ({
   const getTagColor = (colorName: string) =>
     tagColors.find((tag) => tag.name === colorName)?.color || ''
 
-  const isTagChecked = (id: string) => taskTags?.some((tag) => tag.id === id)
+  const isTagChecked = (id: string) =>
+    taskTags?.some((tag) => String(tag.id) === String(id))
 
   const handleClick = (tag: TagProps, isChecked: boolean) => {
     if (isChecked) {

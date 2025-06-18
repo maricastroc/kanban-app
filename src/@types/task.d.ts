@@ -11,4 +11,5 @@ export interface TaskProps {
   subtasks: SubtaskProps[]
   due_date?: Date
   tags?: TaskTagProps[]
+  order?: number
 }
