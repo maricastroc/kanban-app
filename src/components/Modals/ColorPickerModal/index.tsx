@@ -1,7 +1,7 @@
 import { HexColorPicker } from 'react-colorful'
 import * as Dialog from '@radix-ui/react-dialog'
 
-import { Button } from '@/components/Shared/Button'
+import { Button } from '@/components/Core/Button'
 import { ModalContent, ModalOverlay } from '@/styles/shared'
 import { LayoutContainer, StyledPickerContainer } from './styles'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'

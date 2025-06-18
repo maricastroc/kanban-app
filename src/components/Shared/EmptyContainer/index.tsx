@@ -3,7 +3,7 @@ import { ButtonContent, Container, ContentWrapper } from './styles'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useState } from 'react'
 import { BoardFormModal } from '@/components/Modals/BoardFormModal'
-import { SecondaryButton } from '../SecondaryButton'
+import { SecondaryButton } from '../../Core/SecondaryButton'
 
 export function EmptyContainer() {
   const [addBoardModalOpen, setAddBoardModalOpen] = useState(false)

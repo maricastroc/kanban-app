@@ -1,5 +1,5 @@
 import { ButtonsContainer, ModalDescription } from './styles'
-import { Button } from '@/components/Shared/Button'
+import { Button } from '@/components/Core/Button'
 import { TaskProps } from '@/@types/task'
 import { useState } from 'react'
 import { handleApiError } from '@/utils/handleApiError'

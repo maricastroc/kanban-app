@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState } from 'react'
 
-import { Button } from '@/components/Shared/Button'
+import { Button } from '@/components/Core/Button'
 import {
   ActionsContainer,
   ButtonsContainer,
@@ -13,7 +13,7 @@ import {
   TagsContainer,
   TagsTitle,
 } from './styles'
-import { tagColors } from '@/components/Shared/SelectInput'
+import { tagColors } from '@/components/Core/SelectInput'
 
 import { TagProps } from '@/@types/tag'
 import useRequest from '@/utils/useRequest'

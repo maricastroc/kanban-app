@@ -3,7 +3,7 @@ import { Container, Title } from './styles'
 import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
 import { useBoardsContext } from '@/contexts/BoardsContext'
-import { CheckInput } from '@/components/Shared/CheckInput'
+import { CheckInput } from '@/components/Core/CheckInput'
 
 interface SubtaskItemProps {
   id: string | number

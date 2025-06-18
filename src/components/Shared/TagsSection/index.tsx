@@ -2,7 +2,7 @@ import { TagContainer, TagMark, TagName, TagsContainer } from './styles'
 import { TagsTitle } from '@/components/Modals/TagsModal/styles'
 import { TagProps } from '@/@types/tag'
 import { TaskTagProps } from '@/@types/task-tag'
-import { CheckInput } from '../CheckInput'
+import { CheckInput } from '../../Core/CheckInput'
 import { tagColors } from '@/utils/constants'
 import useRequest from '@/utils/useRequest'
 

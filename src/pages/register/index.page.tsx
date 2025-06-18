@@ -22,7 +22,7 @@ import {
   TitleContainer,
 } from '../login/styles'
 import { Envelope, LockKey, User } from 'phosphor-react'
-import { Button } from '@/components/Shared/Button'
+import { Button } from '@/components/Core/Button'
 import Image from 'next/image'
 import Link from 'next/link'
 import { api } from '@/lib/axios'

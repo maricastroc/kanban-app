@@ -14,14 +14,14 @@ import {
   StatusContainer,
   StatusSelectorContainer,
 } from '@/styles/shared'
-import { FormContainer } from '@/components/Shared/FormContainer'
-import { InputContainer } from '@/components/Shared/InputContainer'
-import { Button } from '@/components/Shared/Button'
-import { FieldsContainer } from '@/components/Shared/FieldsContainer'
-import { Field } from '@/components/Shared/Field'
-import { CustomTextarea } from '@/components/Shared/TextArea'
-import { CustomInput } from '@/components/Shared/Input'
-import { CustomLabel } from '@/components/Shared/Label'
+import { FormContainer } from '@/components/Core/FormContainer'
+import { InputContainer } from '@/components/Core/InputContainer'
+import { Button } from '@/components/Core/Button'
+import { FieldsContainer } from '@/components/Core/FieldsContainer'
+import { Field } from '@/components/Core/Field'
+import { CustomTextarea } from '@/components/Core/TextArea'
+import { CustomInput } from '@/components/Core/Input'
+import { CustomLabel } from '@/components/Core/Label'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
 import { StatusSelector } from '@/components/Shared/StatusSelector'
 

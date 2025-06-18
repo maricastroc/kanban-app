@@ -10,7 +10,7 @@ import {
   TaskCardContainer,
 } from './styles'
 import { TaskDetailsModal } from '@/components/Modals/TaskDetailsModal'
-import { tagColors } from '@/components/Shared/SelectInput'
+import { tagColors } from '@/components/Core/SelectInput'
 import { TaskProps } from '@/@types/task'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { BoardColumnProps } from '@/@types/board-column'

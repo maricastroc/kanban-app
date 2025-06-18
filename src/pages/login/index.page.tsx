@@ -25,7 +25,7 @@ import {
   TitleContainer,
 } from './styles'
 import { Envelope, Eye, EyeSlash, LockKey } from 'phosphor-react'
-import { Button } from '@/components/Shared/Button'
+import { Button } from '@/components/Core/Button'
 import Image from 'next/image'
 import { toast } from 'react-hot-toast'
 import Link from 'next/link'
