@@ -38,6 +38,7 @@ const Field = forwardRef<HTMLInputElement, FieldProps>(
           placeholder={placeholder}
           defaultValue={defaultValue}
           onBlur={onChange}
+          disabled={isDisabled}
         />
         <DeleteFieldBtn type="button" className={btnVariant} onClick={onClick}>
           <FontAwesomeIcon icon={faXmark} />
