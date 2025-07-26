@@ -1,7 +1,6 @@
 import { ButtonsContainer, ModalDescription } from './styles'
 import { Button } from '@/components/Core/Button'
 import { TaskProps } from '@/@types/task'
-import { useState } from 'react'
 import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
 import { useBoardsContext } from '@/contexts/BoardsContext'
@@ -15,15 +14,19 @@ interface DeleteBoardProps {
 }
 
 export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
-  const [isLoading, setIsLoading] = useState(false)
-
-  const { activeBoard, activeBoardMutate } = useBoardsContext()
+  const {
+    isLoading,
+    handleSetIsLoading,
+    activeBoard,
+    activeBoardMutate,
+    boardsMutate,
+  } = useBoardsContext()
 
   const handleDelete = async (id: number | string) => {
     if (!activeBoard) return
 
     try {
-      setIsLoading(true)
+      handleSetIsLoading(true)
 
       const routePath = type === 'board' ? `/boards/${id}` : `/tasks/${id}`
 
@@ -34,10 +37,22 @@ export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
       }
 
       await activeBoardMutate()
+      await boardsMutate()
+
+      if (type === 'board') {
+        const storedBoard = localStorage.getItem('activeBoard')
+        const parsedBoard = storedBoard ? JSON.parse(storedBoard) : null
+
+        if (parsedBoard?.id === id) {
+          localStorage.removeItem('activeBoard')
+        }
+
+        await activeBoardMutate()
+      }
     } catch (error) {
       handleApiError(error)
     } finally {
-      setIsLoading(false)
+      handleSetIsLoading(false)
 
       setTimeout(() => {
         onClose()
@@ -66,6 +81,7 @@ export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
         <Button
           title="Delete"
           variant="tertiary"
+          disabled={isLoading}
           onClick={() => {
             if (activeBoard && type === 'board') {
               handleDelete(activeBoard.id as string)
@@ -74,7 +90,12 @@ export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
             }
           }}
         />
-        <Button title="Cancel" variant="secondary" onClick={() => onClose()} />
+        <Button
+          disabled={isLoading}
+          title="Cancel"
+          variant="secondary"
+          onClick={() => onClose()}
+        />
       </ButtonsContainer>
     </BaseModal>
   )

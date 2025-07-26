@@ -26,7 +26,7 @@ export const ModalContent = styled(RadixContent)`
   }
 `
 
-export const ActionBtn = styled.button`
+export const ActionBtn = styled.button<{ disabled?: boolean }>`
   cursor: pointer;
   background-color: transparent;
   border: none;
@@ -41,9 +41,15 @@ export const ActionBtn = styled.button`
     color: ${(props) => props.theme['error-color']};
   }
 
-  &:hover {
+  &:not([disabled]):hover {
     filter: brightness(1.2);
     transition: 200ms;
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+    filter: none;
+    color: ${(props) => props.theme['disabled-color'] || '#999'};
   }
 `
 

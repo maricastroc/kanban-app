@@ -141,7 +141,7 @@ export const useTaskForm = ({
   ) => {
     setStatus(newStatus)
     setValue('status', newStatus)
-    console.log(columnToEditId)
+
     if (columnToEditId) setColumnId(columnToEditId)
   }
 
@@ -177,7 +177,7 @@ export const useTaskForm = ({
       handleSetIsLoading(false)
     }
   }
-  console.log(columnId)
+
   useEffect(() => {
     if (activeBoard && !isEditing) {
       const initialColumn = activeBoard.columns[0]

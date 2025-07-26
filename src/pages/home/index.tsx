@@ -45,9 +45,7 @@ export default function Home() {
   const { onDragEnd, isApiProcessing } = useDragAndDrop(setBoardColumns)
 
   useEffect(() => {
-    if (activeBoard) {
-      setBoardColumns(activeBoard.columns)
-    }
+    setBoardColumns(activeBoard?.columns)
   }, [activeBoard])
 
   if (isCheckingAuth) return null

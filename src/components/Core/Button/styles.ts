@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const Container = styled.button`
+export const Container = styled.button<{ disabled?: boolean }>`
   cursor: pointer;
   width: 100%;
   display: flex;
@@ -34,6 +34,7 @@ export const Container = styled.button`
 
   &.secondary {
     background-color: ${(props) => `${props.theme['secondary-color']}`};
+    color: ${(props) => props.theme['primary-color']};
 
     p,
     svg {
@@ -70,5 +71,6 @@ export const Container = styled.button`
 
   &.disabled {
     cursor: not-allowed;
+    pointer-events: none;
   }
 `

@@ -21,7 +21,7 @@ export function ActionsModal({ onClose }: Props) {
 
   const route = useRouter()
 
-  const { activeBoard } = useBoardsContext()
+  const { activeBoard, isLoading } = useBoardsContext()
 
   const [isEditModalOpen, setEditModalOpen] = useState(false)
 
@@ -60,6 +60,7 @@ export function ActionsModal({ onClose }: Props) {
       handleApiError(error)
     }
   }
+
   return (
     <Dialog.Portal>
       <Dialog.Overlay onClick={onClose} />
@@ -72,7 +73,11 @@ export function ActionsModal({ onClose }: Props) {
           <>
             <Dialog.Root open={isEditModalOpen}>
               <Dialog.Trigger asChild>
-                <ActionBtn onClick={handleEditModalOpen} className="edit">
+                <ActionBtn
+                  disabled={isLoading}
+                  onClick={handleEditModalOpen}
+                  className="edit"
+                >
                   Edit Board
                 </ActionBtn>
               </Dialog.Trigger>

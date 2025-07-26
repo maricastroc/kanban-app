@@ -27,6 +27,8 @@ interface BoardsContextData {
 
   boardsMutate: KeyedMutator<AxiosResponse<{ boards: BoardProps[] }, any>>
   activeBoardMutate: KeyedMutator<AxiosResponse<{ board: BoardProps }, any>>
+
+  setActiveBoard: (board: BoardProps | undefined) => void
 }
 
 const BoardsContext = createContext<BoardsContextData | undefined>(undefined)
@@ -49,9 +51,14 @@ export function BoardsContextProvider({
   children,
 }: BoardsContextProviderProps) {
   const [isLoading, setIsLoading] = useState(false)
+
   const [enableScrollFeature, setEnableScrollFeature] = useState(false)
+
   const [boards, setBoards] = useState<BoardProps[] | null>(null)
+
   const [activeBoard, setActiveBoard] = useState<BoardProps | undefined>()
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   function handleEnableScrollFeature(value: boolean) {
     setEnableScrollFeature(value)
@@ -89,7 +96,7 @@ export function BoardsContextProvider({
     isValidating: isValidatingBoards,
   } = useRequest<{ boards: BoardProps[] }>(
     {
-      url: '/boards',
+      url: isAuthenticated ? '/boards' : undefined,
       method: 'GET',
     },
     {
@@ -103,13 +110,20 @@ export function BoardsContextProvider({
     isValidating: isValidatingActiveBoard,
   } = useRequest<{ board: BoardProps }>(
     {
-      url: '/boards/active',
+      url: isAuthenticated ? '/boards/active' : undefined,
       method: 'GET',
     },
     {
       revalidateOnFocus: false,
     },
   )
+
+  const handleChangeActiveBoard = async (board: BoardProps) => {
+    setActiveBoard(board)
+    localStorage.setItem('activeBoard', JSON.stringify(board))
+
+    await activeBoardMutate()
+  }
 
   useEffect(() => {
     if (boardsData?.boards) {
@@ -119,18 +133,29 @@ export function BoardsContextProvider({
   }, [boardsData])
 
   useEffect(() => {
-    if (activeBoardData?.board) {
+    if (!activeBoardData?.board) {
+      setActiveBoard(undefined)
+      return
+    }
+
+    const isBoardStillInList = boards?.some(
+      (b) => b.id === activeBoardData.board.id,
+    )
+
+    if (isBoardStillInList) {
       setActiveBoard(activeBoardData.board)
       localStorage.setItem('activeBoard', JSON.stringify(activeBoardData.board))
+    } else {
+      setActiveBoard(undefined)
+      localStorage.removeItem('activeBoard')
     }
-  }, [activeBoardData])
+  }, [activeBoardData, boards])
 
-  const handleChangeActiveBoard = async (board: BoardProps) => {
-    setActiveBoard(board)
-    localStorage.setItem('activeBoard', JSON.stringify(board))
+  useEffect(() => {
+    const token = localStorage.getItem('auth_token')
 
-    await activeBoardMutate()
-  }
+    setIsAuthenticated(!!token)
+  }, [])
 
   return (
     <BoardsContext.Provider
@@ -146,6 +171,7 @@ export function BoardsContextProvider({
         isValidatingActiveBoard,
         boardsMutate,
         activeBoardMutate,
+        setActiveBoard,
       }}
     >
       {children}
