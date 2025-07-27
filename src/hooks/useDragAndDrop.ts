@@ -73,7 +73,7 @@ export function useDragAndDrop(
         new_order: Number(newOrder),
       }
 
-      await api.put(`tasks/${task?.id}/move`, payload)
+      await api.patch(`tasks/${task?.id}/move`, payload)
 
       await activeBoardMutate()
     } catch (error) {
@@ -119,7 +119,7 @@ export function useDragAndDrop(
         new_order: newOrder,
       }
 
-      await api.put(`tasks/${task.id}/reorder`, payload)
+      await api.patch(`tasks/${task.id}/reorder`, payload)
 
       await activeBoardMutate()
     } catch (error) {
