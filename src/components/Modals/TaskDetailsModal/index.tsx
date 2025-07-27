@@ -112,7 +112,7 @@ export function TaskDetailsModal({
         new_order: Number(newOrder),
       }
 
-      await api.put(`tasks/${task?.id}/move`, payload)
+      await api.patch(`tasks/${task?.id}/move`, payload)
 
       await activeBoardMutate()
     } catch (error) {

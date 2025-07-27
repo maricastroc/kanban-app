@@ -156,7 +156,6 @@ export const useTaskForm = ({
         description: data.description || '',
         due_date: data.due_date,
         column_id: columnId,
-        status,
         subtasks: subtasks.map((subtask, index) => ({
           ...subtask,
           order: index,
