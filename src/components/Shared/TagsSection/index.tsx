@@ -43,23 +43,28 @@ export const TagsSection = ({
   return (
     <TagsContainer>
       <TagsTitle>Tags</TagsTitle>
-      {tags?.map((item) => {
-        const isChecked = isTagChecked(item.id as string) || false
-        const tagColor = getTagColor(item.color)
 
-        return (
-          <TagContainer key={item.id}>
-            <CheckInput
-              isChecked={isChecked}
-              onClick={() => handleClick(item, isChecked)}
-            />
-            <TagName>
-              <p>{item.name}</p>
-              <TagMark color={tagColor} />
-            </TagName>
-          </TagContainer>
-        )
-      })}
+      {tags && tags.length > 0 ? (
+        tags.map((item) => {
+          const isChecked = isTagChecked(item.id as string) || false
+          const tagColor = getTagColor(item.color)
+
+          return (
+            <TagContainer key={item.id}>
+              <CheckInput
+                isChecked={isChecked}
+                onClick={() => handleClick(item, isChecked)}
+              />
+              <TagName>
+                <p>{item.name}</p>
+                <TagMark color={tagColor} />
+              </TagName>
+            </TagContainer>
+          )
+        })
+      ) : (
+        <span>No tags available.</span>
+      )}
     </TagsContainer>
   )
 }

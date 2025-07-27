@@ -127,6 +127,7 @@ export function Header({ hideSidebar }: Props) {
             </Dialog.Trigger>
             <TaskFormModal
               isEditing={false}
+              column={activeBoard?.columns[0]}
               onClose={() => setIsAddTaskModalOpen(false)}
             />
           </Dialog.Root>

@@ -90,33 +90,29 @@ export function BoardsContextProvider({
     }
   }, [])
 
+  const boardsRequest = isAuthenticated
+    ? { url: '/boards', method: 'GET' }
+    : null
+
+  const activeBoardRequest = isAuthenticated
+    ? { url: '/boards/active', method: 'GET' }
+    : null
+
   const {
     data: boardsData,
     mutate: boardsMutate,
     isValidating: isValidatingBoards,
-  } = useRequest<{ boards: BoardProps[] }>(
-    {
-      url: isAuthenticated ? '/boards' : undefined,
-      method: 'GET',
-    },
-    {
-      revalidateOnFocus: false,
-    },
-  )
+  } = useRequest<{ boards: BoardProps[] }>(boardsRequest, {
+    revalidateOnFocus: false,
+  })
 
   const {
     data: activeBoardData,
     mutate: activeBoardMutate,
     isValidating: isValidatingActiveBoard,
-  } = useRequest<{ board: BoardProps }>(
-    {
-      url: isAuthenticated ? '/boards/active' : undefined,
-      method: 'GET',
-    },
-    {
-      revalidateOnFocus: false,
-    },
-  )
+  } = useRequest<{ board: BoardProps }>(activeBoardRequest, {
+    revalidateOnFocus: false,
+  })
 
   const handleChangeActiveBoard = async (board: BoardProps) => {
     setActiveBoard(board)

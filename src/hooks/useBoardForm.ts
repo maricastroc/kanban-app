@@ -196,7 +196,7 @@ export const useBoardForm = ({ isEditing, onClose }: Props) => {
       })
     }
   }, [activeBoard, isEditing, reset])
-  console.log(initialBoardColumns, boardColumns)
+
   return {
     handleAddColumn,
     handleRemoveColumn,

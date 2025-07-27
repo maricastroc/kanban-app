@@ -5,7 +5,13 @@ export const TagsContainer = styled.div`
   flex-direction: column;
   width: 100%;
   gap: 0.4rem;
-  padding: 1rem 0 0;
+  padding: 1.3rem 0 0;
+
+  span {
+    color: ${(props) => props.theme['subtitle-color']};
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
 `
 
 export const TagContainer = styled.div`
