@@ -89,7 +89,7 @@ export function TaskDetailsModal({
         subtasks: updatedSubtasks,
       }
 
-      await api.put('/subtasks/reorder', payload)
+      await api.patch('/subtasks/reorder', payload)
 
       await activeBoardMutate()
     } catch (error) {
