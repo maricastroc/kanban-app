@@ -52,27 +52,16 @@ export const useTaskForm = ({
 
   const [status, setStatus] = useState(column?.name || '')
 
-  const formSchema = z
-    .object({
-      id: z.number().or(z.string()),
-      name: z.string().min(MIN_TITLE_LENGTH, { message: 'Title is required' }),
-      description: z.string().optional(),
-      subtasks: z
-        .array(subtaskSchema)
-        .min(MIN_SUBTASKS, { message: 'At least one subtask is required' }),
-      status: z.string(),
-      due_date: z.date().optional(),
-    })
-    .refine(
-      (data) => {
-        const names = data.subtasks.map((s) => s.name.trim().toLowerCase())
-        return new Set(names).size === names.length
-      },
-      {
-        message: 'Subtask names must be unique',
-        path: ['subtasks'],
-      },
-    )
+  const formSchema = z.object({
+    id: z.number().or(z.string()),
+    name: z.string().min(MIN_TITLE_LENGTH, { message: 'Title is required' }),
+    description: z.string().optional(),
+    subtasks: z
+      .array(subtaskSchema)
+      .min(MIN_SUBTASKS, { message: 'At least one subtask is required' }),
+    status: z.string(),
+    due_date: z.date().optional(),
+  })
 
   type TaskFormData = z.infer<typeof formSchema>
 
