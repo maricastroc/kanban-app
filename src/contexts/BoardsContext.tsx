@@ -50,23 +50,25 @@ interface BoardsContextProviderProps {
 export function BoardsContextProvider({
   children,
 }: BoardsContextProviderProps) {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
   const [enableScrollFeature, setEnableScrollFeature] = useState(false)
+
   const [boards, setBoards] = useState<BoardProps[] | null>(null)
+
   const [activeBoard, setActiveBoard] = useState<BoardProps | undefined>()
+
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-  // Improved authentication check with storage event listener
   useEffect(() => {
     const checkAuth = () => {
+      setIsLoading(true)
       const token = localStorage.getItem('auth_token')
       setIsAuthenticated(!!token)
     }
 
-    // Initial check
     checkAuth()
 
-    // Listen for auth changes
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'auth_token') {
         checkAuth()
@@ -77,7 +79,6 @@ export function BoardsContextProvider({
     return () => window.removeEventListener('storage', handleStorageChange)
   }, [])
 
-  // Initialize requests with shouldFetch based on authentication
   const boardsRequest = {
     url: '/boards',
     method: 'GET',
@@ -108,52 +109,54 @@ export function BoardsContextProvider({
     revalidateOnMount: true,
   })
 
-  // Force initial load when authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      boardsMutate()
-      activeBoardMutate()
+      setIsLoading(true)
+      Promise.all([boardsMutate(), activeBoardMutate()])
+        .finally(() => setIsLoading(false))
+    } else {
+      setIsLoading(false)
     }
   }, [isAuthenticated, boardsMutate, activeBoardMutate])
 
-  // Load from localStorage on initial render
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    const storedBoards = localStorage.getItem('boards')
-    if (storedBoards) {
-      try {
+    setIsLoading(true)
+    try {
+      const storedBoards = localStorage.getItem('boards')
+      if (storedBoards) {
         setBoards(JSON.parse(storedBoards))
-      } catch {
-        localStorage.removeItem('boards')
       }
-    }
 
-    const storedActiveBoard = localStorage.getItem('activeBoard')
-    if (storedActiveBoard) {
-      try {
+      const storedActiveBoard = localStorage.getItem('activeBoard')
+      if (storedActiveBoard) {
         setActiveBoard(JSON.parse(storedActiveBoard))
-      } catch {
-        localStorage.removeItem('activeBoard')
       }
+    } catch (error) {
+      localStorage.removeItem('boards')
+      localStorage.removeItem('activeBoard')
+    } finally {
+      setIsLoading(false)
     }
   }, [])
 
-  // Update state when new boards data arrives
   useEffect(() => {
     if (boardsData?.boards) {
+      setIsLoading(true)
       setBoards(boardsData.boards)
       localStorage.setItem('boards', JSON.stringify(boardsData.boards))
+      setIsLoading(false)
     }
   }, [boardsData])
 
-  // Update active board when new data arrives
   useEffect(() => {
     if (!activeBoardData?.board) {
       setActiveBoard(undefined)
       return
     }
 
+    setIsLoading(true)
     const isBoardStillInList = boards?.some(
       (b) => b.id === activeBoardData.board.id,
     )
@@ -165,6 +168,7 @@ export function BoardsContextProvider({
       setActiveBoard(undefined)
       localStorage.removeItem('activeBoard')
     }
+    setIsLoading(false)
   }, [activeBoardData, boards])
 
   const handleEnableScrollFeature = (value: boolean) => {
@@ -176,9 +180,15 @@ export function BoardsContextProvider({
   }
 
   const handleChangeActiveBoard = async (board: BoardProps) => {
+    setIsLoading(true)
+
     setActiveBoard(board)
+
     localStorage.setItem('activeBoard', JSON.stringify(board))
+
     await activeBoardMutate()
+
+    setIsLoading(false)
   }
 
   return (
