@@ -49,7 +49,7 @@ export default function Home() {
   }, [activeBoard])
 
   if (isCheckingAuth) return null
-
+  console.log(activeBoard)
   return (
     <>
       <NextSeo title="Kanban App | Dashboard" />

@@ -51,23 +51,72 @@ export function BoardsContextProvider({
   children,
 }: BoardsContextProviderProps) {
   const [isLoading, setIsLoading] = useState(false)
-
   const [enableScrollFeature, setEnableScrollFeature] = useState(false)
-
   const [boards, setBoards] = useState<BoardProps[] | null>(null)
-
   const [activeBoard, setActiveBoard] = useState<BoardProps | undefined>()
-
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-  function handleEnableScrollFeature(value: boolean) {
-    setEnableScrollFeature(value)
+  // Improved authentication check with storage event listener
+  useEffect(() => {
+    const checkAuth = () => {
+      const token = localStorage.getItem('auth_token')
+      setIsAuthenticated(!!token)
+    }
+
+    // Initial check
+    checkAuth()
+
+    // Listen for auth changes
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'auth_token') {
+        checkAuth()
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
+  }, [])
+
+  // Initialize requests with shouldFetch based on authentication
+  const boardsRequest = {
+    url: '/boards',
+    method: 'GET',
+    shouldFetch: isAuthenticated,
   }
 
-  function handleSetIsLoading(value: boolean) {
-    setIsLoading(value)
+  const activeBoardRequest = {
+    url: '/boards/active',
+    method: 'GET',
+    shouldFetch: isAuthenticated,
   }
 
+  const {
+    data: boardsData,
+    mutate: boardsMutate,
+    isValidating: isValidatingBoards,
+  } = useRequest<{ boards: BoardProps[] }>(boardsRequest, {
+    revalidateOnFocus: true,
+    revalidateOnMount: true,
+  })
+
+  const {
+    data: activeBoardData,
+    mutate: activeBoardMutate,
+    isValidating: isValidatingActiveBoard,
+  } = useRequest<{ board: BoardProps }>(activeBoardRequest, {
+    revalidateOnFocus: true,
+    revalidateOnMount: true,
+  })
+
+  // Force initial load when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      boardsMutate()
+      activeBoardMutate()
+    }
+  }, [isAuthenticated, boardsMutate, activeBoardMutate])
+
+  // Load from localStorage on initial render
   useEffect(() => {
     if (typeof window === 'undefined') return
 
@@ -90,37 +139,7 @@ export function BoardsContextProvider({
     }
   }, [])
 
-  const boardsRequest = isAuthenticated
-    ? { url: '/boards', method: 'GET' }
-    : null
-
-  const activeBoardRequest = isAuthenticated
-    ? { url: '/boards/active', method: 'GET' }
-    : null
-
-  const {
-    data: boardsData,
-    mutate: boardsMutate,
-    isValidating: isValidatingBoards,
-  } = useRequest<{ boards: BoardProps[] }>(boardsRequest, {
-    revalidateOnFocus: false,
-  })
-
-  const {
-    data: activeBoardData,
-    mutate: activeBoardMutate,
-    isValidating: isValidatingActiveBoard,
-  } = useRequest<{ board: BoardProps }>(activeBoardRequest, {
-    revalidateOnFocus: false,
-  })
-
-  const handleChangeActiveBoard = async (board: BoardProps) => {
-    setActiveBoard(board)
-    localStorage.setItem('activeBoard', JSON.stringify(board))
-
-    await activeBoardMutate()
-  }
-
+  // Update state when new boards data arrives
   useEffect(() => {
     if (boardsData?.boards) {
       setBoards(boardsData.boards)
@@ -128,6 +147,7 @@ export function BoardsContextProvider({
     }
   }, [boardsData])
 
+  // Update active board when new data arrives
   useEffect(() => {
     if (!activeBoardData?.board) {
       setActiveBoard(undefined)
@@ -147,11 +167,19 @@ export function BoardsContextProvider({
     }
   }, [activeBoardData, boards])
 
-  useEffect(() => {
-    const token = localStorage.getItem('auth_token')
+  const handleEnableScrollFeature = (value: boolean) => {
+    setEnableScrollFeature(value)
+  }
 
-    setIsAuthenticated(!!token)
-  }, [])
+  const handleSetIsLoading = (value: boolean) => {
+    setIsLoading(value)
+  }
+
+  const handleChangeActiveBoard = async (board: BoardProps) => {
+    setActiveBoard(board)
+    localStorage.setItem('activeBoard', JSON.stringify(board))
+    await activeBoardMutate()
+  }
 
   return (
     <BoardsContext.Provider

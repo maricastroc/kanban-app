@@ -156,7 +156,6 @@ export const useBoardForm = ({ isEditing, onClose }: Props) => {
 
   const resetColumns = () => {
     if (isEditing) {
-      // Usa as colunas do activeBoard, não o initialBoardColumns
       const cols = activeBoard?.columns || []
       setBoardColumns(cols)
 
