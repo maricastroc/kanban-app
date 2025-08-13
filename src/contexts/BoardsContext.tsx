@@ -112,8 +112,9 @@ export function BoardsContextProvider({
   useEffect(() => {
     if (isAuthenticated) {
       setIsLoading(true)
-      Promise.all([boardsMutate(), activeBoardMutate()])
-        .finally(() => setIsLoading(false))
+      Promise.all([boardsMutate(), activeBoardMutate()]).finally(() =>
+        setIsLoading(false),
+      )
     } else {
       setIsLoading(false)
     }
@@ -136,6 +137,8 @@ export function BoardsContextProvider({
     } catch (error) {
       localStorage.removeItem('boards')
       localStorage.removeItem('activeBoard')
+
+      console.log(error)
     } finally {
       setIsLoading(false)
     }

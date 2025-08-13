@@ -55,53 +55,55 @@ export default function Home() {
       <NextSeo title="Kanban App | Dashboard" />
       {!isCheckingAuth && (
         <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="all-columns" direction="horizontal">
-            {(provided) => (
-              <LayoutContainer
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-              >
-                <BoardContent>
-                  {!isSmallerThanSm && (
-                    <Sidebar
-                      className={!hideSidebar ? '' : 'hidden'}
-                      onClose={() => setHideSidebar(true)}
-                    />
-                  )}
-                  <Wrapper>
-                    <Header hideSidebar={hideSidebar} />
-                    <ColumnsContainer
-                      ref={columnsContainerRef}
-                      onMouseDown={handleContainerMouseDown}
-                      onMouseUp={handleMouseUp}
-                      onMouseLeave={handleMouseUp}
-                      onMouseMove={handleMouseMove}
-                      className={hideSidebar ? 'hide-sidebar-mode' : ''}
-                    >
-                      {activeBoard ? (
-                        <BoardColumnsList
-                          isOpen={isColumnFormModalOpen}
-                          columns={boardColumns}
-                          isLoading={isLoading}
-                          isApiProcessing={isApiProcessing}
-                          onOpenModal={(value) =>
-                            setIsColumnFormModalOpen(value)
-                          }
-                        />
-                      ) : (
-                        <EmptyContainer />
-                      )}
-                    </ColumnsContainer>
-                  </Wrapper>
-                  {hideSidebar && (
-                    <ShowSidebarBtn onClick={() => setHideSidebar(false)}>
-                      <Image src={HideSidebar} alt="" />
-                    </ShowSidebarBtn>
-                  )}
-                </BoardContent>
-              </LayoutContainer>
-            )}
-          </Droppable>
+          {!isLoading && (
+            <Droppable droppableId="all-columns" direction="horizontal">
+              {(provided) => (
+                <LayoutContainer
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
+                  <BoardContent>
+                    {!isSmallerThanSm && (
+                      <Sidebar
+                        className={!hideSidebar ? '' : 'hidden'}
+                        onClose={() => setHideSidebar(true)}
+                      />
+                    )}
+                    <Wrapper>
+                      <Header hideSidebar={hideSidebar} />
+                      <ColumnsContainer
+                        ref={columnsContainerRef}
+                        onMouseDown={handleContainerMouseDown}
+                        onMouseUp={handleMouseUp}
+                        onMouseLeave={handleMouseUp}
+                        onMouseMove={handleMouseMove}
+                        className={hideSidebar ? 'hide-sidebar-mode' : ''}
+                      >
+                        {activeBoard ? (
+                          <BoardColumnsList
+                            isOpen={isColumnFormModalOpen}
+                            columns={boardColumns}
+                            isLoading={isLoading}
+                            isApiProcessing={isApiProcessing}
+                            onOpenModal={(value) =>
+                              setIsColumnFormModalOpen(value)
+                            }
+                          />
+                        ) : (
+                          <EmptyContainer />
+                        )}
+                      </ColumnsContainer>
+                    </Wrapper>
+                    {hideSidebar && (
+                      <ShowSidebarBtn onClick={() => setHideSidebar(false)}>
+                        <Image src={HideSidebar} alt="" />
+                      </ShowSidebarBtn>
+                    )}
+                  </BoardContent>
+                </LayoutContainer>
+              )}
+            </Droppable>
+          )}
 
           {isLoading && <LoadingComponent />}
         </DragDropContext>
