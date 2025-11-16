@@ -135,7 +135,7 @@ export function BoardsContextProvider({
       setActiveBoard(undefined)
     }
   }, [activeBoardData, boards])
-  console.log(boardsData)
+
   const handleEnableScrollFeature = (value: boolean) => {
     setEnableScrollFeature(value)
   }
