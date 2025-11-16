@@ -51,13 +51,9 @@ export function BoardsContextProvider({
   children,
 }: BoardsContextProviderProps) {
   const [isLoading, setIsLoading] = useState(true)
-
   const [enableScrollFeature, setEnableScrollFeature] = useState(false)
-
   const [boards, setBoards] = useState<BoardProps[] | null>(null)
-
   const [activeBoard, setActiveBoard] = useState<BoardProps | undefined>()
-
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
@@ -82,13 +78,13 @@ export function BoardsContextProvider({
   const boardsRequest = {
     url: '/boards',
     method: 'GET',
-    shouldFetch: isAuthenticated,
+    shouldFetch: true,
   }
 
   const activeBoardRequest = {
     url: '/boards/active',
     method: 'GET',
-    shouldFetch: isAuthenticated,
+    shouldFetch: true,
   }
 
   const {
@@ -121,57 +117,25 @@ export function BoardsContextProvider({
   }, [isAuthenticated, boardsMutate, activeBoardMutate])
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-
-    setIsLoading(true)
-    try {
-      const storedBoards = localStorage.getItem('boards')
-      if (storedBoards) {
-        setBoards(JSON.parse(storedBoards))
+    if (boardsData !== undefined) {
+      if (boardsData?.boards) {
+        setBoards(boardsData.boards)
+      } else {
+        setBoards([])
       }
-
-      const storedActiveBoard = localStorage.getItem('activeBoard')
-      if (storedActiveBoard) {
-        setActiveBoard(JSON.parse(storedActiveBoard))
-      }
-    } catch (error) {
-      localStorage.removeItem('boards')
-      localStorage.removeItem('activeBoard')
-
-      console.log(error)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (boardsData?.boards) {
-      setIsLoading(true)
-      setBoards(boardsData.boards)
-      localStorage.setItem('boards', JSON.stringify(boardsData.boards))
-      setIsLoading(false)
     }
   }, [boardsData])
 
   useEffect(() => {
-    if (!activeBoardData?.board) {
-      setActiveBoard(undefined)
-      return
-    }
-
-    setIsLoading(true)
     const isBoardStillInList = boards?.some(
-      (b) => b.id === activeBoardData.board.id,
+      (b) => b.id === activeBoardData?.board.id,
     )
 
     if (isBoardStillInList) {
-      setActiveBoard(activeBoardData.board)
-      localStorage.setItem('activeBoard', JSON.stringify(activeBoardData.board))
+      setActiveBoard(activeBoardData?.board)
     } else {
       setActiveBoard(undefined)
-      localStorage.removeItem('activeBoard')
     }
-    setIsLoading(false)
   }, [activeBoardData, boards])
 
   const handleEnableScrollFeature = (value: boolean) => {
@@ -184,13 +148,8 @@ export function BoardsContextProvider({
 
   const handleChangeActiveBoard = async (board: BoardProps) => {
     setIsLoading(true)
-
     setActiveBoard(board)
-
-    localStorage.setItem('activeBoard', JSON.stringify(board))
-
     await activeBoardMutate()
-
     setIsLoading(false)
   }
 

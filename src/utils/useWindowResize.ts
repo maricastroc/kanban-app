@@ -6,13 +6,13 @@ export function useWindowResize(breakpoint: number) {
   )
 
   useEffect(() => {
-    if (typeof window === 'undefined') return // Evita erro no SSR
+    if (typeof window === 'undefined') return
 
     const handleResize = () => {
       setIsSmallerThanBreakpoint(window.innerWidth <= breakpoint)
     }
 
-    handleResize() // Define o estado inicial corretamente no cliente
+    handleResize()
 
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)

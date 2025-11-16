@@ -10,7 +10,7 @@ import toast from 'react-hot-toast'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { api } from '@/lib/axios'
 import { handleApiError } from '@/utils/handleApiError'
-import { useRouter } from 'next/router'
+import { signOut } from 'next-auth/react'
 
 interface Props {
   onClose: () => void
@@ -18,8 +18,6 @@ interface Props {
 
 export function ActionsModal({ onClose }: Props) {
   const { enableDarkMode } = useTheme()
-
-  const route = useRouter()
 
   const { activeBoard, isLoading } = useBoardsContext()
 
@@ -49,13 +47,34 @@ export function ActionsModal({ onClose }: Props) {
     try {
       await api.get('/logout')
 
+      await signOut({
+        redirect: false,
+        callbackUrl: '/login',
+      })
+
       localStorage.removeItem('auth_token')
       localStorage.removeItem('activeBoard')
       localStorage.removeItem('boards')
 
+      const domain = window.location.hostname
+      const cookiesToRemove = [
+        'next-auth.csrf-token',
+        'next-auth.session-token',
+        'next-auth.callback-url',
+        '__Secure-next-auth.session-token',
+        '__Host-next-auth.csrf-token',
+      ]
+
+      cookiesToRemove.forEach((cookie) => {
+        document.cookie = `${cookie}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${domain};`
+        document.cookie = `${cookie}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.${domain};`
+      })
+
+      sessionStorage.clear()
+
       toast.success('See you soon!')
 
-      route.push('/login')
+      window.location.replace('/login')
     } catch (error) {
       handleApiError(error)
     }

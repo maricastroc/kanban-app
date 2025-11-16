@@ -3,7 +3,7 @@ import { Error } from './styles'
 
 interface ErrorMessageProps {
   message?: string
-  style?: CSSProperties // define o tipo do style
+  style?: CSSProperties
 }
 
 const ErrorMessage = ({ message, style }: ErrorMessageProps) => {
