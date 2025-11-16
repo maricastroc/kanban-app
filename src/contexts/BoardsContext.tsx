@@ -28,6 +28,7 @@ interface BoardsContextData {
   boardsMutate: KeyedMutator<AxiosResponse<{ boards: BoardProps[] }, any>>
   activeBoardMutate: KeyedMutator<AxiosResponse<{ board: BoardProps }, any>>
 
+  setBoards: (boards: BoardProps[] | null) => void
   setActiveBoard: (board: BoardProps | undefined) => void
 }
 
@@ -168,6 +169,7 @@ export function BoardsContextProvider({
         boardsMutate,
         activeBoardMutate,
         setActiveBoard,
+        setBoards,
       }}
     >
       {children}

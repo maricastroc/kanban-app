@@ -21,7 +21,7 @@ export function ActionsModal({ onClose }: Props) {
 
   const route = useRouter()
 
-  const { activeBoard, isLoading } = useBoardsContext()
+  const { activeBoard, isLoading, setActiveBoard, setBoards } = useBoardsContext()
 
   const [isEditModalOpen, setEditModalOpen] = useState(false)
 
@@ -58,6 +58,9 @@ export function ActionsModal({ onClose }: Props) {
       import('swr').then(({ mutate }) => {
         mutate(() => true, undefined, { revalidate: false })
       })
+
+      setBoards([])
+      setActiveBoard(undefined)
 
       toast.success('See you soon!')
 
