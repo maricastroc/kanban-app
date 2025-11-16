@@ -53,6 +53,12 @@ export function ActionsModal({ onClose }: Props) {
       localStorage.removeItem('activeBoard')
       localStorage.removeItem('boards')
 
+      delete api.defaults.headers.common['Authorization']
+
+      import('swr').then(({ mutate }) => {
+        mutate(() => true, undefined, { revalidate: false })
+      })
+
       toast.success('See you soon!')
 
       route.push('/login')
