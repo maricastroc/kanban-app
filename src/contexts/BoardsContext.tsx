@@ -76,11 +76,10 @@ export function BoardsContextProvider({
     return () => window.removeEventListener('storage', handleStorageChange)
   }, [])
 
-  const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
+  const token =
+    typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
 
-  const boardsRequest = token
-    ? { url: '/boards', method: 'GET' }
-    : null
+  const boardsRequest = token ? { url: '/boards', method: 'GET' } : null
 
   const activeBoardRequest = token
     ? { url: '/boards/active', method: 'GET' }
@@ -136,7 +135,7 @@ export function BoardsContextProvider({
       setActiveBoard(undefined)
     }
   }, [activeBoardData, boards])
-console.log(boardsData)
+  console.log(boardsData)
   const handleEnableScrollFeature = (value: boolean) => {
     setEnableScrollFeature(value)
   }
