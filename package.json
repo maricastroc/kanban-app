@@ -27,7 +27,6 @@
     "jsonwebtoken": "^9.0.2",
     "material-icons": "^1.13.12",
     "next": "^14.2.24",
-    "next-auth": "^4.22.1",
     "next-seo": "^6.0.0",
     "notyf": "^3.10.0",
     "phosphor-react": "^1.4.1",
