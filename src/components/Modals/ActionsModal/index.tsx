@@ -59,7 +59,7 @@ export function ActionsModal({ onClose }: Props) {
         mutate(() => true, undefined, { revalidate: false })
       })
 
-      setBoards([])
+      setBoards(null)
       setActiveBoard(undefined)
 
       toast.success('See you soon!')
