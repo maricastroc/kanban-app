@@ -24,7 +24,7 @@ Users are able to:
 The project was an excellent opportunity to practice implementing the drag-and-drop feature, as well as organizing the theme in local storage while storing other information, such as boards, columns, tasks, and subtasks, in the database via Prisma and PostgreSQL. The use of contexts was essential to keep the features organized and intuitive. Additionally, I implemented authentication using Next OAuth and built the Next.js API and its endpoints, which was a great chance to practice API construction and management.
 
 ## 🔍 Links
-[Deploy](https://kanban-app-maricastroc.vercel.app/)
+[Deploy](https://maricastroc-kanban-app.vercel.app/)
 
 ## 💻 My Process
 ### Built with:
