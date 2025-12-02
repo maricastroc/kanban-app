@@ -99,7 +99,7 @@ export default function Login() {
       {!isCheckingAuth && (
         <LayoutContainer>
           <LogoWrapper>
-            <Image src={Logo} width={24} height={24} alt="" />
+            <Image src={Logo} width={24} height={24} alt="Kanban App logo" />
             <Image
               src={
                 enableDarkMode === undefined || enableDarkMode
@@ -108,7 +108,7 @@ export default function Login() {
               }
               width={112}
               height={24}
-              alt=""
+              alt="Kanban App text logo"
             />
           </LogoWrapper>
           <LoginCard>
@@ -120,51 +120,60 @@ export default function Login() {
             <FormContainer onSubmit={handleSubmit(onSubmit)}>
               <InputsContainer>
                 <FormField>
-                  <p>Name:</p>
+                  <label htmlFor="name">Name:</label>
+
                   <InputContainer>
-                    <IconWrapper>
+                    <IconWrapper aria-hidden="true">
                       <User size={16} />
                     </IconWrapper>
                     <InputField
+                      id="name"
                       type="text"
                       placeholder="e.g. Jon Doe"
                       {...register('name')}
                     />
                   </InputContainer>
+
                   {errors?.name && (
                     <ErrorMessage message={errors.name.message} />
                   )}
                 </FormField>
 
                 <FormField>
-                  <p>E-mail:</p>
+                  <label htmlFor="email">E-mail:</label>
+
                   <InputContainer>
-                    <IconWrapper>
+                    <IconWrapper aria-hidden="true">
                       <Envelope size={16} />
                     </IconWrapper>
                     <InputField
+                      id="email"
                       type="email"
                       placeholder="e.g. jondoe@gmail.com"
                       {...register('email')}
                     />
                   </InputContainer>
+
                   {errors?.email && (
                     <ErrorMessage message={errors.email.message} />
                   )}
                 </FormField>
 
                 <FormField>
-                  <p>Password:</p>
+                  <label htmlFor="password">Password:</label>
+
                   <InputContainer>
-                    <IconWrapper>
+                    <IconWrapper aria-hidden="true">
                       <LockKey size={16} />
                     </IconWrapper>
                     <InputField
+                      id="password"
                       type="password"
                       placeholder="Enter your password"
                       {...register('password')}
                     />
                   </InputContainer>
+
                   {errors?.password && (
                     <ErrorMessage message={errors.password.message} />
                   )}
