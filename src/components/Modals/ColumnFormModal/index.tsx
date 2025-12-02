@@ -109,12 +109,14 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
             />
           )}
         </LayoutContainer>
-        <Button
-          disabled={isSubmitting || !hasNewColumns()}
+        {hasNewColumns() && (
+          <Button
+          disabled={isSubmitting}
           title="Create Column"
           type="submit"
           variant="primary"
         />
+        )}
       </FormContainer>
     </BaseModal>
   )
