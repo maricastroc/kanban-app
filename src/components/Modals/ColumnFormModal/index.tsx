@@ -67,6 +67,17 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
     )
   }
 
+  const hasNewColumns = () => {
+  if (!activeBoard?.columns) return boardColumns.length > 0
+  
+  return boardColumns.some(boardColumn => {
+    return !activeBoard.columns.some(activeColumn => 
+      activeColumn.id === boardColumn.id || 
+      activeColumn.name === boardColumn.name
+    )
+  })
+}
+
   return (
     <BaseModal isLoading={isLoading} onClose={onClose} title="Add New Column">
       <FormContainer onSubmit={handleSubmit(handleSubmitBoard)}>
@@ -99,7 +110,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
           )}
         </LayoutContainer>
         <Button
-          disabled={isSubmitting}
+          disabled={isSubmitting || !hasNewColumns()}
           title="Create Column"
           type="submit"
           variant="primary"
