@@ -80,7 +80,7 @@ export function TaskFormModal({
       <FieldsContainer>
         <Field
           hasError={!!error}
-          isDisabled={subtasks.length <= 1}
+          isDisabled={subtasks.length <= 1 && isEditing}
           placeholder="e.g. Make coffee"
           defaultValue={subtask.name}
           btnVariant={subtasks.length > 1 ? '' : 'disabled'}
