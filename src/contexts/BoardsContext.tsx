@@ -90,7 +90,7 @@ export function BoardsContextProvider({
     mutate: activeBoardMutate,
     isValidating: isValidatingActiveBoard,
   } = useRequest<{ board: BoardProps }>(activeBoardRequest)
-
+console.log(!isAuthenticated, isValidatingBoards, isValidatingActiveBoard)
   const isLoading =
     !isAuthenticated || isValidatingBoards || isValidatingActiveBoard
 
