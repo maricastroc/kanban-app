@@ -45,13 +45,10 @@ export default function Login() {
   const { enableDarkMode } = useTheme()
 
   const [isCheckingAuth, setIsCheckingAuth] = useState(true)
-
   const [isLoading, setIsLoading] = useState(false)
-
   const [showPassword, setShowPassword] = useState(false)
 
   const isRouteLoading = useLoadingOnRouteChange()
-
   const router = useRouter()
 
   const {
@@ -77,7 +74,6 @@ export default function Login() {
 
       if (token) {
         localStorage.setItem('auth_token', token)
-
         toast.success('Welcome to Kanban App!')
         router.push('/')
       } else {
@@ -103,10 +99,12 @@ export default function Login() {
   return (
     <>
       <NextSeo title="Kanban App | Login" />
+
       {!isCheckingAuth && (
         <LayoutContainer>
           <LogoWrapper>
-            <Image src={Logo} width={24} height={24} alt="" />
+            <Image src={Logo} width={24} height={24} alt="Kanban App logo" />
+
             <Image
               src={
                 enableDarkMode === undefined || enableDarkMode
@@ -114,9 +112,10 @@ export default function Login() {
                   : LogoTextDark
               }
               height={24}
-              alt=""
+              alt="Kanban App text logo"
             />
           </LogoWrapper>
+
           <LoginCard>
             <TitleContainer>
               <h1>Login</h1>
@@ -126,44 +125,59 @@ export default function Login() {
             <FormContainer onSubmit={handleSubmit(onSubmit)}>
               <InputsContainer>
                 <FormField>
-                  <p>E-mail:</p>
+                  <label htmlFor="email">E-mail:</label>
+
                   <InputContainer>
-                    <IconWrapper>
+                    <IconWrapper aria-hidden="true">
                       <Envelope size={16} />
                     </IconWrapper>
+
                     <InputField
+                      id="email"
                       type="email"
                       placeholder="e.g. jondoe@gmail.com"
                       {...register('email')}
+                      aria-invalid={!!errors.email}
                     />
                   </InputContainer>
+
                   {errors?.email && (
                     <ErrorMessage message={errors.email.message} />
                   )}
                 </FormField>
 
                 <FormField>
-                  <p>Password:</p>
+                  <label htmlFor="password">Password:</label>
+
                   <InputContainer>
-                    <IconWrapper>
+                    <IconWrapper aria-hidden="true">
                       <LockKey size={16} />
                     </IconWrapper>
+
                     <InputField
+                      id="password"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Enter your password"
                       {...register('password')}
+                      aria-invalid={!!errors.password}
                     />
+
                     <PasswordIconWrapper
                       type="button"
+                      aria-label={
+                        showPassword ? 'Hide password' : 'Show password'
+                      }
+                      aria-pressed={showPassword}
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
-                        <EyeSlash size={16} />
+                        <EyeSlash size={16} aria-hidden="true" />
                       ) : (
-                        <Eye size={16} />
+                        <Eye size={16} aria-hidden="true" />
                       )}
                     </PasswordIconWrapper>
                   </InputContainer>
+
                   {errors?.password && (
                     <ErrorMessage message={errors.password.message} />
                   )}
@@ -174,6 +188,7 @@ export default function Login() {
                 isBigger
                 disabled={isSubmitting || isLoading}
                 title="Login"
+                type="submit"
               />
 
               <CreateAccountContainer>

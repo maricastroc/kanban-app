@@ -9,7 +9,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isBigger?: boolean
 }
 
-const Button = ({
+export const Button = ({
   variant = 'primary',
   title,
   isBigger = false,
@@ -24,19 +24,38 @@ const Button = ({
     loaderColor = theme['primary-color']
   }
 
+  const isLoading = disabled
+
   return (
     <Container
       className={`${variant} ${isBigger ? 'bigger' : ''}`}
-      disabled={disabled}
+      aria-disabled={isLoading}
+      aria-busy={isLoading}
       {...props}
+      disabled={false}
     >
-      {disabled ? (
-        <div style={{ display: 'flex', gap: 2 }}>
+      {isLoading ? (
+        <div style={{ display: 'flex', gap: 2, alignItems: 'center' }}>
           <ThreeDots
             height={'8px'}
             fill={loaderColor}
+            aria-hidden="true"
             className="animate-spin"
           />
+          <span
+            style={{
+              position: 'absolute',
+              width: '1px',
+              height: '1px',
+              padding: 0,
+              margin: '-1px',
+              overflow: 'hidden',
+              clip: 'rect(0, 0, 0, 0)',
+              border: 0,
+            }}
+          >
+            Loading…
+          </span>
         </div>
       ) : (
         <p>{title}</p>
@@ -44,7 +63,3 @@ const Button = ({
     </Container>
   )
 }
-
-Button.displayName = 'Button'
-
-export { Button }

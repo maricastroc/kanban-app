@@ -101,9 +101,10 @@ export const FormField = styled.div`
   width: 100%;
   margin-bottom: 0.5rem;
 
-  p {
+  label {
     font-size: 14px;
     color: ${(props) => props.theme['title-color']};
+    margin-bottom: 0.2rem;
   }
 `
 
@@ -158,6 +159,7 @@ export const IconWrapper = styled.div`
 export const PasswordIconWrapper = styled.button`
   position: absolute;
   border: none;
+  border-radius: 4px;
   background-color: transparent;
   cursor: pointer;
   right: 1rem;
@@ -186,11 +188,12 @@ export const CreateAccountContainer = styled.div`
     background-color: transparent;
     text-decoration: none;
     border: none;
-    color: ${(props) => props.theme['primary-color']};
+    border-radius: 4px;
+    color: ${(props) => props.theme['primary-hover']};
     transition: 200ms;
 
     &:hover {
-      color: ${(props) => props.theme['primary-hover']};
+      color: ${(props) => props.theme['secondary-hover']};
     }
   }
 

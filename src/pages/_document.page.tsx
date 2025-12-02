@@ -31,7 +31,7 @@ class MyDocument extends Document {
 
   render() {
     return (
-      <Html>
+      <Html lang="en">
         <Head>
           <link rel="icon" type="image/svg" href="/icon.svg" />
         </Head>

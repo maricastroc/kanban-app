@@ -7,9 +7,13 @@ export const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
-  :focus {
-    outline: none;
-    boxShadow: 0 0 0 2px rgba(99, 95, 199, 1);
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  a:focus-visible {
+    outline: 2px solid rgba(99, 95, 199, 1);
+    outline-offset: 2px;
   }
 
   body {
@@ -48,19 +52,18 @@ export const GlobalStyle = createGlobalStyle`
     background-color: ${(props) => props.theme['scroll-color']};
   }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus,
-textarea:-webkit-autofill,
-textarea:-webkit-autofill:hover,
-textarea:-webkit-autofill:focus,
-select:-webkit-autofill,
-select:-webkit-autofill:hover,
-select:-webkit-autofill:focus {
-  border: 1px solid ${(props) => props.theme['border-color']};
-  -webkit-text-fill-color: ${(props) => props.theme['text-color']};
-  -webkit-box-shadow: 0 0 0px 1000px #000 inset;
-  transition: background-color 5000s ease-in-out 0s;
-}
-
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    border: 1px solid ${(props) => props.theme['border-color']};
+    -webkit-text-fill-color: ${(props) => props.theme['text-color']};
+    -webkit-box-shadow: 0 0 0px 1000px #000 inset;
+    transition: background-color 5000s ease-in-out 0s;
+  }
 `
