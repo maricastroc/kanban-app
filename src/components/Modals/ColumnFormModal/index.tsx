@@ -71,9 +71,9 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
     <BaseModal isLoading={isLoading} onClose={onClose} title="Add New Column">
       <FormContainer onSubmit={handleSubmit(handleSubmitBoard)}>
         <InputContainer>
-          <CustomLabel>Name</CustomLabel>
+          <CustomLabel>Board Name</CustomLabel>
           <CustomInput
-            className="disabled"
+            disabled
             type="text"
             value={activeBoard?.name}
             {...register('name')}
@@ -94,6 +94,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
               type="button"
               title="+ Add New Column"
               onClick={handleAddColumn}
+              isLoading={isSubmitting}
             />
           )}
         </LayoutContainer>

@@ -16,6 +16,9 @@ export const lightTheme = {
   'sidebar-btn-color': '#635FC7',
   'sidebar-btn-hover': '#DCDBFA',
 
+  'action-btn-color': '#FFFFFF',
+  'action-btn-hover': '#A8A4FF',
+
   'error-color': '#EA5555',
   'error-hover': '#FF9898',
 

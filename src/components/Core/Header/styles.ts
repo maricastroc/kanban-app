@@ -138,11 +138,12 @@ export const ActionBtn = styled.button`
 
     &:hover {
       transition: 200ms;
-      background-color: ${(props) => props.theme['title-color']};
+      background-color: ${(props) => props.theme['action-btn-hover']};
+      border-color: ${(props) => props.theme['action-btn-hover']};
 
       p,
       svg {
-        color: ${(props) => props.theme['primary-color']};
+        color: ${(props) => props.theme['action-btn-color']};
       }
     }
   }

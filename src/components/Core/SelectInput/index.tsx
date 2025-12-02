@@ -75,7 +75,12 @@ export const SelectInput = ({
         <Value placeholder={placeholder}>
           {selectedValue && (
             <div
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                justifyContent: 'center',
+              }}
             >
               <Circle
                 className="title"

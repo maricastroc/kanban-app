@@ -19,7 +19,7 @@ export const Input = styled.input`
     background-color: transparent;
   }
 
-  &.disabled {
+  &:disabled {
     cursor: not-allowed;
     opacity: 0.5;
   }
@@ -36,9 +36,5 @@ export const Input = styled.input`
 
   &::-webkit-input-placeholder {
     background-color: transparent;
-  }
-
-  &:focus {
-    border: solid 2px ${(props) => props.theme['primary-color']};
   }
 `

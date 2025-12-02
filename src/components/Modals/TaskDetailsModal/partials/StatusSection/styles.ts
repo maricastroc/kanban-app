@@ -5,6 +5,7 @@ export const StatusContainer = styled.div`
   flex-direction: column;
   width: 100%;
   margin-top: 1.2rem;
+  margin-bottom: 1rem;
 `
 
 export const StatusSelectorContainer = styled.div`

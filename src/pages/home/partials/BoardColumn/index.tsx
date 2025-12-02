@@ -1,7 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react'
 import { Droppable, Draggable } from 'react-beautiful-dnd'
-import * as Dialog from '@radix-ui/react-dialog'
 import { BoardColumnProps } from '@/@types/board-column'
 import { TaskCard } from '../TaskCard'
 import {
@@ -10,10 +7,6 @@ import {
   TagContainer,
   TasksContainer,
 } from './styles'
-import { ColorPickerModal } from '@/components/Modals/ColorPickerModal'
-import { useBoardsContext } from '@/contexts/BoardsContext'
-import { getTagColor } from '@/utils/getTagColor'
-import { saveColumnColor } from '@/storage/colorConfig'
 
 type ColumnProps = BoardColumnProps & {
   index: number
@@ -21,20 +14,6 @@ type ColumnProps = BoardColumnProps & {
 }
 
 export function BoardColumn({ name, tasks, column, index }: ColumnProps) {
-  const { handleEnableScrollFeature } = useBoardsContext()
-
-  const [currentColor, setCurrentColor] = useState(getTagColor(index))
-
-  const [isColorPickerModalOpen, setIsColorPickerModalOpen] = useState(false)
-
-  useEffect(() => {
-    handleEnableScrollFeature(!isColorPickerModalOpen)
-  }, [isColorPickerModalOpen])
-
-  useEffect(() => {
-    saveColumnColor(index, currentColor)
-  }, [currentColor, index])
-
   const renderTaskCards = () =>
     tasks.map((task, taskIndex) => (
       <Draggable
@@ -52,21 +31,9 @@ export function BoardColumn({ name, tasks, column, index }: ColumnProps) {
 
   return (
     <Container className={isEmpty ? 'empty' : ''}>
-      <Dialog.Root
-        open={isColorPickerModalOpen}
-        onOpenChange={setIsColorPickerModalOpen}
-      >
-        <Dialog.Trigger asChild>
-          <TagContainer>
-            <p>{`${name} (${tasks.length})`}</p>
-          </TagContainer>
-        </Dialog.Trigger>
-        <ColorPickerModal
-          currentColor={currentColor}
-          onChange={(color: string) => setCurrentColor(color)}
-          onClose={() => setIsColorPickerModalOpen(false)}
-        />
-      </Dialog.Root>
+      <TagContainer>
+        <p>{`${name} (${tasks.length})`}</p>
+      </TagContainer>
 
       <Droppable droppableId={index.toString()} type="CARD">
         {(provided) => (

@@ -23,6 +23,7 @@ import { useDragScroll } from '@/utils/useDragScroll'
 import { useDragAndDrop } from '@/hooks/useDragAndDrop'
 import { useAuthRedirect } from '@/hooks/useAuthRedirect'
 import { BoardColumnsList } from './partials/BoardColumnsList'
+import { useTheme } from '@/contexts/ThemeContext'
 
 export default function Home() {
   const columnsContainerRef = useRef<HTMLDivElement | null>(null)
@@ -35,6 +36,8 @@ export default function Home() {
 
   const { isLoading, activeBoard, boards } = useBoardsContext()
 
+  const { enableDarkMode } = useTheme()
+
   const { handleMouseMove, handleMouseUp, handleContainerMouseDown } =
     useDragScroll(columnsContainerRef as RefObject<HTMLDivElement>)
 
@@ -43,7 +46,7 @@ export default function Home() {
   const { isCheckingAuth } = useAuthRedirect()
 
   const { onDragEnd, isApiProcessing } = useDragAndDrop(setBoardColumns)
-
+  console.log(enableDarkMode)
   useEffect(() => {
     setBoardColumns(activeBoard?.columns)
   }, [activeBoard])
@@ -70,7 +73,10 @@ export default function Home() {
                     />
                   )}
                   <Wrapper>
-                    <Header hideSidebar={hideSidebar} />
+                    <Header
+                      hideSidebar={hideSidebar}
+                      enableDarkMode={enableDarkMode}
+                    />
                     <ColumnsContainer
                       ref={columnsContainerRef}
                       onMouseDown={handleContainerMouseDown}

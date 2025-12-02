@@ -6,6 +6,7 @@ export const TaskCardContainer = styled.div`
   flex-direction: column;
   gap: 0.5rem;
   padding: 1.5rem 1rem;
+  outline: none;
   border-radius: 8px;
   background-color: ${(props) => props.theme['cards-color']};
   width: 100%;

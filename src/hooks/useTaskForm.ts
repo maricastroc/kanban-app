@@ -27,7 +27,9 @@ const initialSubtasks: SubtaskProps[] = [
 
 const subtaskSchema = z.object({
   id: z.number().or(z.string()),
-  name: z.string().min(1, { message: 'Subtask title is required' }),
+  name: z
+    .string()
+    .min(3, { message: 'Subtask title must have at least 3 characters' }),
   is_completed: z.boolean(),
 })
 
@@ -37,8 +39,7 @@ export const useTaskForm = ({
   column,
   onClose,
 }: AddTaskModalProps) => {
-  const { activeBoard, activeBoardMutate, handleSetIsLoading } =
-    useBoardsContext()
+  const { activeBoard, activeBoardMutate } = useBoardsContext()
 
   const [columnId, setColumnId] = useState<string | number | undefined>(
     column?.id || undefined,
@@ -136,8 +137,6 @@ export const useTaskForm = ({
 
   const handleSubmitTask = async (data: TaskFormData) => {
     try {
-      handleSetIsLoading(true)
-
       if (!activeBoard) return
 
       const payload = {
@@ -161,8 +160,6 @@ export const useTaskForm = ({
       onClose()
     } catch (error) {
       handleApiError(error)
-    } finally {
-      handleSetIsLoading(false)
     }
   }
 

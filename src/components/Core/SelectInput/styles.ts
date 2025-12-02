@@ -48,10 +48,6 @@ export const Circle = styled.div<{ color: string }>`
   height: 16px;
   border-radius: 50%;
   background-color: ${(props) => props.color};
-
-  &.title {
-    margin-top: -0.2rem;
-  }
 `
 
 export const Icon = styled(SelectIcon)`
@@ -102,6 +98,7 @@ export const SelectItemStyled = styled(SelectItem)<{ disabled?: boolean }>`
   font-size: 0.875rem;
   border-radius: 0.375rem;
   margin: 0.5rem;
+  outline: none;
   cursor: pointer;
   color: ${(props) =>
     props.disabled

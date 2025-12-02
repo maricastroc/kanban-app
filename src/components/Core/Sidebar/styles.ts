@@ -138,6 +138,7 @@ export const CreateBoardBtn = styled.button`
   display: flex;
   padding: 0.9rem 1.5rem;
   align-items: center;
+  border-radius: 4px;
   justify-content: flex-start;
   background-color: transparent;
   border: none;

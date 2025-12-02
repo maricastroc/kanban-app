@@ -7,13 +7,14 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: string
   title: string
   isBigger?: boolean
+  isLoading?: boolean
 }
 
 export const Button = ({
   variant = 'primary',
   title,
   isBigger = false,
-  disabled,
+  isLoading = false,
   ...props
 }: ButtonProps) => {
   const theme = useTheme()
@@ -23,8 +24,6 @@ export const Button = ({
   if (variant === 'secondary') {
     loaderColor = theme['primary-color']
   }
-
-  const isLoading = disabled
 
   return (
     <Container

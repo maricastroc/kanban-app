@@ -51,8 +51,6 @@ export function ActionsModal({ onClose }: Props) {
       await api.get('/logout')
 
       localStorage.removeItem('auth_token')
-      localStorage.removeItem('activeBoard')
-      localStorage.removeItem('boards')
 
       delete api.defaults.headers.common.Authorization
 

@@ -16,7 +16,6 @@ interface BoardsContextData {
   handleEnableScrollFeature: (value: boolean) => void
 
   isLoading: boolean
-  handleSetIsLoading: (value: boolean) => void
   handleChangeActiveBoard: (value: BoardProps) => Promise<void>
 
   activeBoard: BoardProps | undefined
@@ -51,36 +50,31 @@ interface BoardsContextProviderProps {
 export function BoardsContextProvider({
   children,
 }: BoardsContextProviderProps) {
-  const [isLoading, setIsLoading] = useState(true)
   const [enableScrollFeature, setEnableScrollFeature] = useState(false)
+
   const [boards, setBoards] = useState<BoardProps[] | null>(null)
+
   const [activeBoard, setActiveBoard] = useState<BoardProps | undefined>()
+
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
     const checkAuth = () => {
-      setIsLoading(true)
       const token = localStorage.getItem('auth_token')
       setIsAuthenticated(!!token)
     }
 
     checkAuth()
 
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'auth_token') {
-        checkAuth()
-      }
-    }
-
-    window.addEventListener('storage', handleStorageChange)
-    return () => window.removeEventListener('storage', handleStorageChange)
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'auth_token') checkAuth()
+    })
   }, [])
 
   const token =
     typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
 
   const boardsRequest = token ? { url: '/boards', method: 'GET' } : null
-
   const activeBoardRequest = token
     ? { url: '/boards/active', method: 'GET' }
     : null
@@ -89,44 +83,26 @@ export function BoardsContextProvider({
     data: boardsData,
     mutate: boardsMutate,
     isValidating: isValidatingBoards,
-  } = useRequest<{ boards: BoardProps[] }>(boardsRequest, {
-    revalidateOnFocus: true,
-    revalidateOnMount: true,
-  })
+  } = useRequest<{ boards: BoardProps[] }>(boardsRequest)
 
   const {
     data: activeBoardData,
     mutate: activeBoardMutate,
     isValidating: isValidatingActiveBoard,
-  } = useRequest<{ board: BoardProps }>(activeBoardRequest, {
-    revalidateOnFocus: true,
-    revalidateOnMount: true,
-  })
+  } = useRequest<{ board: BoardProps }>(activeBoardRequest)
+
+  // NOVO: loading calculado, não setado
+  const isLoading =
+    !isAuthenticated || isValidatingBoards || isValidatingActiveBoard
 
   useEffect(() => {
-    if (isAuthenticated) {
-      setIsLoading(true)
-      Promise.all([boardsMutate(), activeBoardMutate()]).finally(() =>
-        setIsLoading(false),
-      )
-    } else {
-      setIsLoading(false)
-    }
-  }, [isAuthenticated, boardsMutate, activeBoardMutate])
-
-  useEffect(() => {
-    if (boardsData !== undefined) {
-      if (boardsData?.boards) {
-        setBoards(boardsData.boards)
-      } else {
-        setBoards([])
-      }
-    }
+    if (boardsData?.boards) setBoards(boardsData.boards)
+    else if (boardsData !== undefined) setBoards([])
   }, [boardsData])
 
   useEffect(() => {
     const isBoardStillInList = boards?.some(
-      (b) => b.id === activeBoardData?.board.id,
+      (b) => b.id === activeBoardData?.board?.id,
     )
 
     if (isBoardStillInList) {
@@ -140,15 +116,9 @@ export function BoardsContextProvider({
     setEnableScrollFeature(value)
   }
 
-  const handleSetIsLoading = (value: boolean) => {
-    setIsLoading(value)
-  }
-
   const handleChangeActiveBoard = async (board: BoardProps) => {
-    setIsLoading(true)
     setActiveBoard(board)
     await activeBoardMutate()
-    setIsLoading(false)
   }
 
   return (
@@ -157,7 +127,6 @@ export function BoardsContextProvider({
         enableScrollFeature,
         handleEnableScrollFeature,
         isLoading,
-        handleSetIsLoading,
         handleChangeActiveBoard,
         activeBoard,
         boards,

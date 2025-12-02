@@ -20,13 +20,9 @@ export const Input = styled.input`
     border: solid 1px ${(props) => props.theme['error-color']};
   }
 
-  &.disabled {
+  &:disabled {
     cursor: not-allowed;
     color: ${(props) => props.theme['subtitle-color']};
-  }
-
-  &:focus {
-    border: solid 2px ${(props) => props.theme['primary-color']};
   }
 `
 
@@ -38,6 +34,7 @@ export const DeleteFieldBtn = styled.button`
   background-color: transparent;
   border: none;
   pointer-events: initial;
+  border-radius: 4px;
 
   svg {
     font-size: 1.5rem;

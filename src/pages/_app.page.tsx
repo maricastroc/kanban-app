@@ -27,18 +27,18 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <Toaster
                   toastOptions={{
                     style: {
-                      backgroundColor: '#2a2c38',
+                      backgroundColor: '#20212C',
                       color: '#fff',
                     },
                     success: {
                       style: {
-                        backgroundColor: '#2a2c38',
+                        backgroundColor: '#20212C',
                         color: '#fff',
                       },
                     },
                     error: {
                       style: {
-                        backgroundColor: '#2a2c38',
+                        backgroundColor: '#20212C',
                         color: '#fff',
                       },
                     },

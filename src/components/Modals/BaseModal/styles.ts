@@ -10,7 +10,6 @@ import {
 export const ModalOverlay = styled(RadixOverlay)`
   position: fixed;
   width: 100vw;
-  pointer-events: none
   height: 100vh;
   inset: 0;
   z-index: 9990;
@@ -68,7 +67,7 @@ export const ModalContent = styled(RadixContent)<{
   justify-content: flex-start;
   align-items: flex-start;
   padding: ${(props) => props.padding || '1.5rem'};
-  height: ${(props) => props.height || '90vh'};
+  height: ${(props) => props.height || 'auto'};
   max-height: ${(props) => props.maxHeight || '30rem'};
   background-color: ${(props) => props.theme['cards-color']};
   border: none;

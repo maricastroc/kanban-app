@@ -61,6 +61,7 @@ export const OptionsModal = styled.div`
   button {
     cursor: pointer;
     background-color: transparent;
+    border-radius: 4px;
     border: none;
     font-size: ${(props) => props.theme['heading-m']};
 

@@ -96,6 +96,7 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
 
         <Button
           disabled={isSubmitting}
+          isLoading={isSubmitting}
           title={isEditing ? 'Save Changes' : 'Create Board'}
           type="submit"
           variant="primary"

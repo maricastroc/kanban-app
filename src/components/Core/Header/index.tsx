@@ -29,21 +29,19 @@ import { useBoardsContext } from '@/contexts/BoardsContext'
 import LogoTextLight from '../../../../public/kanban.svg'
 import LogoTextDark from '../../../../public/kanban-dark.svg'
 import Image from 'next/image'
-import { useTheme } from 'styled-components'
 import { TagsModal } from '@/components/Modals/TagsModal'
 
 type Props = {
   hideSidebar: boolean
+  enableDarkMode: boolean
 }
 
-export function Header({ hideSidebar }: Props) {
+export function Header({ hideSidebar, enableDarkMode }: Props) {
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
 
   const [isEditTagsModalOpen, setIsEditTagsModalOpen] = useState(false)
 
   const { activeBoard } = useBoardsContext()
-
-  const { enableDarkMode } = useTheme()
 
   const [isBoardsDetailsModalOpen, setIsBoardsDetailsModalOpen] =
     useState(false)

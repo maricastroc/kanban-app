@@ -13,6 +13,9 @@ export const darkTheme = {
 
   'tertiary-hover': '#A8A4FF',
 
+  'action-btn-color': '#ffffff',
+  'action-btn-hover': '#A8A4FF',
+
   'sidebar-btn-color': '#635FC7',
   'sidebar-btn-hover': '#FFFFFF',
 

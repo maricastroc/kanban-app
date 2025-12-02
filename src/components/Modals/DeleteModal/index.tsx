@@ -15,19 +15,19 @@ interface DeleteBoardProps {
 
 export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
   const {
-    isLoading,
-    handleSetIsLoading,
     activeBoard,
     activeBoardMutate,
     boardsMutate,
+    isValidatingBoards,
+    isValidatingActiveBoard,
   } = useBoardsContext()
+
+  const isLoading = isValidatingBoards || isValidatingActiveBoard
 
   const handleDelete = async (id: number | string) => {
     if (!activeBoard) return
 
     try {
-      handleSetIsLoading(true)
-
       const routePath = type === 'board' ? `/boards/${id}` : `/tasks/${id}`
 
       const response = await api.delete(routePath)
@@ -36,27 +36,16 @@ export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
         toast.success(response.data.message)
       }
 
-      await activeBoardMutate()
       await boardsMutate()
+      await activeBoardMutate()
 
       if (type === 'board') {
-        const storedBoard = localStorage.getItem('activeBoard')
-        const parsedBoard = storedBoard ? JSON.parse(storedBoard) : null
-
-        if (parsedBoard?.id === id) {
-          localStorage.removeItem('activeBoard')
-        }
-
         await activeBoardMutate()
       }
     } catch (error) {
       handleApiError(error)
     } finally {
-      handleSetIsLoading(false)
-
-      setTimeout(() => {
-        onClose()
-      }, 500)
+      onClose()
     }
   }
 
@@ -94,7 +83,7 @@ export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
           disabled={isLoading}
           title="Cancel"
           variant="secondary"
-          onClick={() => onClose()}
+          onClick={onClose}
         />
       </ButtonsContainer>
     </BaseModal>

@@ -40,7 +40,12 @@ const Field = forwardRef<HTMLInputElement, FieldProps>(
           onBlur={onChange}
           disabled={isDisabled}
         />
-        <DeleteFieldBtn type="button" className={btnVariant} onClick={onClick}>
+        <DeleteFieldBtn
+          disabled={isDisabled}
+          type="button"
+          className={btnVariant}
+          onClick={onClick}
+        >
           <FontAwesomeIcon icon={faXmark} />
         </DeleteFieldBtn>
       </Container>
