@@ -90,9 +90,8 @@ export function BoardsContextProvider({
     mutate: activeBoardMutate,
     isValidating: isValidatingActiveBoard,
   } = useRequest<{ board: BoardProps }>(activeBoardRequest)
-console.log(!isAuthenticated, isValidatingBoards, isValidatingActiveBoard)
-  const isLoading =
-    !isAuthenticated || isValidatingBoards || isValidatingActiveBoard
+
+  const isLoading = isValidatingBoards || isValidatingActiveBoard
 
   useEffect(() => {
     if (boardsData?.boards) setBoards(boardsData.boards)
