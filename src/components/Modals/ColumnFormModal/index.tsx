@@ -68,15 +68,16 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
   }
 
   const hasNewColumns = () => {
-  if (!activeBoard?.columns) return boardColumns.length > 0
-  
-  return boardColumns.some(boardColumn => {
-    return !activeBoard.columns.some(activeColumn => 
-      activeColumn.id === boardColumn.id || 
-      activeColumn.name === boardColumn.name
-    )
-  })
-}
+    if (!activeBoard?.columns) return boardColumns.length > 0
+
+    return boardColumns.some((boardColumn) => {
+      return !activeBoard.columns.some(
+        (activeColumn) =>
+          activeColumn.id === boardColumn.id ||
+          activeColumn.name === boardColumn.name,
+      )
+    })
+  }
 
   return (
     <BaseModal isLoading={isLoading} onClose={onClose} title="Add New Column">
@@ -111,11 +112,11 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
         </LayoutContainer>
         {hasNewColumns() && (
           <Button
-          disabled={isSubmitting}
-          title="Create Column"
-          type="submit"
-          variant="primary"
-        />
+            disabled={isSubmitting}
+            title="Create Column"
+            type="submit"
+            variant="primary"
+          />
         )}
       </FormContainer>
     </BaseModal>
