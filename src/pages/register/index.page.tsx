@@ -34,9 +34,15 @@ import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { NextSeo } from 'next-seo'
 
 const signInFormSchema = z.object({
-  name: z.string().min(3, { message: 'Name is required.' }),
-  email: z.string().min(3, { message: 'E-mail is required.' }),
-  password: z.string().min(3, { message: 'Password is required.' }),
+  name: z
+    .string()
+    .min(3, { message: 'Name must have at least 3 characters..' }),
+  email: z
+    .string()
+    .min(3, { message: 'E-mail must have at least 3 characters..' }),
+  password: z
+    .string()
+    .min(3, { message: 'Password must have at least 3 characters.' }),
 })
 
 type SignInFormData = z.infer<typeof signInFormSchema>

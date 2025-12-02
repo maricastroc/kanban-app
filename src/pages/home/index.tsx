@@ -34,7 +34,7 @@ export default function Home() {
 
   const [isColumnFormModalOpen, setIsColumnFormModalOpen] = useState(false)
 
-  const { isLoading, activeBoard, boards } = useBoardsContext()
+  const { isLoading, activeBoard } = useBoardsContext()
 
   const { enableDarkMode } = useTheme()
 

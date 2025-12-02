@@ -22,7 +22,9 @@ import { useBoardsContext } from '@/contexts/BoardsContext'
 
 const tagSchema = z.object({
   id: z.number().or(z.string()).nullable(),
-  name: z.string().min(3, { message: 'Name is required' }),
+  name: z
+    .string()
+    .min(3, { message: 'Tag name must have at least 3 characters' }),
   color: z.string().min(3, { message: 'Color is required' }),
 })
 

@@ -56,21 +56,6 @@ export function BoardsContextProvider({
 
   const [activeBoard, setActiveBoard] = useState<BoardProps | undefined>()
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-
-  useEffect(() => {
-    const checkAuth = () => {
-      const token = localStorage.getItem('auth_token')
-      setIsAuthenticated(!!token)
-    }
-
-    checkAuth()
-
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'auth_token') checkAuth()
-    })
-  }, [])
-
   const token =
     typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
 

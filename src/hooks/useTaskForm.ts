@@ -55,7 +55,9 @@ export const useTaskForm = ({
 
   const formSchema = z.object({
     id: z.number().or(z.string()),
-    name: z.string().min(MIN_TITLE_LENGTH, { message: 'Title is required' }),
+    name: z.string().min(MIN_TITLE_LENGTH, {
+      message: 'Title must have at least 3 characters.',
+    }),
     description: z.string().optional(),
     subtasks: z
       .array(subtaskSchema)

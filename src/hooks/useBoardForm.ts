@@ -17,14 +17,16 @@ interface Props {
 
 const columnSchema = z.object({
   id: z.number().or(z.string()).nullable(),
-  name: z.string().min(3, { message: 'Column name is required' }),
+  name: z
+    .string()
+    .min(3, { message: 'Column name must have at least 3 characters.' }),
 })
 
 const formSchema = z.object({
   id: z.number().or(z.string()).nullable(),
-  name: z
-    .string()
-    .min(MIN_BOARD_NAME_LENGTH, { message: 'Board title is required' }),
+  name: z.string().min(MIN_BOARD_NAME_LENGTH, {
+    message: 'Board title must have at least 3 characters.',
+  }),
   columns: z
     .array(columnSchema)
     .min(1, { message: 'At least one column is required' })
