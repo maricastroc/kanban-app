@@ -171,6 +171,7 @@ export const CreateBoardBtn = styled.button`
       filter: invert(39%) sepia(47%) saturate(748%) hue-rotate(203deg)
         brightness(94%) contrast(93%);
     }
+  }
 `
 
 export const OptionsContainer = styled.div`

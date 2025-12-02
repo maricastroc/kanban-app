@@ -31,7 +31,7 @@ export const Button = ({
       aria-disabled={isLoading}
       aria-busy={isLoading}
       {...props}
-      disabled={false}
+      disabled={isLoading}
     >
       {isLoading ? (
         <div style={{ display: 'flex', gap: 2, alignItems: 'center' }}>
