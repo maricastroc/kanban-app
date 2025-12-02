@@ -46,7 +46,7 @@ export default function Home() {
   const { isCheckingAuth } = useAuthRedirect()
 
   const { onDragEnd, isApiProcessing } = useDragAndDrop(setBoardColumns)
-  console.log(enableDarkMode)
+
   useEffect(() => {
     setBoardColumns(activeBoard?.columns)
   }, [activeBoard])

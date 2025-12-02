@@ -91,7 +91,6 @@ export function BoardsContextProvider({
     isValidating: isValidatingActiveBoard,
   } = useRequest<{ board: BoardProps }>(activeBoardRequest)
 
-  // NOVO: loading calculado, não setado
   const isLoading =
     !isAuthenticated || isValidatingBoards || isValidatingActiveBoard
 
