@@ -37,7 +37,7 @@ const Field = forwardRef<HTMLInputElement, FieldProps>(
           }`}
           placeholder={placeholder}
           defaultValue={defaultValue}
-          onChange={onChange}
+          onBlur={onChange}
           disabled={isDisabled}
         />
         <DeleteFieldBtn
