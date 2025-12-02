@@ -64,7 +64,7 @@ export default function Home() {
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
-                {(isLoading || !boards) && <LoadingComponent />}
+                {isLoading && <LoadingComponent />}
                 <BoardContent>
                   {!isSmallerThanSm && (
                     <Sidebar
