@@ -68,7 +68,7 @@ export const ModalContent = styled(RadixContent)<{
   align-items: flex-start;
   padding: ${(props) => props.padding || '1.5rem'};
   height: ${(props) => props.height || 'auto'};
-  max-height: ${(props) => props.maxHeight || '30rem'};
+  max-height: 90vh;
   background-color: ${(props) => props.theme['cards-color']};
   border: none;
   overflow-y: auto;
