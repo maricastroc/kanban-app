@@ -6,6 +6,8 @@ export const darkTheme = {
   'primary-color': '#635FC7',
   'primary-hover': '#A8A4FF',
 
+  'border-btn-color': '#d29c5e',
+
   'tags-btn-color': '#A8A4FF',
 
   'secondary-color': '#FFFFFF',
@@ -28,7 +30,7 @@ export const darkTheme = {
   'select-color': '#282828',
 
   'details-color': '#E4EBFA',
-  'subtitle-color': '#828FA3',
+  'subtitle-color': '#F4F7FD',
   'border-color': '#505361',
   'cards-color': '#2B2C37',
   'bg-color': '#20212C',

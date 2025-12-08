@@ -30,6 +30,9 @@ export const Container = styled.button<{ disabled?: boolean }>`
       background-color: ${(props) => props.theme['primary-hover']};
       transition: 200ms;
     }
+
+    &:focus {
+    border-color: ${(props) => props.theme['border-btn-color']};
   }
 
   &.secondary {

@@ -11,8 +11,15 @@ export const GlobalStyle = createGlobalStyle`
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible,
-  a:focus-visible {
+  {
     border: 2px solid rgba(99, 95, 199, 1) !important;
+    outline: none;
+  }
+
+  button:focus-visible,
+  a:focus-visible
+  {
+    border: 2px solid rgba(210, 156, 94, 1) !important;
     outline: none;
   }
 
