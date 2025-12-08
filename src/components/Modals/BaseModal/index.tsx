@@ -7,7 +7,7 @@ import {
   ModalTitle,
 } from './styles'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faX, faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import { ReactNode } from 'react'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'

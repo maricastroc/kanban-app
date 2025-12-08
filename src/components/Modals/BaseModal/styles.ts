@@ -72,11 +72,11 @@ export const ModalContent = styled(RadixContent)<{
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  padding: ${(props) => props.padding || '1.5rem'};
+  padding: ${(props) => props.padding || '1rem'};
   height: ${(props) => props.height || 'auto'};
   max-height: 90vh;
   background-color: ${(props) => props.theme['cards-color']};
-  border: none;
+  border: 2px solid transparent;
   overflow-y: auto;
   position: fixed;
   left: 50%;

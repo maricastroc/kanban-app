@@ -23,7 +23,7 @@ export const OptionsBtn = styled.button`
   cursor: pointer;
   display: flex;
   background-color: transparent;
-  border: none;
+  border: 2px solid transparent;
   padding: 0.5rem;
   border-radius: 8px;
   align-items: center;
@@ -61,8 +61,8 @@ export const OptionsModal = styled.div`
   button {
     cursor: pointer;
     background-color: transparent;
-    border-radius: 4px;
-    border: none;
+    border-radius: 8px;
+    border: 2px solid transparent;
     font-size: ${(props) => props.theme['heading-m']};
 
     &.edit {

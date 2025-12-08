@@ -12,7 +12,7 @@ export const SelectStatusField = styled.button`
   border-radius: 8px;
 
   &.active {
-    border: solid 1px ${(props) => props.theme['primary-color']};
+    border: solid 2px ${(props) => props.theme['primary-color']};
   }
 
   p {

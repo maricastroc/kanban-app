@@ -30,6 +30,10 @@ import LogoTextLight from '../../../../public/kanban.svg'
 import LogoTextDark from '../../../../public/kanban-dark.svg'
 import Image from 'next/image'
 import { TagsModal } from '@/components/Modals/TagsModal'
+import { TagProps } from '@/@types/tag'
+import { EditTagModal } from '@/components/Modals/EditTagModal'
+import useRequest from '@/utils/useRequest'
+import { DeleteTagModal } from '@/components/Modals/DeleteTagModal'
 
 type Props = {
   hideSidebar: boolean
@@ -39,7 +43,13 @@ type Props = {
 export function Header({ hideSidebar, enableDarkMode }: Props) {
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
 
-  const [isEditTagsModalOpen, setIsEditTagsModalOpen] = useState(false)
+  const [isViewTagsModalOpen, setIsViewTagsModalOpen] = useState(false)
+
+  const [isEditTagModalOpen, setIsEditTagModalOpen] = useState(false)
+
+  const [isDeleteTagModalOpen, setIsDeleteTagModalOpen] = useState(false)
+
+  const [selectedTag, setSelectedTag] = useState<TagProps | null>(null)
 
   const { activeBoard } = useBoardsContext()
 
@@ -49,6 +59,20 @@ export function Header({ hideSidebar, enableDarkMode }: Props) {
   const [isActionsModalOpen, setIsActionsModalOpen] = useState(false)
 
   const isSmallerThanSm = useWindowResize(BREAKPOINT_SM)
+
+  const { data, mutate: tagsMutate } = useRequest<{
+    tags: TagProps[]
+  }>({
+    url: '/tags',
+    method: 'GET',
+  })
+
+  const onCloseTagModal = () => {
+    setIsViewTagsModalOpen(false)
+    setIsDeleteTagModalOpen(false)
+    setIsEditTagModalOpen(false)
+    setSelectedTag(null)
+  }
 
   useEffect(() => {
     if (!isSmallerThanSm) {
@@ -103,8 +127,8 @@ export function Header({ hideSidebar, enableDarkMode }: Props) {
       </LogoContainer>
       <EditDeleteContainer>
         <Dialog.Root
-          open={isEditTagsModalOpen}
-          onOpenChange={setIsEditTagsModalOpen}
+          open={isViewTagsModalOpen}
+          onOpenChange={setIsViewTagsModalOpen}
         >
           <Dialog.Trigger asChild>
             <ActionBtn className="secondary">
@@ -112,7 +136,44 @@ export function Header({ hideSidebar, enableDarkMode }: Props) {
               <p>Edit Tags</p>
             </ActionBtn>
           </Dialog.Trigger>
-          <TagsModal onClose={() => setIsEditTagsModalOpen(false)} />
+          <TagsModal
+            tags={data?.tags || null}
+            onDeleteTag={(tag) => {
+              setSelectedTag(tag)
+              setIsDeleteTagModalOpen(true)
+              setIsEditTagModalOpen(false)
+              setIsViewTagsModalOpen(false)
+            }}
+            onAddTag={() => {
+              setSelectedTag(null)
+              setIsEditTagModalOpen(true)
+              setIsViewTagsModalOpen(false)
+            }}
+            onSelectTag={(tag) => {
+              setSelectedTag(tag)
+              setIsEditTagModalOpen(true)
+              setIsViewTagsModalOpen(false)
+            }}
+            onClose={onCloseTagModal}
+          />
+        </Dialog.Root>
+
+        <Dialog.Root
+          open={isEditTagModalOpen}
+          onOpenChange={setIsEditTagModalOpen}
+        >
+          <EditTagModal selectedTag={selectedTag} onClose={onCloseTagModal} />
+        </Dialog.Root>
+
+        <Dialog.Root
+          open={isDeleteTagModalOpen}
+          onOpenChange={setIsDeleteTagModalOpen}
+        >
+          <DeleteTagModal
+            tagsMutate={tagsMutate}
+            selectedTag={selectedTag}
+            onClose={onCloseTagModal}
+          />
         </Dialog.Root>
 
         {activeBoard && (

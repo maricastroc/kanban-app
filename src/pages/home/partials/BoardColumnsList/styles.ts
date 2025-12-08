@@ -27,6 +27,11 @@ export const AddColumnContainer = styled.div`
       color: ${(props) => props.theme['primary-color']};
       transition: 200ms;
     }
+
+    button {
+      color: ${(props) => props.theme['primary-color']};
+      transition: 200ms;
+    }
   }
 `
 
@@ -42,9 +47,4 @@ export const AddColumnBtn = styled.button`
   font-size: clamp(1.2rem, 3vw, 1.5rem);
   color: ${(props) => props.theme['subtitle-color']};
   font-weight: 700;
-
-  &:hover {
-    color: ${(props) => props.theme['primary-color']};
-    transition: 200ms;
-  }
 `

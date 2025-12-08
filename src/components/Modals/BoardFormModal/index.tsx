@@ -62,7 +62,6 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
       onClose={onClose}
       isLoading={isLoading}
       title={isEditing ? 'Edit Board' : 'Create Board'}
-      padding="1.5rem 1.5rem 3rem"
     >
       <FormContainer onSubmit={handleSubmit(handleSubmitBoard)}>
         <InputContainer>

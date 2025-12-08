@@ -159,7 +159,6 @@ export function TaskDetailsModal({
         <BaseModal
           hasHeader={false}
           isLoading={isLoading}
-          padding="1.5rem 1.5rem 3rem"
           onClose={onClose}
           title={task.name}
         >

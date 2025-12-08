@@ -15,7 +15,7 @@ export const StatusSelectorContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   background-color: ${(props) => props.theme['cards-color']};
-  border: 1px solid ${(props) => props.theme['primary-color']};
+  border: 2px solid ${(props) => props.theme['primary-color']};
   border-radius: 8px;
   padding: 0.5rem;
 
