@@ -22,7 +22,7 @@ export const Input = styled.input`
 
   &:disabled {
     cursor: not-allowed;
-    color: ${(props) => props.theme['subtitle-color']};
+    opacity: 0.5;
   }
 `
 
