@@ -18,7 +18,7 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { DeleteModal } from '../DeleteModal'
 import { TaskFormModal } from '../TaskFormModal'
 import { TagsSection } from '@/components/Shared/TagsSection'
-import { CustomLabel } from '@/components/Core/Label'
+import { Label } from '@/components/Core/Label'
 import { BaseModal } from '../BaseModal'
 import { Header } from './partials/Header'
 import { SubtasksSection } from './partials/SubtasksSection'
@@ -173,9 +173,9 @@ export function TaskDetailsModal({
 
           <Description>
             <p>{task.description || 'No description'}</p>
-            <CustomLabel>
+            <Label>
               {`Subtasks (${completedCount} of ${task?.subtasks?.length})`}
-            </CustomLabel>
+            </Label>
 
             <SubtasksSection
               taskId={task.id}

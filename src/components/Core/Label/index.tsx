@@ -1,14 +1,10 @@
 import { LabelHTMLAttributes, ReactNode } from 'react'
 import { Label as StyledLabel } from './styles'
 
-interface CustomLabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
+interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
   children: ReactNode
 }
 
-const CustomLabel = ({ children, ...rest }: CustomLabelProps) => {
+export const Label = ({ children, ...rest }: LabelProps) => {
   return <StyledLabel {...rest}>{children}</StyledLabel>
 }
-
-CustomLabel.displayName = 'CustomLabel'
-
-export { CustomLabel }

@@ -14,7 +14,7 @@ import { FieldsContainer } from '@/components/Core/FieldsContainer'
 import { Field } from '@/components/Core/Field'
 import { CustomTextarea } from '@/components/Core/TextArea'
 import { CustomInput } from '@/components/Core/Input'
-import { CustomLabel } from '@/components/Core/Label'
+import { Label } from '@/components/Core/Label'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
 import { TagsSection } from '@/components/Shared/TagsSection'
 import { BaseModal } from '../BaseModal'
@@ -112,7 +112,7 @@ export function TaskFormModal({
     >
       <FormContainer onSubmit={handleSubmit(handleSubmitTask)}>
         <InputContainer>
-          <CustomLabel htmlFor="title">Title</CustomLabel>
+          <Label htmlFor="title">Title</Label>
           <CustomInput
             hasError={!!errors.name}
             placeholder="e.g. Take coffee break"
@@ -122,7 +122,7 @@ export function TaskFormModal({
         </InputContainer>
 
         <InputContainer>
-          <CustomLabel htmlFor="description">Description</CustomLabel>
+          <Label htmlFor="description">Description</Label>
           <CustomTextarea
             hasError={!!errors.description}
             placeholder="e.g. Task description"
@@ -132,7 +132,7 @@ export function TaskFormModal({
         </InputContainer>
 
         <InputContainer>
-          <CustomLabel htmlFor="due_date">Due Date</CustomLabel>
+          <Label htmlFor="due_date">Due Date</Label>
           <StyledDatePickerWrapper>
             <DatePicker
               placeholderText="dd/mm/yyyy"
@@ -146,7 +146,7 @@ export function TaskFormModal({
         </InputContainer>
 
         <SubtasksForm>
-          <CustomLabel>Subtasks</CustomLabel>
+          <Label>Subtasks</Label>
           <SubtasksWrapper>
             {subtasks.map((subtask, index) => (
               <div key={`${subtask.name}-${index}`}>

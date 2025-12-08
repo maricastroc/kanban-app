@@ -1,4 +1,4 @@
-import { CustomLabel } from '@/components/Core/Label'
+import { Label } from '@/components/Core/Label'
 import { StatusContainer, StatusSelectorContainer } from './styles'
 import { SelectStatus } from '@/components/Core/SelectStatus'
 import { RefObject } from 'react'
@@ -27,7 +27,7 @@ export const StatusSection = ({
 }: Props) => {
   return (
     <StatusContainer>
-      <CustomLabel>Current Status</CustomLabel>
+      <Label>Current Status</Label>
       <SelectStatus
         isActive={isActive}
         isOpen={isOpen}

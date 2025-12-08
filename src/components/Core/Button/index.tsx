@@ -41,20 +41,6 @@ export const Button = ({
             aria-hidden="true"
             className="animate-spin"
           />
-          <span
-            style={{
-              position: 'absolute',
-              width: '1px',
-              height: '1px',
-              padding: 0,
-              margin: '-1px',
-              overflow: 'hidden',
-              clip: 'rect(0, 0, 0, 0)',
-              border: 0,
-            }}
-          >
-            Loading…
-          </span>
         </div>
       ) : (
         <p>{title}</p>

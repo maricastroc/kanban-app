@@ -7,7 +7,7 @@ import { Button } from '@/components/Core/Button'
 import { FieldsContainer } from '@/components/Core/FieldsContainer'
 import { Field } from '@/components/Core/Field'
 import { CustomInput } from '@/components/Core/Input'
-import { CustomLabel } from '@/components/Core/Label'
+import { Label } from '@/components/Core/Label'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
 import { ColumnsContainer, ColumnsContent } from './styles'
 import { BaseModal } from '../BaseModal'
@@ -66,7 +66,7 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
     >
       <FormContainer onSubmit={handleSubmit(handleSubmitBoard)}>
         <InputContainer>
-          <CustomLabel htmlFor="name">Board Name</CustomLabel>
+          <Label htmlFor="name">Board Name</Label>
           <CustomInput
             hasError={!!errors.name}
             placeholder="e.g. Backend Tasks"
@@ -76,7 +76,7 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
         </InputContainer>
 
         <ColumnsContainer>
-          <CustomLabel>Columns</CustomLabel>
+          <Label>Columns</Label>
           <ColumnsContent>
             {boardColumns.map((column, index) => (
               <div key={`${column.name}-${index}`}>

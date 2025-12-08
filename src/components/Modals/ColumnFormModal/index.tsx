@@ -6,7 +6,7 @@ import { BoardColumnProps } from '@/@types/board-column'
 import { Button } from '@/components/Core/Button'
 import { FieldsContainer } from '@/components/Core/FieldsContainer'
 import { Field } from '@/components/Core/Field'
-import { CustomLabel } from '@/components/Core/Label'
+import { Label } from '@/components/Core/Label'
 import { CustomInput } from '@/components/Core/Input'
 import { InputContainer } from '@/components/Core/InputContainer'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
@@ -83,7 +83,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
     <BaseModal isLoading={isLoading} onClose={onClose} title="Add New Column">
       <FormContainer onSubmit={handleSubmit(handleSubmitBoard)}>
         <InputContainer>
-          <CustomLabel>Board Name</CustomLabel>
+          <Label>Board Name</Label>
           <CustomInput
             disabled
             type="text"
@@ -92,7 +92,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
           />
         </InputContainer>
         <LayoutContainer>
-          <CustomLabel>Columns</CustomLabel>
+          <Label>Columns</Label>
           <ColumnContent>
             {boardColumns.map((column, index) => (
               <div key={`${column.name}-${index}`}>

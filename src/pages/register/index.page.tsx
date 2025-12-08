@@ -34,15 +34,16 @@ import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { NextSeo } from 'next-seo'
 
 const signInFormSchema = z.object({
-  name: z
-    .string()
-    .min(3, { message: 'Name must have at least 3 characters..' }),
+  name: z.string().min(3, { message: 'Name must have at least 3 characters.' }),
   email: z
     .string()
-    .min(3, { message: 'E-mail must have at least 3 characters..' }),
+    .min(3, { message: 'E-mail must have at least 3 characters.' }),
   password: z
     .string()
-    .min(3, { message: 'Password must have at least 3 characters.' }),
+    .min(8, 'Password must have at least 8 characters.')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter.')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter.')
+    .regex(/\d/, 'Password must contain at least one number.'),
 })
 
 type SignInFormData = z.infer<typeof signInFormSchema>
@@ -126,7 +127,7 @@ export default function Login() {
             <FormContainer onSubmit={handleSubmit(onSubmit)}>
               <InputsContainer>
                 <FormField>
-                  <label htmlFor="name">Name:</label>
+                  <label htmlFor="name">Name</label>
 
                   <InputContainer>
                     <IconWrapper aria-hidden="true">
@@ -146,7 +147,7 @@ export default function Login() {
                 </FormField>
 
                 <FormField>
-                  <label htmlFor="email">E-mail:</label>
+                  <label htmlFor="email">E-mail</label>
 
                   <InputContainer>
                     <IconWrapper aria-hidden="true">
@@ -166,7 +167,7 @@ export default function Login() {
                 </FormField>
 
                 <FormField>
-                  <label htmlFor="password">Password:</label>
+                  <label htmlFor="password">Password</label>
 
                   <InputContainer>
                     <IconWrapper aria-hidden="true">

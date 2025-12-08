@@ -33,6 +33,7 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { useLoadingOnRouteChange } from '@/utils/useLoadingOnRouteChange'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { api } from '@/lib/axios'
+import { Label } from '@/components/Core/Label'
 
 const signInFormSchema = z.object({
   email: z.string().min(3, { message: 'E-mail is required.' }),
@@ -125,7 +126,7 @@ export default function Login() {
             <FormContainer onSubmit={handleSubmit(onSubmit)}>
               <InputsContainer>
                 <FormField>
-                  <label htmlFor="email">E-mail:</label>
+                  <label htmlFor="email">E-mail</label>
 
                   <InputContainer>
                     <IconWrapper aria-hidden="true">
@@ -137,6 +138,7 @@ export default function Login() {
                       type="email"
                       placeholder="e.g. jondoe@gmail.com"
                       {...register('email')}
+                      className={`${errors.email ? 'error' : ''}`}
                       aria-invalid={!!errors.email}
                     />
                   </InputContainer>
@@ -147,7 +149,7 @@ export default function Login() {
                 </FormField>
 
                 <FormField>
-                  <label htmlFor="password">Password:</label>
+                  <Label htmlFor="password">Password</Label>
 
                   <InputContainer>
                     <IconWrapper aria-hidden="true">
@@ -159,6 +161,7 @@ export default function Login() {
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Enter your password"
                       {...register('password')}
+                      className={`${errors.password ? 'error' : ''}`}
                       aria-invalid={!!errors.password}
                     />
 
@@ -186,7 +189,7 @@ export default function Login() {
 
               <Button
                 isBigger
-                disabled={isSubmitting || isLoading}
+                isLoading={isSubmitting || isLoading}
                 title="Login"
                 type="submit"
               />

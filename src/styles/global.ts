@@ -12,14 +12,14 @@ export const GlobalStyle = createGlobalStyle`
   textarea:focus-visible,
   select:focus-visible,
   a:focus-visible {
-    outline: 2px solid rgba(99, 95, 199, 1);
-    outline-offset: 2px;
+    border: 2px solid rgba(99, 95, 199, 1) !important;
+    outline: none;
   }
 
   body {
     background-color: ${(props) => props.theme['bg-color']};
     color: ${(props) => props.theme['title-color']};
-    height: 100vh;
+    min-height: 100vh;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -61,7 +61,7 @@ export const GlobalStyle = createGlobalStyle`
   select:-webkit-autofill,
   select:-webkit-autofill:hover,
   select:-webkit-autofill:focus {
-    border: 1px solid ${(props) => props.theme['border-color']};
+    border: 2px solid ${(props) => props.theme['border-color']};
     -webkit-text-fill-color: ${(props) => props.theme['text-color']};
     -webkit-box-shadow: 0 0 0px 1000px #000 inset;
     transition: background-color 5000s ease-in-out 0s;

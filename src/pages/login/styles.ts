@@ -59,20 +59,14 @@ export const TitleContainer = styled.div`
   color: ${(props) => props.theme['title-color']};
 
   h1 {
-    font-size: 1.8rem;
+    font-size: ${(props) => props.theme['heading-xxl']};
     color: ${(props) => props.theme['title-color']};
   }
 
   p {
     color: ${(props) => props.theme['subtitle-color']};
-    font-size: 0.95rem;
+    font-size: ${(props) => props.theme['heading-m']};
     line-height: 1.25rem;
-  }
-
-  @media (min-width: 480px) {
-    p {
-      font-size: 0.95rem;
-    }
   }
 `
 
@@ -97,12 +91,12 @@ export const FormField = styled.div`
   display: flex;
   align-items: flex-start;
   flex-direction: column;
-  gap: 0.3rem;
   width: 100%;
   margin-bottom: 0.5rem;
 
   label {
-    font-size: 14px;
+    font-size: ${(props) => props.theme['body-m']};
+    font-weight: 700;
     color: ${(props) => props.theme['title-color']};
     margin-bottom: 0.2rem;
   }
@@ -118,11 +112,12 @@ export const InputField = styled.input`
   width: 100%;
   padding: 0.8rem 1rem;
   padding-left: 3rem;
+  margin-top: 0.2rem;
   background-color: transparent;
-  border: 1px solid ${(props) => props.theme['border-color']};
+  border: 2px solid ${(props) => props.theme['border-color']};
   border-radius: 5px;
   color: ${(props) => props.theme['text-color']};
-  font-size: 1rem;
+  font-size: ${(props) => props.theme['body-l']};
 
   &:-webkit-autofill {
     background-color: transparent !important;
@@ -141,6 +136,10 @@ export const InputField = styled.input`
   &:focus {
     background-color: transparent;
   }
+
+  &.error {
+    border: solid 2px ${(props) => props.theme['error-color']};
+  }
 `
 
 export const IconWrapper = styled.div`
@@ -152,7 +151,7 @@ export const IconWrapper = styled.div`
 
   svg {
     color: ${(props) => props.theme['details-color']};
-    margin-top: 0.25rem;
+    margin-top: 0.45rem;
   }
 `
 
@@ -168,7 +167,7 @@ export const PasswordIconWrapper = styled.button`
 
   svg {
     color: ${(props) => props.theme['details-color']};
-    margin-top: 0.25rem;
+    margin-top: 0.45rem;
   }
 `
 
@@ -182,6 +181,7 @@ export const CreateAccountContainer = styled.div`
 
   p {
     color: ${(props) => props.theme['subtitle-color']};
+    font-size: ${(props) => props.theme['heading-m']};
   }
 
   a {
@@ -191,6 +191,7 @@ export const CreateAccountContainer = styled.div`
     border-radius: 4px;
     color: ${(props) => props.theme['primary-hover']};
     transition: 200ms;
+    font-size: ${(props) => props.theme['heading-m']};
 
     &:hover {
       color: ${(props) => props.theme['secondary-hover']};

@@ -29,7 +29,7 @@ export const darkTheme = {
 
   'details-color': '#E4EBFA',
   'subtitle-color': '#828FA3',
-  'border-color': '#3E3F4E',
+  'border-color': '#505361',
   'cards-color': '#2B2C37',
   'bg-color': '#20212C',
   'scroll-color': '#3E3F4E',

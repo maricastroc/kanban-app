@@ -8,7 +8,7 @@ import { InputContainer } from '@/components/Core/InputContainer'
 import { Button } from '@/components/Core/Button'
 import { FormContainer, SelectWrapper } from './styles'
 import { CustomInput } from '@/components/Core/Input'
-import { CustomLabel } from '@/components/Core/Label'
+import { Label } from '@/components/Core/Label'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
 import { SelectInput } from '@/components/Core/SelectInput'
 
@@ -93,7 +93,7 @@ export function TagForm({
   return (
     <FormContainer onSubmit={handleSubmit(onSubmit)}>
       <InputContainer>
-        <CustomLabel htmlFor="name">Name</CustomLabel>
+        <Label htmlFor="name">Name</Label>
         <CustomInput
           isTransparent
           hasError={!!errors?.name}
@@ -104,7 +104,7 @@ export function TagForm({
       </InputContainer>
 
       <SelectWrapper>
-        <CustomLabel htmlFor="color">Color</CustomLabel>
+        <Label htmlFor="color">Color</Label>
         <SelectInput
           placeholder="Select a color"
           currentTags={currentTags}
