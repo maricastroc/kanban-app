@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Dialog from '@radix-ui/react-dialog'
 import { ModalContent, ActionBtn, LogoutBtn } from './styles'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
@@ -46,26 +47,31 @@ export function ActionsModal({ onClose }: Props) {
     onClose()
   }
 
+  const finishLogout = () => {
+    localStorage.removeItem('auth_token')
+
+    delete api.defaults.headers.common.Authorization
+
+    import('swr').then(({ mutate }) => {
+      mutate(() => true, undefined, { revalidate: false })
+    })
+
+    setBoards(null)
+    setActiveBoard(undefined)
+
+    route.push('/login')
+  }
+
   const handleLogout = async () => {
     try {
       await api.get('/logout')
-
-      localStorage.removeItem('auth_token')
-
-      delete api.defaults.headers.common.Authorization
-
-      import('swr').then(({ mutate }) => {
-        mutate(() => true, undefined, { revalidate: false })
-      })
-
-      setBoards(null)
-      setActiveBoard(undefined)
-
+    } catch (error: any) {
+      if (error.response?.status !== 401) {
+        handleApiError(error)
+      }
+    } finally {
       toast.success('See you soon!')
-
-      route.push('/login')
-    } catch (error) {
-      handleApiError(error)
+      finishLogout()
     }
   }
 
