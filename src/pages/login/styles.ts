@@ -64,7 +64,7 @@ export const TitleContainer = styled.div`
   }
 
   p {
-    color: ${(props) => props.theme['subtitle-color']};
+    color: ${(props) => props.theme['paragraph-color']};
     font-size: ${(props) => props.theme['heading-m']};
     line-height: 1.25rem;
   }
@@ -183,7 +183,7 @@ export const CreateAccountContainer = styled.div`
   width: 100%;
 
   p {
-    color: ${(props) => props.theme['subtitle-color']};
+    color: ${(props) => props.theme['paragraph-color']};
     font-size: ${(props) => props.theme['heading-m']};
   }
 

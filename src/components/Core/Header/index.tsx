@@ -102,12 +102,12 @@ export function Header({ hideSidebar, enableDarkMode }: Props) {
         </Dialog.Root>
       </LogoContainer>
       <EditDeleteContainer>
-        <Dialog.Root open={isEditTagsModalOpen}>
+        <Dialog.Root
+          open={isEditTagsModalOpen}
+          onOpenChange={setIsEditTagsModalOpen}
+        >
           <Dialog.Trigger asChild>
-            <ActionBtn
-              className="secondary"
-              onClick={() => setIsEditTagsModalOpen(true)}
-            >
+            <ActionBtn className="secondary">
               <FontAwesomeIcon icon={faTag} />
               <p>Edit Tags</p>
             </ActionBtn>
@@ -116,9 +116,12 @@ export function Header({ hideSidebar, enableDarkMode }: Props) {
         </Dialog.Root>
 
         {activeBoard && (
-          <Dialog.Root open={isAddTaskModalOpen}>
+          <Dialog.Root
+            open={isAddTaskModalOpen}
+            onOpenChange={setIsAddTaskModalOpen}
+          >
             <Dialog.Trigger asChild>
-              <ActionBtn onClick={() => setIsAddTaskModalOpen(true)}>
+              <ActionBtn>
                 <FontAwesomeIcon icon={faPlus} />
                 <p>+ Add New Task</p>
               </ActionBtn>

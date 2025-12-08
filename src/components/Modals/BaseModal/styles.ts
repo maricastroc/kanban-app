@@ -30,9 +30,15 @@ export const CloseButton = styled(RadixClose)`
   color: ${(props) => props.theme['subtitle-color']};
   background-color: transparent;
   padding: 0.2rem;
-  border: none;
+  border: 2px solid transparent;
+  border-radius: 8px;
   cursor: pointer;
   transition: 200ms;
+
+  svg {
+    font-size: 1.5rem;
+    color: ${(props) => props.theme['subtitle-color']};
+  }
 
   &:hover {
     color: ${(props) => props.theme['title-color']};
@@ -83,6 +89,7 @@ export const ModalContent = styled(RadixContent)<{
 
   &:focus {
     box-shadow: none;
+    outline: 2px solid ${(props) => props.theme['primary-color']};
   }
 
   &.lg {
@@ -103,6 +110,10 @@ export const ModalContent = styled(RadixContent)<{
     overflow: auto;
     max-height: auto;
     width: clamp(300px, 90vw, 28rem);
+  }
+
+  @media (min-width: 480px) {
+    padding: ${(props) => props.padding || '2rem'};
   }
 
   @keyframes scaleIn {

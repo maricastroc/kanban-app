@@ -36,8 +36,15 @@ export const AddColumnBtn = styled.button`
   align-items: center;
   justify-content: center;
   background-color: transparent;
-  border: none;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 0.2rem;
   font-size: clamp(1.2rem, 3vw, 1.5rem);
   color: ${(props) => props.theme['subtitle-color']};
   font-weight: 700;
+
+  &:hover {
+    color: ${(props) => props.theme['primary-color']};
+    transition: 200ms;
+  }
 `

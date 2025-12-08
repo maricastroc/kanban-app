@@ -168,7 +168,7 @@ export const ActionBtn = styled.button`
 
     &.secondary {
       background-color: transparent;
-      border: solid 1px ${(props) => props.theme['primary-color']};
+      border: solid 2px ${(props) => props.theme['primary-color']};
       gap: 0.5rem;
       margin-right: 0;
 
@@ -188,7 +188,7 @@ export const EditDeleteBtn = styled.button`
   cursor: pointer;
   display: flex;
   background-color: transparent;
-  border: none;
+  border: 2px solid transparent;
   padding: 0.5rem;
   border-radius: 8px;
   align-items: center;

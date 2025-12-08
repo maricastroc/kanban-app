@@ -1,8 +1,8 @@
 import {
-  BoardBtn,
+  BoardButton,
   BoardsContainer,
   Container,
-  CreateBoardBtn,
+  CreateBoardButton,
   HideButton,
   LogoWrapper,
   OptionsContainer,
@@ -70,7 +70,7 @@ export function Sidebar({ onClose, className }: SidebarProps) {
         <BoardsContainer>
           {boards?.map((board) => {
             return (
-              <BoardBtn
+              <BoardButton
                 key={board.name}
                 className={board.name === activeBoard?.name ? 'active' : ''}
                 onClick={() => {
@@ -79,12 +79,12 @@ export function Sidebar({ onClose, className }: SidebarProps) {
               >
                 <Image src={IconBoard} alt="" />
                 <p>{board.name}</p>
-              </BoardBtn>
+              </BoardButton>
             )
           })}
           <Dialog.Root open={isAddBoardModalOpen}>
             <Dialog.Trigger asChild>
-              <CreateBoardBtn
+              <CreateBoardButton
                 className="create"
                 onClick={() => {
                   setIsAddBoardModalOpen(true)
@@ -92,7 +92,7 @@ export function Sidebar({ onClose, className }: SidebarProps) {
               >
                 <Image src={IconBoard} alt="" />
                 <p>+ Create New Board</p>
-              </CreateBoardBtn>
+              </CreateBoardButton>
             </Dialog.Trigger>
             {isAddBoardModalOpen && (
               <BoardFormModal

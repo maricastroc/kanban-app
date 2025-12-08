@@ -24,25 +24,25 @@ export function ActionsModal({ onClose }: Props) {
   const { activeBoard, isLoading, setActiveBoard, setBoards } =
     useBoardsContext()
 
-  const [isEditModalOpen, setEditModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
-  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
   const handleEditModalOpen = () => {
-    setEditModalOpen(true)
+    setIsEditModalOpen(true)
   }
 
   const handleDeleteModalOpen = () => {
-    setDeleteModalOpen(true)
+    setIsDeleteModalOpen(true)
   }
 
   const closeEditModal = () => {
-    setEditModalOpen(false)
+    setIsEditModalOpen(false)
     onClose()
   }
 
   const closeDeleteModal = () => {
-    setDeleteModalOpen(false)
+    setIsDeleteModalOpen(false)
     onClose()
   }
 
@@ -79,7 +79,16 @@ export function ActionsModal({ onClose }: Props) {
       <ModalContent className={`${enableDarkMode ? 'dark' : 'light'}`}>
         {activeBoard && (
           <>
-            <Dialog.Root open={isEditModalOpen}>
+            <Dialog.Root
+              open={isEditModalOpen}
+              onOpenChange={(open) => {
+                setIsEditModalOpen(open)
+
+                if (!open) {
+                  onClose()
+                }
+              }}
+            >
               <Dialog.Trigger asChild>
                 <ActionBtn
                   disabled={isLoading}
@@ -93,7 +102,16 @@ export function ActionsModal({ onClose }: Props) {
                 <BoardFormModal isEditing onClose={closeEditModal} />
               )}
             </Dialog.Root>
-            <Dialog.Root open={isDeleteModalOpen}>
+            <Dialog.Root
+              open={isDeleteModalOpen}
+              onOpenChange={(open) => {
+                setIsDeleteModalOpen(open)
+
+                if (!open) {
+                  onClose()
+                }
+              }}
+            >
               <Dialog.Trigger asChild>
                 <ActionBtn onClick={handleDeleteModalOpen} className="delete">
                   Delete Board
@@ -105,6 +123,7 @@ export function ActionsModal({ onClose }: Props) {
             </Dialog.Root>
           </>
         )}
+        <span></span>
         <LogoutBtn onClick={handleLogout}>
           Logout
           <SignOut size={22} />

@@ -29,8 +29,9 @@ export const darkTheme = {
   'text-color': '#E4EBFA',
   'select-color': '#282828',
 
+  'paragraph-color': '#F4F7FD',
   'details-color': '#E4EBFA',
-  'subtitle-color': '#F4F7FD',
+  'subtitle-color': '#828FA3',
   'border-color': '#505361',
   'cards-color': '#2B2C37',
   'bg-color': '#20212C',

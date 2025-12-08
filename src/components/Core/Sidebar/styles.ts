@@ -80,14 +80,14 @@ export const BoardsContainer = styled.div`
   gap: 0.5rem;
 `
 
-export const BoardBtn = styled.button`
+export const BoardButton = styled.button`
   cursor: pointer;
   display: flex;
   padding: 0.9rem 1.5rem;
   align-items: center;
   justify-content: flex-start;
   background-color: transparent;
-  border: none;
+  border: 2px solid transparent;
   gap: 0.75rem;
   width: 100%;
   text-align: left;
@@ -133,7 +133,7 @@ export const BoardBtn = styled.button`
   }
 `
 
-export const CreateBoardBtn = styled.button`
+export const CreateBoardButton = styled.button`
   cursor: pointer;
   display: flex;
   padding: 0.9rem 1.5rem;
@@ -141,7 +141,9 @@ export const CreateBoardBtn = styled.button`
   border-radius: 4px;
   justify-content: flex-start;
   background-color: transparent;
-  border: none;
+  border: 2px solid transparent;
+  border-top-right-radius: 22px;
+  border-bottom-right-radius: 22px;
   gap: 0.75rem;
   width: 100%;
   text-align: left;
@@ -189,7 +191,7 @@ export const HideButton = styled.button`
   gap: 0.65rem;
   padding: 0.7rem;
   background-color: transparent;
-  border: none;
+  border: 2px solid transparent;
   padding-left: 1.5rem;
   margin-bottom: 2rem;
   width: 90%;

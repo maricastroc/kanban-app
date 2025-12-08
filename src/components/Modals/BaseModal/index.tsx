@@ -7,7 +7,7 @@ import {
   ModalTitle,
 } from './styles'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faX } from '@fortawesome/free-solid-svg-icons'
+import { faX, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { ReactNode } from 'react'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
@@ -37,7 +37,7 @@ export const BaseModal = ({
 }: Props) => {
   return (
     <Dialog.Portal>
-      <ModalOverlay onClick={onClose} />
+      <ModalOverlay />
       <ModalContent
         padding={padding}
         className="DialogContent"
@@ -48,7 +48,7 @@ export const BaseModal = ({
           <HeaderContent padding={titlePadding}>
             <ModalTitle className="DialogTitle">{title}</ModalTitle>
             <CloseButton onClick={onClose}>
-              <FontAwesomeIcon icon={faX} />
+              <FontAwesomeIcon icon={faXmark} />
             </CloseButton>
           </HeaderContent>
         )}

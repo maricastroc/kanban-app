@@ -33,6 +33,8 @@ export const lightTheme = {
   'overdue-color': '#ce524e',
   'due-soon-color': '#e8b442',
 
+  'paragraph-color': '#828FA3',
+
   'details-color': '#635FC7',
   'subtitle-color': '#828FA3',
   'border-color': '#E4EBFA',

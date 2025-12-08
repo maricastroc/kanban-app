@@ -32,7 +32,8 @@ export const Container = styled.button<{ disabled?: boolean }>`
     }
 
     &:focus {
-    border-color: ${(props) => props.theme['border-btn-color']};
+      border-color: ${(props) => props.theme['border-btn-color']};
+    }
   }
 
   &.secondary {

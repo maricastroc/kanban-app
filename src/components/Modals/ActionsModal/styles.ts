@@ -6,10 +6,9 @@ export const ModalContent = styled(RadixContent)`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 1.5rem 1.2rem;
+  padding: 1rem;
   border-radius: 8px;
   position: absolute;
-  gap: 0.8rem;
   top: 5rem;
   right: 0.7rem;
   width: 12rem;
@@ -21,6 +20,13 @@ export const ModalContent = styled(RadixContent)`
     box-shadow: 0 4px 6px rgba(54, 78, 126, 0.1);
   }
 
+  span {
+    background-color: ${(props) => props.theme['border-color']};
+    width: 100%;
+    height: 2px;
+    margin: 0.2rem 0;
+  }
+
   @media (min-width: 768px) {
     right: 2rem;
   }
@@ -29,7 +35,9 @@ export const ModalContent = styled(RadixContent)`
 export const ActionBtn = styled.button<{ disabled?: boolean }>`
   cursor: pointer;
   background-color: transparent;
-  border: none;
+  border: 2px solid transparent;
+  padding: 0.3rem;
+  border-radius: 8px;
   font-size: ${(props) => props.theme['heading-m']};
   color: ${(props) => props.theme['subtitle-color']};
 
@@ -64,7 +72,9 @@ export const LogoutBtn = styled.button`
   color: ${(props) => props.theme['subtitle-color']};
   width: 100%;
   border-top: solid 1px ${(props) => props.theme['border-color']};
-  padding-top: 0.75rem;
+  border: 2px solid transparent;
+  padding: 0.3rem;
+  border-radius: 8px;
 
   svg {
     color: ${(props) => props.theme['subtitle-color']};

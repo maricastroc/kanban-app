@@ -35,7 +35,10 @@ export function TaskCard({ task, provided, column }: TaskCardProps) {
   }, [isTaskDetailsModalOpen])
 
   return (
-    <Dialog.Root open={isTaskDetailsModalOpen}>
+    <Dialog.Root
+      open={isTaskDetailsModalOpen}
+      onOpenChange={setIsTaskDetailsModalOpen}
+    >
       <Dialog.Trigger asChild>
         <TaskCardContainer
           onClick={() => setIsTaskDetailsModalOpen(true)}

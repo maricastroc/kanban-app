@@ -9,6 +9,7 @@ import { TagProps } from '@/@types/tag'
 
 import { Description } from './styles'
 
+import * as Dialog from '@radix-ui/react-dialog'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 import { useOutsideClick } from '@/utils/useOutsideClick'
 import { handleApiError } from '@/utils/handleApiError'
@@ -213,7 +214,7 @@ export function TaskDetailsModal({
         </BaseModal>
       )}
 
-      {isDeleteModalOpen && (
+      <Dialog.Root open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
         <DeleteModal
           type="task"
           task={task}
@@ -222,9 +223,9 @@ export function TaskDetailsModal({
             closeAllModals()
           }}
         />
-      )}
+      </Dialog.Root>
 
-      {isEditModalOpen && (
+      <Dialog.Root open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <TaskFormModal
           isEditing
           column={column}
@@ -234,7 +235,7 @@ export function TaskDetailsModal({
             closeAllModals()
           }}
         />
-      )}
+      </Dialog.Root>
     </>
   )
 }

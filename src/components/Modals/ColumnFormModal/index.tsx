@@ -1,6 +1,5 @@
 import { LayoutContainer, ColumnContent } from './styles'
 
-import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 import { BoardColumnProps } from '@/@types/board-column'
 
 import { Button } from '@/components/Core/Button'
@@ -19,8 +18,6 @@ interface ColumnFormModalProps {
 }
 
 export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
-  useEscapeKeyHandler(onClose)
-
   const {
     activeBoard,
     errors,
@@ -33,6 +30,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
     handleChangeColumn,
     handleRemoveColumn,
     handleSubmit,
+    resetColumns,
   } = useBoardForm({ isEditing: true, onClose })
 
   const renderColumnInput = (column: BoardColumnProps, index: number) => {
@@ -80,7 +78,14 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
   }
 
   return (
-    <BaseModal isLoading={isLoading} onClose={onClose} title="Add New Column">
+    <BaseModal
+      isLoading={isLoading}
+      onClose={() => {
+        resetColumns()
+        onClose()
+      }}
+      title="Add New Column"
+    >
       <FormContainer onSubmit={handleSubmit(handleSubmitBoard)}>
         <InputContainer>
           <Label>Board Name</Label>
@@ -113,7 +118,7 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
         {hasNewColumns() && (
           <Button
             disabled={isSubmitting}
-            title="Create Column"
+            title="Save Changes"
             type="submit"
             variant="primary"
           />
