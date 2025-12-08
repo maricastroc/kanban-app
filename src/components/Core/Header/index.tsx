@@ -189,7 +189,7 @@ export function Header({ hideSidebar, enableDarkMode }: Props) {
             </Dialog.Trigger>
             <TaskFormModal
               isEditing={false}
-              column={activeBoard?.columns[0]}
+              column={activeBoard?.columns?.[0]}
               onClose={() => setIsAddTaskModalOpen(false)}
             />
           </Dialog.Root>

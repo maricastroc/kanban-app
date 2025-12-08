@@ -13,11 +13,12 @@ import BoardIcon from '@/../public/icon-board.svg'
 import LightThemeSvg from '@/../public/icon-light-theme.svg'
 import DarkThemeSvg from '@/../public/icon-dark-theme.svg'
 import { BoardProps } from '@/@types/board'
-import { simulateDelay } from '@/utils/simulateDelay'
 import { BoardFormModal } from '../BoardFormModal'
 import { useTheme } from '@/contexts/ThemeContext'
 import Image from 'next/image'
 import { BaseModal } from '../BaseModal'
+import { handleApiError } from '@/utils/handleApiError'
+import { api } from '@/lib/axios'
 
 interface BoardsDetailsModalProps {
   onClose: () => void
@@ -52,11 +53,17 @@ export function BoardsDetailsModal({ onClose }: BoardsDetailsModalProps) {
 
   useEscapeKeyHandler(onClose)
 
-  const handleClickBoard = async (board: BoardProps) => {
-    handleChangeActiveBoard(board)
-    await simulateDelay()
-    onClose()
+  const handleActivateBoard = async (board: BoardProps) => {
+    try {
+      const response = await api.patch(`boards/${board.id}/activate`)
+
+      await handleChangeActiveBoard(response.data.data.board)
+      onClose()
+    } catch (error) {
+      handleApiError(error)
+    }
   }
+
   return (
     <BaseModal
       onClose={onClose}
@@ -71,7 +78,7 @@ export function BoardsDetailsModal({ onClose }: BoardsDetailsModalProps) {
               key={board.name}
               board={board}
               activeBoard={activeBoard}
-              handleClickBoard={handleClickBoard}
+              handleClickBoard={handleActivateBoard}
             />
           ))}
 
