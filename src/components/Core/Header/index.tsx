@@ -81,7 +81,7 @@ export function Header({ hideSidebar, enableDarkMode }: Props) {
   }, [isSmallerThanSm])
 
   return (
-    <Container className={hideSidebar ? 'hide-sidebar-mode' : ''}>
+    <Container className={`${hideSidebar ? 'hide-sidebar-mode' : ''}`}>
       <LogoContainer>
         {isSmallerThanSm && (
           <Image src={Logo} width={24} height={24} alt="Project Logo" />
