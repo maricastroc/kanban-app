@@ -1,44 +1,45 @@
-import { useState } from 'react'
+import { useRef } from 'react'
 
 export function useDragScroll(
   columnsContainerRef: React.RefObject<HTMLDivElement>,
 ) {
   const enableScrollFeature = true
 
-  const [isDragging, setIsDragging] = useState(false)
-
-  const [startX, setStartX] = useState<number | null>(null)
-
-  const [scrollLeft, setScrollLeft] = useState<number | null>(null)
+  const isDraggingRef = useRef(false)
+  const startXRef = useRef<number | null>(null)
+  const scrollLeftRef = useRef<number | null>(null)
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    setIsDragging(true)
+    isDraggingRef.current = true
     const container = columnsContainerRef.current
 
     if (container) {
       container.classList.add('hand-cursor')
-      setStartX(e.pageX - container.offsetLeft)
-      setScrollLeft(container.scrollLeft)
+      startXRef.current = e.pageX - container.offsetLeft
+      scrollLeftRef.current = container.scrollLeft
     }
   }
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!enableScrollFeature) {
-      return
-    }
+    if (!enableScrollFeature) return
 
-    if (!isDragging || startX === null || scrollLeft === null) return
+    if (
+      !isDraggingRef.current ||
+      startXRef.current === null ||
+      scrollLeftRef.current === null
+    )
+      return
 
     const container = columnsContainerRef.current
     if (container) {
       const x = e.pageX - container.offsetLeft
-      const walk = (x - startX) * 1
-      container.scrollLeft = scrollLeft - walk
+      const walk = (x - startXRef.current) * 1
+      container.scrollLeft = scrollLeftRef.current - walk
     }
   }
 
   const handleMouseUp = () => {
-    setIsDragging(false)
+    isDraggingRef.current = false
     const container = columnsContainerRef.current
     if (container) {
       container.classList.remove('hand-cursor')
@@ -56,9 +57,6 @@ export function useDragScroll(
   }
 
   return {
-    isDragging,
-    startX,
-    scrollLeft,
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
