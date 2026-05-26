@@ -1,3 +1,4 @@
+import '@/utils/wdyr'
 import { ThemeContext, ThemeProvider } from '@/contexts/ThemeContext'
 import { ThemeProvider as StyledThemeProvider } from 'styled-components'
 import { lightTheme } from '@/styles/themes/light'

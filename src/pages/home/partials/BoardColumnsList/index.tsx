@@ -52,3 +52,7 @@ export const BoardColumnsList = ({
     )
   )
 }
+
+if (process.env.NODE_ENV === 'development') {
+  BoardColumnsList.whyDidYouRender = true
+}

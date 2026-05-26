@@ -127,3 +127,8 @@ export function Sidebar({ onClose, className }: SidebarProps) {
     </Container>
   )
 }
+
+
+if (process.env.NODE_ENV === 'development') {
+  Sidebar.whyDidYouRender = true
+}

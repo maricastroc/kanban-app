@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { DropResult } from 'react-beautiful-dnd'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { api } from '@/lib/axios'
 import { handleApiError } from '@/utils/handleApiError'
 import { TaskProps } from '@/@types/task'
 import { BoardColumnProps } from '@/@types/board-column'
+import { performanceLogger } from '@/utils/performanceLogger'
 
 export function useDragAndDrop(
   setBoardColumns: (cols: BoardColumnProps[]) => void,
@@ -13,6 +14,8 @@ export function useDragAndDrop(
     useBoardsContext()
 
   const [isApiProcessing, setIsApiProcessing] = useState(false)
+  const dragStartTimeRef = useRef(0)
+  const lastApiDurationRef = useRef(0)
 
   const moveTaskToColumn = async (
     task: TaskProps,
@@ -73,7 +76,9 @@ export function useDragAndDrop(
         new_order: Number(newOrder),
       }
 
+      const apiStart = performance.now()
       await api.patch(`tasks/${task?.id}/move`, payload)
+      lastApiDurationRef.current = performance.now() - apiStart
 
       await activeBoardMutate()
     } catch (error) {
@@ -119,7 +124,9 @@ export function useDragAndDrop(
         new_order: newOrder,
       }
 
+      const apiStart = performance.now()
       await api.patch(`tasks/${task.id}/reorder`, payload)
+      lastApiDurationRef.current = performance.now() - apiStart
 
       await activeBoardMutate()
     } catch (error) {
@@ -128,6 +135,11 @@ export function useDragAndDrop(
     } finally {
       setIsApiProcessing(false)
     }
+  }
+
+  const onDragStart = () => {
+    dragStartTimeRef.current = performance.now()
+    performance.mark('drag-start')
   }
 
   const onDragEnd = (result: DropResult) => {
@@ -149,6 +161,10 @@ export function useDragAndDrop(
       return
     }
 
+    const dragDuration = performance.now() - dragStartTimeRef.current
+    performance.mark('drag-end')
+    performance.measure('drag-interaction', 'drag-start', 'drag-end')
+
     const sourceColumnIndex = parseInt(source.droppableId, 10)
     const destinationColumnIndex = parseInt(destination.droppableId, 10)
 
@@ -167,10 +183,18 @@ export function useDragAndDrop(
         destination?.index,
       )
     }
+
+    // log after dispatching the async operation so apiDuration is from previous op
+    performanceLogger.logDrag({
+      dragDuration,
+      apiDuration: lastApiDurationRef.current,
+      timestamp: Date.now(),
+    })
   }
 
   return {
     onDragEnd,
+    onDragStart,
     isApiProcessing,
   }
 }

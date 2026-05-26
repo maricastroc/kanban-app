@@ -57,6 +57,7 @@
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-dom": "^19",
     "@types/styled-components": "^5.1.34",
+    "@welldone-software/why-did-you-render": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "typescript": "^5"

@@ -24,32 +24,38 @@ import { useDragAndDrop } from '@/hooks/useDragAndDrop'
 import { useAuthRedirect } from '@/hooks/useAuthRedirect'
 import { BoardColumnsList } from './partials/BoardColumnsList'
 import { useTheme } from '@/contexts/ThemeContext'
+import { ProfilerWrapper } from '@/components/Shared/ProfilerWrapper'
+import { PerformanceDashboard } from '@/components/Shared/PerformanceDashboard'
+import { BoardProps } from '@/@types/board'
 
 export default function Home() {
   const columnsContainerRef = useRef<HTMLDivElement | null>(null)
 
   const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>()
-
   const [hideSidebar, setHideSidebar] = useState(false)
-
   const [isColumnFormModalOpen, setIsColumnFormModalOpen] = useState(false)
 
-  const { isLoading, activeBoard } = useBoardsContext()
-
+  const { isLoading, activeBoard, setActiveBoard, setBoards } =
+    useBoardsContext()
   const { enableDarkMode } = useTheme()
 
   const { handleMouseMove, handleMouseUp, handleContainerMouseDown } =
     useDragScroll(columnsContainerRef as RefObject<HTMLDivElement>)
 
   const isSmallerThanSm = useWindowResize(BREAKPOINT_SM)
-
   const { isCheckingAuth } = useAuthRedirect()
-
-  const { onDragEnd, isApiProcessing } = useDragAndDrop(setBoardColumns)
+  const { onDragEnd, onDragStart, isApiProcessing } =
+    useDragAndDrop(setBoardColumns)
 
   useEffect(() => {
     setBoardColumns(activeBoard?.columns)
   }, [activeBoard])
+
+  function handleLoadScaleTest(board: BoardProps) {
+    // só substitui o activeBoard visualmente — não toca na lista real de boards
+    setActiveBoard(board)
+    setBoardColumns(board.columns)
+  }
 
   if (isCheckingAuth) return null
 
@@ -57,7 +63,7 @@ export default function Home() {
     <>
       <NextSeo title="Kanban App | Dashboard" />
       {!isCheckingAuth && (
-        <DragDropContext onDragEnd={onDragEnd}>
+        <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
           <Droppable droppableId="all-columns" direction="horizontal">
             {(provided) => (
               <LayoutContainer
@@ -67,38 +73,44 @@ export default function Home() {
                 {isLoading && <LoadingComponent />}
                 <BoardContent>
                   {!isSmallerThanSm && (
-                    <Sidebar
-                      className={!hideSidebar ? '' : 'hidden'}
-                      onClose={() => setHideSidebar(true)}
-                    />
+                    <ProfilerWrapper id="Sidebar">
+                      <Sidebar
+                        className={!hideSidebar ? '' : 'hidden'}
+                        onClose={() => setHideSidebar(true)}
+                      />
+                    </ProfilerWrapper>
                   )}
                   <Wrapper>
-                    <Header
-                      hideSidebar={hideSidebar}
-                      enableDarkMode={enableDarkMode}
-                    />
-                    <ColumnsContainer
-                      ref={columnsContainerRef}
-                      onMouseDown={handleContainerMouseDown}
-                      onMouseUp={handleMouseUp}
-                      onMouseLeave={handleMouseUp}
-                      onMouseMove={handleMouseMove}
-                      className={hideSidebar ? 'hide-sidebar-mode' : ''}
-                    >
-                      {activeBoard ? (
-                        <BoardColumnsList
-                          isOpen={isColumnFormModalOpen}
-                          columns={boardColumns}
-                          isLoading={isLoading}
-                          isApiProcessing={isApiProcessing}
-                          onOpenModal={(value) =>
-                            setIsColumnFormModalOpen(value)
-                          }
-                        />
-                      ) : (
-                        <EmptyContainer />
-                      )}
-                    </ColumnsContainer>
+                    <ProfilerWrapper id="Header">
+                      <Header
+                        hideSidebar={hideSidebar}
+                        enableDarkMode={enableDarkMode}
+                      />
+                    </ProfilerWrapper>
+                    <ProfilerWrapper id="ColumnsContainer">
+                      <ColumnsContainer
+                        ref={columnsContainerRef}
+                        onMouseDown={handleContainerMouseDown}
+                        onMouseUp={handleMouseUp}
+                        onMouseLeave={handleMouseUp}
+                        onMouseMove={handleMouseMove}
+                        className={hideSidebar ? 'hide-sidebar-mode' : ''}
+                      >
+                        {activeBoard ? (
+                          <BoardColumnsList
+                            isOpen={isColumnFormModalOpen}
+                            columns={boardColumns}
+                            isLoading={isLoading}
+                            isApiProcessing={isApiProcessing}
+                            onOpenModal={(value) =>
+                              setIsColumnFormModalOpen(value)
+                            }
+                          />
+                        ) : (
+                          <EmptyContainer />
+                        )}
+                      </ColumnsContainer>
+                    </ProfilerWrapper>
                   </Wrapper>
                   {hideSidebar && (
                     <ShowSidebarBtn onClick={() => setHideSidebar(false)}>
@@ -111,6 +123,7 @@ export default function Home() {
           </Droppable>
         </DragDropContext>
       )}
+      <PerformanceDashboard onLoadScaleTest={handleLoadScaleTest} version="context" />
     </>
   )
 }

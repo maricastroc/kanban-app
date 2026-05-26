@@ -215,3 +215,8 @@ export function Header({ hideSidebar, enableDarkMode }: Props) {
     </Container>
   )
 }
+
+
+if (process.env.NODE_ENV === 'development') {
+  Header.whyDidYouRender = true
+}

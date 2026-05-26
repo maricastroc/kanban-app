@@ -92,3 +92,7 @@ export function TaskCard({ task, provided, column }: TaskCardProps) {
     </Dialog.Root>
   )
 }
+
+if (process.env.NODE_ENV === 'development') {
+  TaskCard.whyDidYouRender = true
+}
