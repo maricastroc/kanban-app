@@ -1,59 +1,40 @@
-import { ThemeContext, ThemeProvider } from '@/contexts/ThemeContext'
+import '@/utils/wdyr'
+import { Provider } from 'react-redux'
+import { store } from '@/store/index'
 import { ThemeProvider as StyledThemeProvider } from 'styled-components'
 import { lightTheme } from '@/styles/themes/light'
 import { darkTheme } from '@/styles/themes/dark'
 import { GlobalStyle } from '@/styles/global'
-import { BoardsContextProvider } from '@/contexts/BoardsContext'
 import { Toaster } from 'react-hot-toast'
 import { AppProps } from 'next/app'
+import { useAppSelector } from '@/store/hooks'
 import 'react-datepicker/dist/react-datepicker.css'
 
-function MyApp({ Component, pageProps }: AppProps) {
+function ThemedApp({ Component, pageProps }: AppProps) {
+  const enableDarkMode = useAppSelector((state) => state.theme.enableDarkMode)
+
   return (
-    <ThemeProvider>
-      <ThemeContext.Consumer>
-        {(context) => {
-          if (!context) {
-            return null
-          }
-
-          const { enableDarkMode } = context
-
-          return (
-            <StyledThemeProvider
-              theme={enableDarkMode ? darkTheme : lightTheme}
-            >
-              <BoardsContextProvider>
-                <Toaster
-                  toastOptions={{
-                    style: {
-                      backgroundColor: '#20212C',
-                      color: '#fff',
-                    },
-                    success: {
-                      style: {
-                        backgroundColor: '#20212C',
-                        color: '#fff',
-                      },
-                    },
-                    error: {
-                      style: {
-                        backgroundColor: '#20212C',
-                        color: '#fff',
-                      },
-                    },
-                  }}
-                />
-                <main>
-                  <Component {...pageProps} />
-                </main>
-                <GlobalStyle />
-              </BoardsContextProvider>
-            </StyledThemeProvider>
-          )
+    <StyledThemeProvider theme={enableDarkMode ? darkTheme : lightTheme}>
+      <Toaster
+        toastOptions={{
+          style: { backgroundColor: '#20212C', color: '#fff' },
+          success: { style: { backgroundColor: '#20212C', color: '#fff' } },
+          error: { style: { backgroundColor: '#20212C', color: '#fff' } },
         }}
-      </ThemeContext.Consumer>
-    </ThemeProvider>
+      />
+      <main>
+        <Component {...pageProps} />
+      </main>
+      <GlobalStyle />
+    </StyledThemeProvider>
+  )
+}
+
+function MyApp(props: AppProps) {
+  return (
+    <Provider store={store}>
+      <ThemedApp {...props} />
+    </Provider>
   )
 }
 

@@ -1,7 +1,7 @@
 import { BoardColumnProps } from '@/@types/board-column'
 import * as Dialog from '@radix-ui/react-dialog'
 import { AddColumnBtn, AddColumnContainer } from './styles'
-import { useTheme } from '@/contexts/ThemeContext'
+import { useAppSelector } from '@/store/hooks'
 import { BoardColumn } from '../BoardColumn'
 import { ColumnFormModal } from '@/components/Modals/ColumnFormModal'
 
@@ -20,7 +20,7 @@ export const BoardColumnsList = ({
   isOpen,
   onOpenModal,
 }: Props) => {
-  const { enableDarkMode } = useTheme()
+  const enableDarkMode = useAppSelector((state) => state.theme.enableDarkMode)
 
   return (
     columns && (
@@ -51,4 +51,8 @@ export const BoardColumnsList = ({
       </>
     )
   )
+}
+
+if (process.env.NODE_ENV === 'development') {
+  BoardColumnsList.whyDidYouRender = true
 }

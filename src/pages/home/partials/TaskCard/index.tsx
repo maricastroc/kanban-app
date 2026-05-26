@@ -12,7 +12,8 @@ import {
 import { TaskDetailsModal } from '@/components/Modals/TaskDetailsModal'
 import { tagColors } from '@/components/Core/SelectInput'
 import { TaskProps } from '@/@types/task'
-import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useAppDispatch } from '@/store/hooks'
+import { setEnableScrollFeature } from '@/store/boardsSlice'
 import { BoardColumnProps } from '@/@types/board-column'
 import { formatDate } from '@/utils/formatDate'
 import { getDueStatus } from '@/utils/getDueStatus'
@@ -26,13 +27,13 @@ type TaskCardProps = {
 }
 
 export function TaskCard({ task, provided, column }: TaskCardProps) {
-  const { handleEnableScrollFeature } = useBoardsContext()
+  const dispatch = useAppDispatch()
 
   const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false)
 
   useEffect(() => {
-    handleEnableScrollFeature(!isTaskDetailsModalOpen)
-  }, [isTaskDetailsModalOpen])
+    dispatch(setEnableScrollFeature(!isTaskDetailsModalOpen))
+  }, [isTaskDetailsModalOpen, dispatch])
 
   return (
     <Dialog.Root
@@ -91,4 +92,8 @@ export function TaskCard({ task, provided, column }: TaskCardProps) {
       />
     </Dialog.Root>
   )
+}
+
+if (process.env.NODE_ENV === 'development') {
+  TaskCard.whyDidYouRender = true
 }

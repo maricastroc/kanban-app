@@ -25,7 +25,7 @@ import { TaskFormModal } from '@/components/Modals/TaskFormModal'
 import { ActionsModal } from '@/components/Modals/ActionsModal'
 import { BREAKPOINT_SM } from '@/utils/constants'
 import { useWindowResize } from '@/utils/useWindowResize'
-import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useAppSelector } from '@/store/hooks'
 import LogoTextLight from '../../../../public/kanban.svg'
 import LogoTextDark from '../../../../public/kanban-dark.svg'
 import Image from 'next/image'
@@ -51,7 +51,7 @@ export function Header({ hideSidebar, enableDarkMode }: Props) {
 
   const [selectedTag, setSelectedTag] = useState<TagProps | null>(null)
 
-  const { activeBoard } = useBoardsContext()
+  const activeBoard = useAppSelector((state) => state.boards.activeBoard)
 
   const [isBoardsDetailsModalOpen, setIsBoardsDetailsModalOpen] =
     useState(false)
@@ -214,4 +214,9 @@ export function Header({ hideSidebar, enableDarkMode }: Props) {
       </EditDeleteContainer>
     </Container>
   )
+}
+
+
+if (process.env.NODE_ENV === 'development') {
+  Header.whyDidYouRender = true
 }

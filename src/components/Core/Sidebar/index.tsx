@@ -25,8 +25,9 @@ import { useState } from 'react'
 import { EyeSlash } from 'phosphor-react'
 import { BoardFormModal } from '@/components/Modals/BoardFormModal'
 import Image from 'next/image'
-import { useTheme } from '@/contexts/ThemeContext'
-import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { toggleTheme } from '@/store/themeSlice'
+import { fetchActiveBoard, setActiveBoard } from '@/store/boardsSlice'
 import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
 import { BoardProps } from '@/@types/board'
@@ -37,9 +38,10 @@ interface SidebarProps {
 }
 
 export function Sidebar({ onClose, className }: SidebarProps) {
-  const { toggleTheme, enableDarkMode } = useTheme()
-
-  const { handleChangeActiveBoard, activeBoard, boards } = useBoardsContext()
+  const dispatch = useAppDispatch()
+  const enableDarkMode = useAppSelector((state) => state.theme.enableDarkMode)
+  const activeBoard = useAppSelector((state) => state.boards.activeBoard)
+  const boards = useAppSelector((state) => state.boards.boards)
 
   const [isAddBoardModalOpen, setIsAddBoardModalOpen] = useState(false)
 
@@ -47,7 +49,8 @@ export function Sidebar({ onClose, className }: SidebarProps) {
     try {
       const response = await api.patch(`boards/${board.id}/activate`)
 
-      await handleChangeActiveBoard(response.data.data.board)
+      dispatch(setActiveBoard(response.data.data.board))
+      dispatch(fetchActiveBoard())
     } catch (error) {
       handleApiError(error)
     }
@@ -112,7 +115,7 @@ export function Sidebar({ onClose, className }: SidebarProps) {
             className="SwitchRoot"
             id="airplane-mode"
             onClick={() => {
-              toggleTheme()
+              dispatch(toggleTheme())
             }}
           >
             <SwitchThumb className="SwitchThumb" />
@@ -126,4 +129,9 @@ export function Sidebar({ onClose, className }: SidebarProps) {
       </OptionsContainer>
     </Container>
   )
+}
+
+
+if (process.env.NODE_ENV === 'development') {
+  Sidebar.whyDidYouRender = true
 }
