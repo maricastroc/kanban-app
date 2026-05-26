@@ -40,6 +40,9 @@ type Props = {
   enableDarkMode: boolean
 }
 
+// stable reference — prevents useRequest from creating a new SWR key on every render
+const TAGS_REQUEST = { url: '/tags', method: 'GET' }
+
 export function Header({ hideSidebar, enableDarkMode }: Props) {
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
 
@@ -62,10 +65,7 @@ export function Header({ hideSidebar, enableDarkMode }: Props) {
 
   const { data, mutate: tagsMutate } = useRequest<{
     tags: TagProps[]
-  }>({
-    url: '/tags',
-    method: 'GET',
-  })
+  }>(TAGS_REQUEST)
 
   const onCloseTagModal = () => {
     setIsViewTagsModalOpen(false)
