@@ -18,7 +18,8 @@ import toast from 'react-hot-toast'
 import { TagProps } from '@/@types/tag'
 import { KeyedMutator } from 'swr'
 import { AxiosResponse } from 'axios'
-import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useAppDispatch } from '@/store/hooks'
+import { fetchActiveBoard } from '@/store/boardsSlice'
 
 const tagSchema = z.object({
   id: z.number().or(z.string()).nullable(),
@@ -49,7 +50,7 @@ export function TagForm({
   onClose,
   handleIsSubmitting,
 }: Props) {
-  const { activeBoardMutate } = useBoardsContext()
+  const dispatch = useAppDispatch()
 
   const {
     handleSubmit,
@@ -80,7 +81,7 @@ export function TagForm({
       toast.success(response.data.message)
       reset()
       tagsMutate()
-      activeBoardMutate()
+      dispatch(fetchActiveBoard())
 
       setTimeout(onClose, 500)
     } catch (error) {

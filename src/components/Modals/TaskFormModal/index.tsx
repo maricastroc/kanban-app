@@ -25,7 +25,7 @@ import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 import { SubtaskProps } from '@/@types/subtask'
 import { TaskProps } from '@/@types/task'
 import { useTaskForm } from '@/hooks/useTaskForm'
-import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useAppSelector } from '@/store/hooks'
 import { StatusSection } from '../TaskDetailsModal/partials/StatusSection'
 import { BoardColumnProps } from '@/@types/board-column'
 
@@ -44,7 +44,9 @@ export function TaskFormModal({
 }: AddTaskModalProps) {
   const statusRef = useRef<HTMLDivElement | null>(null)
 
-  const { isLoading } = useBoardsContext()
+  const isLoading = useAppSelector(
+    (state) => state.boards.isValidatingBoards || state.boards.isValidatingActiveBoard,
+  )
 
   const [isOptionsContainerOpen, setIsOptionsContainerOpen] = useState(false)
 

@@ -3,7 +3,8 @@ import { Button } from '@/components/Core/Button'
 import { TaskProps } from '@/@types/task'
 import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
-import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { fetchBoards, fetchActiveBoard } from '@/store/boardsSlice'
 import toast from 'react-hot-toast'
 import { BaseModal } from '../BaseModal'
 
@@ -14,15 +15,11 @@ interface DeleteBoardProps {
 }
 
 export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
-  const {
-    activeBoard,
-    activeBoardMutate,
-    boardsMutate,
-    isValidatingBoards,
-    isValidatingActiveBoard,
-  } = useBoardsContext()
-
-  const isLoading = isValidatingBoards || isValidatingActiveBoard
+  const dispatch = useAppDispatch()
+  const activeBoard = useAppSelector((state) => state.boards.activeBoard)
+  const isLoading = useAppSelector(
+    (state) => state.boards.isValidatingBoards || state.boards.isValidatingActiveBoard,
+  )
 
   const handleDelete = async (id: number | string) => {
     if (!activeBoard) return
@@ -36,12 +33,8 @@ export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
         toast.success(response.data.message)
       }
 
-      await boardsMutate()
-      await activeBoardMutate()
-
-      if (type === 'board') {
-        await activeBoardMutate()
-      }
+      dispatch(fetchBoards())
+      dispatch(fetchActiveBoard())
     } catch (error) {
       handleApiError(error)
     } finally {

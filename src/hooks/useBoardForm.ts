@@ -7,7 +7,8 @@ import { initialBoardColumns } from '@/utils/getInitialValues'
 import { handleApiError } from '@/utils/handleApiError'
 import { MIN_BOARD_NAME_LENGTH, MAX_COLUMNS } from '@/utils/constants'
 import { BoardColumnProps } from '@/@types/board-column'
-import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { fetchBoards, setActiveBoard } from '@/store/boardsSlice'
 import { useEffect, useState } from 'react'
 
 interface Props {
@@ -38,8 +39,8 @@ const formSchema = z.object({
 export type FormData = z.infer<typeof formSchema>
 
 export const useBoardForm = ({ isEditing, onClose }: Props) => {
-  const { activeBoard, boardsMutate, handleChangeActiveBoard } =
-    useBoardsContext()
+  const dispatch = useAppDispatch()
+  const activeBoard = useAppSelector((state) => state.boards.activeBoard)
 
   const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>(
     activeBoard?.columns || [
@@ -107,9 +108,8 @@ export const useBoardForm = ({ isEditing, onClose }: Props) => {
 
       toast?.success(response.data.message)
 
-      handleChangeActiveBoard(response.data.data.board)
-
-      await boardsMutate()
+      dispatch(setActiveBoard(response.data.data.board))
+      dispatch(fetchBoards())
 
       setTimeout(() => {
         onClose()

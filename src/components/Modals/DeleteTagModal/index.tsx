@@ -8,7 +8,8 @@ import toast from 'react-hot-toast'
 import { api } from '@/lib/axios'
 import { KeyedMutator } from 'swr'
 import { AxiosResponse } from 'axios'
-import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useAppDispatch } from '@/store/hooks'
+import { fetchActiveBoard } from '@/store/boardsSlice'
 import { handleApiError } from '@/utils/handleApiError'
 
 interface Props {
@@ -27,7 +28,7 @@ interface Props {
 export function DeleteTagModal({ onClose, tagsMutate, selectedTag }: Props) {
   const [isLoading, setIsLoading] = useState(false)
 
-  const { activeBoardMutate } = useBoardsContext()
+  const dispatch = useAppDispatch()
 
   const onDelete = async () => {
     try {
@@ -38,7 +39,7 @@ export function DeleteTagModal({ onClose, tagsMutate, selectedTag }: Props) {
       toast.success(response.data.message)
       onClose()
 
-      await activeBoardMutate()
+      dispatch(fetchActiveBoard())
       await tagsMutate()
       onClose()
     } catch (error) {

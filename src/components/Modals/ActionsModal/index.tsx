@@ -5,10 +5,11 @@ import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { useState } from 'react'
 import { DeleteModal } from '../DeleteModal'
 import { BoardFormModal } from '../BoardFormModal'
-import { useTheme } from '@/contexts/ThemeContext'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { toggleTheme } from '@/store/themeSlice'
+import { setBoards, setActiveBoard } from '@/store/boardsSlice'
 import { SignOut } from 'phosphor-react'
 import toast from 'react-hot-toast'
-import { useBoardsContext } from '@/contexts/BoardsContext'
 import { api } from '@/lib/axios'
 import { handleApiError } from '@/utils/handleApiError'
 import { useRouter } from 'next/router'
@@ -18,12 +19,14 @@ interface Props {
 }
 
 export function ActionsModal({ onClose }: Props) {
-  const { enableDarkMode } = useTheme()
+  const dispatch = useAppDispatch()
+  const enableDarkMode = useAppSelector((state) => state.theme.enableDarkMode)
+  const activeBoard = useAppSelector((state) => state.boards.activeBoard)
+  const isLoading = useAppSelector(
+    (state) => state.boards.isValidatingBoards || state.boards.isValidatingActiveBoard,
+  )
 
   const route = useRouter()
-
-  const { activeBoard, isLoading, setActiveBoard, setBoards } =
-    useBoardsContext()
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
@@ -52,12 +55,8 @@ export function ActionsModal({ onClose }: Props) {
 
     delete api.defaults.headers.common.Authorization
 
-    import('swr').then(({ mutate }) => {
-      mutate(() => true, undefined, { revalidate: false })
-    })
-
-    setBoards(null)
-    setActiveBoard(undefined)
+    dispatch(setBoards(null))
+    dispatch(setActiveBoard(undefined))
 
     route.push('/login')
   }

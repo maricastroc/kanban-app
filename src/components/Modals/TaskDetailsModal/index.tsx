@@ -13,8 +13,8 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 import { useOutsideClick } from '@/utils/useOutsideClick'
 import { handleApiError } from '@/utils/handleApiError'
-import { useBoardsContext } from '@/contexts/BoardsContext'
-import { useTheme } from '@/contexts/ThemeContext'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { fetchActiveBoard } from '@/store/boardsSlice'
 
 import { DeleteModal } from '../DeleteModal'
 import { TaskFormModal } from '../TaskFormModal'
@@ -58,9 +58,9 @@ export function TaskDetailsModal({
     return subtask?.is_completed ? acc + 1 : acc
   }, 0)
 
-  const { activeBoard, activeBoardMutate } = useBoardsContext()
-
-  const { enableDarkMode } = useTheme()
+  const dispatch = useAppDispatch()
+  const activeBoard = useAppSelector((state) => state.boards.activeBoard)
+  const enableDarkMode = useAppSelector((state) => state.theme.enableDarkMode)
 
   const statusRef = useRef<HTMLDivElement | null>(null)
 
@@ -92,7 +92,7 @@ export function TaskDetailsModal({
 
       await api.patch('/subtasks/reorder', payload)
 
-      await activeBoardMutate()
+      dispatch(fetchActiveBoard())
     } catch (error) {
       handleApiError(error)
     } finally {
@@ -115,7 +115,7 @@ export function TaskDetailsModal({
 
       await api.patch(`tasks/${task?.id}/move`, payload)
 
-      await activeBoardMutate()
+      dispatch(fetchActiveBoard())
     } catch (error) {
       handleApiError(error)
     } finally {
@@ -139,7 +139,7 @@ export function TaskDetailsModal({
         await api.post(`/tasks/${taskId}/tags/${tagId}`)
       }
 
-      await activeBoardMutate()
+      dispatch(fetchActiveBoard())
     } catch (error) {
       handleApiError(error)
     } finally {

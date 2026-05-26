@@ -29,7 +29,7 @@ import { Button } from '@/components/Core/Button'
 import Image from 'next/image'
 import { toast } from 'react-hot-toast'
 import Link from 'next/link'
-import { useTheme } from '@/contexts/ThemeContext'
+import { useAppSelector } from '@/store/hooks'
 import { useLoadingOnRouteChange } from '@/utils/useLoadingOnRouteChange'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { api } from '@/lib/axios'
@@ -43,7 +43,7 @@ const signInFormSchema = z.object({
 type SignInFormData = z.infer<typeof signInFormSchema>
 
 export default function Login() {
-  const { enableDarkMode } = useTheme()
+  const enableDarkMode = useAppSelector((state) => state.theme.enableDarkMode)
 
   const [isCheckingAuth, setIsCheckingAuth] = useState(true)
   const [isLoading, setIsLoading] = useState(false)

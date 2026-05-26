@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { Container, Title } from './styles'
 import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
-import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useAppDispatch } from '@/store/hooks'
+import { fetchActiveBoard } from '@/store/boardsSlice'
 import { CheckInput } from '@/components/Core/CheckInput'
 
 interface SubtaskItemProps {
@@ -20,7 +21,7 @@ export function SubtaskItem({
 }: SubtaskItemProps) {
   const [isChecked, setIsChecked] = useState(isCompleted)
 
-  const { activeBoardMutate } = useBoardsContext()
+  const dispatch = useAppDispatch()
 
   const handleToggleSubtaskStatus = async () => {
     setIsChecked((prev) => !prev)
@@ -30,7 +31,7 @@ export function SubtaskItem({
 
       await api.patch(`/subtasks/${id}/toggle-completion`)
 
-      await activeBoardMutate()
+      dispatch(fetchActiveBoard())
     } catch (error) {
       handleApiError(error)
     } finally {

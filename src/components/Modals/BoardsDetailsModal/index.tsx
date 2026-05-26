@@ -7,14 +7,15 @@ import {
   SwitchRoot,
   SwitchThumb,
 } from './styles'
-import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { toggleTheme } from '@/store/themeSlice'
+import { fetchActiveBoard, setActiveBoard } from '@/store/boardsSlice'
 import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
 import BoardIcon from '@/../public/icon-board.svg'
 import LightThemeSvg from '@/../public/icon-light-theme.svg'
 import DarkThemeSvg from '@/../public/icon-dark-theme.svg'
 import { BoardProps } from '@/@types/board'
 import { BoardFormModal } from '../BoardFormModal'
-import { useTheme } from '@/contexts/ThemeContext'
 import Image from 'next/image'
 import { BaseModal } from '../BaseModal'
 import { handleApiError } from '@/utils/handleApiError'
@@ -45,9 +46,9 @@ const BoardListItem = ({
   )
 
 export function BoardsDetailsModal({ onClose }: BoardsDetailsModalProps) {
-  const { toggleTheme } = useTheme()
-
-  const { activeBoard, boards, handleChangeActiveBoard } = useBoardsContext()
+  const dispatch = useAppDispatch()
+  const activeBoard = useAppSelector((state) => state.boards.activeBoard)
+  const boards = useAppSelector((state) => state.boards.boards)
 
   const [addBoardModalOpen, setAddBoardModalOpen] = useState(false)
 
@@ -57,7 +58,8 @@ export function BoardsDetailsModal({ onClose }: BoardsDetailsModalProps) {
     try {
       const response = await api.patch(`boards/${board.id}/activate`)
 
-      await handleChangeActiveBoard(response.data.data.board)
+      dispatch(setActiveBoard(response.data.data.board))
+      dispatch(fetchActiveBoard())
       onClose()
     } catch (error) {
       handleApiError(error)
@@ -102,7 +104,7 @@ export function BoardsDetailsModal({ onClose }: BoardsDetailsModalProps) {
           className="SwitchRoot"
           id="airplane-mode"
           onClick={() => {
-            toggleTheme()
+            dispatch(toggleTheme())
           }}
         >
           <SwitchThumb className="SwitchThumb" />

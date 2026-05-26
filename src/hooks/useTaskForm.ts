@@ -5,7 +5,8 @@ import { v4 as uuidv4 } from 'uuid'
 import { z } from 'zod'
 
 import { api } from '@/lib/axios'
-import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { fetchActiveBoard } from '@/store/boardsSlice'
 import { handleApiError } from '@/utils/handleApiError'
 import { MIN_SUBTASKS, MIN_TITLE_LENGTH } from '@/utils/constants'
 import { SubtaskProps } from '@/@types/subtask'
@@ -39,7 +40,8 @@ export const useTaskForm = ({
   column,
   onClose,
 }: AddTaskModalProps) => {
-  const { activeBoard, activeBoardMutate } = useBoardsContext()
+  const dispatch = useAppDispatch()
+  const activeBoard = useAppSelector((state) => state.boards.activeBoard)
 
   const [columnId, setColumnId] = useState<string | number | undefined>(
     column?.id || undefined,
@@ -157,7 +159,7 @@ export const useTaskForm = ({
         ? api.put(`/tasks/${task?.id}`, payload)
         : api.post('/tasks', payload))
 
-      await activeBoardMutate()
+      dispatch(fetchActiveBoard())
       resetForm()
       onClose()
     } catch (error) {
