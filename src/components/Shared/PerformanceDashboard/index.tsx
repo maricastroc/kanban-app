@@ -5,6 +5,12 @@ import { BoardProps } from '@/@types/board'
 
 interface Props {
   onLoadScaleTest: (board: BoardProps) => void
+  /** Context API only: invalidates SWR cache and re-fetches without seeding. */
+  onForceFresh?: () => Promise<void>
+  /** Context API only: creates N real tasks via API then re-fetches. */
+  onSeedAndFresh?: (count: number, onProgress: (done: number, total: number) => void) => Promise<void>
+  /** Context API only: deletes all tasks created by the last seed run. */
+  onCleanupSeedTasks?: (onProgress: (done: number, total: number) => void) => Promise<void>
   version?: 'context' | 'redux'
 }
 
@@ -18,9 +24,14 @@ interface TestMeta {
   interaction: string
 }
 
-export function PerformanceDashboard({ onLoadScaleTest, version = 'context' }: Props) {
+export function PerformanceDashboard({ onLoadScaleTest, onForceFresh, onSeedAndFresh, onCleanupSeedTasks, version = 'context' }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<Tab>('renders')
+  const [isFetching, setIsFetching] = useState(false)
+  const [freshReady, setFreshReady] = useState(false)
+  const [seedProgress, setSeedProgress] = useState<{ done: number; total: number } | null>(null)
+  const [cleanupProgress, setCleanupProgress] = useState<{ done: number; total: number } | null>(null)
+  const [hasSeeded, setHasSeeded] = useState(false)
   const [stats, setStats] = useState<ComponentStat[]>([])
   const [dragStats, setDragStats] = useState<ReturnType<
     typeof performanceLogger.getDragStats
@@ -88,6 +99,48 @@ export function PerformanceDashboard({ onLoadScaleTest, version = 'context' }: P
     performanceLogger.clear()
     setMeta((m) => ({ ...m, tasks: String(count), interaction: `scale-${count}-tasks` }))
     onLoadScaleTest(generateMockBoard(count))
+  }
+
+  async function handleForceFresh(taskCount: number) {
+    if (!onForceFresh) return
+    setFreshReady(false)
+    setIsFetching(true)
+    performanceLogger.clear()
+    setMeta((m) => ({ ...m, tasks: String(taskCount), interaction: `scale-dnd-${taskCount}-tasks` }))
+    try {
+      await onForceFresh()
+    } finally {
+      setIsFetching(false)
+      setFreshReady(true)
+    }
+  }
+
+  async function handleSeed(count: number) {
+    if (!onSeedAndFresh) return
+    setFreshReady(false)
+    setHasSeeded(false)
+    setSeedProgress({ done: 0, total: count })
+    performanceLogger.clear()
+    setMeta((m) => ({ ...m, tasks: String(count), interaction: `scale-dnd-${count}-tasks` }))
+    try {
+      await onSeedAndFresh(count, (done, total) => setSeedProgress({ done, total }))
+      setHasSeeded(true)
+      setFreshReady(true)
+    } finally {
+      setSeedProgress(null)
+    }
+  }
+
+  async function handleCleanup() {
+    if (!onCleanupSeedTasks) return
+    setFreshReady(false)
+    setHasSeeded(false)
+    setCleanupProgress({ done: 0, total: 0 })
+    try {
+      await onCleanupSeedTasks((done, total) => setCleanupProgress({ done, total }))
+    } finally {
+      setCleanupProgress(null)
+    }
   }
 
   function updateMeta(key: keyof TestMeta, value: string) {
@@ -241,11 +294,15 @@ export function PerformanceDashboard({ onLoadScaleTest, version = 'context' }: P
 
             {activeTab === 'scale' && (
               <div>
-                <p style={{ color: '#89b4fa', marginBottom: 12 }}>
-                  Inject mock tasks to test rendering at scale.
-                  Profiler data is cleared before each test.
+                {/* ── Scale Rendering (mock data) ─────────────────── */}
+                <p style={{ color: '#89b4fa', marginBottom: 8, fontWeight: 700, fontSize: 11 }}>
+                  RENDER SCALE (mock data)
                 </p>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+                <p style={{ color: '#6c7086', fontSize: 11, marginBottom: 8 }}>
+                  Injects mock tasks to measure render cost. Bypasses the API.
+                  After loading, check the Renders tab.
+                </p>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
                   {[30, 60, 100, 200].map((count) => (
                     <button
                       key={count}
@@ -256,9 +313,71 @@ export function PerformanceDashboard({ onLoadScaleTest, version = 'context' }: P
                     </button>
                   ))}
                 </div>
-                <p style={{ color: '#6c7086', fontSize: 11 }}>
-                  ⚠ Uses mock data (bypasses API). After loading, check the Renders tab.
-                </p>
+
+                {/* ── Scale DnD (seeds real tasks via API) ─────────── */}
+                <div style={{ borderTop: '1px solid #45475a', paddingTop: 12 }}>
+                  <p style={{ color: '#a6e3a1', marginBottom: 6, fontWeight: 700, fontSize: 11 }}>
+                    DND SCALE — SEED REAL TASKS (Context API only)
+                  </p>
+                  <p style={{ color: '#6c7086', fontSize: 11, marginBottom: 10 }}>
+                    Creates N real tasks in the active board via the API (lotes de 10),
+                    then re-fetches. After "Ready", drag a task manually.
+                    Use Cleanup to delete seeded tasks when done.
+                  </p>
+                  {onSeedAndFresh ? (
+                    <>
+                      {/* Seed buttons */}
+                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
+                        {[30, 60, 100, 200].map((count) => (
+                          <button
+                            key={count}
+                            onClick={() => handleSeed(count)}
+                            disabled={!!seedProgress || !!cleanupProgress}
+                            style={btn(seedProgress || cleanupProgress ? '#6c7086' : '#a6e3a1')}
+                          >
+                            + {count} tasks
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Seeding progress */}
+                      {seedProgress && (
+                        <p style={{ color: '#f9e2af', fontSize: 11, marginBottom: 6 }}>
+                          ⏳ Creating tasks… {seedProgress.done} / {seedProgress.total}
+                        </p>
+                      )}
+
+                      {/* Ready state */}
+                      {freshReady && !seedProgress && !cleanupProgress && (
+                        <p style={{ color: '#a6e3a1', fontSize: 11, marginBottom: 8 }}>
+                          ✓ Tasks created and board refreshed. Drag a task now, then export.
+                        </p>
+                      )}
+
+                      {/* Cleanup */}
+                      {hasSeeded && !seedProgress && (
+                        <div>
+                          <button
+                            onClick={handleCleanup}
+                            disabled={!!cleanupProgress}
+                            style={btn(cleanupProgress ? '#6c7086' : '#f38ba8')}
+                          >
+                            🗑 Cleanup seeded tasks
+                          </button>
+                          {cleanupProgress && (
+                            <span style={{ color: '#f9e2af', fontSize: 11, marginLeft: 10 }}>
+                              Deleting… {cleanupProgress.done} / {cleanupProgress.total}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <p style={{ color: '#6c7086', fontSize: 11 }}>
+                      Not available in Redux version.
+                    </p>
+                  )}
+                </div>
               </div>
             )}
 

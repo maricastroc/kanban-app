@@ -27,15 +27,22 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { ProfilerWrapper } from '@/components/Shared/ProfilerWrapper'
 import { PerformanceDashboard } from '@/components/Shared/PerformanceDashboard'
 import { BoardProps } from '@/@types/board'
+import { api } from '@/lib/axios'
+import { v4 as uuidv4 } from 'uuid'
+
+const SEED_TASK_PREFIX = '[scale-test]'
+const SEED_BATCH_SIZE = 10
 
 export default function Home() {
   const columnsContainerRef = useRef<HTMLDivElement | null>(null)
+  // Stores IDs of tasks created by the seeding function so cleanup can delete them
+  const seededTaskIdsRef = useRef<number[]>([])
 
   const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>()
   const [hideSidebar, setHideSidebar] = useState(false)
   const [isColumnFormModalOpen, setIsColumnFormModalOpen] = useState(false)
 
-  const { isLoading, activeBoard, setActiveBoard, setBoards } =
+  const { isLoading, activeBoard, setActiveBoard, setBoards, activeBoardMutate } =
     useBoardsContext()
   const { enableDarkMode } = useTheme()
 
@@ -52,9 +59,82 @@ export default function Home() {
   }, [activeBoard])
 
   function handleLoadScaleTest(board: BoardProps) {
-    // só substitui o activeBoard visualmente — não toca na lista real de boards
     setActiveBoard(board)
     setBoardColumns(board.columns)
+  }
+
+  /**
+   * Creates `count` real tasks in the active board via the API (batched),
+   * then forces SWR to re-fetch fresh board data.
+   * Task IDs are stored in seededTaskIdsRef for later cleanup.
+   */
+  async function handleSeedAndFresh(
+    count: number,
+    onProgress: (done: number, total: number) => void,
+  ) {
+    if (!activeBoard?.columns?.length) return
+
+    const columns = activeBoard.columns
+    seededTaskIdsRef.current = []
+
+    // Build task payloads distributed evenly across columns
+    const payloads = Array.from({ length: count }, (_, i) => ({
+      uuid: uuidv4(),
+      name: `${SEED_TASK_PREFIX} Task ${i + 1}`,
+      description: 'Automatically created for scale DnD performance test.',
+      column_id: Number(columns[i % columns.length].id),
+      subtasks: [],
+      tags: [],
+    }))
+
+    // POST in batches of SEED_BATCH_SIZE
+    let done = 0
+    for (let i = 0; i < payloads.length; i += SEED_BATCH_SIZE) {
+      const batch = payloads.slice(i, i + SEED_BATCH_SIZE)
+      // API response shape: { success, message, data: { task: { id, ... } } }
+      const responses = await Promise.all(
+        batch.map((p) =>
+          api.post<{ data: { task: { id: number } } }>('/tasks', p),
+        ),
+      )
+      responses.forEach((r) => {
+        const id = r.data?.data?.task?.id
+        if (id) seededTaskIdsRef.current.push(id)
+      })
+      done += batch.length
+      onProgress(done, count)
+    }
+
+    // Invalidate SWR cache and fetch fresh data so DnD uses real task IDs
+    await activeBoardMutate(undefined, { revalidate: true })
+  }
+
+  /**
+   * Deletes all tasks created by the last seed run, then refreshes the board.
+   */
+  async function handleCleanupSeedTasks(
+    onProgress: (done: number, total: number) => void,
+  ) {
+    const ids = seededTaskIdsRef.current
+    if (!ids.length) return
+
+    let done = 0
+    for (let i = 0; i < ids.length; i += SEED_BATCH_SIZE) {
+      const batch = ids.slice(i, i + SEED_BATCH_SIZE)
+      await Promise.all(batch.map((id) => api.delete(`/tasks/${id}`)))
+      done += batch.length
+      onProgress(done, ids.length)
+    }
+
+    seededTaskIdsRef.current = []
+    await activeBoardMutate(undefined, { revalidate: true })
+  }
+
+  /**
+   * Invalidates SWR cache and re-fetches fresh board data (no seeding).
+   */
+  async function handleForceFresh() {
+    await activeBoardMutate(undefined, { revalidate: true })
   }
 
   if (isCheckingAuth) return null
@@ -123,7 +203,13 @@ export default function Home() {
           </Droppable>
         </DragDropContext>
       )}
-      <PerformanceDashboard onLoadScaleTest={handleLoadScaleTest} version="context" />
+      <PerformanceDashboard
+        onLoadScaleTest={handleLoadScaleTest}
+        onForceFresh={handleForceFresh}
+        onSeedAndFresh={handleSeedAndFresh}
+        onCleanupSeedTasks={handleCleanupSeedTasks}
+        version="context"
+      />
     </>
   )
 }
