@@ -39,7 +39,7 @@ export function SubtaskItem({
   }
 
   return (
-    <Container style={{ marginTop: '0.5rem' }}>
+    <Container>
       <CheckInput
         isChecked={isChecked}
         onClick={() => handleToggleSubtaskStatus()}

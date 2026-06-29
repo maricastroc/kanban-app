@@ -1,47 +1,69 @@
 import { baseFontSizes } from './base'
 
 export const darkTheme = {
-  'title-color': '#FFFFFF',
+  'title-color': '#F4F5F7',
 
-  'primary-color': '#635FC7',
-  'primary-hover': '#A8A4FF',
+  'primary-color': '#1AA294',
+  'primary-hover': '#2BBEAF',
 
-  'border-btn-color': '#d29c5e',
+  'border-btn-color': '#1AA294',
 
-  'tags-btn-color': '#A8A4FF',
+  'tags-btn-color': '#2BBEAF',
 
-  'secondary-color': '#FFFFFF',
-  'secondary-hover': '#DCDBFA',
+  'secondary-color': '#16161B',
+  'secondary-hover': '#1F1F26',
 
-  'tertiary-hover': '#A8A4FF',
+  'tertiary-hover': '#2BBEAF',
 
-  'action-btn-color': '#ffffff',
-  'action-btn-hover': '#A8A4FF',
+  'action-btn-color': '#E7E7EA',
+  'action-btn-hover': '#2BBEAF',
 
-  'sidebar-btn-color': '#635FC7',
-  'sidebar-btn-hover': '#FFFFFF',
+  'sidebar-btn-color': '#1AA294',
+  'sidebar-btn-hover': 'rgba(26, 162, 148, 0.13)',
 
-  'error-color': '#EA5555',
-  'error-hover': '#FF9898',
+  'error-color': '#E5484D',
+  'error-hover': '#FF6166',
 
-  'button-title': '#FFFFFF',
+  'button-title': '#04201C',
 
-  'text-color': '#E4EBFA',
-  'select-color': '#282828',
+  'text-color': '#C7CAD1',
+  'select-color': '#16161B',
 
-  'paragraph-color': '#F4F7FD',
-  'details-color': '#E4EBFA',
-  'subtitle-color': '#828FA3',
-  'border-color': '#505361',
-  'cards-color': '#2B2C37',
-  'bg-color': '#20212C',
-  'scroll-color': '#3E3F4E',
+  'paragraph-color': '#C7CAD1',
+  'details-color': '#8A8E98',
+  'subtitle-color': '#878B95',
+  'border-color': 'rgba(255, 255, 255, 0.08)',
+  'cards-color': '#16161B',
+  'bg-color': '#0A0A0C',
+  'scroll-color': '#2A2A30',
 
-  'light-bg-color': '#FFFFFF',
+  'light-bg-color': '#16161B',
 
-  'completed-color': '#67E2AE',
-  'overdue-color': '#ce524e',
-  'due-soon-color': '#fcc447',
+  'completed-color': '#2FB48A',
+  'overdue-color': '#C95C57',
+  'due-soon-color': '#E0A53B',
+
+  // --- redesign surfaces & accents (C2 / teal) ---
+  'canvas-color': '#0A0A0C',
+  'sidebar-color': '#0D0D11',
+  'panel-color': '#0D0D11',
+  'card-color': '#17181D',
+  'card-hover': '#1E1F26',
+  'field-bg': '#131317',
+  'card-shadow': '0 6px 18px rgba(0, 0, 0, 0.34)',
+  'muted-color': '#6A6D77',
+  'hairline-color': 'rgba(255, 255, 255, 0.06)',
+  'hairline-strong': 'rgba(255, 255, 255, 0.11)',
+  'accent-color': '#1AA294',
+  'accent-hover': '#2BBEAF',
+  'accent-soft': 'rgba(26, 162, 148, 0.13)',
+  'accent-text': '#74D6C7',
+  'accent-on': '#04201C',
+  'accent-glow': 'rgba(26, 162, 148, 0.26)',
+  // exclusive secondary signature accent (rose) — used sparingly for identity
+  'accent-2': '#E8638F',
+  'accent-2-soft': 'rgba(232, 99, 143, 0.14)',
+  'kbd-bg': 'rgba(255, 255, 255, 0.07)',
 
   ...baseFontSizes,
 }

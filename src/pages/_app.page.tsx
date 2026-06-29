@@ -1,4 +1,3 @@
-import '@/utils/wdyr'
 import { ThemeContext, ThemeProvider } from '@/contexts/ThemeContext'
 import { ThemeProvider as StyledThemeProvider } from 'styled-components'
 import { lightTheme } from '@/styles/themes/light'
@@ -28,20 +27,11 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <Toaster
                   toastOptions={{
                     style: {
-                      backgroundColor: '#20212C',
-                      color: '#fff',
-                    },
-                    success: {
-                      style: {
-                        backgroundColor: '#20212C',
-                        color: '#fff',
-                      },
-                    },
-                    error: {
-                      style: {
-                        backgroundColor: '#20212C',
-                        color: '#fff',
-                      },
+                      backgroundColor: enableDarkMode ? '#16161B' : '#FFFFFF',
+                      color: enableDarkMode ? '#E7E7EA' : '#15161A',
+                      border: enableDarkMode
+                        ? '1px solid rgba(255,255,255,0.10)'
+                        : '1px solid rgba(0,0,0,0.10)',
                     },
                   }}
                 />

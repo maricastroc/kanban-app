@@ -7,11 +7,13 @@ import { SubtaskProps } from '@/@types/subtask'
 import { BoardColumnProps } from '@/@types/board-column'
 import { TagProps } from '@/@types/tag'
 
-import { Description } from './styles'
+import { TaskDescription } from './styles'
 
 import * as Dialog from '@radix-ui/react-dialog'
-import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
-import { useOutsideClick } from '@/utils/useOutsideClick'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faListCheck } from '@fortawesome/free-solid-svg-icons'
+import { useEscapeKey } from '@/utils/useEscapeKey'
+import { useClickOutside } from '@/utils/useClickOutside'
 import { handleApiError } from '@/utils/handleApiError'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { useTheme } from '@/contexts/ThemeContext'
@@ -20,7 +22,7 @@ import { DeleteModal } from '../DeleteModal'
 import { TaskFormModal } from '../TaskFormModal'
 import { TagsSection } from '@/components/Shared/TagsSection'
 import { Label } from '@/components/Core/Label'
-import { BaseModal } from '../BaseModal'
+import { Sheet } from '../Sheet'
 import { Header } from './partials/Header'
 import { SubtasksSection } from './partials/SubtasksSection'
 import { StatusSection } from './partials/StatusSection'
@@ -36,7 +38,7 @@ export function TaskDetailsModal({
   column,
   onClose,
 }: TaskDetailsModalProps) {
-  useEscapeKeyHandler(onClose)
+  useEscapeKey(onClose)
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -64,7 +66,7 @@ export function TaskDetailsModal({
 
   const statusRef = useRef<HTMLDivElement | null>(null)
 
-  useOutsideClick(statusRef as RefObject<HTMLElement>, () => closeAllModals())
+  useClickOutside(statusRef as RefObject<HTMLElement>, () => closeAllModals())
 
   const closeAllModals = () => {
     setIsDeleteModalOpen(false)
@@ -156,12 +158,7 @@ export function TaskDetailsModal({
   return (
     <>
       {!isDeleteModalOpen && !isEditModalOpen && (
-        <BaseModal
-          hasHeader={false}
-          isLoading={isLoading}
-          onClose={onClose}
-          title={task.name}
-        >
+        <Sheet isLoading={isLoading} onClose={onClose}>
           <Header
             enableDarkMode={enableDarkMode}
             taskName={task.name}
@@ -171,9 +168,12 @@ export function TaskDetailsModal({
             onToggleActionsModal={(value) => setIsActionsModalOpen(value)}
           />
 
-          <Description>
-            <p>{task.description || 'No description'}</p>
+          <Sheet.Body>
+            <TaskDescription>
+              {task.description || 'No description'}
+            </TaskDescription>
             <Label>
+              <FontAwesomeIcon icon={faListCheck} />
               {`Subtasks (${completedCount} of ${task?.subtasks?.length})`}
             </Label>
 
@@ -186,11 +186,15 @@ export function TaskDetailsModal({
               handleSetSubtasks={(value) => setSubtasks(value)}
             />
 
+            <Sheet.Divider />
+
             <TagsSection
               taskTags={task.tags}
               onCheckedClick={(item) => handleToggleTagStatus(item, true)}
               onUncheckedClick={(item) => handleToggleTagStatus(item, false)}
             />
+
+            <Sheet.Divider />
 
             <StatusSection
               activeBoard={activeBoard}
@@ -209,8 +213,8 @@ export function TaskDetailsModal({
               status={status}
               onToggleOpen={() => setIsOptionsOpen(true)}
             />
-          </Description>
-        </BaseModal>
+          </Sheet.Body>
+        </Sheet>
       )}
 
       <Dialog.Root open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>

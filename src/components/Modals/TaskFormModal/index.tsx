@@ -1,15 +1,23 @@
 import { RefObject, useRef, useState } from 'react'
 import DatePicker from 'react-datepicker'
 import toast from 'react-hot-toast'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
+  faPlus,
+  faHeading,
+  faAlignLeft,
+  faCalendar,
+  faListCheck,
+} from '@fortawesome/free-solid-svg-icons'
+import {
+  AddSubtaskBtn,
   StyledDatePickerWrapper,
-  SubtasksForm,
   SubtasksWrapper,
 } from './styles'
+import { Sheet, Kbd } from '../Sheet'
+import { Button } from '@/components/Core/Button'
 
 import { FormContainer } from '@/components/Core/FormContainer'
-import { InputContainer } from '@/components/Core/InputContainer'
-import { Button } from '@/components/Core/Button'
 import { FieldsContainer } from '@/components/Core/FieldsContainer'
 import { Field } from '@/components/Core/Field'
 import { CustomTextarea } from '@/components/Core/TextArea'
@@ -17,10 +25,9 @@ import { CustomInput } from '@/components/Core/Input'
 import { Label } from '@/components/Core/Label'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
 import { TagsSection } from '@/components/Shared/TagsSection'
-import { BaseModal } from '../BaseModal'
 
-import { useOutsideClick } from '@/utils/useOutsideClick'
-import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
+import { useClickOutside } from '@/utils/useClickOutside'
+import { useEscapeKey } from '@/utils/useEscapeKey'
 
 import { SubtaskProps } from '@/@types/subtask'
 import { TaskProps } from '@/@types/task'
@@ -67,11 +74,20 @@ export function TaskFormModal({
     watch,
   } = useTaskForm({ isEditing, column, task, onClose })
 
-  useOutsideClick(statusRef as RefObject<HTMLElement>, () =>
+  useClickOutside(statusRef as RefObject<HTMLElement>, () =>
     setIsOptionsContainerOpen(false),
   )
 
-  useEscapeKeyHandler(onClose)
+  useEscapeKey(onClose)
+
+  const submitForm = handleSubmit(handleSubmitTask)
+
+  const handleFormKeyDown = (e: React.KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault()
+      submitForm()
+    }
+  }
 
   const renderSubtaskInput = (index: number, subtask: SubtaskProps) => {
     const error = errors.subtasks?.[index]?.name?.message
@@ -104,100 +120,144 @@ export function TaskFormModal({
   }
 
   return (
-    <BaseModal
-      isLoading={isLoading}
-      onClose={handleClose}
-      title={isEditing ? 'Edit Task' : 'Add New Task'}
-      padding="1.5rem 1.5rem 2rem"
-    >
-      <FormContainer onSubmit={handleSubmit(handleSubmitTask)}>
-        <InputContainer>
-          <Label htmlFor="title">Title</Label>
-          <CustomInput
-            hasError={!!errors.name}
-            placeholder="e.g. Take coffee break"
-            {...register('name')}
-          />
-          {<ErrorMessage message={errors.name?.message} />}
-        </InputContainer>
+    <Sheet isLoading={isLoading} onClose={handleClose}>
+      <Sheet.Header
+        icon={faPlus}
+        title={isEditing ? 'Edit task' : 'Create task'}
+        subtitle={
+          isEditing
+            ? 'Update the details of this task.'
+            : `Add a new task to ${activeBoard?.name || 'this board'}.`
+        }
+        onClose={handleClose}
+      />
 
-        <InputContainer>
-          <Label htmlFor="description">Description</Label>
-          <CustomTextarea
-            hasError={!!errors.description}
-            placeholder="e.g. Task description"
-            {...register('description')}
-          />
-          {<ErrorMessage message={errors.description?.message} />}
-        </InputContainer>
+      <Sheet.Body>
+        <FormContainer
+          id="task-form"
+          onSubmit={submitForm}
+          onKeyDown={handleFormKeyDown}
+          style={{ marginTop: 0, gap: 0 }}
+        >
+          <Sheet.Section>
+            <Sheet.FieldGroup>
+              <Label htmlFor="title">
+                <FontAwesomeIcon icon={faHeading} />
+                Title
+              </Label>
+              <CustomInput
+                hasError={!!errors.name}
+                placeholder="e.g. Take coffee break"
+                {...register('name')}
+              />
+              <ErrorMessage message={errors.name?.message} />
+            </Sheet.FieldGroup>
 
-        <InputContainer>
-          <Label htmlFor="due_date">Due Date</Label>
-          <StyledDatePickerWrapper>
-            <DatePicker
-              placeholderText="dd/mm/yyyy"
-              customInput={<CustomInput />}
-              selected={watch('due_date')}
-              dateFormat="dd/MM/yyyy"
-              onChange={(date) => setValue('due_date', date as Date)}
+            <Sheet.FieldGroup>
+              <Label htmlFor="description">
+                <FontAwesomeIcon icon={faAlignLeft} />
+                Description
+              </Label>
+              <CustomTextarea
+                hasError={!!errors.description}
+                placeholder="e.g. Task description"
+                {...register('description')}
+              />
+              <ErrorMessage message={errors.description?.message} />
+            </Sheet.FieldGroup>
+          </Sheet.Section>
+
+          <Sheet.Divider />
+
+          <Sheet.Section>
+            <Sheet.FieldGroup>
+              <Label htmlFor="due_date">
+                <FontAwesomeIcon icon={faCalendar} />
+                Due date
+              </Label>
+              <StyledDatePickerWrapper>
+                <DatePicker
+                  placeholderText="dd/mm/yyyy"
+                  customInput={<CustomInput />}
+                  selected={watch('due_date')}
+                  dateFormat="dd/MM/yyyy"
+                  popperProps={{ strategy: 'fixed' }}
+                  onChange={(date) => setValue('due_date', date as Date)}
+                />
+              </StyledDatePickerWrapper>
+              <ErrorMessage message={errors.due_date?.message} />
+            </Sheet.FieldGroup>
+
+            <TagsSection
+              taskTags={taskTags}
+              onCheckedClick={(tag) =>
+                setTaskTags((prev) => prev.filter((t) => t.id !== tag.id))
+              }
+              onUncheckedClick={(tag) => setTaskTags((prev) => [...prev, tag])}
             />
-          </StyledDatePickerWrapper>
-          {<ErrorMessage message={errors.due_date?.message} />}
-        </InputContainer>
 
-        <SubtasksForm>
-          <Label>Subtasks</Label>
-          <SubtasksWrapper>
-            {subtasks.map((subtask, index) => (
-              <div key={`${subtask.name}-${index}`}>
-                {renderSubtaskInput(index, subtask)}
-              </div>
-            ))}
+            <Sheet.FieldGroup>
+              <StatusSection
+                statusRef={statusRef}
+                activeBoard={activeBoard}
+                handleChangeStatus={async (column) => {
+                  handleChangeStatus(column.name, column.id as string)
+                  setIsOptionsContainerOpen(false)
+                }}
+                isOpen={isOptionsContainerOpen}
+                isActive={isOptionsContainerOpen}
+                status={status}
+                onToggleOpen={() => setIsOptionsContainerOpen(true)}
+              />
+              <ErrorMessage message={errors.status?.message} />
+            </Sheet.FieldGroup>
+          </Sheet.Section>
 
-            {
+          <Sheet.Divider />
+
+          <Sheet.Section>
+            <Sheet.SectionLabel>
+              <FontAwesomeIcon icon={faListCheck} />
+              Subtasks
+            </Sheet.SectionLabel>
+            <SubtasksWrapper>
+              {subtasks.map((subtask, index) => (
+                <div key={`${subtask.name}-${index}`}>
+                  {renderSubtaskInput(index, subtask)}
+                </div>
+              ))}
               <ErrorMessage
-                style={{ marginTop: '-0.5rem' }}
+                style={{ marginTop: '-0.25rem' }}
                 message={errors?.subtasks?.message}
               />
-            }
-          </SubtasksWrapper>
-          <Button
-            variant="secondary"
-            type="button"
-            title="+ Add New Subtask"
-            onClick={handleAddSubtask}
-          />
-        </SubtasksForm>
+            </SubtasksWrapper>
+            <AddSubtaskBtn type="button" onClick={handleAddSubtask}>
+              <FontAwesomeIcon icon={faPlus} />
+              Add subtask
+            </AddSubtaskBtn>
+          </Sheet.Section>
+        </FormContainer>
+      </Sheet.Body>
 
-        <TagsSection
-          taskTags={taskTags}
-          onCheckedClick={(tag) =>
-            setTaskTags((prev) => prev.filter((t) => t.id !== tag.id))
-          }
-          onUncheckedClick={(tag) => setTaskTags((prev) => [...prev, tag])}
-        />
-
-        <StatusSection
-          statusRef={statusRef}
-          activeBoard={activeBoard}
-          handleChangeStatus={async (column) => {
-            handleChangeStatus(column.name, column.id as string)
-            setIsOptionsContainerOpen(false)
-          }}
-          isOpen={isOptionsContainerOpen}
-          isActive={isOptionsContainerOpen}
-          status={status}
-          onToggleOpen={() => setIsOptionsContainerOpen(true)}
-        />
-
-        {<ErrorMessage message={errors.status?.message} />}
-
+      <Sheet.Footer>
         <Button
-          title={isEditing ? 'Edit Task' : 'Create Task'}
-          type="submit"
+          variant="secondary"
+          fullWidth={false}
+          type="button"
+          onClick={handleClose}
+        >
+          Cancel
+        </Button>
+        <Button
           variant="primary"
-        />
-      </FormContainer>
-    </BaseModal>
+          fullWidth={false}
+          type="submit"
+          form="task-form"
+        >
+          {isEditing ? 'Save changes' : 'Create task'}
+          <Kbd className="onAccent">⌘↵</Kbd>
+        </Button>
+      </Sheet.Footer>
+    </Sheet>
   )
 }

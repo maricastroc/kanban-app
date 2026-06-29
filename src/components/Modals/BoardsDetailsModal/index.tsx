@@ -8,7 +8,7 @@ import {
   SwitchThumb,
 } from './styles'
 import { useBoardsContext } from '@/contexts/BoardsContext'
-import { useEscapeKeyHandler } from '@/utils/useEscapeKeyPress'
+import { useEscapeKey } from '@/utils/useEscapeKey'
 import BoardIcon from '@/../public/icon-board.svg'
 import LightThemeSvg from '@/../public/icon-light-theme.svg'
 import DarkThemeSvg from '@/../public/icon-dark-theme.svg'
@@ -51,7 +51,7 @@ export function BoardsDetailsModal({ onClose }: BoardsDetailsModalProps) {
 
   const [addBoardModalOpen, setAddBoardModalOpen] = useState(false)
 
-  useEscapeKeyHandler(onClose)
+  useEscapeKey(onClose)
 
   const handleActivateBoard = async (board: BoardProps) => {
     try {

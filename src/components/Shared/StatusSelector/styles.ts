@@ -3,36 +3,32 @@ import styled from 'styled-components'
 export const StatusSelectorBtn = styled.button`
   position: relative;
   display: flex;
-  padding: 0.3rem;
-  padding-left: 0rem;
+  padding: 0.5rem 0.6rem 0.5rem 2rem;
   align-items: center;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 7px;
   width: 100%;
   background-color: transparent;
-  border: 2px solid transparent;
+  border: none;
   font-size: ${(props) => props.theme['body-l']};
   font-weight: 500;
-  text-align: flex-start;
-  color: ${(props) => props.theme['subtitle-color']};
-
-  &:focus {
-    box-shadow: none;
-  }
+  text-align: left;
+  color: ${(props) => props.theme['text-color']};
+  transition: background-color 140ms ease, color 140ms ease;
 
   &:hover {
-    background-color: ${(props) => `${props.theme['subtitle-color']}1A`};
+    background-color: ${(props) => props.theme['card-hover']};
     color: ${(props) => props.theme['title-color']};
   }
 
   svg {
     position: absolute;
-    color: ${(props) => props.theme['primary-color']};
-    font-size: 0.9rem;
-    left: 0.2rem;
+    color: ${(props) => props.theme['accent-color']};
+    font-size: 0.85rem;
+    left: 0.65rem;
   }
 
   span {
-    margin-left: 1.2rem;
+    margin-left: 0;
   }
 `

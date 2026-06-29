@@ -1,16 +1,28 @@
 import toast from 'react-hot-toast'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faPlus,
+  faXmark,
+  faHeading,
+  faTableColumns,
+  faGripVertical,
+} from '@fortawesome/free-solid-svg-icons'
 import { MAX_COLUMNS } from '@/utils/constants'
 import { BoardColumnProps } from '@/@types/board-column'
 import { FormContainer } from '@/components/Core/FormContainer'
-import { InputContainer } from '@/components/Core/InputContainer'
 import { Button } from '@/components/Core/Button'
-import { FieldsContainer } from '@/components/Core/FieldsContainer'
-import { Field } from '@/components/Core/Field'
 import { CustomInput } from '@/components/Core/Input'
 import { Label } from '@/components/Core/Label'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
-import { ColumnsContainer, ColumnsContent } from './styles'
-import { BaseModal } from '../BaseModal'
+import {
+  AddColumnBtn,
+  ColumnInput,
+  ColumnRow,
+  ColumnsWrapper,
+  GripIcon,
+  RemoveColumnBtn,
+} from './styles'
+import { Sheet } from '../Sheet'
 import { useBoardForm } from '@/hooks/useBoardForm'
 
 interface BoardModalProps {
@@ -32,75 +44,119 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
     handleSubmitBoard,
   } = useBoardForm({ isEditing, onClose })
 
-  const renderColumnInput = (column: BoardColumnProps, index: number) => {
+  const submitForm = handleSubmit(handleSubmitBoard)
+
+  const renderColumnRow = (column: BoardColumnProps, index: number) => {
     const error = errors.columns?.[index]?.name?.message
+    const canRemove = boardColumns?.length > 1
 
     return (
-      <FieldsContainer key={index}>
-        <Field
-          hasError={!!error}
-          isDisabled={false}
-          btnVariant={boardColumns?.length > 1 ? '' : 'disabled'}
-          defaultValue={column.name}
-          placeholder="e.g. New Column"
-          onChange={(e) => handleChangeColumn(index, e.target.value)}
-          onClick={() => {
-            if (boardColumns?.length > 1) {
-              handleRemoveColumn(index)
-            } else {
-              toast.error('Board needs to have at least one column.')
-            }
-          }}
-        />
-        {<ErrorMessage message={error} />}
-      </FieldsContainer>
+      <Sheet.FieldGroup key={`${column.name}-${index}`}>
+        <ColumnRow className={error ? 'error' : ''}>
+          <GripIcon>
+            <FontAwesomeIcon icon={faGripVertical} />
+          </GripIcon>
+          <ColumnInput
+            spellCheck={false}
+            defaultValue={column.name}
+            placeholder="e.g. Todo"
+            onBlur={(e) => handleChangeColumn(index, e.target.value)}
+          />
+          <RemoveColumnBtn
+            type="button"
+            aria-label="Remove column"
+            disabled={!canRemove}
+            onClick={() => {
+              if (canRemove) {
+                handleRemoveColumn(index)
+              } else {
+                toast.error('Board needs to have at least one column.')
+              }
+            }}
+          >
+            <FontAwesomeIcon icon={faXmark} />
+          </RemoveColumnBtn>
+        </ColumnRow>
+        <ErrorMessage message={error} />
+      </Sheet.FieldGroup>
     )
   }
 
   return (
-    <BaseModal
-      onClose={onClose}
-      isLoading={isLoading}
-      title={isEditing ? 'Edit Board' : 'Create Board'}
-    >
-      <FormContainer onSubmit={handleSubmit(handleSubmitBoard)}>
-        <InputContainer>
-          <Label htmlFor="name">Board Name</Label>
-          <CustomInput
-            hasError={!!errors.name}
-            placeholder="e.g. Backend Tasks"
-            {...register('name')}
-          />
-          {<ErrorMessage message={errors.name?.message} />}
-        </InputContainer>
+    <Sheet isLoading={isLoading} onClose={onClose}>
+      <Sheet.Header
+        icon={faTableColumns}
+        title={isEditing ? 'Edit board' : 'Create board'}
+        subtitle="Rename the board and customize its workflow columns."
+        onClose={onClose}
+      />
 
-        <ColumnsContainer>
-          <Label>Columns</Label>
-          <ColumnsContent>
-            {boardColumns.map((column, index) => (
-              <div key={`${column.name}-${index}`}>
-                {renderColumnInput(column, index)}
-              </div>
-            ))}
-          </ColumnsContent>
-          {boardColumns.length < MAX_COLUMNS && (
-            <Button
-              variant="secondary"
-              type="button"
-              title="+ Add New Column"
-              onClick={handleAddColumn}
-            />
-          )}
-        </ColumnsContainer>
+      <Sheet.Body>
+        <FormContainer
+          id="board-form"
+          onSubmit={submitForm}
+          style={{ marginTop: 0, gap: 0 }}
+        >
+          <Sheet.Section>
+            <Sheet.FieldGroup>
+              <Label htmlFor="name">
+                <FontAwesomeIcon icon={faHeading} />
+                Board name
+              </Label>
+              <CustomInput
+                hasError={!!errors.name}
+                placeholder="e.g. Backend Tasks"
+                {...register('name')}
+              />
+              <ErrorMessage message={errors.name?.message} />
+            </Sheet.FieldGroup>
+          </Sheet.Section>
 
+          <Sheet.Divider />
+
+          <Sheet.Section>
+            <Sheet.SectionLabel>
+              <FontAwesomeIcon icon={faTableColumns} />
+              Workflow columns
+            </Sheet.SectionLabel>
+            <Sheet.SectionHint>
+              These stages define how work moves across your board.
+            </Sheet.SectionHint>
+            <ColumnsWrapper>
+              {boardColumns.map((column, index) =>
+                renderColumnRow(column, index),
+              )}
+            </ColumnsWrapper>
+            {boardColumns.length < MAX_COLUMNS && (
+              <AddColumnBtn type="button" onClick={handleAddColumn}>
+                <FontAwesomeIcon icon={faPlus} />
+                Add column
+              </AddColumnBtn>
+            )}
+          </Sheet.Section>
+        </FormContainer>
+      </Sheet.Body>
+
+      <Sheet.Footer>
         <Button
+          variant="secondary"
+          fullWidth={false}
+          type="button"
+          onClick={onClose}
+        >
+          Cancel
+        </Button>
+        <Button
+          variant="primary"
+          fullWidth={false}
+          type="submit"
+          form="board-form"
           disabled={isSubmitting}
           isLoading={isSubmitting}
-          title={isEditing ? 'Save Changes' : 'Create Board'}
-          type="submit"
-          variant="primary"
-        />
-      </FormContainer>
-    </BaseModal>
+        >
+          {isEditing ? 'Save changes' : 'Create board'}
+        </Button>
+      </Sheet.Footer>
+    </Sheet>
   )
 }

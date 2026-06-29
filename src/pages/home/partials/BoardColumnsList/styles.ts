@@ -5,32 +5,21 @@ export const AddColumnContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 17.5rem;
-  height: auto;
-  margin-top: 2.4rem;
-  border-radius: 8px;
-
-  &.dark {
-    background: linear-gradient(
-      to bottom,
-      rgba(130, 143, 163, 0.075),
-      rgba(130, 143, 163, 0)
-    );
-  }
-
-  &.light {
-    background: linear-gradient(180deg, #e9effa, rgba(233, 239, 250, 0.5));
-  }
+  min-width: 11rem;
+  max-width: 11rem;
+  align-self: flex-start;
+  min-height: 120px;
+  border: 1.5px dashed ${(props) => props.theme['hairline-strong']};
+  border-radius: 12px;
+  background-color: transparent;
+  transition: border-color 160ms, background-color 160ms;
 
   &:hover {
-    h2 {
-      color: ${(props) => props.theme['primary-color']};
-      transition: 200ms;
-    }
+    border-color: ${(props) => props.theme['accent-color']};
+    background-color: ${(props) => props.theme['accent-soft']};
 
     button {
-      color: ${(props) => props.theme['primary-color']};
-      transition: 200ms;
+      color: ${(props) => props.theme['accent-text']};
     }
   }
 `
@@ -39,12 +28,16 @@ export const AddColumnBtn = styled.button`
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 0.4rem;
   background-color: transparent;
-  border: 2px solid transparent;
-  border-radius: 8px;
-  padding: 0.2rem;
-  font-size: clamp(1.2rem, 3vw, 1.5rem);
-  color: ${(props) => props.theme['subtitle-color']};
-  font-weight: 700;
+  border: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: ${(props) => props.theme['muted-color']};
+  transition: color 160ms;
+
+  span {
+    font-size: 1.05rem;
+    line-height: 1;
+  }
 `

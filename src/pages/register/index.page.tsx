@@ -19,10 +19,21 @@ import {
   LayoutContainer,
   LoginCard,
   LogoWrapper,
+  PasswordIconWrapper,
+  Tagline,
   TitleContainer,
 } from '../login/styles'
-import { Envelope, LockKey, User } from 'phosphor-react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faEnvelope,
+  faEye,
+  faEyeSlash,
+  faLock,
+  faUser,
+  faUserPlus,
+} from '@fortawesome/free-solid-svg-icons'
 import { Button } from '@/components/Core/Button'
+import { Label } from '@/components/Core/Label'
 import Image from 'next/image'
 import Link from 'next/link'
 import { api } from '@/lib/axios'
@@ -58,6 +69,7 @@ export default function Login() {
   const isRouteLoading = useLoadingOnRouteChange()
 
   const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const {
     register,
@@ -118,6 +130,9 @@ export default function Login() {
               alt="Kanban App text logo"
             />
           </LogoWrapper>
+
+          <Tagline>Organize projects with clarity.</Tagline>
+
           <LoginCard>
             <TitleContainer>
               <h1>Create account</h1>
@@ -127,11 +142,11 @@ export default function Login() {
             <FormContainer onSubmit={handleSubmit(onSubmit)}>
               <InputsContainer>
                 <FormField>
-                  <label htmlFor="name">Name</label>
+                  <Label htmlFor="name">Name</Label>
 
                   <InputContainer>
                     <IconWrapper aria-hidden="true">
-                      <User size={16} />
+                      <FontAwesomeIcon icon={faUser} style={{ fontSize: 16 }} />
                     </IconWrapper>
                     <InputField
                       id="name"
@@ -147,11 +162,14 @@ export default function Login() {
                 </FormField>
 
                 <FormField>
-                  <label htmlFor="email">E-mail</label>
+                  <Label htmlFor="email">Email</Label>
 
                   <InputContainer>
                     <IconWrapper aria-hidden="true">
-                      <Envelope size={16} />
+                      <FontAwesomeIcon
+                        icon={faEnvelope}
+                        style={{ fontSize: 16 }}
+                      />
                     </IconWrapper>
                     <InputField
                       id="email"
@@ -167,18 +185,41 @@ export default function Login() {
                 </FormField>
 
                 <FormField>
-                  <label htmlFor="password">Password</label>
+                  <Label htmlFor="password">Password</Label>
 
                   <InputContainer>
                     <IconWrapper aria-hidden="true">
-                      <LockKey size={16} />
+                      <FontAwesomeIcon icon={faLock} style={{ fontSize: 16 }} />
                     </IconWrapper>
                     <InputField
                       id="password"
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       placeholder="Enter your password"
                       {...register('password')}
                     />
+
+                    <PasswordIconWrapper
+                      type="button"
+                      aria-label={
+                        showPassword ? 'Hide password' : 'Show password'
+                      }
+                      aria-pressed={showPassword}
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <FontAwesomeIcon
+                          icon={faEyeSlash}
+                          style={{ fontSize: 16 }}
+                          aria-hidden="true"
+                        />
+                      ) : (
+                        <FontAwesomeIcon
+                          icon={faEye}
+                          style={{ fontSize: 16 }}
+                          aria-hidden="true"
+                        />
+                      )}
+                    </PasswordIconWrapper>
                   </InputContainer>
 
                   {errors?.password && (
@@ -189,9 +230,16 @@ export default function Login() {
 
               <Button
                 isBigger
-                disabled={isSubmitting || isLoading}
-                title="Sign Up"
-              />
+                isLoading={isSubmitting || isLoading}
+                type="submit"
+              >
+                <FontAwesomeIcon
+                  icon={faUserPlus}
+                  style={{ fontSize: 14 }}
+                  aria-hidden="true"
+                />
+                Sign Up
+              </Button>
 
               <CreateAccountContainer>
                 <p>Already have an account?</p>

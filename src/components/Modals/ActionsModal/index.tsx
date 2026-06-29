@@ -1,12 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Dialog from '@radix-ui/react-dialog'
-import { ModalContent, ActionBtn, LogoutBtn } from './styles'
+import { ModalContent } from './styles'
+import { MenuDivider, MenuItem } from '@/components/Core/Menu/styles'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { useState } from 'react'
 import { DeleteModal } from '../DeleteModal'
 import { BoardFormModal } from '../BoardFormModal'
 import { useTheme } from '@/contexts/ThemeContext'
-import { SignOut } from 'phosphor-react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faPen,
+  faRightFromBracket,
+  faTrashCan,
+} from '@fortawesome/free-solid-svg-icons'
 import toast from 'react-hot-toast'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { api } from '@/lib/axios'
@@ -96,13 +102,14 @@ export function ActionsModal({ onClose }: Props) {
               }}
             >
               <Dialog.Trigger asChild>
-                <ActionBtn
+                <MenuItem
+                  type="button"
                   disabled={isLoading}
                   onClick={handleEditModalOpen}
-                  className="edit"
                 >
+                  <FontAwesomeIcon icon={faPen} />
                   Edit Board
-                </ActionBtn>
+                </MenuItem>
               </Dialog.Trigger>
               {activeBoard && (
                 <BoardFormModal isEditing onClose={closeEditModal} />
@@ -119,9 +126,14 @@ export function ActionsModal({ onClose }: Props) {
               }}
             >
               <Dialog.Trigger asChild>
-                <ActionBtn onClick={handleDeleteModalOpen} className="delete">
+                <MenuItem
+                  type="button"
+                  className="danger"
+                  onClick={handleDeleteModalOpen}
+                >
+                  <FontAwesomeIcon icon={faTrashCan} />
                   Delete Board
-                </ActionBtn>
+                </MenuItem>
               </Dialog.Trigger>
               {activeBoard && (
                 <DeleteModal type={'board'} onClose={closeDeleteModal} />
@@ -129,11 +141,11 @@ export function ActionsModal({ onClose }: Props) {
             </Dialog.Root>
           </>
         )}
-        <span></span>
-        <LogoutBtn onClick={handleLogout}>
+        <MenuDivider />
+        <MenuItem type="button" onClick={handleLogout}>
+          <FontAwesomeIcon icon={faRightFromBracket} />
           Logout
-          <SignOut size={22} />
-        </LogoutBtn>
+        </MenuItem>
       </ModalContent>
     </Dialog.Portal>
   )

@@ -9,6 +9,11 @@ export const LayoutContainer = styled.div`
   min-height: 100vh;
   flex-grow: 1;
   background-color: ${(props) => props.theme['bg-color']};
+  background-image: radial-gradient(
+    600px circle at 50% 38%,
+    rgba(26, 162, 148, 0.07),
+    transparent 70%
+  );
 `
 
 export const LoginCard = styled.div`
@@ -21,12 +26,12 @@ export const LoginCard = styled.div`
   padding-top: 4.5rem;
   padding-bottom: 4rem;
   margin-bottom: 1.5rem;
-  max-width: 30rem;
+  max-width: 31.25rem;
   flex-direction: column;
   background-color: ${(props) => props.theme['bg-color']};
 
   @media (min-width: 480px) {
-    padding: 2rem;
+    padding: 2.75rem;
     margin-bottom: 2.5rem;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     background-color: ${(props) => props.theme['cards-color']};
@@ -46,8 +51,17 @@ export const LogoWrapper = styled.div`
   }
 
   @media (min-width: 480px) {
-    padding-bottom: 2.5rem;
+    padding-bottom: 0.75rem;
   }
+`
+
+export const Tagline = styled.p`
+  width: 100%;
+  text-align: center;
+  color: ${(props) => props.theme['paragraph-color']};
+  font-size: ${(props) => props.theme['heading-m']};
+  letter-spacing: 0.2px;
+  padding-bottom: 1.75rem;
 `
 
 export const TitleContainer = styled.div`
@@ -76,7 +90,11 @@ export const FormContainer = styled.form`
   width: 100%;
   flex-direction: column;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 2.5rem;
+
+  > button {
+    height: 52px;
+  }
 `
 
 export const InputsContainer = styled.div`
@@ -93,13 +111,6 @@ export const FormField = styled.div`
   flex-direction: column;
   width: 100%;
   margin-bottom: 0.5rem;
-
-  label {
-    font-size: ${(props) => props.theme['body-m']};
-    font-weight: 700;
-    color: ${(props) => props.theme['title-color']};
-    margin-bottom: 0.2rem;
-  }
 `
 
 export const InputContainer = styled.div`
@@ -133,8 +144,18 @@ export const InputField = styled.input`
     background-color: transparent;
   }
 
-  &:focus {
+  &:focus,
+  &:focus-visible {
     background-color: transparent;
+    outline: none;
+    border-color: ${(props) => props.theme['accent-color']};
+    box-shadow: 0 0 0 3px ${(props) => props.theme['accent-soft']};
+  }
+
+  &:-webkit-autofill:focus {
+    border: 2px solid ${(props) => props.theme['accent-color']};
+    box-shadow: 0 0 0px 1000px #000 inset,
+      0 0 0 3px ${(props) => props.theme['accent-soft']};
   }
 
   &.error {
@@ -192,12 +213,13 @@ export const CreateAccountContainer = styled.div`
     text-decoration: none;
     border: 2px solid transparent;
     border-radius: 4px;
-    color: ${(props) => props.theme['primary-hover']};
-    transition: 200ms;
+    color: ${(props) => props.theme['accent-color']};
+    transition: color 200ms;
     font-size: ${(props) => props.theme['heading-m']};
 
     &:hover {
-      color: ${(props) => props.theme['secondary-hover']};
+      color: ${(props) => props.theme['accent-hover']};
+      text-decoration: underline;
     }
   }
 

@@ -5,10 +5,15 @@ export const Container = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 1rem;
-  background-color: ${(props) => props.theme['bg-color']};
+  gap: 0.75rem;
+  background-color: transparent;
   border-radius: 8px;
-  padding: 0.85rem;
+  padding: 0.5rem 0.55rem;
+  transition: background-color 140ms ease;
+
+  &:hover {
+    background-color: ${(props) => props.theme['card-hover']};
+  }
 `
 
 export const Title = styled.p`

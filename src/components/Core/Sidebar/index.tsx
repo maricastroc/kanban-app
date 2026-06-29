@@ -1,33 +1,37 @@
 import {
   BoardButton,
+  BoardIcon,
   BoardsContainer,
+  Brand,
   Container,
+  CreateBoardArea,
   CreateBoardButton,
+  CreateDivider,
   HideButton,
-  LogoWrapper,
   OptionsContainer,
+  SectionLabel,
   SwitchRoot,
   SwitchThumb,
   ThemeSwitcherContainer,
-  Title,
   Wrapper,
 } from './styles'
 import * as Dialog from '@radix-ui/react-dialog'
 
-import IconBoard from '@/../public/icon-board.svg'
-import LightThemeSvg from '@/../public/icon-light-theme.svg'
-import DarkThemeSvg from '@/../public/icon-dark-theme.svg'
-import Logo from '@/../public/icon.svg'
-import LogoTextLight from '../../../../public/kanban.svg'
-import LogoTextDark from '../../../../public/kanban-dark.svg'
 import { useState } from 'react'
 
-import { EyeSlash } from 'phosphor-react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faTableColumns,
+  faPlus,
+  faEyeSlash,
+  faMoon,
+  faSun,
+} from '@fortawesome/free-solid-svg-icons'
 import { BoardFormModal } from '@/components/Modals/BoardFormModal'
-import Image from 'next/image'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { handleApiError } from '@/utils/handleApiError'
+import { getBoardColor } from '@/utils/getBoardColor'
 import { api } from '@/lib/axios'
 import { BoardProps } from '@/@types/board'
 
@@ -35,6 +39,12 @@ interface SidebarProps {
   onClose: () => void
   className?: string
 }
+
+const getBoardTaskCount = (board: BoardProps) =>
+  board.columns?.reduce(
+    (total, column) => total + (column.tasks?.length || 0),
+    0,
+  ) || 0
 
 export function Sidebar({ onClose, className }: SidebarProps) {
   const { toggleTheme, enableDarkMode } = useTheme()
@@ -56,19 +66,25 @@ export function Sidebar({ onClose, className }: SidebarProps) {
   return (
     <Container className={className}>
       <Wrapper className={className}>
-        <LogoWrapper>
-          <Image src={Logo} width={24} height={24} alt="" />
-          <Image
-            src={enableDarkMode ? LogoTextLight : LogoTextDark}
-            width={112}
-            height={24}
-            className="logo"
-            alt=""
-          />
-        </LogoWrapper>
-        <Title>{`All Boards (${boards?.length || 0})`}</Title>
+        <Brand>
+          <span className="logo-mark">
+            <FontAwesomeIcon
+              icon={faTableColumns}
+              style={{ fontSize: '0.9rem' }}
+            />
+          </span>
+          <span>kanban</span>
+        </Brand>
+
+        <SectionLabel>
+          <span>Boards</span>
+          <span>{boards?.length || 0}</span>
+        </SectionLabel>
+
         <BoardsContainer>
           {boards?.map((board) => {
+            const taskCount = getBoardTaskCount(board)
+            const color = getBoardColor(board.name)
             return (
               <BoardButton
                 key={board.name}
@@ -77,11 +93,19 @@ export function Sidebar({ onClose, className }: SidebarProps) {
                   handleActivateBoard(board)
                 }}
               >
-                <Image src={IconBoard} alt="" />
+                <BoardIcon style={{ backgroundColor: `${color}22`, color }}>
+                  {board.name.charAt(0).toUpperCase()}
+                </BoardIcon>
                 <p>{board.name}</p>
+                {taskCount > 0 && <span className="count">{taskCount}</span>}
               </BoardButton>
             )
           })}
+        </BoardsContainer>
+
+        <CreateBoardArea>
+          <CreateDivider />
+
           <Dialog.Root open={isAddBoardModalOpen}>
             <Dialog.Trigger asChild>
               <CreateBoardButton
@@ -90,8 +114,10 @@ export function Sidebar({ onClose, className }: SidebarProps) {
                   setIsAddBoardModalOpen(true)
                 }}
               >
-                <Image src={IconBoard} alt="" />
-                <p>+ Create New Board</p>
+                <span className="plus-box">
+                  <FontAwesomeIcon icon={faPlus} />
+                </span>
+                <p>Create board</p>
               </CreateBoardButton>
             </Dialog.Trigger>
             {isAddBoardModalOpen && (
@@ -103,32 +129,29 @@ export function Sidebar({ onClose, className }: SidebarProps) {
               />
             )}
           </Dialog.Root>
-        </BoardsContainer>
+        </CreateBoardArea>
       </Wrapper>
+
       <OptionsContainer>
         <ThemeSwitcherContainer>
-          <Image src={DarkThemeSvg} alt="" />
+          <FontAwesomeIcon icon={faMoon} />
           <SwitchRoot
             className="SwitchRoot"
-            id="airplane-mode"
-            onClick={() => {
+            id="theme-switch"
+            checked={!enableDarkMode}
+            onCheckedChange={() => {
               toggleTheme()
             }}
           >
             <SwitchThumb className="SwitchThumb" />
           </SwitchRoot>
-          <Image src={LightThemeSvg} alt="" />
+          <FontAwesomeIcon icon={faSun} />
         </ThemeSwitcherContainer>
         <HideButton onClick={onClose}>
-          <EyeSlash />
-          <p>Hide Sidebar</p>
+          <FontAwesomeIcon icon={faEyeSlash} />
+          <p>Hide sidebar</p>
         </HideButton>
       </OptionsContainer>
     </Container>
   )
-}
-
-
-if (process.env.NODE_ENV === 'development') {
-  Sidebar.whyDidYouRender = true
 }

@@ -22,9 +22,17 @@ import {
   LoginCard,
   LogoWrapper,
   PasswordIconWrapper,
+  Tagline,
   TitleContainer,
 } from './styles'
-import { Envelope, Eye, EyeSlash, LockKey } from 'phosphor-react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faEnvelope,
+  faEye,
+  faEyeSlash,
+  faLock,
+  faRightToBracket,
+} from '@fortawesome/free-solid-svg-icons'
 import { Button } from '@/components/Core/Button'
 import Image from 'next/image'
 import { toast } from 'react-hot-toast'
@@ -117,20 +125,25 @@ export default function Login() {
             />
           </LogoWrapper>
 
+          <Tagline>Organize projects with clarity.</Tagline>
+
           <LoginCard>
             <TitleContainer>
               <h1>Login</h1>
-              <p>Add your details below to get back into the app</p>
+              <p>Welcome back. Sign in to continue.</p>
             </TitleContainer>
 
             <FormContainer onSubmit={handleSubmit(onSubmit)}>
               <InputsContainer>
                 <FormField>
-                  <label htmlFor="email">E-mail</label>
+                  <Label htmlFor="email">Email</Label>
 
                   <InputContainer>
                     <IconWrapper aria-hidden="true">
-                      <Envelope size={16} />
+                      <FontAwesomeIcon
+                        icon={faEnvelope}
+                        style={{ fontSize: 16 }}
+                      />
                     </IconWrapper>
 
                     <InputField
@@ -153,7 +166,7 @@ export default function Login() {
 
                   <InputContainer>
                     <IconWrapper aria-hidden="true">
-                      <LockKey size={16} />
+                      <FontAwesomeIcon icon={faLock} style={{ fontSize: 16 }} />
                     </IconWrapper>
 
                     <InputField
@@ -174,9 +187,17 @@ export default function Login() {
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
-                        <EyeSlash size={16} aria-hidden="true" />
+                        <FontAwesomeIcon
+                          icon={faEyeSlash}
+                          style={{ fontSize: 16 }}
+                          aria-hidden="true"
+                        />
                       ) : (
-                        <Eye size={16} aria-hidden="true" />
+                        <FontAwesomeIcon
+                          icon={faEye}
+                          style={{ fontSize: 16 }}
+                          aria-hidden="true"
+                        />
                       )}
                     </PasswordIconWrapper>
                   </InputContainer>
@@ -190,9 +211,15 @@ export default function Login() {
               <Button
                 isBigger
                 isLoading={isSubmitting || isLoading}
-                title="Login"
                 type="submit"
-              />
+              >
+                <FontAwesomeIcon
+                  icon={faRightToBracket}
+                  style={{ fontSize: 14 }}
+                  aria-hidden="true"
+                />
+                Login
+              </Button>
 
               <CreateAccountContainer>
                 <p>Don&apos;t have an account?</p>

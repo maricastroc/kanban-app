@@ -1,9 +1,19 @@
-import { TagContainer, TagMark, TagName, TagsContainer } from './styles'
-import { TagsTitle } from '@/components/Modals/TagsModal/styles'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCheck, faTags } from '@fortawesome/free-solid-svg-icons'
+import {
+  Chip,
+  ChipCheck,
+  ChipDot,
+  ChipsWrap,
+  Empty,
+  TagsContainer,
+  TagsHeader,
+  TagsHint,
+  TagsLabel,
+} from './styles'
 import { TagProps } from '@/@types/tag'
 import { TaskTagProps } from '@/@types/task-tag'
-import { CheckInput } from '../../Core/CheckInput'
-import { tagColors } from '@/utils/constants'
+import { getTagHex } from '@/utils/getTagHex'
 import useRequest from '@/utils/useRequest'
 
 interface Props {
@@ -26,9 +36,6 @@ export const TagsSection = ({
 
   const tags = data?.tags
 
-  const getTagColor = (colorName: string) =>
-    tagColors.find((tag) => tag.name === colorName)?.color || ''
-
   const isTagChecked = (id: string) =>
     taskTags?.some((tag) => String(tag.id) === String(id))
 
@@ -42,28 +49,43 @@ export const TagsSection = ({
 
   return (
     <TagsContainer>
-      <TagsTitle>Tags</TagsTitle>
+      <TagsHeader>
+        <TagsLabel>
+          <FontAwesomeIcon icon={faTags} />
+          Tags
+        </TagsLabel>
+        <TagsHint>Choose one or more labels for this task.</TagsHint>
+      </TagsHeader>
 
       {tags && tags.length > 0 ? (
-        tags.map((item) => {
-          const isChecked = isTagChecked(item.id as string) || false
-          const tagColor = getTagColor(item.color)
+        <ChipsWrap>
+          {tags.map((item) => {
+            const isChecked = isTagChecked(item.id as string) || false
+            const tagColor = getTagHex(item.color)
 
-          return (
-            <TagContainer key={item.id}>
-              <CheckInput
-                isChecked={isChecked}
+            return (
+              <Chip
+                key={item.id}
+                type="button"
+                $color={tagColor}
+                $checked={isChecked}
+                aria-pressed={isChecked}
                 onClick={() => handleClick(item, isChecked)}
-              />
-              <TagName>
-                <p>{item.name}</p>
-                <TagMark color={tagColor} />
-              </TagName>
-            </TagContainer>
-          )
-        })
+              >
+                {isChecked ? (
+                  <ChipCheck>
+                    <FontAwesomeIcon icon={faCheck} />
+                  </ChipCheck>
+                ) : (
+                  <ChipDot $color={tagColor} />
+                )}
+                {item.name}
+              </Chip>
+            )
+          })}
+        </ChipsWrap>
       ) : (
-        <span>No tags available.</span>
+        <Empty>No tags available.</Empty>
       )}
     </TagsContainer>
   )

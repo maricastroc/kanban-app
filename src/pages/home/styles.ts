@@ -7,6 +7,10 @@ export const LayoutContainer = styled.div`
   overflow: hidden;
   height: 100%;
   background-color: ${(props) => props.theme['bg-color']};
+
+  @media (min-width: 768px) {
+    height: 100vh;
+  }
 `
 
 export const BoardContent = styled.div`
@@ -15,6 +19,11 @@ export const BoardContent = styled.div`
   min-height: 100vh;
   height: 100%;
   overflow: hidden;
+
+  @media (min-width: 768px) {
+    min-height: 0;
+    height: 100vh;
+  }
 `
 
 export const Wrapper = styled.div`
@@ -29,33 +38,41 @@ export const Wrapper = styled.div`
   }
 
   scrollbar-width: none;
+
+  @media (min-width: 768px) {
+    min-height: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
 `
 
 export const ColumnsContainer = styled.div`
   display: flex;
-  overflow-x: scroll;
-  padding: 1.5rem;
-  gap: 1.5rem;
+  overflow-x: auto;
+  padding: 1rem;
+  gap: 0.85rem;
   flex-grow: 1;
-  padding-bottom: 2rem;
+  padding-bottom: 1.5rem;
   justify-content: initial;
-  align-items: stretch;
-  cursor: move;
+  align-items: flex-start;
+  cursor: grab;
   height: 100%;
 
+  &:active {
+    cursor: grabbing;
+  }
+
   @media (min-width: 768px) {
-    padding: 1.5rem;
-    min-height: 100%;
-    margin-left: 260px;
+    flex: 1;
+    min-height: 0;
+    height: auto;
+    overflow-y: hidden;
+    padding: 1.25rem 1.5rem;
+    margin-left: 220px;
 
     &.hide-sidebar-mode {
       margin-left: 0;
     }
-  }
-
-  @media (min-width: 1024px) {
-    padding: 2rem;
-    gap: 2rem;
   }
 `
 

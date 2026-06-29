@@ -13,7 +13,8 @@ export const ModalOverlay = styled(RadixOverlay)`
   height: 100vh;
   inset: 0;
   z-index: 9990;
-  background-color: rgba(10, 10, 10, 0.7);
+  background-color: rgba(6, 6, 8, 0.6);
+  backdrop-filter: blur(4px);
 `
 
 export const HeaderContent = styled.div<{ padding?: string }>`
@@ -67,6 +68,7 @@ export const ModalContent = styled(RadixContent)<{
   padding?: string
   height?: string
   maxHeight?: string
+  overflow?: string
 }>`
   display: flex;
   flex-direction: column;
@@ -75,21 +77,22 @@ export const ModalContent = styled(RadixContent)<{
   padding: ${(props) => props.padding || '1rem'};
   height: ${(props) => props.height || 'auto'};
   max-height: 90vh;
-  background-color: ${(props) => props.theme['cards-color']};
-  border: 2px solid transparent;
-  overflow-y: auto;
+  background-color: ${(props) => props.theme['card-color']};
+  border: 1px solid ${(props) => props.theme['hairline-color']};
+  overflow-y: ${(props) => props.overflow || 'auto'};
   position: fixed;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   width: clamp(300px, 90vw, 33rem);
-  border-radius: 8px;
+  border-radius: 18px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
   z-index: 9998;
-  animation: scaleIn 0.5s ease-out forwards;
+  animation: scaleIn 0.22s ease-out forwards;
 
   &:focus {
-    box-shadow: none;
-    outline: 2px solid ${(props) => props.theme['primary-color']};
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
+    outline: none;
   }
 
   &.lg {
@@ -107,9 +110,9 @@ export const ModalContent = styled(RadixContent)<{
 
   &.delete {
     height: auto;
-    overflow: auto;
-    max-height: auto;
-    width: clamp(300px, 90vw, 28rem);
+    overflow: visible;
+    max-height: none;
+    width: clamp(300px, 92vw, 25rem);
   }
 
   @media (min-width: 480px) {

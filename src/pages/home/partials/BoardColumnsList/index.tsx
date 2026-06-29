@@ -9,14 +9,14 @@ interface Props {
   columns?: BoardColumnProps[]
   isLoading: boolean
   isApiProcessing: boolean
+  dragDisabled: boolean
   onOpenModal: (value: boolean) => void
   isOpen: boolean
 }
 
 export const BoardColumnsList = ({
   columns,
-  isApiProcessing,
-  isLoading,
+  dragDisabled,
   isOpen,
   onOpenModal,
 }: Props) => {
@@ -31,18 +31,18 @@ export const BoardColumnsList = ({
             id={column.id}
             column={column}
             name={column.name}
-            tasks={column.tasks.map((task) => ({
-              ...task,
-              isDragDisabled: isLoading || isApiProcessing,
-            }))}
+            tasks={column.tasks}
             index={index}
+            dragDisabled={dragDisabled}
           />
         ))}
         {columns.length < 6 && (
           <Dialog.Root open={isOpen} onOpenChange={onOpenModal}>
             <Dialog.Trigger asChild>
               <AddColumnContainer className={enableDarkMode ? 'dark' : 'light'}>
-                <AddColumnBtn>+ New Column</AddColumnBtn>
+                <AddColumnBtn>
+                  <span>+</span> New column
+                </AddColumnBtn>
               </AddColumnContainer>
             </Dialog.Trigger>
             <ColumnFormModal onClose={() => onOpenModal(false)} />
@@ -51,8 +51,4 @@ export const BoardColumnsList = ({
       </>
     )
   )
-}
-
-if (process.env.NODE_ENV === 'development') {
-  BoardColumnsList.whyDidYouRender = true
 }

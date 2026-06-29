@@ -7,20 +7,19 @@ export const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
-  button:focus-visible,
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible,
-  {
-    border: 2px solid rgba(99, 95, 199, 1) !important;
-    outline: none;
-  }
-
-  button:focus-visible,
   a:focus-visible
   {
-    border: 2px solid rgba(210, 156, 94, 1) !important;
-    outline: none;
+    outline: 2px solid ${(props) => props.theme['accent-color']};
+    outline-offset: 2px;
+    border-color: ${(props) => props.theme['accent-color']};
+  }
+
+  button:focus-visible {
+    outline: 2px solid ${(props) => props.theme['accent-color']};
+    outline-offset: 2px;
   }
 
   body {
@@ -28,31 +27,44 @@ export const GlobalStyle = createGlobalStyle`
     color: ${(props) => props.theme['title-color']};
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body, input, textarea, button {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont,
+      'Segoe UI', sans-serif;
     font-weight: 400;
     font-size: 1rem;
+    letter-spacing: -0.01em;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont,
+      'Segoe UI', sans-serif;
+    letter-spacing: -0.02em;
   }
 
   ::-webkit-scrollbar {
-    width: 0.7rem;
-    height: 0.4rem;
+    width: 0.5rem;
+    height: 0.5rem;
   }
 
   ::-webkit-scrollbar-track {
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: transparent;
     border-radius: 10px;
   }
 
   ::-webkit-scrollbar-thumb {
     background-color: ${(props) => props.theme['scroll-color']};
     border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: ${(props) => props.theme['muted-color']};
+    background-clip: padding-box;
   }
 
   ::-webkit-scrollbar-corner {

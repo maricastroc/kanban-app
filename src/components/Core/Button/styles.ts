@@ -1,80 +1,87 @@
 import styled from 'styled-components'
 
-export const Container = styled.button<{ disabled?: boolean }>`
-  cursor: pointer;
-  width: 100%;
-  display: flex;
+export const Container = styled.button`
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 18px;
-  padding: 0.7rem;
-  border: none;
-  height: 2.4rem;
+  gap: 0.5rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  transition: background-color 140ms ease, border-color 140ms ease,
+    box-shadow 140ms ease, transform 120ms ease;
 
-  &.bigger {
-    height: 2.7rem;
-
-    p {
-      font-size: 14px;
-    }
+  p {
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
   }
 
+  &.full {
+    width: 100%;
+  }
+
+  /* sizes */
+  &.sm {
+    height: 34px;
+    padding: 0 0.95rem;
+    font-size: 0.8rem;
+  }
+  &.md {
+    height: 42px;
+    padding: 0 1.1rem;
+  }
+  &.lg {
+    height: 48px;
+    padding: 0 1.4rem;
+    font-size: 0.85rem;
+  }
+
+  /* variants */
   &.primary {
-    background-color: ${(props) => props.theme['primary-color']};
+    background-color: ${(props) => props.theme['accent-color']};
+    color: ${(props) => props.theme['accent-on']};
 
-    p {
-      color: ${(props) => props.theme['button-title']};
-    }
-
-    &:not([disabled]):hover {
-      background-color: ${(props) => props.theme['primary-hover']};
-      transition: 200ms;
-    }
-
-    &:focus {
-      border-color: ${(props) => props.theme['border-btn-color']};
+    &:not(:disabled):hover {
+      background-color: ${(props) => props.theme['accent-hover']};
+      box-shadow: 0 0 0 4px ${(props) => props.theme['accent-soft']};
     }
   }
 
   &.secondary {
-    background-color: ${(props) => `${props.theme['secondary-color']}`};
-    color: ${(props) => props.theme['primary-color']};
+    background-color: transparent;
+    border-color: ${(props) => props.theme['border-color']};
+    color: ${(props) => props.theme['text-color']};
 
-    p,
-    svg {
-      color: ${(props) => props.theme['primary-color']};
-    }
-
-    &:not([disabled]):hover {
-      background-color: ${(props) => `${props.theme['secondary-hover']}`};
-      transition: 200ms;
+    &:not(:disabled):hover {
+      background-color: ${(props) => props.theme['card-hover']};
+      border-color: ${(props) => props.theme['hairline-strong']};
     }
   }
 
+  &.danger,
   &.tertiary {
     background-color: ${(props) => props.theme['error-color']};
+    color: #ffffff;
 
-    p {
-      color: ${(props) => props.theme['button-title']};
-    }
-
-    &:not([disabled]):hover {
+    &:not(:disabled):hover {
       background-color: ${(props) => props.theme['error-hover']};
-      transition: 200ms;
     }
   }
 
-  p {
-    font-size: ${(props) => props.theme['body-l']};
-    font-weight: 700;
+  &:active:not(:disabled) {
+    transform: scale(0.98);
   }
 
   &:focus {
     box-shadow: none;
   }
 
-  &.disabled {
+  &:disabled {
     cursor: not-allowed;
-    pointer-events: none;
+    opacity: 0.5;
   }
 `

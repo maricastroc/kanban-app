@@ -1,12 +1,21 @@
+import { RefObject, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   LayoutContainer,
   OptionsBtn,
   OptionsContainer,
   OptionsModal,
+  TaskTitle,
 } from './styles'
-import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
-import { Title } from '@radix-ui/react-dialog'
+import { HeaderIcon } from '../../../Sheet/styles'
+import { MenuDivider, MenuItem } from '@/components/Core/Menu/styles'
+import {
+  faEllipsisVertical,
+  faPen,
+  faSquareCheck,
+  faTrashCan,
+} from '@fortawesome/free-solid-svg-icons'
+import { useClickOutside } from '@/utils/useClickOutside'
 
 interface Props {
   enableDarkMode: boolean
@@ -25,24 +34,41 @@ export const Header = ({
   onToggleDeleteModal,
   onToggleEditModal,
 }: Props) => {
+  const optionsRef = useRef<HTMLDivElement>(null)
+
+  useClickOutside(optionsRef as RefObject<HTMLElement>, () => {
+    if (isActionsModalOpen) onToggleActionsModal(false)
+  })
+
   return (
     <LayoutContainer>
-      <Title>{taskName}</Title>
-      <OptionsContainer>
-        <OptionsBtn onClick={() => onToggleActionsModal(!isActionsModalOpen)}>
+      <HeaderIcon>
+        <FontAwesomeIcon icon={faSquareCheck} />
+      </HeaderIcon>
+      <TaskTitle>{taskName}</TaskTitle>
+      <OptionsContainer ref={optionsRef}>
+        <OptionsBtn
+          aria-label="Task options"
+          data-active={isActionsModalOpen}
+          onClick={() => onToggleActionsModal(!isActionsModalOpen)}
+        >
           <FontAwesomeIcon icon={faEllipsisVertical} />
         </OptionsBtn>
         {isActionsModalOpen && (
           <OptionsModal className={enableDarkMode ? 'dark' : 'light'}>
-            <button className="edit" onClick={() => onToggleEditModal(true)}>
+            <MenuItem type="button" onClick={() => onToggleEditModal(true)}>
+              <FontAwesomeIcon icon={faPen} />
               Edit Task
-            </button>
-            <button
-              className="delete"
+            </MenuItem>
+            <MenuDivider />
+            <MenuItem
+              type="button"
+              className="danger"
               onClick={() => onToggleDeleteModal(true)}
             >
+              <FontAwesomeIcon icon={faTrashCan} />
               Delete Task
-            </button>
+            </MenuItem>
           </OptionsModal>
         )}
       </OptionsContainer>

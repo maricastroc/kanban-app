@@ -1,49 +1,52 @@
-import { ButtonHTMLAttributes } from 'react'
+import { ButtonHTMLAttributes, ReactNode } from 'react'
 import { Container } from './styles'
 import { ThreeDots } from 'react-loading-icons'
 import { useTheme } from 'styled-components'
 
+type Variant = 'primary' | 'secondary' | 'danger' | 'tertiary'
+type Size = 'sm' | 'md' | 'lg'
+
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: string
-  title: string
+  variant?: Variant
+  size?: Size
+  title?: string
+  children?: ReactNode
   isBigger?: boolean
   isLoading?: boolean
+  fullWidth?: boolean
 }
 
 export const Button = ({
   variant = 'primary',
+  size,
   title,
+  children,
   isBigger = false,
   isLoading = false,
+  fullWidth = true,
+  disabled,
   ...props
 }: ButtonProps) => {
   const theme = useTheme()
 
-  let loaderColor = theme['button-title']
+  const resolvedSize: Size = size ?? (isBigger ? 'lg' : 'md')
 
-  if (variant === 'secondary') {
-    loaderColor = theme['primary-color']
-  }
+  let loaderColor = theme['accent-on']
+  if (variant === 'secondary') loaderColor = theme['text-color']
+  if (variant === 'danger' || variant === 'tertiary') loaderColor = '#ffffff'
 
   return (
     <Container
-      className={`${variant} ${isBigger ? 'bigger' : ''}`}
-      aria-disabled={isLoading}
+      className={`${variant} ${resolvedSize} ${fullWidth ? 'full' : ''}`}
+      aria-disabled={isLoading || disabled}
       aria-busy={isLoading}
       {...props}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
     >
       {isLoading ? (
-        <div style={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-          <ThreeDots
-            height={'8px'}
-            fill={loaderColor}
-            aria-hidden="true"
-            className="animate-spin"
-          />
-        </div>
+        <ThreeDots height="8px" fill={loaderColor} aria-hidden="true" />
       ) : (
-        <p>{title}</p>
+        children ?? <p>{title}</p>
       )}
     </Container>
   )

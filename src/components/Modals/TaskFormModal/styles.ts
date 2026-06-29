@@ -1,5 +1,22 @@
 import styled from 'styled-components'
 
+// Dashed "Add subtask" composer reuses the shared sheet primitive.
+export { DashedComposerBtn as AddSubtaskBtn } from '../Sheet/styles'
+
+export const SubtasksForm = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`
+
+export const SubtasksWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+  margin-bottom: 0.7rem;
+`
+
 export const StyledDatePickerWrapper = styled.div`
   width: 100%;
 
@@ -8,10 +25,12 @@ export const StyledDatePickerWrapper = styled.div`
   }
 
   .react-datepicker {
-    background-color: ${(props) => props.theme['bg-color']};
-    border: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: ${(props) => props.theme['card-color']};
+    border: 1px solid ${(props) => props.theme['hairline-strong']};
+    border-radius: 12px;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
     padding: 0.7rem;
+    font-family: inherit;
 
     div {
       color: ${(props) => props.theme['title-color']};
@@ -57,35 +76,21 @@ export const StyledDatePickerWrapper = styled.div`
     }
   }
 
+  .react-datepicker__day {
+    color: ${(props) => props.theme['text-color']};
+    border-radius: 6px;
+  }
+
   .react-datepicker__day--selected,
-  .react-datepicker__day--today,
   .react-datepicker__day:hover {
-    background-color: ${(props) => props.theme['subtitle-color']};
-    color: white;
+    background-color: ${(props) => props.theme['accent-color']};
+    color: ${(props) => props.theme['accent-on']};
+    border-radius: 6px;
   }
 
   .react-datepicker__day--today {
-    background-color: ${(props) => props.theme['border-color']};
-    border-radius: 4px;
-    color: white;
+    background-color: ${(props) => props.theme['hairline-strong']};
+    border-radius: 6px;
+    color: ${(props) => props.theme['title-color']};
   }
-
-  .react-datepicker-popper[data-placement^='top'] .react-datepicker__triangle {
-    color: ${(props) => props.theme['bg-color']};
-    fill: ${(props) => props.theme['bg-color']};
-    stroke: ${(props) => props.theme['bg-color']};
-  }
-`
-
-export const SubtasksForm = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 0.7rem;
-`
-
-export const SubtasksWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
 `

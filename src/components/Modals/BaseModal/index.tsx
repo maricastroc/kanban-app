@@ -21,6 +21,8 @@ interface Props {
   titlePadding?: string
   isLoading?: boolean
   hasHeader?: boolean
+  overflow?: string
+  className?: string
   onClose: () => void
 }
 
@@ -33,6 +35,8 @@ export const BaseModal = ({
   maxHeight,
   isLoading,
   hasHeader = true,
+  overflow,
+  className,
   onClose,
 }: Props) => {
   return (
@@ -40,9 +44,10 @@ export const BaseModal = ({
       <ModalOverlay />
       <ModalContent
         padding={padding}
-        className="DialogContent"
+        className={`DialogContent ${className ?? ''}`}
         maxHeight={maxHeight}
         height={height}
+        overflow={overflow}
       >
         {hasHeader && (
           <HeaderContent padding={titlePadding}>

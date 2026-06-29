@@ -4,18 +4,18 @@ import { Root as RadixRoot, Thumb as RadixThumb } from '@radix-ui/react-switch'
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  border-right: solid 1px ${(props) => props.theme['border-color']};
-  min-width: 260px;
-  background-color: ${(props) => props.theme['cards-color']};
+  border-right: solid 1px ${(props) => props.theme['hairline-color']};
+  min-width: 220px;
+  background-color: ${(props) => props.theme['sidebar-color']};
   position: fixed;
   top: 0;
   height: 100vh;
   z-index: 100;
-  overflow-y: auto;
+  overflow: hidden;
   transform: translateX(0);
-  width: 260px;
+  width: 220px;
   transition: transform 0.3s ease, width 0.3s ease;
+  padding: 1rem 0 0.75rem;
 
   &::-webkit-scrollbar {
     display: none;
@@ -33,154 +33,217 @@ export const Container = styled.div`
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  background-color: ${(props) => props.theme['cards-color']};
-  transform: translateX(0); /* Inicia visível */
-  transition: transform 0.3s ease;
+  flex: 1;
+  min-height: 0;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`
+
+export const Brand = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.25rem 1rem 1.4rem;
+
+  .logo-mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: ${(props) => props.theme['accent-color']};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      color: ${(props) => props.theme['accent-on']};
+    }
+  }
+
+  span {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: ${(props) => props.theme['title-color']};
+  }
+`
+
+export const SectionLabel = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.15rem 0.5rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  color: ${(props) => props.theme['muted-color']};
+  text-transform: uppercase;
+`
+
+export const BoardsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  gap: 1px;
+  padding: 0 0.6rem;
+  overflow-y: auto;
 
   &::-webkit-scrollbar {
     display: none;
   }
 
-  &.hidden {
-    transform: translateX(-100%);
-  }
+  scrollbar-width: none;
 `
 
-export const LogoWrapper = styled.div`
+export const CreateBoardArea = styled.div`
+  flex-shrink: 0;
+  width: 100%;
+  padding: 0 0.6rem;
+`
+
+export const BoardIcon = styled.span`
   display: flex;
-  margin: 2.3rem 0 2.5rem;
   align-items: center;
-  gap: 1.1rem;
-  padding-left: 1.7rem;
-
-  img {
-    scale: 1.1;
-  }
-`
-
-export const Title = styled.h3`
-  display: flex;
-  justify-content: flex-start;
-  padding: 1.875rem 1.5rem 0;
-  width: 100%;
-  font-size: ${(props) => props.theme['heading-s']};
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  font-size: 0.66rem;
   font-weight: 700;
-  color: ${(props) => props.theme['subtitle-color']};
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-`
-
-export const BoardsContainer = styled.div`
-  display: flex;
-  margin-top: 1.25rem;
-  flex-direction: column;
-  width: 100%;
-  background-color: ${(props) => props.theme['cards-color']};
-  padding-right: 1.5rem;
-  gap: 0.5rem;
+  letter-spacing: -0.02em;
 `
 
 export const BoardButton = styled.button`
   cursor: pointer;
+  position: relative;
   display: flex;
-  padding: 0.9rem 1.5rem;
+  padding: 0.6rem 0.65rem;
   align-items: center;
-  justify-content: flex-start;
+  border-radius: 8px;
   background-color: transparent;
-  border: 2px solid transparent;
-  gap: 0.75rem;
+  border: none;
+  gap: 0.6rem;
   width: 100%;
   text-align: left;
+  color: ${(props) => props.theme['subtitle-color']};
+  transition: background-color 160ms, color 160ms;
+
+  svg {
+    font-size: 0.95rem;
+    flex-shrink: 0;
+    color: ${(props) => props.theme['muted-color']};
+  }
 
   p {
-    color: ${(props) => props.theme['subtitle-color']};
-    font-weight: 700;
+    flex: 1;
+    min-width: 0;
+    font-size: 0.82rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: inherit;
   }
 
-  &.active {
-    background-color: ${(props) => props.theme['sidebar-btn-color']};
-    border-top-right-radius: 22px;
-    border-bottom-right-radius: 22px;
-
-    p {
-      color: ${(props) => props.theme['button-title']};
-      font-size: ${(props) => props.theme['heading-m']};
-    }
-
-    img {
-      filter: brightness(1.5);
-    }
-  }
-
-  &:focus {
-    box-shadow: none;
+  .count {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: ${(props) => props.theme['muted-color']};
   }
 
   &:hover {
-    background-color: ${(props) => `${props.theme['sidebar-btn-hover']}`};
-    transition: 200ms;
-    border-top-right-radius: 22px;
-    border-bottom-right-radius: 22px;
+    background-color: ${(props) => props.theme['hairline-color']};
+    color: ${(props) => props.theme['text-color']};
+  }
 
-    p {
-      color: ${(props) => props.theme['primary-color']};
+  &.active {
+    background-color: ${(props) => props.theme['accent-soft']};
+    color: ${(props) => props.theme['accent-text']};
+
+    svg {
+      color: ${(props) => props.theme['accent-color']};
     }
 
-    img {
-      filter: invert(39%) sepia(47%) saturate(748%) hue-rotate(203deg)
-        brightness(94%) contrast(93%);
+    .count {
+      color: ${(props) => props.theme['accent-color']};
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 16px;
+      width: 2px;
+      border-radius: 0 2px 2px 0;
+      background-color: ${(props) => props.theme['accent-color']};
     }
   }
+
+  &:focus-visible {
+    outline-offset: -2px;
+  }
+`
+
+export const CreateDivider = styled.div`
+  height: 1px;
+  margin: 0.45rem 0.5rem;
+  background-color: ${(props) => props.theme['hairline-color']};
 `
 
 export const CreateBoardButton = styled.button`
   cursor: pointer;
   display: flex;
-  padding: 0.9rem 1.5rem;
+  padding: 0.6rem 0.65rem;
   align-items: center;
-  border-radius: 4px;
-  justify-content: flex-start;
+  border-radius: 8px;
   background-color: transparent;
-  border: 2px solid transparent;
-  border-top-right-radius: 22px;
-  border-bottom-right-radius: 22px;
-  gap: 0.75rem;
+  border: none;
+  gap: 0.6rem;
   width: 100%;
   text-align: left;
+  color: ${(props) => props.theme['accent-color']};
+  transition: background-color 160ms;
 
-  p {
-    color: ${(props) => props.theme['tags-btn-color']};
-    font-size: ${(props) => props.theme['heading-m']};
-    font-weight: 700;
+  .plus-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    background-color: ${(props) => props.theme['accent-soft']};
   }
 
-  img {
-    filter: invert(39%) sepia(47%) saturate(748%) hue-rotate(203deg)
-      brightness(94%) contrast(93%);
+  svg {
+    font-size: 0.8rem;
+    color: ${(props) => props.theme['accent-color']};
+  }
+
+  p {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: ${(props) => props.theme['accent-color']};
   }
 
   &:hover {
-    background-color: ${(props) => `${props.theme['sidebar-btn-hover']}`};
-    transition: 200ms;
-    border-top-right-radius: 22px;
-    border-bottom-right-radius: 22px;
-
-    p {
-      color: ${(props) => props.theme['primary-color']};
-    }
-
-    img {
-      filter: invert(39%) sepia(47%) saturate(748%) hue-rotate(203deg)
-        brightness(94%) contrast(93%);
-    }
+    background-color: ${(props) => props.theme['accent-soft']};
   }
 `
 
 export const OptionsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  background-color: ${(props) => props.theme['cards-color']};
+  gap: 0.5rem;
+  padding: 0.75rem 0.75rem 0;
+  margin-top: auto;
+  border-top: 1px solid ${(props) => props.theme['hairline-color']};
 `
 
 export const HideButton = styled.button`
@@ -188,94 +251,79 @@ export const HideButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 0.65rem;
-  padding: 0.7rem;
+  gap: 0.6rem;
+  padding: 0.6rem 0.65rem;
   background-color: transparent;
-  border: 2px solid transparent;
-  padding-left: 1.5rem;
-  margin-bottom: 2rem;
-  width: 90%;
-  border-top-right-radius: 22px;
-  border-bottom-right-radius: 22px;
+  border: none;
+  border-radius: 8px;
+  width: 100%;
+  color: ${(props) => props.theme['muted-color']};
+  transition: background-color 160ms, color 160ms;
 
   p {
-    font-size: ${(props) => props.theme['heading-m']};
-    font-weight: 700;
-    color: ${(props) => props.theme['subtitle-color']};
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: inherit;
   }
 
   svg {
-    color: ${(props) => props.theme['subtitle-color']};
-    font-size: 1.3rem;
-    margin-left: 1.5rem;
+    color: inherit;
+    font-size: 1.05rem;
   }
 
   &:hover {
-    background-color: ${(props) => `${props.theme['sidebar-btn-hover']}`};
-    transition: 200ms;
-    border-top-right-radius: 22px;
-    border-bottom-right-radius: 22px;
-
-    p {
-      color: ${(props) => props.theme['primary-color']};
-    }
-
-    svg {
-      filter: invert(39%) sepia(47%) saturate(748%) hue-rotate(203deg)
-        brightness(94%) contrast(93%);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    padding-left: 0.5rem;
+    background-color: ${(props) => props.theme['hairline-color']};
+    color: ${(props) => props.theme['text-color']};
   }
 `
 
 export const ThemeSwitcherContainer = styled.div`
-  background-color: ${(props) => props.theme['bg-color']};
-  border-radius: 8px;
+  background-color: ${(props) => props.theme['panel-color']};
+  border: 1px solid ${(props) => props.theme['hairline-color']};
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
-  gap: 1.5rem;
-  width: 85%;
-  margin: 0 auto;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 0.6rem;
+  gap: 1rem;
 
   svg {
-    color: ${(props) => props.theme['subtitle-color']};
-    font-size: 1.5rem;
+    color: ${(props) => props.theme['muted-color']};
+    font-size: 1rem;
   }
 `
 
 export const SwitchRoot = styled(RadixRoot)`
   cursor: pointer;
-  width: 40px;
+  display: flex;
+  align-items: center;
+  width: 38px;
   height: 20px;
-  background-color: ${(props) => props.theme['primary-color']};
+  padding: 0;
+  background-color: ${(props) => props.theme['accent-color']};
   border-radius: 9999px;
   position: relative;
   box-shadow: none;
   border: none;
+  flex-shrink: 0;
+  transition: background-color 200ms ease;
 
   &:hover {
-    background-color: ${(props) => props.theme['primary-hover']};
-    transition: 200ms;
+    background-color: ${(props) => props.theme['accent-hover']};
   }
 `
 
 export const SwitchThumb = styled(RadixThumb)`
-  position: absolute;
+  display: block;
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background-color: ${(props) => props.theme['button-title']};
-  top: 3px;
-  transform: translateX(-16px);
+  background-color: #ffffff;
+  transform: translateX(3px);
   transition: transform 0.2s ease;
+  will-change: transform;
 
   &[data-state='checked'] {
-    transform: translateX(2px);
+    transform: translateX(21px);
   }
 `

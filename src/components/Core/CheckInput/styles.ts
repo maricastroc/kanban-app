@@ -6,7 +6,7 @@ export const UncheckedBox = styled.button`
   min-height: 16px;
   background-color: ${(props) => props.theme['cards-color']};
   border: solid 1px ${(props) => props.theme['border-color']};
-  border-radius: 3;
+  border-radius: 5px;
 
   &:focus {
     box-shadow: none;
@@ -22,7 +22,7 @@ export const CheckedBox = styled.button`
   min-height: 16px;
   background-color: ${(props) => props.theme['primary-color']};
   border: none;
-  border-radius: 3;
+  border-radius: 5px;
 
   svg {
     color: ${(props) => props.theme['button-title']};

@@ -14,12 +14,12 @@ export const MIN_SUBTASKS = 1
 export const DEFAULT_STATUS = 'Not specified'
 
 export const tagColors = [
-  { color: '#49C4E5', name: 'Aqua Blue' },
-  { color: '#8471F2', name: 'Lavender' },
-  { color: '#67E2AE', name: 'Mint Green' },
-  { color: '#fcc447', name: 'Golden Yellow' },
-  { color: '#4875b7', name: 'Blue' },
-  { color: '#b57474', name: 'Rose Red' },
-  { color: '#f8a5d7', name: 'Soft Pink' },
-  { color: '#ce524e', name: 'Vivid Red' },
+  { color: '#4FC4DA', name: 'Aqua Blue' },
+  { color: '#9A86F2', name: 'Lavender' },
+  { color: '#5DC9A1', name: 'Mint Green' },
+  { color: '#E6B450', name: 'Golden Yellow' },
+  { color: '#5E8AED', name: 'Blue' },
+  { color: '#DD7A93', name: 'Rose Red' },
+  { color: '#E58BD0', name: 'Soft Pink' },
+  { color: '#E56A62', name: 'Vivid Red' },
 ]
