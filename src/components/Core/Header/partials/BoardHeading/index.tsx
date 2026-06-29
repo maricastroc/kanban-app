@@ -27,17 +27,19 @@ interface Props {
 }
 
 export function BoardHeading({ activeBoard, metrics, isSmallerThanSm }: Props) {
-  const details = useDisclosure()
+  const { isOpen, open, close } = useDisclosure()
 
-  // the boards sheet is a mobile-only affordance — close it when leaving mobile
+  // the boards sheet is a mobile-only affordance — close it when leaving mobile.
+  // `close` is a stable useCallback from useDisclosure, so the effect only runs
+  // when isSmallerThanSm changes.
   useEffect(() => {
-    if (!isSmallerThanSm) details.close()
-  }, [isSmallerThanSm, details.close])
+    if (!isSmallerThanSm) close()
+  }, [isSmallerThanSm, close])
 
   return (
-    <Dialog.Root open={details.isOpen}>
+    <Dialog.Root open={isOpen}>
       <Dialog.Trigger asChild>
-        <BoardNameContainer onClick={() => isSmallerThanSm && details.open()}>
+        <BoardNameContainer onClick={() => isSmallerThanSm && open()}>
           <TitleBlock>
             <Eyebrow>Boards</Eyebrow>
             <BoardName>{activeBoard?.name || 'No board selected'}</BoardName>
@@ -59,7 +61,7 @@ export function BoardHeading({ activeBoard, metrics, isSmallerThanSm }: Props) {
           </TitleBlock>
         </BoardNameContainer>
       </Dialog.Trigger>
-      <BoardsDetailsModal onClose={details.close} />
+      <BoardsDetailsModal onClose={close} />
     </Dialog.Root>
   )
 }
