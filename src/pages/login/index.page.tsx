@@ -30,6 +30,7 @@ import { PasswordField } from './partials/PasswordField'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useLoadingOnRouteChange } from '@/utils/useLoadingOnRouteChange'
 import { useRedirectIfAuthenticated } from '@/hooks/useRedirectIfAuthenticated'
+import { useAuthUser } from '@/hooks/useAuthUser'
 import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
 
@@ -44,6 +45,7 @@ export default function Login() {
   const { enableDarkMode } = useTheme()
 
   const { isCheckingAuth } = useRedirectIfAuthenticated()
+  const { mutate: revalidateAuth } = useAuthUser()
   const isRouteLoading = useLoadingOnRouteChange()
   const router = useRouter()
 
@@ -62,21 +64,17 @@ export default function Login() {
     setIsLoading(true)
 
     try {
-      const response = await api.post('login', {
+      await api.post('login', {
         email: data.email,
         password: data.password,
         redirect: false,
       })
 
-      const token = response.data.token
-
-      if (token) {
-        localStorage.setItem('auth_token', token)
-        toast.success('Welcome to Kanban App!')
-        router.push('/')
-      } else {
-        toast.error('No token returned.')
-      }
+      // session now lives in the httpOnly cookie — refresh /user so the app
+      // picks up the authenticated state before navigating
+      await revalidateAuth()
+      toast.success('Welcome to Kanban App!')
+      router.push('/')
     } catch (error) {
       handleApiError(error)
     } finally {

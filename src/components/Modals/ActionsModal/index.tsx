@@ -54,10 +54,8 @@ export function ActionsModal({ onClose }: Props) {
   }
 
   const finishLogout = () => {
-    localStorage.removeItem('auth_token')
-
-    delete api.defaults.headers.common.Authorization
-
+    // the session cookie is cleared by the backend /logout — just drop the
+    // client-side state and the SWR cache (including the /user probe)
     import('swr').then(({ mutate }) => {
       mutate(() => true, undefined, { revalidate: false })
     })

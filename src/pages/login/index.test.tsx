@@ -8,12 +8,14 @@ import Login from './index.page'
 
 // Shared spies, created via vi.hoisted so the (hoisted) vi.mock factories below
 // can reference them.
-const { pushMock, postMock, toastSuccess, toastError } = vi.hoisted(() => ({
-  pushMock: vi.fn(),
-  postMock: vi.fn(),
-  toastSuccess: vi.fn(),
-  toastError: vi.fn(),
-}))
+const { pushMock, postMock, toastSuccess, toastError, revalidateAuthMock } =
+  vi.hoisted(() => ({
+    pushMock: vi.fn(),
+    postMock: vi.fn(),
+    toastSuccess: vi.fn(),
+    toastError: vi.fn(),
+    revalidateAuthMock: vi.fn(),
+  }))
 
 vi.mock('next/router', () => ({
   useRouter: () => ({
@@ -45,6 +47,17 @@ vi.mock('@/contexts/ThemeContext', () => ({
   useTheme: () => ({ enableDarkMode: true, toggleTheme: vi.fn() }),
 }))
 
+// Auth now lives in an httpOnly cookie; the session is resolved through
+// useAuthUser, so we stub it to control the auth state in the tests.
+vi.mock('@/hooks/useAuthUser', () => ({
+  useAuthUser: () => ({
+    user: null,
+    isAuthenticated: false,
+    isLoading: false,
+    mutate: revalidateAuthMock,
+  }),
+}))
+
 const renderLogin = () =>
   render(
     <ThemeProvider theme={darkTheme}>
@@ -55,7 +68,6 @@ const renderLogin = () =>
 describe('Login page', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    localStorage.clear()
   })
 
   it('renders the login form once the auth check resolves', async () => {
@@ -77,8 +89,8 @@ describe('Login page', () => {
     expect(postMock).not.toHaveBeenCalled()
   })
 
-  it('submits credentials, stores the token, notifies and navigates on success', async () => {
-    postMock.mockResolvedValueOnce({ data: { token: 'jwt-123' } })
+  it('submits credentials, refreshes the session, notifies and navigates on success', async () => {
+    postMock.mockResolvedValueOnce({ data: { user: { id: 1 } } })
     const user = userEvent.setup()
     renderLogin()
 
@@ -94,13 +106,15 @@ describe('Login page', () => {
       })
     })
 
-    expect(localStorage.getItem('auth_token')).toBe('jwt-123')
+    // session is established via the cookie; the app refreshes /user instead of
+    // reading a token from localStorage
+    expect(revalidateAuthMock).toHaveBeenCalled()
     expect(toastSuccess).toHaveBeenCalledWith('Welcome to Kanban App!')
     expect(pushMock).toHaveBeenCalledWith('/')
   })
 
-  it('shows an error and does not navigate when no token is returned', async () => {
-    postMock.mockResolvedValueOnce({ data: {} })
+  it('does not navigate when the request fails', async () => {
+    postMock.mockRejectedValueOnce(new Error('invalid credentials'))
     const user = userEvent.setup()
     renderLogin()
 
@@ -108,9 +122,9 @@ describe('Login page', () => {
     await user.type(screen.getByLabelText('Password'), 'secret123')
     await user.click(screen.getByRole('button', { name: /login/i }))
 
-    await waitFor(() =>
-      expect(toastError).toHaveBeenCalledWith('No token returned.'),
-    )
+    await waitFor(() => expect(postMock).toHaveBeenCalled())
+
     expect(pushMock).not.toHaveBeenCalled()
+    expect(toastSuccess).not.toHaveBeenCalled()
   })
 })

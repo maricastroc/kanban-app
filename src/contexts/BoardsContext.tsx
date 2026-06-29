@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BoardProps } from '@/@types/board'
 import useRequest from '@/utils/useRequest'
+import { useAuthUser } from '@/hooks/useAuthUser'
 import { AxiosResponse } from 'axios'
 import {
   createContext,
@@ -56,11 +57,12 @@ export function BoardsContextProvider({
 
   const [activeBoard, setActiveBoard] = useState<BoardProps | undefined>()
 
-  const token =
-    typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
+  const { isAuthenticated } = useAuthUser()
 
-  const boardsRequest = token ? { url: '/boards', method: 'GET' } : null
-  const activeBoardRequest = token
+  const boardsRequest = isAuthenticated
+    ? { url: '/boards', method: 'GET' }
+    : null
+  const activeBoardRequest = isAuthenticated
     ? { url: '/boards/active', method: 'GET' }
     : null
 

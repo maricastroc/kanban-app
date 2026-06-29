@@ -1,23 +1,20 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { useAuthUser } from './useAuthUser'
 
 /**
- * Guards the auth pages (login/register): if a session token already exists,
- * redirect to the app; otherwise reveal the page. Complement of useAuthRedirect.
+ * Guards the auth pages (login/register): redirects to the app when the user
+ * already has a valid session. Complement of useAuthRedirect.
  */
 export function useRedirectIfAuthenticated() {
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
   const router = useRouter()
+  const { isAuthenticated, isLoading } = useAuthUser()
 
   useEffect(() => {
-    const token = localStorage.getItem('auth_token')
-    if (token) {
+    if (!isLoading && isAuthenticated) {
       router.replace('/')
-    } else {
-      setIsCheckingAuth(false)
     }
-  }, [])
+  }, [isLoading, isAuthenticated, router])
 
-  return { isCheckingAuth }
+  return { isCheckingAuth: isLoading }
 }

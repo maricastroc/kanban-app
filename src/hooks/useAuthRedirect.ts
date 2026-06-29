@@ -1,20 +1,20 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { useAuthUser } from './useAuthUser'
 
+/**
+ * Guards protected pages: redirects to /login once the session probe resolves
+ * as unauthenticated. `isCheckingAuth` stays true while the probe is in flight.
+ */
 export function useAuthRedirect() {
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
-
   const router = useRouter()
+  const { isAuthenticated, isLoading } = useAuthUser()
 
   useEffect(() => {
-    const token = localStorage.getItem('auth_token')
-    if (!token) {
+    if (!isLoading && !isAuthenticated) {
       router.replace('/login')
-    } else {
-      setIsCheckingAuth(false)
     }
-  }, [])
+  }, [isLoading, isAuthenticated, router])
 
-  return { isCheckingAuth }
+  return { isCheckingAuth: isLoading }
 }

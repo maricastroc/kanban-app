@@ -1,20 +1,13 @@
 import axios from 'axios'
 
+// Auth travels in an httpOnly cookie now — `withCredentials` makes the browser
+// send it on every request. No token is read from JS (XSS can't steal it).
 export const api = axios.create({
-  baseURL: 'https://kanban-api-production-6d84.up.railway.app/api/',
-  // baseURL: 'http://localhost:8000/api/',
+  baseURL:
+    process.env.NEXT_PUBLIC_API_URL ?? 'https://api.marianacastro.dev/api/',
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
-})
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('auth_token')
-
-  if (token) {
-    config.headers = config.headers || {}
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
 })
