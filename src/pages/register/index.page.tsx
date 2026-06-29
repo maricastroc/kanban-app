@@ -8,7 +8,11 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import toast from 'react-hot-toast'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEnvelope, faUser, faUserPlus } from '@fortawesome/free-solid-svg-icons'
+import {
+  faEnvelope,
+  faUser,
+  faUserPlus,
+} from '@fortawesome/free-solid-svg-icons'
 
 import Logo from '@/../public/icon.svg'
 import LogoTextLight from '@/../public/kanban.svg'
@@ -145,7 +149,11 @@ export default function Register() {
               />
             </InputsContainer>
 
-            <Button isBigger isLoading={isSubmitting || isLoading} type="submit">
+            <Button
+              isBigger
+              isLoading={isSubmitting || isLoading}
+              type="submit"
+            >
               <FontAwesomeIcon
                 icon={faUserPlus}
                 style={{ fontSize: 14 }}

@@ -1,5 +1,9 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faHeading, faTableColumns } from '@fortawesome/free-solid-svg-icons'
+import {
+  faPlus,
+  faHeading,
+  faTableColumns,
+} from '@fortawesome/free-solid-svg-icons'
 import { MAX_COLUMNS } from '@/utils/constants'
 import { FormContainer } from '@/components/Core/FormContainer'
 import { Button } from '@/components/Core/Button'

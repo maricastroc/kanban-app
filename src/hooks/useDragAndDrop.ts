@@ -19,11 +19,11 @@ export function useDragAndDrop(
     newColumnId: string,
     newOrder: number,
   ) => {
-    setIsApiProcessing(true)
-
     if (!activeBoard) {
       return
     }
+
+    setIsApiProcessing(true)
 
     const originalColumns = [...activeBoard.columns]
 

@@ -130,7 +130,11 @@ export default function Login() {
               />
             </InputsContainer>
 
-            <Button isBigger isLoading={isSubmitting || isLoading} type="submit">
+            <Button
+              isBigger
+              isLoading={isSubmitting || isLoading}
+              type="submit"
+            >
               <FontAwesomeIcon
                 icon={faRightToBracket}
                 style={{ fontSize: 14 }}

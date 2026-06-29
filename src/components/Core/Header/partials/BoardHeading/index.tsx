@@ -37,9 +37,7 @@ export function BoardHeading({ activeBoard, metrics, isSmallerThanSm }: Props) {
   return (
     <Dialog.Root open={details.isOpen}>
       <Dialog.Trigger asChild>
-        <BoardNameContainer
-          onClick={() => isSmallerThanSm && details.open()}
-        >
+        <BoardNameContainer onClick={() => isSmallerThanSm && details.open()}>
           <TitleBlock>
             <Eyebrow>Boards</Eyebrow>
             <BoardName>{activeBoard?.name || 'No board selected'}</BoardName>

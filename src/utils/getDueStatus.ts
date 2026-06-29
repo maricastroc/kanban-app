@@ -2,7 +2,9 @@ export const getDueStatus = (
   date: string | Date,
   subtasks: { is_completed: boolean }[],
 ): string => {
-  const parsedDate = date instanceof Date ? date : new Date(date)
+  // Always clone: `new Date(date)` copies a Date argument (and parses a string),
+  // so the setHours() below never mutates the caller's original Date.
+  const parsedDate = new Date(date)
   const today = new Date()
 
   today.setHours(0, 0, 0, 0)

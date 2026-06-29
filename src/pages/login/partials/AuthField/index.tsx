@@ -1,7 +1,12 @@
 import { InputHTMLAttributes, forwardRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
-import { FormField, IconWrapper, InputContainer, InputField } from '../../styles'
+import {
+  FormField,
+  IconWrapper,
+  InputContainer,
+  InputField,
+} from '../../styles'
 import { Label } from '@/components/Core/Label'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
 
