@@ -13,7 +13,10 @@ const GENERIC_MESSAGE = 'Ooops, something went wrong. Please try again later.'
 // handleApiError uses axios.isAxiosError(), which at runtime only checks the
 // `isAxiosError` flag — so a plain object with that flag stands in for a real
 // AxiosError without needing the constructor.
-const axiosError = (data: unknown) => ({ isAxiosError: true, response: { data } })
+const axiosError = (data: unknown) => ({
+  isAxiosError: true,
+  response: { data },
+})
 
 describe('handleApiError', () => {
   beforeEach(() => {
