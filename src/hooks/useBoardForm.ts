@@ -8,7 +8,7 @@ import { handleApiError } from '@/utils/handleApiError'
 import { MIN_BOARD_NAME_LENGTH, MAX_COLUMNS } from '@/utils/constants'
 import { BoardColumnProps } from '@/@types/board-column'
 import { useBoardsContext } from '@/contexts/BoardsContext'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 interface Props {
   isEditing: boolean
@@ -156,28 +156,7 @@ export const useBoardForm = ({ isEditing, onClose }: Props) => {
     setValue('columns', updatedColumns)
   }
 
-  const resetColumns = () => {
-    if (isEditing) {
-      const cols = activeBoard?.columns || []
-      setBoardColumns(cols)
-
-      reset({
-        id: activeBoard?.id,
-        name: activeBoard?.name || '',
-        columns: cols,
-      })
-    } else {
-      setBoardColumns(initialBoardColumns)
-
-      reset({
-        id: null,
-        name: '',
-        columns: initialBoardColumns,
-      })
-    }
-  }
-
-  useEffect(() => {
+  const resetColumns = useCallback(() => {
     if (isEditing) {
       const cols = activeBoard?.columns || []
       setBoardColumns(cols)
@@ -197,6 +176,10 @@ export const useBoardForm = ({ isEditing, onClose }: Props) => {
       })
     }
   }, [activeBoard, isEditing, reset])
+
+  useEffect(() => {
+    resetColumns()
+  }, [resetColumns])
 
   return {
     handleAddColumn,

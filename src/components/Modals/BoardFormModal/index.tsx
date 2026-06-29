@@ -1,28 +1,14 @@
-import toast from 'react-hot-toast'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faPlus,
-  faXmark,
-  faHeading,
-  faTableColumns,
-  faGripVertical,
-} from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faHeading, faTableColumns } from '@fortawesome/free-solid-svg-icons'
 import { MAX_COLUMNS } from '@/utils/constants'
-import { BoardColumnProps } from '@/@types/board-column'
 import { FormContainer } from '@/components/Core/FormContainer'
 import { Button } from '@/components/Core/Button'
 import { CustomInput } from '@/components/Core/Input'
 import { Label } from '@/components/Core/Label'
 import { ErrorMessage } from '@/components/Shared/ErrorMessage'
-import {
-  AddColumnBtn,
-  ColumnInput,
-  ColumnRow,
-  ColumnsWrapper,
-  GripIcon,
-  RemoveColumnBtn,
-} from './styles'
+import { AddColumnBtn, ColumnsWrapper } from './styles'
 import { Sheet } from '../Sheet'
+import { ColumnRowField } from './partials/ColumnRowField'
 import { useBoardForm } from '@/hooks/useBoardForm'
 
 interface BoardModalProps {
@@ -45,42 +31,6 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
   } = useBoardForm({ isEditing, onClose })
 
   const submitForm = handleSubmit(handleSubmitBoard)
-
-  const renderColumnRow = (column: BoardColumnProps, index: number) => {
-    const error = errors.columns?.[index]?.name?.message
-    const canRemove = boardColumns?.length > 1
-
-    return (
-      <Sheet.FieldGroup key={`${column.name}-${index}`}>
-        <ColumnRow className={error ? 'error' : ''}>
-          <GripIcon>
-            <FontAwesomeIcon icon={faGripVertical} />
-          </GripIcon>
-          <ColumnInput
-            spellCheck={false}
-            defaultValue={column.name}
-            placeholder="e.g. Todo"
-            onBlur={(e) => handleChangeColumn(index, e.target.value)}
-          />
-          <RemoveColumnBtn
-            type="button"
-            aria-label="Remove column"
-            disabled={!canRemove}
-            onClick={() => {
-              if (canRemove) {
-                handleRemoveColumn(index)
-              } else {
-                toast.error('Board needs to have at least one column.')
-              }
-            }}
-          >
-            <FontAwesomeIcon icon={faXmark} />
-          </RemoveColumnBtn>
-        </ColumnRow>
-        <ErrorMessage message={error} />
-      </Sheet.FieldGroup>
-    )
-  }
 
   return (
     <Sheet isLoading={isLoading} onClose={onClose}>
@@ -123,9 +73,16 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
               These stages define how work moves across your board.
             </Sheet.SectionHint>
             <ColumnsWrapper>
-              {boardColumns.map((column, index) =>
-                renderColumnRow(column, index),
-              )}
+              {boardColumns.map((column, index) => (
+                <ColumnRowField
+                  key={`${column.name}-${index}`}
+                  name={column.name}
+                  error={errors.columns?.[index]?.name?.message}
+                  canRemove={boardColumns.length > 1}
+                  onChangeName={(value) => handleChangeColumn(index, value)}
+                  onRemove={() => handleRemoveColumn(index)}
+                />
+              ))}
             </ColumnsWrapper>
             {boardColumns.length < MAX_COLUMNS && (
               <AddColumnBtn type="button" onClick={handleAddColumn}>

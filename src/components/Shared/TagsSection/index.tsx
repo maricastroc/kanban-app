@@ -14,7 +14,7 @@ import {
 import { TagProps } from '@/@types/tag'
 import { TaskTagProps } from '@/@types/task-tag'
 import { getTagHex } from '@/utils/getTagHex'
-import useRequest from '@/utils/useRequest'
+import { useTags } from '@/hooks/useTags'
 
 interface Props {
   taskTags?: TaskTagProps[]
@@ -27,14 +27,7 @@ export const TagsSection = ({
   onCheckedClick,
   onUncheckedClick,
 }: Props) => {
-  const { data } = useRequest<{
-    tags: TagProps[]
-  }>({
-    url: '/tags',
-    method: 'GET',
-  })
-
-  const tags = data?.tags
+  const { tags } = useTags()
 
   const isTagChecked = (id: string) =>
     taskTags?.some((tag) => String(tag.id) === String(id))

@@ -23,7 +23,6 @@ import { useDragScroll } from '@/utils/useDragScroll'
 import { useDragAndDrop } from '@/hooks/useDragAndDrop'
 import { useAuthRedirect } from '@/hooks/useAuthRedirect'
 import { BoardColumnsList } from './partials/BoardColumnsList'
-import { useTheme } from '@/contexts/ThemeContext'
 import {
   filterBoardColumns,
   isBoardFiltered,
@@ -43,7 +42,6 @@ export default function Home() {
   const [sortBy, setSortBy] = useState<SortKey>('manual')
 
   const { isLoading, activeBoard } = useBoardsContext()
-  const { enableDarkMode } = useTheme()
 
   const { handleMouseMove, handleMouseUp, handleContainerMouseDown } =
     useDragScroll(columnsContainerRef as RefObject<HTMLDivElement>)
@@ -99,7 +97,6 @@ export default function Home() {
                   <Wrapper>
                     <Header
                       hideSidebar={hideSidebar}
-                      enableDarkMode={enableDarkMode}
                       search={search}
                       onSearchChange={setSearch}
                       filterTags={filterTags}

@@ -1,47 +1,37 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react'
 import { NextSeo } from 'next-seo'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
-import Logo from '@/../public/icon.svg'
-import LogoTextLight from '@/../public/kanban.svg'
-import LogoTextDark from '@/../public/kanban-dark.svg'
+import Image from 'next/image'
+import Link from 'next/link'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { handleApiError } from '@/utils/handleApiError'
-import { ErrorMessage } from '@/components/Shared/ErrorMessage'
+import { toast } from 'react-hot-toast'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEnvelope, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
+
+import Logo from '@/../public/icon.svg'
+import LogoTextLight from '@/../public/kanban.svg'
+import LogoTextDark from '@/../public/kanban-dark.svg'
 import {
   CreateAccountContainer,
   FormContainer,
-  FormField,
-  IconWrapper,
-  InputContainer,
-  InputField,
   InputsContainer,
   LayoutContainer,
   LoginCard,
   LogoWrapper,
-  PasswordIconWrapper,
   Tagline,
   TitleContainer,
 } from './styles'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faEnvelope,
-  faEye,
-  faEyeSlash,
-  faLock,
-  faRightToBracket,
-} from '@fortawesome/free-solid-svg-icons'
 import { Button } from '@/components/Core/Button'
-import Image from 'next/image'
-import { toast } from 'react-hot-toast'
-import Link from 'next/link'
+import { LoadingComponent } from '@/components/Shared/LoadingComponent'
+import { AuthField } from './partials/AuthField'
+import { PasswordField } from './partials/PasswordField'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useLoadingOnRouteChange } from '@/utils/useLoadingOnRouteChange'
-import { LoadingComponent } from '@/components/Shared/LoadingComponent'
+import { useRedirectIfAuthenticated } from '@/hooks/useRedirectIfAuthenticated'
+import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
-import { Label } from '@/components/Core/Label'
 
 const signInFormSchema = z.object({
   email: z.string().min(3, { message: 'E-mail is required.' }),
@@ -53,12 +43,11 @@ type SignInFormData = z.infer<typeof signInFormSchema>
 export default function Login() {
   const { enableDarkMode } = useTheme()
 
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
-  const [isLoading, setIsLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-
+  const { isCheckingAuth } = useRedirectIfAuthenticated()
   const isRouteLoading = useLoadingOnRouteChange()
   const router = useRouter()
+
+  const [isLoading, setIsLoading] = useState(false)
 
   const {
     register,
@@ -95,142 +84,70 @@ export default function Login() {
     }
   }
 
-  useEffect(() => {
-    const token = localStorage.getItem('auth_token')
-
-    if (token) {
-      router.replace('/')
-    } else {
-      setIsCheckingAuth(false)
-    }
-  }, [])
+  if (isCheckingAuth) return null
 
   return (
     <>
       <NextSeo title="Kanban App | Login" />
 
-      {!isCheckingAuth && (
-        <LayoutContainer>
-          <LogoWrapper>
-            <Image src={Logo} width={24} height={24} alt="Kanban App logo" />
+      <LayoutContainer>
+        <LogoWrapper>
+          <Image src={Logo} width={24} height={24} alt="Kanban App logo" />
+          <Image
+            src={
+              enableDarkMode === undefined || enableDarkMode
+                ? LogoTextLight
+                : LogoTextDark
+            }
+            height={24}
+            alt="Kanban App text logo"
+          />
+        </LogoWrapper>
 
-            <Image
-              src={
-                enableDarkMode === undefined || enableDarkMode
-                  ? LogoTextLight
-                  : LogoTextDark
-              }
-              height={24}
-              alt="Kanban App text logo"
-            />
-          </LogoWrapper>
+        <Tagline>Organize projects with clarity.</Tagline>
 
-          <Tagline>Organize projects with clarity.</Tagline>
+        <LoginCard>
+          <TitleContainer>
+            <h1>Login</h1>
+            <p>Welcome back. Sign in to continue.</p>
+          </TitleContainer>
 
-          <LoginCard>
-            <TitleContainer>
-              <h1>Login</h1>
-              <p>Welcome back. Sign in to continue.</p>
-            </TitleContainer>
+          <FormContainer onSubmit={handleSubmit(onSubmit)}>
+            <InputsContainer>
+              <AuthField
+                id="email"
+                label="Email"
+                type="email"
+                placeholder="e.g. jondoe@gmail.com"
+                icon={faEnvelope}
+                error={errors.email?.message}
+                {...register('email')}
+              />
 
-            <FormContainer onSubmit={handleSubmit(onSubmit)}>
-              <InputsContainer>
-                <FormField>
-                  <Label htmlFor="email">Email</Label>
+              <PasswordField
+                error={errors.password?.message}
+                {...register('password')}
+              />
+            </InputsContainer>
 
-                  <InputContainer>
-                    <IconWrapper aria-hidden="true">
-                      <FontAwesomeIcon
-                        icon={faEnvelope}
-                        style={{ fontSize: 16 }}
-                      />
-                    </IconWrapper>
+            <Button isBigger isLoading={isSubmitting || isLoading} type="submit">
+              <FontAwesomeIcon
+                icon={faRightToBracket}
+                style={{ fontSize: 14 }}
+                aria-hidden="true"
+              />
+              Login
+            </Button>
 
-                    <InputField
-                      id="email"
-                      type="email"
-                      placeholder="e.g. jondoe@gmail.com"
-                      {...register('email')}
-                      className={`${errors.email ? 'error' : ''}`}
-                      aria-invalid={!!errors.email}
-                    />
-                  </InputContainer>
+            <CreateAccountContainer>
+              <p>Don&apos;t have an account?</p>
+              <Link href="/register">Create account</Link>
+            </CreateAccountContainer>
+          </FormContainer>
+        </LoginCard>
 
-                  {errors?.email && (
-                    <ErrorMessage message={errors.email.message} />
-                  )}
-                </FormField>
-
-                <FormField>
-                  <Label htmlFor="password">Password</Label>
-
-                  <InputContainer>
-                    <IconWrapper aria-hidden="true">
-                      <FontAwesomeIcon icon={faLock} style={{ fontSize: 16 }} />
-                    </IconWrapper>
-
-                    <InputField
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Enter your password"
-                      {...register('password')}
-                      className={`${errors.password ? 'error' : ''}`}
-                      aria-invalid={!!errors.password}
-                    />
-
-                    <PasswordIconWrapper
-                      type="button"
-                      aria-label={
-                        showPassword ? 'Hide password' : 'Show password'
-                      }
-                      aria-pressed={showPassword}
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <FontAwesomeIcon
-                          icon={faEyeSlash}
-                          style={{ fontSize: 16 }}
-                          aria-hidden="true"
-                        />
-                      ) : (
-                        <FontAwesomeIcon
-                          icon={faEye}
-                          style={{ fontSize: 16 }}
-                          aria-hidden="true"
-                        />
-                      )}
-                    </PasswordIconWrapper>
-                  </InputContainer>
-
-                  {errors?.password && (
-                    <ErrorMessage message={errors.password.message} />
-                  )}
-                </FormField>
-              </InputsContainer>
-
-              <Button
-                isBigger
-                isLoading={isSubmitting || isLoading}
-                type="submit"
-              >
-                <FontAwesomeIcon
-                  icon={faRightToBracket}
-                  style={{ fontSize: 14 }}
-                  aria-hidden="true"
-                />
-                Login
-              </Button>
-
-              <CreateAccountContainer>
-                <p>Don&apos;t have an account?</p>
-                <Link href="/register">Create account</Link>
-              </CreateAccountContainer>
-            </FormContainer>
-          </LoginCard>
-
-          {(isLoading || isRouteLoading) && <LoadingComponent />}
-        </LayoutContainer>
-      )}
+        {(isLoading || isRouteLoading) && <LoadingComponent />}
+      </LayoutContainer>
     </>
   )
 }

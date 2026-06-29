@@ -1,50 +1,39 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+import { NextSeo } from 'next-seo'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
-import Logo from '@/../public/icon.svg'
-import LogoTextLight from '@/../public/kanban.svg'
-import LogoTextDark from '@/../public/kanban-dark.svg'
+import Image from 'next/image'
+import Link from 'next/link'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { handleApiError } from '@/utils/handleApiError'
-import { ErrorMessage } from '@/components/Shared/ErrorMessage'
+import toast from 'react-hot-toast'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEnvelope, faUser, faUserPlus } from '@fortawesome/free-solid-svg-icons'
+
+import Logo from '@/../public/icon.svg'
+import LogoTextLight from '@/../public/kanban.svg'
+import LogoTextDark from '@/../public/kanban-dark.svg'
 import {
   CreateAccountContainer,
   FormContainer,
-  FormField,
-  IconWrapper,
-  InputContainer,
-  InputField,
   InputsContainer,
   LayoutContainer,
   LoginCard,
   LogoWrapper,
-  PasswordIconWrapper,
   Tagline,
   TitleContainer,
 } from '../login/styles'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faEnvelope,
-  faEye,
-  faEyeSlash,
-  faLock,
-  faUser,
-  faUserPlus,
-} from '@fortawesome/free-solid-svg-icons'
 import { Button } from '@/components/Core/Button'
-import { Label } from '@/components/Core/Label'
-import Image from 'next/image'
-import Link from 'next/link'
-import { api } from '@/lib/axios'
-import toast from 'react-hot-toast'
-import { useEffect, useState } from 'react'
-import { useTheme } from 'styled-components'
-import { useLoadingOnRouteChange } from '@/utils/useLoadingOnRouteChange'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
-import { NextSeo } from 'next-seo'
+import { AuthField } from '../login/partials/AuthField'
+import { PasswordField } from '../login/partials/PasswordField'
+import { useTheme } from '@/contexts/ThemeContext'
+import { useLoadingOnRouteChange } from '@/utils/useLoadingOnRouteChange'
+import { useRedirectIfAuthenticated } from '@/hooks/useRedirectIfAuthenticated'
+import { handleApiError } from '@/utils/handleApiError'
+import { api } from '@/lib/axios'
 
-const signInFormSchema = z.object({
+const signUpFormSchema = z.object({
   name: z.string().min(3, { message: 'Name must have at least 3 characters.' }),
   email: z
     .string()
@@ -57,30 +46,27 @@ const signInFormSchema = z.object({
     .regex(/\d/, 'Password must contain at least one number.'),
 })
 
-type SignInFormData = z.infer<typeof signInFormSchema>
+type SignUpFormData = z.infer<typeof signUpFormSchema>
 
-export default function Login() {
+export default function Register() {
   const { enableDarkMode } = useTheme()
 
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
-
+  const { isCheckingAuth } = useRedirectIfAuthenticated()
+  const isRouteLoading = useLoadingOnRouteChange()
   const router = useRouter()
 
-  const isRouteLoading = useLoadingOnRouteChange()
-
   const [isLoading, setIsLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
 
   const {
     register,
     handleSubmit,
     formState: { isSubmitting, errors },
-  } = useForm<SignInFormData>({
-    resolver: zodResolver(signInFormSchema),
+  } = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpFormSchema),
     defaultValues: { email: '', password: '' },
   })
 
-  async function onSubmit(data: SignInFormData) {
+  async function onSubmit(data: SignUpFormData) {
     setIsLoading(true)
 
     try {
@@ -102,155 +88,81 @@ export default function Login() {
     }
   }
 
-  useEffect(() => {
-    const token = localStorage.getItem('auth_token')
-
-    if (token) {
-      router.replace('/')
-    } else {
-      setIsCheckingAuth(false)
-    }
-  }, [])
+  if (isCheckingAuth) return null
 
   return (
     <>
       <NextSeo title="Kanban App | Register" />
-      {!isCheckingAuth && (
-        <LayoutContainer>
-          <LogoWrapper>
-            <Image src={Logo} width={24} height={24} alt="Kanban App logo" />
-            <Image
-              src={
-                enableDarkMode === undefined || enableDarkMode
-                  ? LogoTextLight
-                  : LogoTextDark
-              }
-              width={112}
-              height={24}
-              alt="Kanban App text logo"
-            />
-          </LogoWrapper>
 
-          <Tagline>Organize projects with clarity.</Tagline>
+      <LayoutContainer>
+        <LogoWrapper>
+          <Image src={Logo} width={24} height={24} alt="Kanban App logo" />
+          <Image
+            src={
+              enableDarkMode === undefined || enableDarkMode
+                ? LogoTextLight
+                : LogoTextDark
+            }
+            width={112}
+            height={24}
+            alt="Kanban App text logo"
+          />
+        </LogoWrapper>
 
-          <LoginCard>
-            <TitleContainer>
-              <h1>Create account</h1>
-              <p>Let’s get you started organizing your tasks!</p>
-            </TitleContainer>
+        <Tagline>Organize projects with clarity.</Tagline>
 
-            <FormContainer onSubmit={handleSubmit(onSubmit)}>
-              <InputsContainer>
-                <FormField>
-                  <Label htmlFor="name">Name</Label>
+        <LoginCard>
+          <TitleContainer>
+            <h1>Create account</h1>
+            <p>Let&apos;s get you started organizing your tasks!</p>
+          </TitleContainer>
 
-                  <InputContainer>
-                    <IconWrapper aria-hidden="true">
-                      <FontAwesomeIcon icon={faUser} style={{ fontSize: 16 }} />
-                    </IconWrapper>
-                    <InputField
-                      id="name"
-                      type="text"
-                      placeholder="e.g. Jon Doe"
-                      {...register('name')}
-                    />
-                  </InputContainer>
+          <FormContainer onSubmit={handleSubmit(onSubmit)}>
+            <InputsContainer>
+              <AuthField
+                id="name"
+                label="Name"
+                type="text"
+                placeholder="e.g. Jon Doe"
+                icon={faUser}
+                error={errors.name?.message}
+                {...register('name')}
+              />
 
-                  {errors?.name && (
-                    <ErrorMessage message={errors.name.message} />
-                  )}
-                </FormField>
+              <AuthField
+                id="email"
+                label="Email"
+                type="email"
+                placeholder="e.g. jondoe@gmail.com"
+                icon={faEnvelope}
+                error={errors.email?.message}
+                {...register('email')}
+              />
 
-                <FormField>
-                  <Label htmlFor="email">Email</Label>
+              <PasswordField
+                error={errors.password?.message}
+                {...register('password')}
+              />
+            </InputsContainer>
 
-                  <InputContainer>
-                    <IconWrapper aria-hidden="true">
-                      <FontAwesomeIcon
-                        icon={faEnvelope}
-                        style={{ fontSize: 16 }}
-                      />
-                    </IconWrapper>
-                    <InputField
-                      id="email"
-                      type="email"
-                      placeholder="e.g. jondoe@gmail.com"
-                      {...register('email')}
-                    />
-                  </InputContainer>
+            <Button isBigger isLoading={isSubmitting || isLoading} type="submit">
+              <FontAwesomeIcon
+                icon={faUserPlus}
+                style={{ fontSize: 14 }}
+                aria-hidden="true"
+              />
+              Sign Up
+            </Button>
 
-                  {errors?.email && (
-                    <ErrorMessage message={errors.email.message} />
-                  )}
-                </FormField>
+            <CreateAccountContainer>
+              <p>Already have an account?</p>
+              <Link href="/login">Login</Link>
+            </CreateAccountContainer>
+          </FormContainer>
+        </LoginCard>
 
-                <FormField>
-                  <Label htmlFor="password">Password</Label>
-
-                  <InputContainer>
-                    <IconWrapper aria-hidden="true">
-                      <FontAwesomeIcon icon={faLock} style={{ fontSize: 16 }} />
-                    </IconWrapper>
-                    <InputField
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Enter your password"
-                      {...register('password')}
-                    />
-
-                    <PasswordIconWrapper
-                      type="button"
-                      aria-label={
-                        showPassword ? 'Hide password' : 'Show password'
-                      }
-                      aria-pressed={showPassword}
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <FontAwesomeIcon
-                          icon={faEyeSlash}
-                          style={{ fontSize: 16 }}
-                          aria-hidden="true"
-                        />
-                      ) : (
-                        <FontAwesomeIcon
-                          icon={faEye}
-                          style={{ fontSize: 16 }}
-                          aria-hidden="true"
-                        />
-                      )}
-                    </PasswordIconWrapper>
-                  </InputContainer>
-
-                  {errors?.password && (
-                    <ErrorMessage message={errors.password.message} />
-                  )}
-                </FormField>
-              </InputsContainer>
-
-              <Button
-                isBigger
-                isLoading={isSubmitting || isLoading}
-                type="submit"
-              >
-                <FontAwesomeIcon
-                  icon={faUserPlus}
-                  style={{ fontSize: 14 }}
-                  aria-hidden="true"
-                />
-                Sign Up
-              </Button>
-
-              <CreateAccountContainer>
-                <p>Already have an account?</p>
-                <Link href="/login">Login</Link>
-              </CreateAccountContainer>
-            </FormContainer>
-          </LoginCard>
-
-          {(isLoading || isRouteLoading) && <LoadingComponent />}
-        </LayoutContainer>
-      )}
+        {(isLoading || isRouteLoading) && <LoadingComponent />}
+      </LayoutContainer>
     </>
   )
 }
