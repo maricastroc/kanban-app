@@ -53,6 +53,55 @@ export const TaskCardContainer = styled.div`
   }
 `
 
+export const TaskTitleRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  width: 100%;
+
+  &.completed strong {
+    color: ${(props) => props.theme['muted-color']};
+    text-decoration: line-through;
+    text-decoration-color: ${(props) => props.theme['muted-color']};
+  }
+`
+
+// A checkbox-style completion toggle. Hollow circle when open; fills with the
+// completed colour and a check when done.
+export const CompleteToggle = styled.button`
+  flex-shrink: 0;
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid ${(props) => props.theme['hairline-strong']};
+  border-radius: 50%;
+  background-color: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: border-color 140ms ease, background-color 140ms ease;
+
+  svg {
+    font-size: 0.55rem;
+  }
+
+  &:hover {
+    border-color: ${(props) => props.theme['completed-color']};
+  }
+
+  &.completed {
+    border-color: ${(props) => props.theme['completed-color']};
+    background-color: ${(props) => props.theme['completed-color']};
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+`
+
 export const TagsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -119,36 +168,43 @@ export const InfoItem = styled.div`
   }
 `
 
-// The due-date status reads as a chip (tinted fill + soft border) sitting next
-// to the date, so it shares the visual language of the tags up top without
-// being mistaken for one — the date stays the primary datum, muted.
-export const DueChip = styled.span`
+// Trello-style due-date pill: a plain muted clock + date when there's nothing
+// to flag, tinting into a coloured pill once the date is overdue / due soon, or
+// the task is done. The status rides on the pill, so the date itself stays
+// readable instead of competing with a separate label.
+export const DueDateBadge = styled.div`
   display: inline-flex;
   align-items: center;
-  height: 17px;
-  padding: 0 0.4rem;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  gap: 5px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: ${(props) => props.theme['muted-color']};
+  border-radius: 5px;
   white-space: nowrap;
+
+  svg {
+    font-size: 0.72rem;
+    color: currentColor;
+  }
+
+  &.overdue,
+  &.due_soon,
+  &.completed {
+    padding: 2px 7px;
+  }
 
   &.overdue {
     color: ${(props) => props.theme['overdue-color']};
     background-color: ${(props) => `${props.theme['overdue-color']}1f`};
-    border-color: ${(props) => `${props.theme['overdue-color']}33`};
   }
 
   &.due_soon {
     color: ${(props) => props.theme['due-soon-color']};
     background-color: ${(props) => `${props.theme['due-soon-color']}1f`};
-    border-color: ${(props) => `${props.theme['due-soon-color']}33`};
   }
 
   &.completed {
     color: ${(props) => props.theme['completed-color']};
     background-color: ${(props) => `${props.theme['completed-color']}1f`};
-    border-color: ${(props) => `${props.theme['completed-color']}33`};
   }
 `

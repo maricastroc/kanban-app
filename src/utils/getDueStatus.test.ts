@@ -13,35 +13,28 @@ describe('getDueStatus', () => {
     vi.useRealTimers()
   })
 
-  const incomplete = [{ is_completed: false }]
-  const completed = [{ is_completed: true }, { is_completed: true }]
-
-  it("returns 'completed' when every subtask is done, even past the due date", () => {
-    expect(getDueStatus('2026-06-01', completed)).toBe('completed')
+  it("returns 'completed' when the task is marked complete, even past the due date", () => {
+    expect(getDueStatus('2026-06-01', true)).toBe('completed')
   })
 
-  it('does not treat an empty subtask list as completed', () => {
-    expect(getDueStatus('2026-06-28', [])).toBe('overdue')
-  })
-
-  it("returns 'overdue' for a past due date", () => {
-    expect(getDueStatus('2026-06-28', incomplete)).toBe('overdue')
+  it("returns 'overdue' for a past due date that isn't complete", () => {
+    expect(getDueStatus('2026-06-28', false)).toBe('overdue')
   })
 
   it("returns 'due_soon' when the due date is today", () => {
-    expect(getDueStatus('2026-06-29', incomplete)).toBe('due_soon')
+    expect(getDueStatus('2026-06-29', false)).toBe('due_soon')
   })
 
   it("returns 'due_soon' when the due date is tomorrow", () => {
-    expect(getDueStatus('2026-06-30', incomplete)).toBe('due_soon')
+    expect(getDueStatus('2026-06-30', false)).toBe('due_soon')
   })
 
   it('returns an empty string when the due date is comfortably in the future', () => {
-    expect(getDueStatus('2026-07-15', incomplete)).toBe('')
+    expect(getDueStatus('2026-07-15', false)).toBe('')
   })
 
   it('accepts a Date instance as well as a string', () => {
-    expect(getDueStatus(new Date('2026-06-29T00:00:00Z'), incomplete)).toBe(
+    expect(getDueStatus(new Date('2026-06-29T00:00:00Z'), false)).toBe(
       'due_soon',
     )
   })
@@ -50,7 +43,7 @@ describe('getDueStatus', () => {
     const original = new Date('2026-06-29T15:30:00Z')
     const before = original.getTime()
 
-    getDueStatus(original, incomplete)
+    getDueStatus(original, false)
 
     // The function zeroes the hours internally; the caller's Date must be intact.
     expect(original.getTime()).toBe(before)
@@ -68,27 +61,24 @@ describe('getDueLabel', () => {
     vi.useRealTimers()
   })
 
-  const incomplete = [{ is_completed: false }]
-  const completed = [{ is_completed: true }, { is_completed: true }]
-
-  it("returns 'Done' when every subtask is completed", () => {
-    expect(getDueLabel('2026-06-01', completed)).toBe('Done')
+  it("returns 'Done' when the task is marked complete", () => {
+    expect(getDueLabel('2026-06-01', true)).toBe('Done')
   })
 
   it("returns 'Overdue' for any past due date", () => {
-    expect(getDueLabel('2026-06-28', incomplete)).toBe('Overdue')
-    expect(getDueLabel('2026-05-29', incomplete)).toBe('Overdue')
+    expect(getDueLabel('2026-06-28', false)).toBe('Overdue')
+    expect(getDueLabel('2026-05-29', false)).toBe('Overdue')
   })
 
   it("returns 'Due today' when the due date is today", () => {
-    expect(getDueLabel('2026-06-29', incomplete)).toBe('Due today')
+    expect(getDueLabel('2026-06-29', false)).toBe('Due today')
   })
 
   it("returns 'Due tomorrow' when the due date is tomorrow", () => {
-    expect(getDueLabel('2026-06-30', incomplete)).toBe('Due tomorrow')
+    expect(getDueLabel('2026-06-30', false)).toBe('Due tomorrow')
   })
 
   it('returns an empty label for a date comfortably in the future', () => {
-    expect(getDueLabel('2026-07-15', incomplete)).toBe('')
+    expect(getDueLabel('2026-07-15', false)).toBe('')
   })
 })

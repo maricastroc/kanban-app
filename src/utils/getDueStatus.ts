@@ -1,5 +1,3 @@
-type Subtaskish = { is_completed: boolean }
-
 // Always clone: `new Date(value)` copies a Date argument (and parses a string),
 // so the setHours() below never mutates the caller's original Date.
 const startOfDay = (value: string | Date): Date => {
@@ -7,9 +5,6 @@ const startOfDay = (value: string | Date): Date => {
   date.setHours(0, 0, 0, 0)
   return date
 }
-
-const allSubtasksCompleted = (subtasks: Subtaskish[]): boolean =>
-  subtasks.length > 0 && subtasks.every((st) => st.is_completed)
 
 // Whole-day distance from today; negative when the date is already in the past.
 const daysUntil = (date: string | Date): number => {
@@ -19,9 +14,9 @@ const daysUntil = (date: string | Date): number => {
 
 export const getDueStatus = (
   date: string | Date,
-  subtasks: Subtaskish[],
+  isCompleted: boolean,
 ): string => {
-  if (allSubtasksCompleted(subtasks)) return 'completed'
+  if (isCompleted) return 'completed'
 
   const days = daysUntil(date)
 
@@ -39,9 +34,9 @@ export const getDueStatus = (
  */
 export const getDueLabel = (
   date: string | Date,
-  subtasks: Subtaskish[],
+  isCompleted: boolean,
 ): string => {
-  if (allSubtasksCompleted(subtasks)) return 'Done'
+  if (isCompleted) return 'Done'
 
   const days = daysUntil(date)
 

@@ -4,7 +4,8 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
-  DueChip,
+  CompleteToggle,
+  DueDateBadge,
   InfoContent,
   InfoItem,
   ProgressContainer,
@@ -13,6 +14,7 @@ import {
   Tag,
   TagsContainer,
   TaskCardContainer,
+  TaskTitleRow,
 } from './styles'
 import { TaskDetailsModal } from '@/components/Modals/TaskDetailsModal'
 import { getTagHex } from '@/utils/getTagHex'
@@ -21,7 +23,14 @@ import { useBoardsContext } from '@/contexts/BoardsContext'
 import { BoardColumnProps } from '@/@types/board-column'
 import { formatDate } from '@/utils/formatDate'
 import { getDueStatus, getDueLabel } from '@/utils/getDueStatus'
-import { faClock, faListCheck } from '@fortawesome/free-solid-svg-icons'
+import { api } from '@/lib/axios'
+import { handleApiError } from '@/utils/handleApiError'
+import {
+  faCheck,
+  faCircleCheck,
+  faClock,
+  faListCheck,
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export const taskSortableId = (id: TaskProps['id']) => `task-${id}`
@@ -40,13 +49,36 @@ export function CardContent({ task }: { task: TaskProps }) {
   const progress =
     totalSubtasks > 0 ? (completedSubtasks / totalSubtasks) * 100 : 0
 
-  const subtasksList = task?.subtasks ?? []
+  const { activeBoardMutate } = useBoardsContext()
+  const [isCompleted, setIsCompleted] = useState(!!task.is_completed)
+  const [isToggling, setIsToggling] = useState(false)
+
   const dueStatus = task?.due_date
-    ? getDueStatus(task.due_date, subtasksList)
+    ? getDueStatus(task.due_date, isCompleted)
     : ''
-  const dueLabel = task?.due_date
-    ? getDueLabel(task.due_date, subtasksList)
-    : ''
+  const dueLabel = task?.due_date ? getDueLabel(task.due_date, isCompleted) : ''
+
+  async function handleToggleCompletion(event: React.MouseEvent) {
+    // The card is both a drag handle and the modal trigger, so stop the toggle
+    // click from starting a drag or opening the details modal.
+    event.preventDefault()
+    event.stopPropagation()
+    if (isToggling) return
+
+    const next = !isCompleted
+    setIsCompleted(next)
+    setIsToggling(true)
+
+    try {
+      await api.patch(`/tasks/${task.id}/toggle-completion`)
+      await activeBoardMutate()
+    } catch (error) {
+      setIsCompleted(!next)
+      handleApiError(error)
+    } finally {
+      setIsToggling(false)
+    }
+  }
 
   return (
     <>
@@ -66,7 +98,24 @@ export function CardContent({ task }: { task: TaskProps }) {
         </TagsContainer>
       )}
 
-      <strong>{task.name}</strong>
+      <TaskTitleRow className={isCompleted ? 'completed' : ''}>
+        <CompleteToggle
+          type="button"
+          className={isCompleted ? 'completed' : ''}
+          onClick={handleToggleCompletion}
+          onPointerDown={(event) => event.stopPropagation()}
+          disabled={isToggling}
+          aria-pressed={isCompleted}
+          aria-label={
+            isCompleted ? 'Mark task as not done' : 'Mark task as done'
+          }
+        >
+          {isCompleted ? (
+            <FontAwesomeIcon icon={faCheck} aria-hidden="true" />
+          ) : null}
+        </CompleteToggle>
+        <strong>{task.name}</strong>
+      </TaskTitleRow>
 
       {completedSubtasks > 0 && (
         <ProgressWrapper>
@@ -83,13 +132,13 @@ export function CardContent({ task }: { task: TaskProps }) {
         </InfoItem>
 
         {task?.due_date && (
-          <InfoItem>
-            <FontAwesomeIcon icon={faClock} />
-            <p>{formatDate(task.due_date)}</p>
-            {dueLabel ? (
-              <DueChip className={dueStatus}>{dueLabel}</DueChip>
-            ) : null}
-          </InfoItem>
+          <DueDateBadge className={dueStatus} title={dueLabel || undefined}>
+            <FontAwesomeIcon
+              icon={isCompleted ? faCircleCheck : faClock}
+              aria-hidden="true"
+            />
+            <span>{formatDate(task.due_date)}</span>
+          </DueDateBadge>
         )}
       </InfoContent>
     </>

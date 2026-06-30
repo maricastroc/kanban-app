@@ -8,6 +8,7 @@ export interface TaskProps {
   name: string
   description?: string
   status: string
+  is_completed?: boolean
   subtasks: SubtaskProps[]
   due_date?: Date
   tags?: TaskTagProps[]
