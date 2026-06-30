@@ -16,13 +16,14 @@ import {
   ThemeSwitcherContainer,
   Wrapper,
 } from './styles'
+import Image from 'next/image'
+import LogoMark from '@/../public/logo-mark.svg'
 import * as Dialog from '@radix-ui/react-dialog'
 
 import { useState } from 'react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-  faTableColumns,
   faPlus,
   faEyeSlash,
   faMoon,
@@ -69,9 +70,11 @@ export function Sidebar({ onClose, className }: SidebarProps) {
       <Wrapper className={className}>
         <Brand>
           <span className="logo-mark">
-            <FontAwesomeIcon
-              icon={faTableColumns}
-              style={{ fontSize: '0.9rem' }}
+            <Image
+              src={LogoMark}
+              width={30}
+              height={30}
+              alt="Kanban App logo"
             />
           </span>
           <span>kanban</span>

@@ -48,16 +48,16 @@ export const Brand = styled.div`
   padding: 0.25rem 1rem 1.4rem;
 
   .logo-mark {
+    display: flex;
     width: 30px;
     height: 30px;
     border-radius: 9px;
-    background: ${(props) => props.theme['accent-color']};
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    overflow: hidden;
 
-    svg {
-      color: ${(props) => props.theme['accent-on']};
+    img {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
   }
 
