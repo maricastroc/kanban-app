@@ -109,7 +109,7 @@ describe('Login page', () => {
     // session is established via the cookie; the app refreshes /user instead of
     // reading a token from localStorage
     expect(revalidateAuthMock).toHaveBeenCalled()
-    expect(toastSuccess).toHaveBeenCalledWith('Welcome to Kanban App!')
+    expect(toastSuccess).toHaveBeenCalledWith('Welcome to Cadence!')
     expect(pushMock).toHaveBeenCalledWith('/')
   })
 

@@ -43,11 +43,19 @@ export const LogoWrapper = styled.div`
   align-items: center;
   justify-content: center;
   padding-top: 2.5rem;
-  gap: 1.3rem;
+  gap: 0.8rem;
   width: 100%;
 
   img {
     scale: 1.2;
+  }
+
+  .wordmark {
+    font-weight: 700;
+    font-size: 2rem;
+    letter-spacing: -1px;
+    line-height: 1;
+    color: ${(props) => props.theme['title-color']};
   }
 
   @media (min-width: 480px) {

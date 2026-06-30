@@ -1,7 +1,9 @@
 {
-  "name": "kanban-app",
+  "name": "cadence",
   "version": "0.1.0",
   "private": true,
+  "author": "Mariana Castro <marianacastrorc@gmail.com> (https://github.com/maricastroc)",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

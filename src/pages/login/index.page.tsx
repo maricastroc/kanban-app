@@ -15,8 +15,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 
 import Logo from '@/../public/icon.svg'
-import LogoTextLight from '@/../public/kanban.svg'
-import LogoTextDark from '@/../public/kanban-dark.svg'
 import {
   CreateAccountContainer,
   FormContainer,
@@ -32,7 +30,6 @@ import { Button } from '@/components/Core/Button'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { AuthField } from './partials/AuthField'
 import { PasswordField } from './partials/PasswordField'
-import { useTheme } from '@/contexts/ThemeContext'
 import { useLoadingOnRouteChange } from '@/utils/useLoadingOnRouteChange'
 import { useRedirectIfAuthenticated } from '@/hooks/useRedirectIfAuthenticated'
 import { useAuthUser } from '@/hooks/useAuthUser'
@@ -47,8 +44,6 @@ const signInFormSchema = z.object({
 type SignInFormData = z.infer<typeof signInFormSchema>
 
 export default function Login() {
-  const { enableDarkMode } = useTheme()
-
   const { isCheckingAuth } = useRedirectIfAuthenticated()
   const { mutate: revalidateAuth } = useAuthUser()
   const isRouteLoading = useLoadingOnRouteChange()
@@ -79,7 +74,7 @@ export default function Login() {
       // session now lives in the httpOnly cookie — refresh /user so the app
       // picks up the authenticated state before navigating
       await revalidateAuth()
-      toast.success('Welcome to Kanban App!')
+      toast.success('Welcome to Cadence!')
       router.push('/')
     } catch (error) {
       handleApiError(error)
@@ -110,20 +105,12 @@ export default function Login() {
 
   return (
     <>
-      <NextSeo title="Kanban App | Login" />
+      <NextSeo title="Cadence | Login" />
 
       <LayoutContainer>
         <LogoWrapper>
-          <Image src={Logo} width={24} height={24} alt="Kanban App logo" />
-          <Image
-            src={
-              enableDarkMode === undefined || enableDarkMode
-                ? LogoTextLight
-                : LogoTextDark
-            }
-            height={24}
-            alt="Kanban App text logo"
-          />
+          <Image src={Logo} width={24} height={24} alt="Cadence logo" />
+          <span className="wordmark">cadence</span>
         </LogoWrapper>
 
         <Tagline>Organize projects with clarity.</Tagline>

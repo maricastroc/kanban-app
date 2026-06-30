@@ -110,7 +110,7 @@ export default function Home() {
 
   return (
     <>
-      <NextSeo title="Kanban App | Dashboard" />
+      <NextSeo title="Cadence | Dashboard" />
       {!isCheckingAuth && (
         <DndContext
           sensors={sensors}

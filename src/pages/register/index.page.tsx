@@ -15,8 +15,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 
 import Logo from '@/../public/icon.svg'
-import LogoTextLight from '@/../public/kanban.svg'
-import LogoTextDark from '@/../public/kanban-dark.svg'
 import {
   CreateAccountContainer,
   FormContainer,
@@ -31,7 +29,6 @@ import { Button } from '@/components/Core/Button'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { AuthField } from '../login/partials/AuthField'
 import { PasswordField } from '../login/partials/PasswordField'
-import { useTheme } from '@/contexts/ThemeContext'
 import { useLoadingOnRouteChange } from '@/utils/useLoadingOnRouteChange'
 import { useRedirectIfAuthenticated } from '@/hooks/useRedirectIfAuthenticated'
 import { handleApiError } from '@/utils/handleApiError'
@@ -53,8 +50,6 @@ const signUpFormSchema = z.object({
 type SignUpFormData = z.infer<typeof signUpFormSchema>
 
 export default function Register() {
-  const { enableDarkMode } = useTheme()
-
   const { isCheckingAuth } = useRedirectIfAuthenticated()
   const isRouteLoading = useLoadingOnRouteChange()
   const router = useRouter()
@@ -96,21 +91,12 @@ export default function Register() {
 
   return (
     <>
-      <NextSeo title="Kanban App | Register" />
+      <NextSeo title="Cadence | Register" />
 
       <LayoutContainer>
         <LogoWrapper>
-          <Image src={Logo} width={24} height={24} alt="Kanban App logo" />
-          <Image
-            src={
-              enableDarkMode === undefined || enableDarkMode
-                ? LogoTextLight
-                : LogoTextDark
-            }
-            width={112}
-            height={24}
-            alt="Kanban App text logo"
-          />
+          <Image src={Logo} width={24} height={24} alt="Cadence logo" />
+          <span className="wordmark">cadence</span>
         </LogoWrapper>
 
         <Tagline>Organize projects with clarity.</Tagline>

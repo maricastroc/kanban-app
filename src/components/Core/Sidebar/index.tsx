@@ -70,14 +70,9 @@ export function Sidebar({ onClose, className }: SidebarProps) {
       <Wrapper className={className}>
         <Brand>
           <span className="logo-mark">
-            <Image
-              src={LogoMark}
-              width={30}
-              height={30}
-              alt="Kanban App logo"
-            />
+            <Image src={LogoMark} width={30} height={30} alt="Cadence logo" />
           </span>
-          <span>kanban</span>
+          <span>cadence</span>
         </Brand>
 
         <SectionLabel>
