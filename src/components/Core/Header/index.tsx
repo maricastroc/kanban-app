@@ -36,10 +36,11 @@ export function Header({
   const metrics = useMemo(() => {
     const columns = activeBoard?.columns || []
     const tasks = columns.flatMap((c) => c.tasks || [])
-    const allSubtasks = tasks.flatMap((t) => t.subtasks || [])
-    const completed = allSubtasks.filter((s) => s.is_completed).length
-    const progress = allSubtasks.length
-      ? Math.round((completed / allSubtasks.length) * 100)
+    // "% done" reflects completed tasks (the is_completed marker), matching how
+    // completion works on the cards — not subtask progress.
+    const completedTasks = tasks.filter((t) => t.is_completed).length
+    const progress = tasks.length
+      ? Math.round((completedTasks / tasks.length) * 100)
       : 0
     return { tasks: tasks.length, columns: columns.length, progress }
   }, [activeBoard])

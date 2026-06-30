@@ -7,7 +7,9 @@ export const AddColumnContainer = styled.div`
   justify-content: center;
   min-width: 11rem;
   max-width: 11rem;
-  align-self: flex-start;
+  /* Stretch to the full board height (the columns container has a definite
+     height) so the add-column target isn't a stubby box next to the columns. */
+  align-self: stretch;
   min-height: 120px;
   border: 1.5px dashed ${(props) => props.theme['hairline-strong']};
   border-radius: 12px;
