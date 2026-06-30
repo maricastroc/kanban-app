@@ -22,6 +22,8 @@ const SORT_OPTIONS: { key: SortKey; label: string }[] = [
 ]
 
 interface Props {
+  /** Dims and disables the toolbar — used while no board is selected. */
+  disabled?: boolean
   search: string
   onSearchChange: (value: string) => void
   filterTags: string[]
@@ -32,6 +34,7 @@ interface Props {
 }
 
 export function BoardToolbar({
+  disabled = false,
   search,
   onSearchChange,
   filterTags,
@@ -56,6 +59,7 @@ export function BoardToolbar({
 
   // "/" focuses the search field (skips when already typing somewhere)
   useEffect(() => {
+    if (disabled) return
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== '/') return
       const el = document.activeElement as HTMLElement | null
@@ -69,13 +73,13 @@ export function BoardToolbar({
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [])
+  }, [disabled])
 
   const activeSortLabel =
     SORT_OPTIONS.find((o) => o.key === sortBy)?.label || 'Sort'
 
   return (
-    <Toolbar>
+    <Toolbar className={disabled ? 'disabled' : ''} aria-disabled={disabled}>
       <SearchBox>
         <FontAwesomeIcon icon={faMagnifyingGlass} />
         <input
@@ -84,8 +88,9 @@ export function BoardToolbar({
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search tasks…"
           aria-label="Search tasks"
+          disabled={disabled}
         />
-        {search ? (
+        {disabled ? null : search ? (
           <FontAwesomeIcon
             className="clear"
             icon={faXmark}
@@ -100,6 +105,7 @@ export function BoardToolbar({
 
       <ToolButtonWrapper ref={filterRef}>
         <ToolButton
+          disabled={disabled}
           className={`${filter.isOpen ? 'open' : ''} ${
             filterTags.length ? 'active' : ''
           }`}
@@ -137,6 +143,7 @@ export function BoardToolbar({
 
       <ToolButtonWrapper ref={sortRef}>
         <ToolButton
+          disabled={disabled}
           className={`${sort.isOpen ? 'open' : ''} ${
             sortBy !== 'manual' ? 'active' : ''
           }`}

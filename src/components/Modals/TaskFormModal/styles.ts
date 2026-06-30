@@ -35,29 +35,38 @@ export const StyledDatePickerWrapper = styled.div`
     div {
       color: ${(props) => props.theme['title-color']};
     }
+  }
 
-    button {
-      color: ${(props) => props.theme['title-color']};
-      top: 1rem;
-      width: 16px;
-      height: 16px;
-      right: 0.3rem;
-      fill: ${(props) => props.theme['border-color']};
-      color: ${(props) => props.theme['border-color']};
-    }
+  .react-datepicker__navigation {
+    top: 0.7rem;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    transition: background-color 140ms ease;
+  }
 
-    span {
-      height: 5px;
-      margin-top: -1rem;
-      margin-right: 1.25rem;
-      fill: ${(props) => props.theme['border-color']};
+  .react-datepicker__navigation--previous {
+    left: 0.7rem;
+  }
 
-      &::before {
-        height: 7px;
-        width: 7px;
-        border-color: ${(props) => props.theme['subtitle-color']};
-      }
-    }
+  .react-datepicker__navigation--next {
+    right: 0.7rem;
+  }
+
+  .react-datepicker__navigation:hover {
+    background-color: ${(props) => props.theme['hairline-color']};
+  }
+
+  .react-datepicker__navigation-icon::before {
+    width: 7px;
+    height: 7px;
+    border-width: 2px 2px 0 0;
+    border-color: ${(props) => props.theme['subtitle-color']};
+  }
+
+  .react-datepicker__navigation:hover
+    .react-datepicker__navigation-icon::before {
+    border-color: ${(props) => props.theme['title-color']};
   }
 
   .react-datepicker__day-names {

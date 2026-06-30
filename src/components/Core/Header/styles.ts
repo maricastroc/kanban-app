@@ -221,6 +221,13 @@ export const Toolbar = styled.div`
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
+  transition: opacity 160ms ease;
+
+  &.disabled {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+  }
 `
 
 export const SearchBox = styled.div`

@@ -31,7 +31,14 @@ export const Input = styled.input`
   }
 
   &.error {
-    border-color: ${(props) => props.theme['error-color']};
+    border-color: ${(props) => props.theme['error-border']};
+    background-color: ${(props) => props.theme['error-soft']};
+  }
+
+  &.error:focus,
+  &.error:focus-visible {
+    border-color: ${(props) => props.theme['error-border']};
+    box-shadow: 0 0 0 3px ${(props) => props.theme['error-soft']};
   }
 
   &.transparent {

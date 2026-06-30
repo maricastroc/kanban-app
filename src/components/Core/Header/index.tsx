@@ -56,6 +56,7 @@ export function Header({
       </TopRow>
 
       <BoardToolbar
+        disabled={!activeBoard}
         search={search}
         onSearchChange={onSearchChange}
         filterTags={filterTags}

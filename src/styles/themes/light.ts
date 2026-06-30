@@ -21,6 +21,10 @@ export const lightTheme = {
 
   'error-color': '#D93A3F',
   'error-hover': '#B82E33',
+  // softened error states for a more premium, less aggressive look
+  'error-text': '#C0383C',
+  'error-border': 'rgba(217, 58, 63, 0.32)',
+  'error-soft': 'rgba(217, 58, 63, 0.05)',
 
   'button-title': '#FFFFFF',
 

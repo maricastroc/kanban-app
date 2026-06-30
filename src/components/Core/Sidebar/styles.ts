@@ -98,6 +98,13 @@ export const BoardsContainer = styled.div`
   scrollbar-width: none;
 `
 
+export const EmptyBoardsHint = styled.p`
+  padding: 0.4rem 0.65rem 0.75rem;
+  font-size: 0.76rem;
+  line-height: 1.4;
+  color: ${(props) => props.theme['muted-color']};
+`
+
 export const CreateBoardArea = styled.div`
   flex-shrink: 0;
   width: 100%;

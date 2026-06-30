@@ -7,6 +7,7 @@ import {
   CreateBoardArea,
   CreateBoardButton,
   CreateDivider,
+  EmptyBoardsHint,
   HideButton,
   OptionsContainer,
   SectionLabel,
@@ -82,6 +83,9 @@ export function Sidebar({ onClose, className }: SidebarProps) {
         </SectionLabel>
 
         <BoardsContainer>
+          {!boards?.length && (
+            <EmptyBoardsHint>No boards yet — create one below.</EmptyBoardsHint>
+          )}
           {boards?.map((board) => {
             const taskCount = getBoardTaskCount(board)
             const color = getBoardColor(board.name)

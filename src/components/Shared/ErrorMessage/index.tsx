@@ -1,4 +1,6 @@
 import { CSSProperties } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons'
 import { Error } from './styles'
 
 interface ErrorMessageProps {
@@ -11,6 +13,7 @@ const ErrorMessage = ({ message, style }: ErrorMessageProps) => {
 
   return (
     <Error style={style}>
+      <FontAwesomeIcon icon={faCircleExclamation} aria-hidden />
       <span>{message}</span>
     </Error>
   )

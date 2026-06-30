@@ -43,21 +43,23 @@ export function BoardHeading({ activeBoard, metrics, isSmallerThanSm }: Props) {
           <TitleBlock>
             <Eyebrow>Boards</Eyebrow>
             <BoardName>{activeBoard?.name || 'No board selected'}</BoardName>
-            <MetricStrip>
-              <StatChip>
-                <strong>{metrics.tasks}</strong> tasks
-              </StatChip>
-              <StatChip>
-                <strong>{metrics.columns}</strong> columns
-              </StatChip>
-              <StatChip>
-                <span className="ring" />
-                <strong>{metrics.progress}%</strong> done
-              </StatChip>
-              {isSmallerThanSm && (
-                <FontAwesomeIcon className="chevron" icon={faAngleDown} />
-              )}
-            </MetricStrip>
+            {activeBoard && (
+              <MetricStrip>
+                <StatChip>
+                  <strong>{metrics.tasks}</strong> tasks
+                </StatChip>
+                <StatChip>
+                  <strong>{metrics.columns}</strong> columns
+                </StatChip>
+                <StatChip>
+                  <span className="ring" />
+                  <strong>{metrics.progress}%</strong> done
+                </StatChip>
+                {isSmallerThanSm && (
+                  <FontAwesomeIcon className="chevron" icon={faAngleDown} />
+                )}
+              </MetricStrip>
+            )}
           </TitleBlock>
         </BoardNameContainer>
       </Dialog.Trigger>

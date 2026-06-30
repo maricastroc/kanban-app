@@ -9,8 +9,14 @@ export const SecondaryBtn = styled.button`
   color: ${(props) => props.theme['button-title']};
   border: none;
   border-radius: 22px;
-  width: 164px;
+  width: auto;
+  min-width: 164px;
   height: 48px;
+  padding: 0 1.6rem;
+  gap: 0.5rem;
+  box-shadow: 0 8px 22px ${(props) => props.theme['accent-glow']};
+  transition: background-color 200ms ease, transform 200ms ease,
+    box-shadow 200ms ease;
 
   svg {
     font-size: 1rem;
@@ -24,7 +30,8 @@ export const SecondaryBtn = styled.button`
   }
 
   &:not([disabled]):hover {
-    transition: 200ms;
     background-color: ${(props) => props.theme['tertiary-hover']};
+    transform: translateY(-1px);
+    box-shadow: 0 10px 26px ${(props) => props.theme['accent-glow']};
   }
 `
