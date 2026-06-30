@@ -363,7 +363,7 @@ export const Dropdown = styled.div`
   border-radius: 10px;
   background-color: ${(props) => props.theme['card-color']};
   border: 1px solid ${(props) => props.theme['hairline-strong']};
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+  box-shadow: ${(props) => props.theme['shadow-md']};
   display: flex;
   flex-direction: column;
   gap: 1px;

@@ -25,6 +25,7 @@ import HideSidebar from '../../../public/icon-show-sidebar.svg'
 import { useWindowResize } from '@/utils/useWindowResize'
 import Image from 'next/image'
 import { EmptyContainer } from '@/components/Shared/EmptyContainer'
+import { EmptyColumns } from '@/components/Shared/EmptyColumns'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { useDragScroll } from '@/utils/useDragScroll'
@@ -44,12 +45,11 @@ export default function Home() {
   const [hideSidebar, setHideSidebar] = useState(false)
   const [isColumnFormModalOpen, setIsColumnFormModalOpen] = useState(false)
 
-  // Search / filter / sort live here so the Header toolbar and the board share them
   const [search, setSearch] = useState('')
   const [filterTags, setFilterTags] = useState<string[]>([])
   const [sortBy, setSortBy] = useState<SortKey>('manual')
 
-  const { isLoading, activeBoard } = useBoardsContext()
+  const { isLoading, activeBoard, boards } = useBoardsContext()
 
   const { handleMouseMove, handleMouseUp, handleContainerMouseDown } =
     useDragScroll(columnsContainerRef as RefObject<HTMLDivElement>)
@@ -59,8 +59,6 @@ export default function Home() {
   const { activeTask, isApiProcessing, onDragStart, onDragOver, onDragEnd } =
     useDragAndDrop(boardColumns, setBoardColumns)
 
-  // A small activation distance lets a plain click open the task dialog while
-  // an intentional drag still starts past the threshold.
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   )
@@ -69,8 +67,6 @@ export default function Home() {
     setBoardColumns(activeBoard?.columns)
   }, [activeBoard])
 
-  // The column backing the floating overlay card (task may have crossed
-  // columns mid-drag, so resolve it from the live board state).
   const overlayColumn =
     activeTask &&
     boardColumns?.find((col) =>
@@ -79,7 +75,12 @@ export default function Home() {
 
   const isFiltering = isBoardFiltered({ search, tags: filterTags, sortBy })
 
-  // Display view of the board with search/tag/sort applied (board data untouched)
+  // Boards exist but none has resolved yet (initial fetch or the auto-activation
+  // round-trip): keep the loader up instead of flashing the "no board selected"
+  // / empty-board states between requests.
+  const isResolvingBoard =
+    !activeBoard && (isLoading || (boards?.length ?? 0) > 0)
+
   const displayColumns = useMemo(
     () =>
       filterBoardColumns(boardColumns, { search, tags: filterTags, sortBy }),
@@ -110,10 +111,7 @@ export default function Home() {
           onDragEnd={onDragEnd}
         >
           <LayoutContainer>
-            {/* Only block the screen on the initial load. Once a board is on
-                screen, background revalidations (e.g. after an optimistic
-                drag) refresh it in place instead of flashing this overlay. */}
-            {isLoading && !activeBoard && <LoadingComponent />}
+            {isResolvingBoard && <LoadingComponent />}
             <BoardContent>
               {!isSmallerThanSm && (
                 <Sidebar
@@ -141,16 +139,26 @@ export default function Home() {
                   className={hideSidebar ? 'hide-sidebar-mode' : ''}
                 >
                   {activeBoard ? (
-                    <BoardColumnsList
-                      isOpen={isColumnFormModalOpen}
-                      columns={displayColumns}
-                      isLoading={isLoading}
-                      isApiProcessing={isApiProcessing}
-                      dragDisabled={isLoading || isApiProcessing || isFiltering}
-                      onOpenModal={(value) => setIsColumnFormModalOpen(value)}
-                    />
+                    boardColumns?.length === 0 ? (
+                      <EmptyColumns
+                        isOpen={isColumnFormModalOpen}
+                        onOpenModal={setIsColumnFormModalOpen}
+                      />
+                    ) : (
+                      <BoardColumnsList
+                        isOpen={isColumnFormModalOpen}
+                        columns={displayColumns}
+                        isLoading={isLoading}
+                        isApiProcessing={isApiProcessing}
+                        dragDisabled={
+                          isLoading || isApiProcessing || isFiltering
+                        }
+                        onOpenModal={(value) => setIsColumnFormModalOpen(value)}
+                      />
+                    )
                   ) : (
-                    <EmptyContainer />
+                    !isResolvingBoard &&
+                    boards?.length === 0 && <EmptyContainer />
                   )}
                 </ColumnsContainer>
               </Wrapper>

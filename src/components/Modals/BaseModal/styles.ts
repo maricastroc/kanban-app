@@ -13,7 +13,7 @@ export const ModalOverlay = styled(RadixOverlay)`
   height: 100vh;
   inset: 0;
   z-index: 9990;
-  background-color: rgba(6, 6, 8, 0.6);
+  background-color: ${(props) => props.theme['overlay-color']};
   backdrop-filter: blur(4px);
 `
 
@@ -86,12 +86,12 @@ export const ModalContent = styled(RadixContent)<{
   transform: translate(-50%, -50%);
   width: clamp(300px, 90vw, 33rem);
   border-radius: 18px;
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
+  box-shadow: ${(props) => props.theme['shadow-lg']};
   z-index: 9998;
   animation: scaleIn 0.22s ease-out forwards;
 
   &:focus {
-    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
+    box-shadow: ${(props) => props.theme['shadow-lg']};
     outline: none;
   }
 

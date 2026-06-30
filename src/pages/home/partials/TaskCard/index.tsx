@@ -28,9 +28,7 @@ export const taskSortableId = (id: TaskProps['id']) => `task-${id}`
 type TaskCardProps = {
   task: TaskProps
   column: BoardColumnProps
-  /** Disables dragging (e.g. while filtering or an API call is in flight) */
   dragDisabled?: boolean
-  /** Renders the floating card inside the DragOverlay (no sortable, no dialog) */
   dragOverlay?: boolean
 }
 
@@ -113,8 +111,6 @@ export function TaskCard({
     disabled: dragDisabled || dragOverlay,
   })
 
-  // The floating preview rendered inside <DragOverlay> — keep the tilt
-  // affordance here instead of mutating the lib transform like before.
   if (dragOverlay) {
     return (
       <TaskCardContainer className="task-card dragging">
@@ -126,7 +122,6 @@ export function TaskCard({
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
-    // The source slot is dimmed while its DragOverlay clone follows the cursor
     opacity: isDragging ? 0.4 : undefined,
   }
 

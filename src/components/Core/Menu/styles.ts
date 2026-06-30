@@ -15,7 +15,7 @@ export const menuSurface = css`
   z-index: 10;
   background-color: ${(props) => props.theme['card-color']};
   border: 1px solid ${(props) => props.theme['hairline-strong']};
-  box-shadow: ${(props) => props.theme['card-shadow']};
+  box-shadow: ${(props) => props.theme['shadow-md']};
 `
 
 export const MenuItem = styled.button`

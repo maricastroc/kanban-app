@@ -28,7 +28,7 @@ export const StyledDatePickerWrapper = styled.div`
     background-color: ${(props) => props.theme['card-color']};
     border: 1px solid ${(props) => props.theme['hairline-strong']};
     border-radius: 12px;
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+    box-shadow: ${(props) => props.theme['shadow-md']};
     padding: 0.7rem;
     font-family: inherit;
 

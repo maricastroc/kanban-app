@@ -2,12 +2,14 @@
 import { BoardProps } from '@/@types/board'
 import useRequest from '@/utils/useRequest'
 import { useAuthUser } from '@/hooks/useAuthUser'
+import { api } from '@/lib/axios'
 import { AxiosResponse } from 'axios'
 import {
   createContext,
   ReactNode,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react'
 import { KeyedMutator } from 'swr'
@@ -70,15 +72,22 @@ export function BoardsContextProvider({
     data: boardsData,
     mutate: boardsMutate,
     isValidating: isValidatingBoards,
+    isLoading: isLoadingBoards,
   } = useRequest<{ boards: BoardProps[] }>(boardsRequest)
 
   const {
     data: activeBoardData,
     mutate: activeBoardMutate,
     isValidating: isValidatingActiveBoard,
+    isLoading: isLoadingActiveBoard,
   } = useRequest<{ board: BoardProps }>(activeBoardRequest)
 
-  const isLoading = isValidatingBoards || isValidatingActiveBoard
+  // Only the *initial* fetch — background revalidations (mount, reconnect,
+  // mutate) keep this false so the board stops flashing the full-screen loader.
+  const isLoading = isLoadingBoards || isLoadingActiveBoard
+
+  // Guards the one-shot auto-activation so it can't fire on every re-render.
+  const autoActivatingRef = useRef(false)
 
   useEffect(() => {
     if (boardsData?.boards) setBoards(boardsData.boards)
@@ -86,16 +95,50 @@ export function BoardsContextProvider({
   }, [boardsData])
 
   useEffect(() => {
-    const isBoardStillInList = boards?.some(
-      (b) => b.id === activeBoardData?.board?.id,
-    )
+    // Wait until boards are loaded and the active-board probe has settled,
+    // otherwise we'd clear the selection (or auto-activate) mid-fetch.
+    if (!boards || isLoadingActiveBoard || autoActivatingRef.current) return
 
-    if (isBoardStillInList) {
-      setActiveBoard(activeBoardData?.board)
-    } else {
-      setActiveBoard(undefined)
+    const activeId = activeBoardData?.board?.id
+    const matched =
+      activeId != null
+        ? boards.find((b) => String(b.id) === String(activeId))
+        : undefined
+
+    // The active board from the API already carries its columns → use it
+    // directly. (The board view reads `activeBoard.columns`; the `/boards`
+    // list endpoint omits columns, so a list item alone isn't enough.)
+    if (matched && activeBoardData?.board?.columns) {
+      setActiveBoard(activeBoardData.board)
+      return
     }
-  }, [activeBoardData, boards])
+
+    // Genuinely no boards → let the "create your first board" empty state show.
+    if (boards.length === 0) {
+      setActiveBoard(undefined)
+      return
+    }
+
+    // Boards exist but we don't have a board-with-columns yet (none active, the
+    // active one was deleted, or the probe returned one without columns).
+    // Activate the target board to fetch its full detail with columns, so the
+    // user lands on a real board instead of the empty state.
+    const targetId = matched ? activeId : boards[0].id
+    autoActivatingRef.current = true
+    api
+      .patch(`boards/${targetId}/activate`)
+      .then((res) => {
+        const board = res?.data?.data?.board ?? boards[0]
+        setActiveBoard({ ...board, columns: board.columns ?? [] })
+      })
+      .catch(() => {
+        // Last resort: land on the first board even without its columns yet.
+        setActiveBoard({ ...boards[0], columns: boards[0].columns ?? [] })
+      })
+      .finally(() => {
+        autoActivatingRef.current = false
+      })
+  }, [activeBoardData, boards, isLoadingActiveBoard])
 
   const handleEnableScrollFeature = (value: boolean) => {
     setEnableScrollFeature(value)

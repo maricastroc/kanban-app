@@ -1,5 +1,19 @@
 import { baseFontSizes } from './base'
 
+/**
+ * Light theme — designed as its own product, not an inversion of dark.
+ *
+ * Surface model (mirrors the *relationships* in dark.ts, but elevation reads
+ * through WHITENESS + soft slate shadows + hairlines instead of tone alone):
+ *
+ *   canvas  #EBEDF2  ── recessed page + board surface (clearly not white)
+ *   sidebar #F4F5F8  ┐
+ *   panel   #F4F5F8  ┘  chrome rail / column panels, one step up + hairline
+ *   card    #FFFFFF  ── elevated content, the brightest surface + shadow
+ *
+ * Shadows are layered and tinted toward cool slate (never pure black) so depth
+ * appears without visual noise. References: Linear / Attio / Notion / GitHub.
+ */
 export const lightTheme = {
   'title-color': '#15161A',
 
@@ -41,34 +55,55 @@ export const lightTheme = {
 
   'details-color': '#6A6E78',
   'subtitle-color': '#6A6E78',
-  'border-color': 'rgba(0, 0, 0, 0.09)',
+
+  // --- borders / hairlines (cool slate base, not muddy pure-black) ---
+  'border-color': 'rgba(16, 24, 40, 0.10)',
+  'hairline-color': 'rgba(16, 24, 40, 0.08)',
+  'hairline-strong': 'rgba(16, 24, 40, 0.14)',
+
   'cards-color': '#FFFFFF',
-  'bg-color': '#F6F7F9',
+  'bg-color': '#EBEDF2',
   'scroll-color': '#C4C7CE',
 
-  'light-bg-color': '#EEF0F2',
+  'light-bg-color': '#EAECF1',
 
   // --- redesign surfaces & accents (C2 / teal) ---
-  'canvas-color': '#F6F7F9',
-  'sidebar-color': '#FFFFFF',
-  'panel-color': '#F1F2F4',
+  'canvas-color': '#EBEDF2',
+  'sidebar-color': '#F4F5F8',
+  'panel-color': '#F4F5F8',
   'card-color': '#FFFFFF',
-  'card-hover': '#FBFCFD',
-  'field-bg': '#F1F2F4',
-  'card-shadow': '0 6px 16px rgba(15, 23, 42, 0.10)',
+  // hover-fill for menu items / buttons / rows that sit on a white surface
+  'card-hover': '#EDEFF3',
+  // surface a card rises to on hover/drag — stays crisp white, shadow lifts it
+  'card-lift': '#FFFFFF',
+  'field-bg': '#ECEEF2',
+
+  // --- layered elevation system (soft, slate-tinted) ---
+  'shadow-xs': '0 1px 2px rgba(16, 24, 40, 0.06)',
+  'shadow-sm':
+    '0 2px 4px rgba(16, 24, 40, 0.05), 0 6px 16px rgba(16, 24, 40, 0.08)',
+  'shadow-md':
+    '0 4px 8px rgba(16, 24, 40, 0.06), 0 12px 28px rgba(16, 24, 40, 0.12)',
+  'shadow-lg':
+    '0 12px 24px rgba(16, 24, 40, 0.10), 0 32px 64px rgba(16, 24, 40, 0.18)',
+  // back-compat alias (kept equal to shadow-sm)
+  'card-shadow':
+    '0 2px 4px rgba(16, 24, 40, 0.05), 0 6px 16px rgba(16, 24, 40, 0.08)',
+
+  // scrim behind modals / loading — airy slate, not heavy black
+  'overlay-color': 'rgba(17, 24, 39, 0.30)',
+
   'muted-color': '#8A8E98',
-  'hairline-color': 'rgba(0, 0, 0, 0.07)',
-  'hairline-strong': 'rgba(0, 0, 0, 0.12)',
   'accent-color': '#0D9488',
   'accent-hover': '#0F766E',
-  'accent-soft': 'rgba(13, 148, 136, 0.10)',
+  'accent-soft': 'rgba(13, 148, 136, 0.12)',
   'accent-text': '#0F766E',
   'accent-on': '#FFFFFF',
   'accent-glow': 'rgba(13, 148, 136, 0.22)',
   // exclusive secondary signature accent (rose) — used sparingly for identity
   'accent-2': '#D6477A',
   'accent-2-soft': 'rgba(214, 71, 122, 0.10)',
-  'kbd-bg': 'rgba(0, 0, 0, 0.05)',
+  'kbd-bg': 'rgba(16, 24, 40, 0.05)',
 
   ...baseFontSizes,
 }

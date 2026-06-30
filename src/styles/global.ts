@@ -82,7 +82,8 @@ export const GlobalStyle = createGlobalStyle`
   select:-webkit-autofill:focus {
     border: 2px solid ${(props) => props.theme['border-color']};
     -webkit-text-fill-color: ${(props) => props.theme['text-color']};
-    -webkit-box-shadow: 0 0 0px 1000px #000 inset;
+    -webkit-box-shadow: 0 0 0px 1000px ${(props) =>
+      props.theme['field-bg']} inset;
     transition: background-color 5000s ease-in-out 0s;
   }
 `

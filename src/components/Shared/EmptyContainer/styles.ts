@@ -17,6 +17,11 @@ export const Container = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
+  /* Fill the board area (a flex-start row) and center on both axes, so the
+     empty state sits in the middle instead of sinking to the bottom. */
+  flex: 1;
+  align-self: stretch;
+  height: 100%;
 `
 
 export const ContentWrapper = styled.div`

@@ -167,7 +167,7 @@ export const useTaskForm = ({
 
   useEffect(() => {
     if (activeBoard && !isEditing) {
-      const initialColumn = activeBoard.columns[0]
+      const initialColumn = activeBoard.columns?.[0]
       if (initialColumn) {
         setStatus(initialColumn.name)
         setValue('status', initialColumn.name)

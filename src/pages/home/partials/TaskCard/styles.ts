@@ -10,7 +10,7 @@ export const TaskCardContainer = styled.div`
   border-radius: 11px;
   background-color: ${(props) => props.theme['card-color']};
   border: 1px solid ${(props) => props.theme['hairline-color']};
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.18);
+  box-shadow: ${(props) => props.theme['shadow-xs']};
   width: 100%;
   align-items: flex-start;
   transition: background-color 180ms ease, border-color 180ms ease,
@@ -26,9 +26,9 @@ export const TaskCardContainer = styled.div`
   }
 
   &:hover {
-    background-color: ${(props) => props.theme['card-hover']};
+    background-color: ${(props) => props.theme['card-lift']};
     border-color: ${(props) => props.theme['hairline-strong']};
-    box-shadow: ${(props) => props.theme['card-shadow']};
+    box-shadow: ${(props) => props.theme['shadow-sm']};
     transform: translateY(-2px);
   }
 
@@ -38,10 +38,10 @@ export const TaskCardContainer = styled.div`
 
   &.dragging {
     cursor: grabbing;
-    background-color: ${(props) => props.theme['card-hover']};
+    background-color: ${(props) => props.theme['card-lift']};
     border-color: ${(props) => props.theme['accent-color']};
-    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.5),
-      0 0 0 1px ${(props) => props.theme['accent-soft']};
+    box-shadow: ${(props) => props.theme['shadow-lg']},
+      0 0 0 1px ${(props) => props.theme['accent-color']};
   }
 `
 

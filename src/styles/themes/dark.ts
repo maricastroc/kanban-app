@@ -52,9 +52,22 @@ export const darkTheme = {
   'sidebar-color': '#0D0D11',
   'panel-color': '#0D0D11',
   'card-color': '#17181D',
+  // hover-fill for menu items / buttons / rows on an elevated surface
   'card-hover': '#1E1F26',
+  // surface a card rises to on hover/drag (brightens, as elevation = lighter)
+  'card-lift': '#1E1F26',
   'field-bg': '#131317',
+
+  // --- layered elevation system (kept strong/black for the dark canvas) ---
+  'shadow-xs': '0 1px 2px rgba(0, 0, 0, 0.30)',
+  'shadow-sm': '0 6px 18px rgba(0, 0, 0, 0.34)',
+  'shadow-md': '0 12px 28px rgba(0, 0, 0, 0.45)',
+  'shadow-lg': '0 30px 90px rgba(0, 0, 0, 0.55)',
+  // back-compat alias (kept equal to shadow-sm)
   'card-shadow': '0 6px 18px rgba(0, 0, 0, 0.34)',
+
+  // scrim behind modals / loading
+  'overlay-color': 'rgba(6, 6, 8, 0.6)',
   'muted-color': '#6A6D77',
   'hairline-color': 'rgba(255, 255, 255, 0.06)',
   'hairline-strong': 'rgba(255, 255, 255, 0.11)',
