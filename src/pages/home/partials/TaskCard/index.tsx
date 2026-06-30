@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import {
   InfoContent,
   InfoItem,
@@ -22,18 +23,74 @@ import { getDueStatus } from '@/utils/getDueStatus'
 import { faClock, faListCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
+export const taskSortableId = (id: TaskProps['id']) => `task-${id}`
+
 type TaskCardProps = {
   task: TaskProps
   column: BoardColumnProps
-  provided: any
-  isDragging?: boolean
+  /** Disables dragging (e.g. while filtering or an API call is in flight) */
+  dragDisabled?: boolean
+  /** Renders the floating card inside the DragOverlay (no sortable, no dialog) */
+  dragOverlay?: boolean
+}
+
+function CardContent({ task }: { task: TaskProps }) {
+  const totalSubtasks = task?.subtasks?.length || 0
+  const completedSubtasks =
+    task?.subtasks?.filter((subtask) => subtask?.is_completed)?.length || 0
+  const progress =
+    totalSubtasks > 0 ? (completedSubtasks / totalSubtasks) * 100 : 0
+
+  return (
+    <>
+      {task?.tags && task?.tags?.length > 0 && (
+        <TagsContainer>
+          {task.tags.map((item) => {
+            const hex = getTagHex(item.color)
+            return (
+              <Tag
+                key={item.id}
+                style={{ backgroundColor: `${hex}1a`, color: hex }}
+              >
+                {item.name}
+              </Tag>
+            )
+          })}
+        </TagsContainer>
+      )}
+
+      <strong>{task.name}</strong>
+
+      {completedSubtasks > 0 && (
+        <ProgressWrapper>
+          <ProgressContainer>
+            <ProgressFill progress={progress} />
+          </ProgressContainer>
+        </ProgressWrapper>
+      )}
+
+      <InfoContent>
+        <InfoItem>
+          <FontAwesomeIcon icon={faListCheck} />
+          <p>{`${completedSubtasks}/${totalSubtasks}`}</p>
+        </InfoItem>
+
+        {task?.due_date && (
+          <InfoItem className={`${getDueStatus(task.due_date, task.subtasks)}`}>
+            <FontAwesomeIcon icon={faClock} />
+            <p>{formatDate(task.due_date)}</p>
+          </InfoItem>
+        )}
+      </InfoContent>
+    </>
+  )
 }
 
 export function TaskCard({
   task,
-  provided,
   column,
-  isDragging,
+  dragDisabled,
+  dragOverlay,
 }: TaskCardProps) {
   const { handleEnableScrollFeature } = useBoardsContext()
 
@@ -43,20 +100,35 @@ export function TaskCard({
     handleEnableScrollFeature(!isTaskDetailsModalOpen)
   }, [isTaskDetailsModalOpen])
 
-  const totalSubtasks = task?.subtasks?.length || 0
-  const completedSubtasks =
-    task?.subtasks?.filter((subtask) => subtask?.is_completed)?.length || 0
-  const progress =
-    totalSubtasks > 0 ? (completedSubtasks / totalSubtasks) * 100 : 0
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: taskSortableId(task.id),
+    data: { type: 'task', task, columnId: column.id },
+    disabled: dragDisabled || dragOverlay,
+  })
 
-  // Drag affordance: append a slight tilt to the lib's translate transform
-  const dragProps = isTaskDetailsModalOpen ? {} : provided.draggableProps
-  const dragHandle = isTaskDetailsModalOpen ? {} : provided.dragHandleProps
-  const baseStyle = dragProps?.style
-  const dragStyle =
-    isDragging && baseStyle?.transform
-      ? { ...baseStyle, transform: `${baseStyle.transform} rotate(2deg)` }
-      : baseStyle
+  // The floating preview rendered inside <DragOverlay> — keep the tilt
+  // affordance here instead of mutating the lib transform like before.
+  if (dragOverlay) {
+    return (
+      <TaskCardContainer className="task-card dragging">
+        <CardContent task={task} />
+      </TaskCardContainer>
+    )
+  }
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    // The source slot is dimmed while its DragOverlay clone follows the cursor
+    opacity: isDragging ? 0.4 : undefined,
+  }
 
   return (
     <Dialog.Root
@@ -65,54 +137,14 @@ export function TaskCard({
     >
       <Dialog.Trigger asChild>
         <TaskCardContainer
+          ref={setNodeRef}
+          style={style}
+          className="task-card"
           onClick={() => setIsTaskDetailsModalOpen(true)}
-          className={`task-card${isDragging ? ' dragging' : ''}`}
-          ref={isTaskDetailsModalOpen ? null : provided.innerRef}
-          {...dragProps}
-          {...dragHandle}
-          style={dragStyle}
+          {...attributes}
+          {...listeners}
         >
-          {task?.tags && task?.tags?.length > 0 && (
-            <TagsContainer>
-              {task.tags.map((item) => {
-                const hex = getTagHex(item.color)
-                return (
-                  <Tag
-                    key={item.id}
-                    style={{ backgroundColor: `${hex}1a`, color: hex }}
-                  >
-                    {item.name}
-                  </Tag>
-                )
-              })}
-            </TagsContainer>
-          )}
-
-          <strong>{task.name}</strong>
-
-          {completedSubtasks > 0 && (
-            <ProgressWrapper>
-              <ProgressContainer>
-                <ProgressFill progress={progress} />
-              </ProgressContainer>
-            </ProgressWrapper>
-          )}
-
-          <InfoContent>
-            <InfoItem>
-              <FontAwesomeIcon icon={faListCheck} />
-              <p>{`${completedSubtasks}/${totalSubtasks}`}</p>
-            </InfoItem>
-
-            {task?.due_date && (
-              <InfoItem
-                className={`${getDueStatus(task.due_date, task.subtasks)}`}
-              >
-                <FontAwesomeIcon icon={faClock} />
-                <p>{formatDate(task.due_date)}</p>
-              </InfoItem>
-            )}
-          </InfoContent>
+          <CardContent task={task} />
         </TaskCardContainer>
       </Dialog.Trigger>
       <TaskDetailsModal

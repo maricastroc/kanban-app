@@ -1,5 +1,6 @@
 import { RefObject, useRef, useState } from 'react'
-import { Droppable, Draggable } from 'react-beautiful-dnd'
+import { useDroppable } from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import * as Dialog from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -9,7 +10,6 @@ import {
   faPen,
 } from '@fortawesome/free-solid-svg-icons'
 import { BoardColumnProps } from '@/@types/board-column'
-import { TaskCard } from '../TaskCard'
 import {
   AddTaskButton,
   ColumnHeader,
@@ -24,9 +24,11 @@ import { TaskFormModal } from '@/components/Modals/TaskFormModal'
 import { BoardFormModal } from '@/components/Modals/BoardFormModal'
 import { MenuDivider, MenuItem } from '@/components/Core/Menu/styles'
 import { useClickOutside } from '@/utils/useClickOutside'
+import { TaskCard, taskSortableId } from '../TaskCard'
+
+export const columnDroppableId = (id: BoardColumnProps['id']) => `column-${id}`
 
 type ColumnProps = BoardColumnProps & {
-  index: number
   column: BoardColumnProps
   dragDisabled: boolean
 }
@@ -35,7 +37,6 @@ export function BoardColumn({
   name,
   tasks,
   column,
-  index,
   dragDisabled,
 }: ColumnProps) {
   const [isAddTaskOpen, setIsAddTaskOpen] = useState(false)
@@ -50,24 +51,12 @@ export function BoardColumn({
 
   const isEmpty = column?.tasks?.length === 0
 
-  const renderTaskCards = () =>
-    tasks.map((task, taskIndex) => (
-      <Draggable
-        key={String(task.id)}
-        draggableId={String(task.id)}
-        index={taskIndex}
-        isDragDisabled={dragDisabled}
-      >
-        {(provided, snapshot) => (
-          <TaskCard
-            column={column}
-            task={task}
-            provided={provided}
-            isDragging={snapshot.isDragging}
-          />
-        )}
-      </Draggable>
-    ))
+  // A column is a droppable target identified by its stable id (not its
+  // position), so dropping into an empty column still resolves correctly.
+  const { setNodeRef } = useDroppable({
+    id: columnDroppableId(column.id),
+    data: { type: 'column', columnId: column.id },
+  })
 
   return (
     <>
@@ -112,23 +101,27 @@ export function BoardColumn({
           </MenuContainer>
         </ColumnHeader>
 
-        <Droppable droppableId={index.toString()} type="CARD">
-          {(provided) => (
-            <TasksContainer
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-            >
-              {renderTaskCards()}
-              {provided.placeholder}
-              {isEmpty && (
-                <EmptyTasksContainer>
-                  <FontAwesomeIcon icon={faInbox} />
-                  <span>Drop tasks here</span>
-                </EmptyTasksContainer>
-              )}
-            </TasksContainer>
-          )}
-        </Droppable>
+        <SortableContext
+          items={tasks.map((task) => taskSortableId(task.id))}
+          strategy={verticalListSortingStrategy}
+        >
+          <TasksContainer ref={setNodeRef}>
+            {tasks.map((task) => (
+              <TaskCard
+                key={String(task.id)}
+                column={column}
+                task={task}
+                dragDisabled={dragDisabled}
+              />
+            ))}
+            {isEmpty && (
+              <EmptyTasksContainer>
+                <FontAwesomeIcon icon={faInbox} />
+                <span>Drop tasks here</span>
+              </EmptyTasksContainer>
+            )}
+          </TasksContainer>
+        </SortableContext>
 
         <AddTaskButton
           type="button"

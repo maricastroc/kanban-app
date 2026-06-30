@@ -25,14 +25,13 @@ export const BoardColumnsList = ({
   return (
     columns && (
       <>
-        {columns.map((column, index) => (
+        {columns.map((column) => (
           <BoardColumn
             key={column.id}
             id={column.id}
             column={column}
             name={column.name}
             tasks={column.tasks}
-            index={index}
             dragDisabled={dragDisabled}
           />
         ))}
