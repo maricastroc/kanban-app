@@ -8,10 +8,8 @@ import {
 } from './styles'
 import { Button } from '@/components/Core/Button'
 import { TaskProps } from '@/@types/task'
-import { handleApiError } from '@/utils/handleApiError'
-import { api } from '@/lib/axios'
 import { useBoardsContext } from '@/contexts/BoardsContext'
-import toast from 'react-hot-toast'
+import { useUndoableDelete } from '@/hooks/useUndoableDelete'
 import { BaseModal } from '../BaseModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons'
@@ -23,13 +21,9 @@ interface DeleteBoardProps {
 }
 
 export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
-  const {
-    activeBoard,
-    activeBoardMutate,
-    boardsMutate,
-    isValidatingBoards,
-    isValidatingActiveBoard,
-  } = useBoardsContext()
+  const { activeBoard, isValidatingBoards, isValidatingActiveBoard } =
+    useBoardsContext()
+  const { deleteWithUndo } = useUndoableDelete()
 
   const isLoading = isValidatingBoards || isValidatingActiveBoard
 
@@ -40,35 +34,23 @@ export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
 
   let consequence: string
   if (isBoard) {
-    consequence =
-      'This board and all of its columns and tasks will be permanently deleted.'
+    consequence = 'This board and all of its columns and tasks will be deleted.'
   } else if (subtaskCount > 0) {
     consequence = `This task and its ${subtaskCount} ${
       subtaskCount === 1 ? 'subtask' : 'subtasks'
-    } will be permanently deleted.`
+    } will be deleted.`
   } else {
-    consequence = 'This task will be permanently deleted.'
+    consequence = 'This task will be deleted.'
   }
 
-  const handleDelete = async (id: number | string) => {
-    if (!activeBoard) return
-
-    try {
-      const routePath = isBoard ? `/boards/${id}` : `/tasks/${id}`
-
-      const response = await api.delete(routePath)
-
-      if (response?.data) {
-        toast.success(response.data.message)
-      }
-
-      await boardsMutate()
-      await activeBoardMutate()
-    } catch (error) {
-      handleApiError(error)
-    } finally {
-      onClose()
+  const handleDelete = () => {
+    if (isBoard) {
+      if (!activeBoard) return
+      deleteWithUndo({ type: 'board' })
+    } else if (task) {
+      deleteWithUndo({ type: 'task', task })
     }
+    onClose()
   }
 
   return (
@@ -92,7 +74,7 @@ export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
       )}
 
       <ModalDescription>
-        {consequence} This action cannot be undone.
+        {consequence} You can undo this for a few seconds.
       </ModalDescription>
 
       <ButtonsContainer>
@@ -110,13 +92,7 @@ export function DeleteModal({ type, task, onClose }: DeleteBoardProps) {
           size="sm"
           fullWidth={false}
           disabled={isLoading}
-          onClick={() => {
-            if (activeBoard && isBoard) {
-              handleDelete(activeBoard.id as string)
-            } else if (task) {
-              handleDelete(task.id as string)
-            }
-          }}
+          onClick={handleDelete}
         />
       </ButtonsContainer>
     </BaseModal>

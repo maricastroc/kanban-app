@@ -36,6 +36,11 @@ export const TaskCardContainer = styled.div`
     cursor: grabbing;
   }
 
+  &:focus-visible {
+    outline: 2px solid ${(props) => props.theme['accent-color']};
+    outline-offset: 2px;
+  }
+
   &.dragging {
     cursor: grabbing;
     background-color: ${(props) => props.theme['card-lift']};

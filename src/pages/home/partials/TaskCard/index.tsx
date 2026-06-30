@@ -159,18 +159,16 @@ export function TaskCard({
     handleEnableScrollFeature(!isTaskDetailsModalOpen)
   }, [isTaskDetailsModalOpen])
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: taskSortableId(task.id),
-    data: { type: 'task', task, columnId: column.id },
-    disabled: dragDisabled || dragOverlay,
-  })
+  // Tasks reorder by pointer (drag anywhere on the card). We keep only the
+  // pointer activator and not the keyboard one, so that for keyboard users
+  // Enter/Space opens the task instead of starting a drag. (Columns carry the
+  // keyboard-drag affordance on their dedicated handle.)
+  const { listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({
+      id: taskSortableId(task.id),
+      data: { type: 'task', task, columnId: column.id },
+      disabled: dragDisabled || dragOverlay,
+    })
 
   if (dragOverlay) {
     return (
@@ -186,23 +184,35 @@ export function TaskCard({
     opacity: isDragging ? 0.4 : undefined,
   }
 
+  const openDetails = () => setIsTaskDetailsModalOpen(true)
+
   return (
     <Dialog.Root
       open={isTaskDetailsModalOpen}
       onOpenChange={setIsTaskDetailsModalOpen}
     >
-      <Dialog.Trigger asChild>
-        <TaskCardContainer
-          ref={setNodeRef}
-          style={style}
-          className={`task-card${dragDisabled ? ' drag-disabled' : ''}`}
-          onClick={() => setIsTaskDetailsModalOpen(true)}
-          {...attributes}
-          {...listeners}
-        >
-          <CardContent task={task} />
-        </TaskCardContainer>
-      </Dialog.Trigger>
+      <TaskCardContainer
+        ref={setNodeRef}
+        style={style}
+        className={`task-card${dragDisabled ? ' drag-disabled' : ''}`}
+        role="button"
+        tabIndex={0}
+        aria-label={`Open task: ${task.name}`}
+        onClick={openDetails}
+        {...listeners}
+        onKeyDown={(event) => {
+          // Keep keyboard focus opening the task: ignore keys bubbling up from
+          // the completion toggle, and override dnd-kit's own key handler so
+          // Enter/Space opens the details instead of starting a drag.
+          if (event.target !== event.currentTarget) return
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            openDetails()
+          }
+        }}
+      >
+        <CardContent task={task} />
+      </TaskCardContainer>
       <TaskDetailsModal
         task={task}
         column={column}

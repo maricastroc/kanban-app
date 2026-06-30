@@ -1,41 +1,28 @@
 import type { ReactElement } from 'react'
 import type { TaskProps } from '@/@types/task'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ThemeProvider } from 'styled-components'
 import * as Dialog from '@radix-ui/react-dialog'
 import { darkTheme } from '@/styles/themes/dark'
 import { DeleteModal } from './index'
 
-const {
-  deleteMock,
-  toastSuccess,
-  toastError,
-  boardsMutate,
-  activeBoardMutate,
-} = vi.hoisted(() => ({
-  deleteMock: vi.fn(),
-  toastSuccess: vi.fn(),
-  toastError: vi.fn(),
-  boardsMutate: vi.fn(),
-  activeBoardMutate: vi.fn(),
+const { deleteWithUndo } = vi.hoisted(() => ({
+  deleteWithUndo: vi.fn(),
 }))
 
-vi.mock('@/lib/axios', () => ({ api: { delete: deleteMock } }))
-
-vi.mock('react-hot-toast', () => {
-  const toast = { success: toastSuccess, error: toastError }
-  return { __esModule: true, default: toast, toast }
-})
+// The deferred-delete orchestration lives in the hook; here we only assert the
+// modal hands the right request over and closes.
+vi.mock('@/hooks/useUndoableDelete', () => ({
+  useUndoableDelete: () => ({ deleteWithUndo }),
+}))
 
 // The real context throws without a provider and pulls in SWR/useAuthUser, so
-// we stub it with a controllable active board and spyable mutators.
+// we stub it with a controllable active board.
 vi.mock('@/contexts/BoardsContext', () => ({
   useBoardsContext: () => ({
     activeBoard: { id: 'board-1', name: 'Marketing', columns: [] },
-    boardsMutate,
-    activeBoardMutate,
     isValidatingBoards: false,
     isValidatingActiveBoard: false,
   }),
@@ -65,13 +52,12 @@ describe('DeleteModal', () => {
       expect(screen.getByText('Marketing')).toBeInTheDocument()
       expect(
         screen.getByText(
-          /This board and all of its columns and tasks will be permanently deleted/,
+          /This board and all of its columns and tasks will be deleted/,
         ),
       ).toBeInTheDocument()
     })
 
-    it('deletes the board, notifies, revalidates and closes', async () => {
-      deleteMock.mockResolvedValueOnce({ data: { message: 'Board deleted' } })
+    it('requests an undoable board delete and closes', async () => {
       const onClose = vi.fn()
       const user = userEvent.setup()
       renderModal(<DeleteModal type="board" onClose={onClose} />)
@@ -80,12 +66,7 @@ describe('DeleteModal', () => {
         await screen.findByRole('button', { name: 'Delete board' }),
       )
 
-      await waitFor(() => {
-        expect(deleteMock).toHaveBeenCalledWith('/boards/board-1')
-      })
-      expect(toastSuccess).toHaveBeenCalledWith('Board deleted')
-      expect(boardsMutate).toHaveBeenCalled()
-      expect(activeBoardMutate).toHaveBeenCalled()
+      expect(deleteWithUndo).toHaveBeenCalledWith({ type: 'board' })
       expect(onClose).toHaveBeenCalled()
     })
 
@@ -97,21 +78,7 @@ describe('DeleteModal', () => {
       await user.click(await screen.findByRole('button', { name: 'Cancel' }))
 
       expect(onClose).toHaveBeenCalled()
-      expect(deleteMock).not.toHaveBeenCalled()
-    })
-
-    it('still closes when the delete request fails', async () => {
-      deleteMock.mockRejectedValueOnce(new Error('boom'))
-      const onClose = vi.fn()
-      const user = userEvent.setup()
-      renderModal(<DeleteModal type="board" onClose={onClose} />)
-
-      await user.click(
-        await screen.findByRole('button', { name: 'Delete board' }),
-      )
-
-      await waitFor(() => expect(onClose).toHaveBeenCalled())
-      expect(toastSuccess).not.toHaveBeenCalled()
+      expect(deleteWithUndo).not.toHaveBeenCalled()
     })
   })
 
@@ -134,14 +101,11 @@ describe('DeleteModal', () => {
       ).toBeInTheDocument()
       expect(screen.getByText('Write docs')).toBeInTheDocument()
       expect(
-        screen.getByText(
-          /This task and its 2 subtasks will be permanently deleted/,
-        ),
+        screen.getByText(/This task and its 2 subtasks will be deleted/),
       ).toBeInTheDocument()
     })
 
-    it('deletes via the tasks route', async () => {
-      deleteMock.mockResolvedValueOnce({ data: { message: 'Task deleted' } })
+    it('requests an undoable task delete with the task and closes', async () => {
       const onClose = vi.fn()
       const user = userEvent.setup()
       renderModal(<DeleteModal type="task" task={task} onClose={onClose} />)
@@ -150,10 +114,8 @@ describe('DeleteModal', () => {
         await screen.findByRole('button', { name: 'Delete task' }),
       )
 
-      await waitFor(() =>
-        expect(deleteMock).toHaveBeenCalledWith('/tasks/task-9'),
-      )
-      expect(toastSuccess).toHaveBeenCalledWith('Task deleted')
+      expect(deleteWithUndo).toHaveBeenCalledWith({ type: 'task', task })
+      expect(onClose).toHaveBeenCalled()
     })
   })
 })

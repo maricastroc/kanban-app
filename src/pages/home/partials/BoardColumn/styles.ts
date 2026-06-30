@@ -90,6 +90,12 @@ export const DragHandle = styled.button`
     cursor: grabbing;
   }
 
+  &:focus-visible {
+    outline: 2px solid ${(props) => props.theme['accent-color']};
+    outline-offset: 2px;
+    color: ${(props) => props.theme['title-color']};
+  }
+
   &:disabled {
     cursor: default;
     opacity: 0.4;
@@ -124,6 +130,12 @@ export const MenuButton = styled.button`
   &.is-open {
     color: ${(props) => props.theme['title-color']};
     background-color: ${(props) => props.theme['card-hover']};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${(props) => props.theme['accent-color']};
+    outline-offset: 2px;
+    color: ${(props) => props.theme['title-color']};
   }
 `
 

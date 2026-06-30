@@ -2,12 +2,16 @@
 import { useState, useRef, useEffect, useMemo, RefObject } from 'react'
 import { NextSeo } from 'next-seo'
 import {
+  Announcements,
   DndContext,
   DragOverlay,
+  KeyboardSensor,
   PointerSensor,
+  ScreenReaderInstructions,
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { Header } from '@/components/Core/Header'
 import { TaskCard } from './partials/TaskCard'
 import { ColumnOverlay } from './partials/BoardColumn'
@@ -41,6 +45,41 @@ import {
   SortKey,
 } from '@/utils/filterBoardColumns'
 
+const screenReaderInstructions: ScreenReaderInstructions = {
+  draggable:
+    'To pick up a task or column, press space or enter. While dragging, use ' +
+    'the arrow keys to move it. Press space or enter again to drop, or press ' +
+    'escape to cancel.',
+}
+
+const describeItem = (data?: Record<string, unknown>): string => {
+  if (data?.type === 'column') {
+    const column = data.column as { name?: string } | undefined
+    return `column "${column?.name ?? ''}"`
+  }
+  const task = data?.task as { name?: string } | undefined
+  return `task "${task?.name ?? ''}"`
+}
+
+const dndAnnouncements: Announcements = {
+  onDragStart: ({ active }) =>
+    `Picked up ${describeItem(active.data.current)}.`,
+  onDragOver: ({ active, over }) =>
+    over
+      ? `${describeItem(active.data.current)} is over ${describeItem(
+          over.data.current,
+        )}.`
+      : `${describeItem(active.data.current)} is no longer over a drop target.`,
+  onDragEnd: ({ active, over }) =>
+    over
+      ? `${describeItem(active.data.current)} was dropped onto ${describeItem(
+          over.data.current,
+        )}.`
+      : `${describeItem(active.data.current)} was dropped.`,
+  onDragCancel: ({ active }) =>
+    `Dragging ${describeItem(active.data.current)} was cancelled.`,
+}
+
 export default function Home() {
   const columnsContainerRef = useRef<HTMLDivElement | null>(null)
 
@@ -70,6 +109,9 @@ export default function Home() {
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   )
 
   useEffect(() => {
@@ -114,6 +156,10 @@ export default function Home() {
       {!isCheckingAuth && (
         <DndContext
           sensors={sensors}
+          accessibility={{
+            announcements: dndAnnouncements,
+            screenReaderInstructions,
+          }}
           collisionDetection={kanbanCollisionDetection}
           onDragStart={onDragStart}
           onDragOver={onDragOver}
@@ -172,7 +218,10 @@ export default function Home() {
                 </ColumnsContainer>
               </Wrapper>
               {hideSidebar && (
-                <ShowSidebarBtn onClick={() => setHideSidebar(false)}>
+                <ShowSidebarBtn
+                  onClick={() => setHideSidebar(false)}
+                  aria-label="Show sidebar"
+                >
                   <Image src={HideSidebar} alt="" />
                 </ShowSidebarBtn>
               )}

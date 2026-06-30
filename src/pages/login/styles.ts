@@ -20,15 +20,15 @@ export const LoginCard = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 1rem;
+  padding: 1.5rem;
   width: 90%;
   border-radius: 15px;
-  padding-top: 4.5rem;
-  padding-bottom: 4rem;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
   margin-bottom: 1.5rem;
   max-width: 31.25rem;
   flex-direction: column;
-  background-color: ${(props) => props.theme['bg-color']};
+  background-color: ${(props) => props.theme['cards-color']};
 
   @media (min-width: 480px) {
     padding: 2.3rem;

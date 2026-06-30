@@ -26,12 +26,31 @@ function MyApp({ Component, pageProps }: AppProps) {
               <BoardsContextProvider>
                 <Toaster
                   toastOptions={{
+                    success: {
+                      iconTheme: {
+                        primary: enableDarkMode
+                          ? darkTheme['primary-color']
+                          : lightTheme['primary-color'],
+                        secondary: enableDarkMode
+                          ? darkTheme['card-color']
+                          : lightTheme['card-color'],
+                      },
+                    },
                     style: {
-                      backgroundColor: enableDarkMode ? '#16161B' : '#FFFFFF',
-                      color: enableDarkMode ? '#E7E7EA' : '#15161A',
-                      border: enableDarkMode
-                        ? '1px solid rgba(255,255,255,0.10)'
-                        : '1px solid rgba(0,0,0,0.10)',
+                      backgroundColor: enableDarkMode
+                        ? darkTheme['card-color']
+                        : lightTheme['card-color'],
+                      color: enableDarkMode
+                        ? darkTheme['text-color']
+                        : lightTheme['title-color'],
+                      border: `1px solid ${
+                        enableDarkMode
+                          ? darkTheme['hairline-strong']
+                          : lightTheme['hairline-strong']
+                      }`,
+                      boxShadow: enableDarkMode
+                        ? darkTheme['shadow-md']
+                        : lightTheme['shadow-md'],
                     },
                   }}
                 />

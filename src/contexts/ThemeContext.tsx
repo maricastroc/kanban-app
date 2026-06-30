@@ -1,9 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { getStorageTheme, saveStorageTheme } from '@/storage/themeConfig'
 
 type ThemeContextType = {
