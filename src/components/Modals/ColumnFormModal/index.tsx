@@ -80,7 +80,9 @@ export function ColumnFormModal({ onClose }: ColumnFormModalProps) {
 
                 return (
                   <ColumnRowField
-                    key={`${column.name}-${index}`}
+                    key={column.clientId}
+                    id={column.clientId}
+                    sortable={false}
                     name={column.name}
                     error={errors.columns?.[index]?.name?.message}
                     disabled={isExistingByName}

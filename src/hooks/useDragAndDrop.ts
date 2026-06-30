@@ -1,5 +1,11 @@
 import { Dispatch, SetStateAction, useRef, useState } from 'react'
-import { DragEndEvent, DragOverEvent, DragStartEvent } from '@dnd-kit/core'
+import {
+  closestCorners,
+  CollisionDetection,
+  DragEndEvent,
+  DragOverEvent,
+  DragStartEvent,
+} from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { api } from '@/lib/axios'
@@ -14,6 +20,20 @@ type Id = string | number | null | undefined
 
 const sameId = (a: Id, b: Id) => String(a) === String(b)
 
+// Columns and tasks share one DndContext. When dragging a column we must only
+// collide with other columns — otherwise the inner task droppables (which
+// overlap the whole panel) win and the horizontal sort can't resolve a target.
+export const kanbanCollisionDetection: CollisionDetection = (args) => {
+  if (args.active.data.current?.type !== 'column') return closestCorners(args)
+
+  return closestCorners({
+    ...args,
+    droppableContainers: args.droppableContainers.filter(
+      (container) => container.data.current?.type === 'column',
+    ),
+  })
+}
+
 // dnd ids are stable strings (`task-<id>` / `column-<id>`), never array
 // positions — so reordering, filtering or sorting the columns can't desync
 // the drag target the way the old positional `droppableId` index did.
@@ -26,6 +46,9 @@ export function useDragAndDrop(
   const { activeBoardMutate } = useBoardsContext()
 
   const [activeTask, setActiveTask] = useState<TaskProps | null>(null)
+  const [activeColumn, setActiveColumn] = useState<BoardColumnProps | null>(
+    null,
+  )
   const [isApiProcessing, setIsApiProcessing] = useState(false)
 
   // Mirror of the rendered columns so `onDragEnd` reads the latest state even
@@ -39,6 +62,9 @@ export function useDragAndDrop(
     columns: BoardColumnProps[]
     columnId: BoardColumnProps['id']
   } | null>(null)
+
+  // Pre-drag column snapshot, captured when a column drag starts (for rollback).
+  const columnDragStart = useRef<BoardColumnProps[] | null>(null)
 
   const resolveColumn = (
     columns: BoardColumnProps[],
@@ -55,11 +81,23 @@ export function useDragAndDrop(
   }
 
   const onDragStart = (event: DragStartEvent) => {
+    if (!boardColumns) return
+
+    if (event.active.data.current?.type === 'column') {
+      const column = event.active.data.current?.column as
+        | BoardColumnProps
+        | undefined
+      if (!column) return
+      setActiveColumn(column)
+      columnDragStart.current = boardColumns
+      return
+    }
+
     const task = event.active.data.current?.task as TaskProps | undefined
     const columnId = event.active.data.current
       ?.columnId as BoardColumnProps['id']
 
-    if (!task || !boardColumns) return
+    if (!task) return
 
     setActiveTask(task)
     dragStart.current = { columns: boardColumns, columnId }
@@ -70,6 +108,10 @@ export function useDragAndDrop(
   const onDragOver = (event: DragOverEvent) => {
     const { active, over } = event
     if (!over) return
+
+    // Columns are a single horizontal list — the sortable strategy animates the
+    // shift on its own, so there's no live cross-container move to mirror here.
+    if (active.data.current?.type === 'column') return
 
     const activeId = String(active.id)
     const overId = String(over.id)
@@ -111,6 +153,12 @@ export function useDragAndDrop(
 
   const onDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
+
+    if (active.data.current?.type === 'column') {
+      onColumnDragEnd(active, over)
+      return
+    }
+
     setActiveTask(null)
 
     const snapshot = dragStart.current
@@ -153,21 +201,22 @@ export function useDragAndDrop(
     const finalColumn = columns.find((c) => sameId(c.id, destColumn.id))
     if (!finalColumn) return
 
-    const newOrder = finalColumn.tasks.findIndex((t) => sameId(t.id, taskId))
+    // 0-based position in the rendered list; the API orders tasks 1-based.
+    const newIndex = finalColumn.tasks.findIndex((t) => sameId(t.id, taskId))
     const movedToNewColumn = !sameId(snapshot.columnId, destColumn.id)
 
     // No-op guard: dropped back where it started.
     if (!movedToNewColumn) {
-      const originalOrder = snapshot.columns
+      const originalIndex = snapshot.columns
         .find((c) => sameId(c.id, snapshot.columnId))
         ?.tasks.findIndex((t) => sameId(t.id, taskId))
-      if (originalOrder === newOrder) return
+      if (originalIndex === newIndex) return
     }
 
     commit({
       taskId,
       destColumnId: destColumn.id,
-      newOrder,
+      newOrder: newIndex + 1,
       movedToNewColumn,
       rollback: snapshot.columns,
     })
@@ -205,8 +254,63 @@ export function useDragAndDrop(
     }
   }
 
+  // Single-list horizontal reorder: the final index is the only thing that
+  // changed, so we read it off the post-drag array and persist it 1-based.
+  const onColumnDragEnd = (
+    active: DragEndEvent['active'],
+    over: DragEndEvent['over'],
+  ) => {
+    setActiveColumn(null)
+
+    const snapshot = columnDragStart.current
+    columnDragStart.current = null
+
+    const current = columnsRef.current
+    if (!over || !snapshot || !current) return
+
+    // `over` may resolve to a column or to a task inside one — both map back to
+    // the owning column.
+    const draggedColumn = resolveColumn(current, String(active.id))
+    const targetColumn = resolveColumn(current, String(over.id))
+    if (!draggedColumn || !targetColumn) return
+
+    const oldIndex = current.findIndex((c) => sameId(c.id, draggedColumn.id))
+    const newIndex = current.findIndex((c) => sameId(c.id, targetColumn.id))
+    if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return
+
+    setBoardColumns(arrayMove(current, oldIndex, newIndex))
+
+    commitColumn({
+      columnId: draggedColumn.id,
+      newOrder: newIndex + 1,
+      rollback: snapshot,
+    })
+  }
+
+  const commitColumn = async ({
+    columnId,
+    newOrder,
+    rollback,
+  }: {
+    columnId: BoardColumnProps['id']
+    newOrder: number
+    rollback: BoardColumnProps[]
+  }) => {
+    setIsApiProcessing(true)
+    try {
+      await api.patch(`columns/${columnId}/reorder`, { new_order: newOrder })
+      await activeBoardMutate()
+    } catch (error) {
+      setBoardColumns(rollback)
+      handleApiError(error)
+    } finally {
+      setIsApiProcessing(false)
+    }
+  }
+
   return {
     activeTask,
+    activeColumn,
     isApiProcessing,
     onDragStart,
     onDragOver,

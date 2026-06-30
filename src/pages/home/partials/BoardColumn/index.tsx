@@ -1,6 +1,10 @@
 import { RefObject, useRef, useState } from 'react'
-import { useDroppable } from '@dnd-kit/core'
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import * as Dialog from '@radix-ui/react-dialog'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -8,11 +12,13 @@ import {
   faEllipsis,
   faInbox,
   faPen,
+  faGripVertical,
 } from '@fortawesome/free-solid-svg-icons'
 import { BoardColumnProps } from '@/@types/board-column'
 import {
   AddTaskButton,
   ColumnHeader,
+  DragHandle,
   EmptyTasksContainer,
   MenuButton,
   MenuContainer,
@@ -24,7 +30,8 @@ import { TaskFormModal } from '@/components/Modals/TaskFormModal'
 import { BoardFormModal } from '@/components/Modals/BoardFormModal'
 import { MenuDivider, MenuItem } from '@/components/Core/Menu/styles'
 import { useClickOutside } from '@/utils/useClickOutside'
-import { TaskCard, taskSortableId } from '../TaskCard'
+import { CardContent, TaskCard, taskSortableId } from '../TaskCard'
+import { TaskCardContainer } from '../TaskCard/styles'
 
 export const columnDroppableId = (id: BoardColumnProps['id']) => `column-${id}`
 
@@ -51,17 +58,43 @@ export function BoardColumn({
 
   const isEmpty = column?.tasks?.length === 0
 
-  // A column is a droppable target identified by its stable id (not its
-  // position), so dropping into an empty column still resolves correctly.
-  const { setNodeRef } = useDroppable({
+  // The column is both a sortable item (horizontal reorder) and the droppable
+  // target for tasks — one stable id (`column-<id>`) serves both, so dropping
+  // into an empty column and reordering columns can't desync from positions.
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: columnDroppableId(column.id),
-    data: { type: 'column', columnId: column.id },
+    data: { type: 'column', column, columnId: column.id },
+    disabled: dragDisabled,
   })
+
+  const style: React.CSSProperties = {
+    transform: CSS.Translate.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : undefined,
+  }
 
   return (
     <>
-      <Panel>
+      <Panel ref={setNodeRef} style={style}>
         <ColumnHeader>
+          <DragHandle
+            ref={setActivatorNodeRef}
+            type="button"
+            className="column-drag-handle"
+            aria-label="Drag to reorder column"
+            {...attributes}
+            {...listeners}
+          >
+            <FontAwesomeIcon icon={faGripVertical} />
+          </DragHandle>
           <span className="name">{name}</span>
           <span className="count">{tasks.length}</span>
           <MenuContainer ref={menuRef}>
@@ -105,7 +138,7 @@ export function BoardColumn({
           items={tasks.map((task) => taskSortableId(task.id))}
           strategy={verticalListSortingStrategy}
         >
-          <TasksContainer ref={setNodeRef}>
+          <TasksContainer>
             {tasks.map((task) => (
               <TaskCard
                 key={String(task.id)}
@@ -145,5 +178,39 @@ export function BoardColumn({
         <BoardFormModal isEditing onClose={() => setIsEditBoardOpen(false)} />
       </Dialog.Root>
     </>
+  )
+}
+
+// Rendered inside the DndContext's <DragOverlay> while a column is being
+// dragged. Purely presentational — no sortable hooks (which would re-register
+// the column/task ids already mounted in the board) — so it just mirrors the
+// column's chrome and cards as a ghost that follows the cursor.
+export function ColumnOverlay({ column }: { column: BoardColumnProps }) {
+  const isEmpty = column.tasks.length === 0
+
+  return (
+    <Panel className="drag-overlay">
+      <ColumnHeader>
+        <DragHandle as="span" className="column-drag-handle" aria-hidden>
+          <FontAwesomeIcon icon={faGripVertical} />
+        </DragHandle>
+        <span className="name">{column.name}</span>
+        <span className="count">{column.tasks.length}</span>
+      </ColumnHeader>
+
+      <TasksContainer>
+        {column.tasks.map((task) => (
+          <TaskCardContainer key={String(task.id)} className="task-card">
+            <CardContent task={task} />
+          </TaskCardContainer>
+        ))}
+        {isEmpty && (
+          <EmptyTasksContainer>
+            <FontAwesomeIcon icon={faInbox} />
+            <span>Drop tasks here</span>
+          </EmptyTasksContainer>
+        )}
+      </TasksContainer>
+    </Panel>
   )
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { CSSProperties, ReactNode, Ref, useState } from 'react'
 import { Container, Title } from './styles'
 import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
@@ -10,6 +10,11 @@ interface SubtaskItemProps {
   name: string
   isCompleted: boolean
   handleSetIsLoading: (value: boolean) => void
+  /** Optional drag handle rendered at the start of the row (sortable lists). */
+  dragHandle?: ReactNode
+  /** Ref for the sortable node — applied to the row container. */
+  containerRef?: Ref<HTMLDivElement>
+  style?: CSSProperties
 }
 
 export function SubtaskItem({
@@ -17,6 +22,9 @@ export function SubtaskItem({
   name,
   isCompleted,
   handleSetIsLoading,
+  dragHandle,
+  containerRef,
+  style,
 }: SubtaskItemProps) {
   const [isChecked, setIsChecked] = useState(isCompleted)
 
@@ -39,7 +47,8 @@ export function SubtaskItem({
   }
 
   return (
-    <Container>
+    <Container ref={containerRef} style={style}>
+      {dragHandle}
       <CheckInput
         isChecked={isChecked}
         onClick={() => handleToggleSubtaskStatus()}

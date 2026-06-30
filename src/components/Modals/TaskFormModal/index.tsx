@@ -1,4 +1,4 @@
-import { RefObject, useRef, useState } from 'react'
+import { ReactNode, RefObject, useRef, useState } from 'react'
 import DatePicker from 'react-datepicker'
 import toast from 'react-hot-toast'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -8,10 +8,26 @@ import {
   faAlignLeft,
   faCalendar,
   faListCheck,
+  faGripVertical,
 } from '@fortawesome/free-solid-svg-icons'
+import {
+  DndContext,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import {
   AddSubtaskBtn,
   StyledDatePickerWrapper,
+  SubtaskDragHandle,
+  SubtaskRow,
   SubtasksWrapper,
 } from './styles'
 import { Sheet, Kbd } from '../Sheet'
@@ -43,6 +59,48 @@ interface AddTaskModalProps {
   onClose: () => void
 }
 
+function SortableSubtaskField({
+  id,
+  children,
+}: {
+  id: string
+  children: ReactNode
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id })
+
+  const style: React.CSSProperties = {
+    transform: CSS.Translate.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : undefined,
+    position: 'relative',
+    zIndex: isDragging ? 1 : undefined,
+  }
+
+  return (
+    <SubtaskRow ref={setNodeRef} style={style}>
+      <SubtaskDragHandle
+        ref={setActivatorNodeRef}
+        type="button"
+        className="subtask-drag-handle"
+        aria-label="Drag to reorder subtask"
+        {...attributes}
+        {...listeners}
+      >
+        <FontAwesomeIcon icon={faGripVertical} />
+      </SubtaskDragHandle>
+      {children}
+    </SubtaskRow>
+  )
+}
+
 export function TaskFormModal({
   onClose,
   column,
@@ -69,6 +127,7 @@ export function TaskFormModal({
     handleAddSubtask,
     handleChangeSubtask,
     handleRemoveSubtask,
+    handleReorderSubtask,
     handleChangeStatus,
     handleSubmitTask,
     watch,
@@ -81,6 +140,10 @@ export function TaskFormModal({
   useEscapeKey(onClose)
 
   const submitForm = handleSubmit(handleSubmitTask)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+  )
 
   const handleFormKeyDown = (e: React.KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
@@ -221,11 +284,25 @@ export function TaskFormModal({
               Subtasks
             </Sheet.SectionLabel>
             <SubtasksWrapper>
-              {subtasks.map((subtask, index) => (
-                <div key={`${subtask.name}-${index}`}>
-                  {renderSubtaskInput(index, subtask)}
-                </div>
-              ))}
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleReorderSubtask}
+              >
+                <SortableContext
+                  items={subtasks.map((subtask) => String(subtask.id))}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {subtasks.map((subtask, index) => (
+                    <SortableSubtaskField
+                      key={subtask.id}
+                      id={String(subtask.id)}
+                    >
+                      {renderSubtaskInput(index, subtask)}
+                    </SortableSubtaskField>
+                  ))}
+                </SortableContext>
+              </DndContext>
               <ErrorMessage
                 style={{ marginTop: '-0.25rem' }}
                 message={errors?.subtasks?.message}

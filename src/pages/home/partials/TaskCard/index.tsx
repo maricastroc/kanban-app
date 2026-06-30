@@ -32,7 +32,7 @@ type TaskCardProps = {
   dragOverlay?: boolean
 }
 
-function CardContent({ task }: { task: TaskProps }) {
+export function CardContent({ task }: { task: TaskProps }) {
   const totalSubtasks = task?.subtasks?.length || 0
   const completedSubtasks =
     task?.subtasks?.filter((subtask) => subtask?.is_completed)?.length || 0

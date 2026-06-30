@@ -4,6 +4,14 @@ import {
   faHeading,
   faTableColumns,
 } from '@fortawesome/free-solid-svg-icons'
+import {
+  DndContext,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { MAX_COLUMNS } from '@/utils/constants'
 import { FormContainer } from '@/components/Core/FormContainer'
 import { Button } from '@/components/Core/Button'
@@ -30,11 +38,16 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
     handleAddColumn,
     handleChangeColumn,
     handleRemoveColumn,
+    handleReorderColumns,
     handleSubmit,
     handleSubmitBoard,
   } = useBoardForm({ isEditing, onClose })
 
   const submitForm = handleSubmit(handleSubmitBoard)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+  )
 
   return (
     <Sheet isLoading={isLoading} onClose={onClose}>
@@ -77,16 +90,29 @@ export function BoardFormModal({ onClose, isEditing }: BoardModalProps) {
               These stages define how work moves across your board.
             </Sheet.SectionHint>
             <ColumnsWrapper>
-              {boardColumns.map((column, index) => (
-                <ColumnRowField
-                  key={`${column.name}-${index}`}
-                  name={column.name}
-                  error={errors.columns?.[index]?.name?.message}
-                  canRemove={boardColumns.length > 1}
-                  onChangeName={(value) => handleChangeColumn(index, value)}
-                  onRemove={() => handleRemoveColumn(index)}
-                />
-              ))}
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleReorderColumns}
+              >
+                <SortableContext
+                  items={boardColumns.map((column) => column.clientId)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {boardColumns.map((column, index) => (
+                    <ColumnRowField
+                      key={column.clientId}
+                      id={column.clientId}
+                      name={column.name}
+                      error={errors.columns?.[index]?.name?.message}
+                      canRemove={boardColumns.length > 1}
+                      dragDisabled={isSubmitting}
+                      onChangeName={(value) => handleChangeColumn(index, value)}
+                      onRemove={() => handleRemoveColumn(index)}
+                    />
+                  ))}
+                </SortableContext>
+              </DndContext>
             </ColumnsWrapper>
             {boardColumns.length < MAX_COLUMNS && (
               <AddColumnBtn type="button" onClick={handleAddColumn}>

@@ -5,14 +5,17 @@ export const Container = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 0.75rem;
-  background-color: transparent;
-  border-radius: 8px;
-  padding: 0.5rem 0.55rem;
-  transition: background-color 140ms ease;
+  gap: 0.6rem;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.7rem;
+  background-color: ${(props) => props.theme['field-bg']};
+  border: 1px solid ${(props) => props.theme['border-color']};
+  border-radius: 9px;
+  transition: border-color 160ms ease, background-color 160ms ease;
 
   &:hover {
-    background-color: ${(props) => props.theme['card-hover']};
+    border-color: ${(props) => props.theme['hairline-strong']};
   }
 `
 

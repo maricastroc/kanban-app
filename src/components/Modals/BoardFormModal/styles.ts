@@ -45,13 +45,36 @@ export const ColumnRow = styled.div`
   }
 `
 
-export const GripIcon = styled.span`
+export const DragHandle = styled.button`
   display: flex;
   align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  width: 20px;
+  height: 26px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
   color: ${(props) => props.theme['muted-color']};
   font-size: 0.8rem;
   cursor: grab;
+  touch-action: none;
+  transition: color 140ms ease, background-color 140ms ease;
+
+  &:hover:not(:disabled) {
+    color: ${(props) => props.theme['title-color']};
+    background-color: ${(props) => props.theme['card-hover']};
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.4;
+  }
 `
 
 export const ColumnInput = styled.input`
@@ -63,6 +86,13 @@ export const ColumnInput = styled.input`
   outline: none;
   color: ${(props) => props.theme['title-color']};
   font-size: 0.85rem;
+
+  /* The row itself shows the focus ring (:focus-within); suppress the global
+     input:focus-visible outline so we don't get a doubled/offset outline. */
+  &:focus,
+  &:focus-visible {
+    outline: none;
+  }
 
   &::placeholder {
     color: ${(props) => props.theme['muted-color']};

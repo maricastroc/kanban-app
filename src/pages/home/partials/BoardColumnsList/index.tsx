@@ -1,8 +1,12 @@
 import { BoardColumnProps } from '@/@types/board-column'
 import * as Dialog from '@radix-ui/react-dialog'
+import {
+  SortableContext,
+  horizontalListSortingStrategy,
+} from '@dnd-kit/sortable'
 import { AddColumnBtn, AddColumnContainer } from './styles'
 import { useTheme } from '@/contexts/ThemeContext'
-import { BoardColumn } from '../BoardColumn'
+import { BoardColumn, columnDroppableId } from '../BoardColumn'
 import { ColumnFormModal } from '@/components/Modals/ColumnFormModal'
 
 interface Props {
@@ -25,16 +29,21 @@ export const BoardColumnsList = ({
   return (
     columns && (
       <>
-        {columns.map((column) => (
-          <BoardColumn
-            key={column.id}
-            id={column.id}
-            column={column}
-            name={column.name}
-            tasks={column.tasks}
-            dragDisabled={dragDisabled}
-          />
-        ))}
+        <SortableContext
+          items={columns.map((column) => columnDroppableId(column.id))}
+          strategy={horizontalListSortingStrategy}
+        >
+          {columns.map((column) => (
+            <BoardColumn
+              key={column.id}
+              id={column.id}
+              column={column}
+              name={column.name}
+              tasks={column.tasks}
+              dragDisabled={dragDisabled}
+            />
+          ))}
+        </SortableContext>
         {columns.length < 6 && (
           <Dialog.Root open={isOpen} onOpenChange={onOpenModal}>
             <Dialog.Trigger asChild>

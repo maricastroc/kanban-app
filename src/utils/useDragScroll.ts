@@ -49,7 +49,11 @@ export function useDragScroll(
   const handleContainerMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement
 
-    if (target.closest('.task-card') || target.closest('.modal')) {
+    if (
+      target.closest('.task-card') ||
+      target.closest('.modal') ||
+      target.closest('.column-drag-handle')
+    ) {
       return
     }
 

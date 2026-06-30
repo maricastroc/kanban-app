@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { v4 as uuidv4 } from 'uuid'
 import { z } from 'zod'
+import { arrayMove } from '@dnd-kit/sortable'
+import { DragEndEvent } from '@dnd-kit/core'
 
 import { api } from '@/lib/axios'
 import { useBoardsContext } from '@/contexts/BoardsContext'
@@ -127,6 +129,23 @@ export const useTaskForm = ({
     [getValues, setValue],
   )
 
+  const handleReorderSubtask = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+
+    const oldIndex = subtasks.findIndex(
+      (s) => String(s.id) === String(active.id),
+    )
+    const newIndex = subtasks.findIndex((s) => String(s.id) === String(over.id))
+    if (oldIndex === -1 || newIndex === -1) return
+
+    // The submit payload derives each subtask's `order` from its array index,
+    // so reordering here persists on save (no extra request needed).
+    const reordered = arrayMove(subtasks, oldIndex, newIndex)
+    setSubtasks(reordered)
+    setValue('subtasks', reordered)
+  }
+
   const handleChangeStatus = (
     newStatus: string,
     columnToEditId?: string | number,
@@ -195,6 +214,7 @@ export const useTaskForm = ({
     handleAddSubtask,
     handleChangeSubtask,
     handleRemoveSubtask,
+    handleReorderSubtask,
     handleChangeStatus,
     handleSubmitTask,
     setTaskTags,

@@ -5,12 +5,12 @@ import {
   DndContext,
   DragOverlay,
   PointerSensor,
-  closestCorners,
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
 import { Header } from '@/components/Core/Header'
 import { TaskCard } from './partials/TaskCard'
+import { ColumnOverlay } from './partials/BoardColumn'
 import {
   ColumnsContainer,
   LayoutContainer,
@@ -29,7 +29,10 @@ import { EmptyColumns } from '@/components/Shared/EmptyColumns'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { useDragScroll } from '@/utils/useDragScroll'
-import { useDragAndDrop } from '@/hooks/useDragAndDrop'
+import {
+  useDragAndDrop,
+  kanbanCollisionDetection,
+} from '@/hooks/useDragAndDrop'
 import { useAuthRedirect } from '@/hooks/useAuthRedirect'
 import { BoardColumnsList } from './partials/BoardColumnsList'
 import {
@@ -56,8 +59,14 @@ export default function Home() {
 
   const isSmallerThanSm = useWindowResize(BREAKPOINT_SM)
   const { isCheckingAuth } = useAuthRedirect()
-  const { activeTask, isApiProcessing, onDragStart, onDragOver, onDragEnd } =
-    useDragAndDrop(boardColumns, setBoardColumns)
+  const {
+    activeTask,
+    activeColumn,
+    isApiProcessing,
+    onDragStart,
+    onDragOver,
+    onDragEnd,
+  } = useDragAndDrop(boardColumns, setBoardColumns)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -105,7 +114,7 @@ export default function Home() {
       {!isCheckingAuth && (
         <DndContext
           sensors={sensors}
-          collisionDetection={closestCorners}
+          collisionDetection={kanbanCollisionDetection}
           onDragStart={onDragStart}
           onDragOver={onDragOver}
           onDragEnd={onDragEnd}
@@ -171,7 +180,9 @@ export default function Home() {
           </LayoutContainer>
 
           <DragOverlay>
-            {activeTask && overlayColumn ? (
+            {activeColumn ? (
+              <ColumnOverlay column={activeColumn} />
+            ) : activeTask && overlayColumn ? (
               <TaskCard task={activeTask} column={overlayColumn} dragOverlay />
             ) : null}
           </DragOverlay>

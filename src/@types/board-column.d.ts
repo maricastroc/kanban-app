@@ -4,5 +4,6 @@ export interface BoardColumnProps {
   uuid?: string
   id: string | number | null
   name: string
+  order?: number
   tasks: TaskProps[]
 }

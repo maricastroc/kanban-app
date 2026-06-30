@@ -26,6 +26,12 @@ export const Panel = styled.div`
   &:hover {
     border-color: ${(props) => props.theme['hairline-strong']};
   }
+
+  &.drag-overlay {
+    cursor: grabbing;
+    border-color: ${(props) => props.theme['accent-color']};
+    box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.45);
+  }
 `
 
 export const ColumnHeader = styled.div`
@@ -49,6 +55,41 @@ export const ColumnHeader = styled.div`
     font-size: 0.78rem;
     font-weight: 500;
     color: ${(props) => props.theme['muted-color']};
+  }
+`
+
+export const DragHandle = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 26px;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  border-radius: 6px;
+  color: ${(props) => props.theme['muted-color']};
+  cursor: grab;
+  touch-action: none;
+  transition: color 160ms ease, background-color 160ms ease;
+
+  svg {
+    font-size: 0.8rem;
+  }
+
+  &:hover {
+    color: ${(props) => props.theme['title-color']};
+    background-color: ${(props) => props.theme['card-hover']};
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.4;
   }
 `
 

@@ -9,6 +9,8 @@ import { MIN_BOARD_NAME_LENGTH, MAX_COLUMNS } from '@/utils/constants'
 import { BoardColumnProps } from '@/@types/board-column'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { useCallback, useEffect, useState } from 'react'
+import { arrayMove } from '@dnd-kit/sortable'
+import { DragEndEvent } from '@dnd-kit/core'
 
 interface Props {
   isEditing: boolean
@@ -37,15 +39,32 @@ const formSchema = z.object({
 
 export type FormData = z.infer<typeof formSchema>
 
+// A board column plus a stable client-side key, so the drag-and-drop list keeps
+// a consistent identity even for not-yet-saved columns (id === null) or columns
+// that share a name. The clientId is never sent to the API.
+type DraftColumn = BoardColumnProps & { clientId: string }
+
+let columnKeySeq = 0
+
+const attachClientIds = (columns: BoardColumnProps[]): DraftColumn[] =>
+  columns.map((column) => ({
+    ...column,
+    clientId:
+      (column as DraftColumn).clientId ??
+      (column.id != null ? `col-${column.id}` : `new-${++columnKeySeq}`),
+  }))
+
 export const useBoardForm = ({ isEditing, onClose }: Props) => {
   const { activeBoard, boardsMutate, handleChangeActiveBoard } =
     useBoardsContext()
 
-  const [boardColumns, setBoardColumns] = useState<BoardColumnProps[]>(
-    activeBoard?.columns || [
-      { id: null, name: 'Todo', tasks: [] },
-      { id: null, name: 'Doing', tasks: [] },
-    ],
+  const [boardColumns, setBoardColumns] = useState<DraftColumn[]>(
+    attachClientIds(
+      activeBoard?.columns || [
+        { id: null, name: 'Todo', tasks: [] },
+        { id: null, name: 'Doing', tasks: [] },
+      ],
+    ),
   )
 
   const [isLoading, setIsLoading] = useState(false)
@@ -123,10 +142,28 @@ export const useBoardForm = ({ isEditing, onClose }: Props) => {
   }
 
   const handleAddColumn = () => {
-    const newColumn = { id: null, name: '', tasks: [] }
+    const newColumn: DraftColumn = {
+      id: null,
+      name: '',
+      tasks: [],
+      clientId: `new-${++columnKeySeq}`,
+    }
     const updatedColumns = [...boardColumns, newColumn]
     setBoardColumns(updatedColumns)
     setValue('columns', updatedColumns)
+  }
+
+  const handleReorderColumns = (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+
+    const oldIndex = boardColumns.findIndex((c) => c.clientId === active.id)
+    const newIndex = boardColumns.findIndex((c) => c.clientId === over.id)
+    if (oldIndex === -1 || newIndex === -1) return
+
+    const reordered = arrayMove(boardColumns, oldIndex, newIndex)
+    setBoardColumns(reordered)
+    setValue('columns', reordered)
   }
 
   const handleChangeColumn = (index: number, newValue: string) => {
@@ -158,7 +195,7 @@ export const useBoardForm = ({ isEditing, onClose }: Props) => {
 
   const resetColumns = useCallback(() => {
     if (isEditing) {
-      const cols = activeBoard?.columns || []
+      const cols = attachClientIds(activeBoard?.columns || [])
       setBoardColumns(cols)
 
       reset({
@@ -167,12 +204,13 @@ export const useBoardForm = ({ isEditing, onClose }: Props) => {
         columns: cols,
       })
     } else {
-      setBoardColumns(initialBoardColumns)
+      const cols = attachClientIds(initialBoardColumns)
+      setBoardColumns(cols)
 
       reset({
         id: null,
         name: '',
-        columns: initialBoardColumns,
+        columns: cols,
       })
     }
   }, [activeBoard, isEditing, reset])
@@ -184,6 +222,7 @@ export const useBoardForm = ({ isEditing, onClose }: Props) => {
   return {
     handleAddColumn,
     handleRemoveColumn,
+    handleReorderColumns,
     handleSubmitBoard,
     handleSubmit,
     handleChangeColumn,
