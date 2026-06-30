@@ -1,26 +1,53 @@
+type Subtaskish = { is_completed: boolean }
+
+// Always clone: `new Date(value)` copies a Date argument (and parses a string),
+// so the setHours() below never mutates the caller's original Date.
+const startOfDay = (value: string | Date): Date => {
+  const date = new Date(value)
+  date.setHours(0, 0, 0, 0)
+  return date
+}
+
+const allSubtasksCompleted = (subtasks: Subtaskish[]): boolean =>
+  subtasks.length > 0 && subtasks.every((st) => st.is_completed)
+
+// Whole-day distance from today; negative when the date is already in the past.
+const daysUntil = (date: string | Date): number => {
+  const diff = startOfDay(date).getTime() - startOfDay(new Date()).getTime()
+  return Math.ceil(diff / (1000 * 60 * 60 * 24))
+}
+
 export const getDueStatus = (
   date: string | Date,
-  subtasks: { is_completed: boolean }[],
+  subtasks: Subtaskish[],
 ): string => {
-  // Always clone: `new Date(date)` copies a Date argument (and parses a string),
-  // so the setHours() below never mutates the caller's original Date.
-  const parsedDate = new Date(date)
-  const today = new Date()
+  if (allSubtasksCompleted(subtasks)) return 'completed'
 
-  today.setHours(0, 0, 0, 0)
-  parsedDate.setHours(0, 0, 0, 0)
+  const days = daysUntil(date)
 
-  const allSubtasksCompleted =
-    subtasks.length > 0 && subtasks.every((st) => st.is_completed)
+  if (days < 0) return 'overdue'
+  if (days === 0 || days === 1) return 'due_soon'
 
-  if (allSubtasksCompleted) return 'completed'
+  return ''
+}
 
-  const diffInDays = Math.ceil(
-    (parsedDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
-  )
+/**
+ * A short, glanceable label for the due-date status chip ("Overdue", "Due
+ * today", "Done"). Pairs with the chip colour so the meaning never rides on
+ * colour alone. Returns '' for dates comfortably in the future, where the
+ * formatted date already speaks for itself.
+ */
+export const getDueLabel = (
+  date: string | Date,
+  subtasks: Subtaskish[],
+): string => {
+  if (allSubtasksCompleted(subtasks)) return 'Done'
 
-  if (diffInDays < 0) return 'overdue'
-  if (diffInDays === 1 || diffInDays === 0) return 'due_soon'
+  const days = daysUntil(date)
+
+  if (days < 0) return 'Overdue'
+  if (days === 0) return 'Due today'
+  if (days === 1) return 'Due tomorrow'
 
   return ''
 }

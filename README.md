@@ -6,7 +6,7 @@ A fullstack Kanban board for daily task management — organize work across mult
 
 This repository is the **frontend** (Next.js). It talks to a separate **Laravel API** ([kanban-api](https://github.com/maricastroc/kanban-api)) over HTTP, with authentication handled by a secure **httpOnly session cookie**.
 
-🔗 **Live demo:** [kanban.marianacastro.dev](https://kanban.marianacastro.dev/)
+🔗 **Live demo:** [kanban.marianacastro.dev](https://kanban.marianacastro.dev/) — click **"Explore the demo"** on the login page to jump straight in, no sign-up required.
 
 ---
 
@@ -15,13 +15,14 @@ This repository is the **frontend** (Next.js). It talks to a separate **Laravel 
 **Boards & workflow**
 - Create, edit and delete boards, and switch the active board
 - Customize each board's workflow columns — add, rename and remove (up to 6)
+- Reorder columns by drag-and-drop, with optimistic updates and rollback on failure
 - Each board gets a deterministic accent color for quick visual identity
 
 **Tasks**
 - Create, edit and delete tasks with title, description and due date
 - Subtasks: add, remove, toggle completion and reorder (animated)
 - Due-date status badges (overdue / due soon / completed), derived from the date and subtask progress
-- Drag and drop to move tasks across columns or reorder within a column, with optimistic updates
+- Drag and drop to move tasks across columns or reorder within a column — optimistic, with rollback if the request fails
 
 **Labels**
 - Create, edit and delete color-coded labels, with per-board usage counts
@@ -38,6 +39,7 @@ This repository is the **frontend** (Next.js). It talks to a separate **Laravel 
 
 **Auth**
 - Register, login and logout, with route guards
+- **One-click demo** — "Explore the demo" signs you into a shared demo account whose sample workspace is reseeded on every entry, so visitors can try the app without signing up
 - Session stored in an **httpOnly cookie** that JavaScript can't read — see [Authentication](#-authentication)
 
 ---
@@ -49,8 +51,8 @@ This repository is the **frontend** (Next.js). It talks to a separate **Laravel 
 - [styled-components](https://styled-components.com/) for styling and theming
 - [SWR](https://swr.vercel.app/) + [Axios](https://axios-http.com/) for data fetching
 - [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) for forms and validation
-- [react-beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd) (drag & drop) + [Framer Motion](https://www.framer.com/motion/) (subtask reorder)
-- [Radix UI](https://www.radix-ui.com/) primitives (dialog, select, switch) + [Font Awesome](https://fontawesome.com/)
+- [dnd kit](https://dndkit.com/) for drag-and-drop — tasks, columns and subtask reordering
+- [Radix UI](https://www.radix-ui.com/) primitives (dialog, switch, visually-hidden) + [Font Awesome](https://fontawesome.com/)
 - [react-hot-toast](https://react-hot-toast.com/) for notifications
 - [Vitest](https://vitest.dev/) + [Testing Library](https://testing-library.com/) for tests
 - ESLint + Prettier
@@ -119,25 +121,19 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## 🧪 Testing
 
-Unit and component tests with Vitest + Testing Library.
+Unit and component tests with [Vitest](https://vitest.dev/) + [Testing Library](https://testing-library.com/), focused on the logic most likely to regress:
+
+- **Drag-and-drop engine** (`useDragAndDrop`) — cross-column moves, within-column and column reordering, the move-vs-reorder persistence calls, and rollback when a request fails
+- **Utilities** — due-date status, date formatting, board/column filtering, deterministic board colors, tag colors and API-error handling
+- **Form & UI flows** — login/register validation, the password field, and the delete-confirmation dialog
+
+Coverage is collected for `src/hooks` and `src/utils`.
 
 ```bash
 npm test            # run the suite once
 npm run test:watch  # watch mode
 npm run test:coverage
 ```
-
----
-
-## ⚙️ Continuous Integration
-
-A GitHub Actions workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs on every pull request and push to `main`:
-
-- **Lint** — `npm run lint`
-- **Test** — `npm test`
-- **Build** — `npm run build`
-
-It runs on Node 22, and older runs for the same branch are auto-cancelled.
 
 ---
 
@@ -155,13 +151,12 @@ It runs on Node 22, and older runs for the same branch are auto-cancelled.
 
 ---
 
-## 📝 What I learned
+## 📝 Engineering decisions
 
-This project started from the Frontend Mentor Kanban challenge and grew into a decoupled fullstack app. Highlights:
+The project began as the Frontend Mentor Kanban challenge and was rebuilt into a decoupled fullstack app. A few decisions worth calling out:
 
-- Designing a **decoupled SPA + REST API** (Next.js ↔ Laravel/Sanctum) and handling the cross-origin concerns that come with it (CORS, credentials, cookies).
-- Migrating auth from a **localStorage token to an httpOnly cookie** for XSS safety — including the same-site subdomain setup that makes a `SameSite=Lax` cookie work across Vercel + Railway.
-- Implementing optimistic **drag-and-drop** for moving tasks across columns and reordering within a column.
-- Orchestrating complex state with React Context + SWR while keeping the UI in sync with the API.
-- Setting up **Vitest + Testing Library** and a **CI pipeline** (lint + test + build) on pull requests.
-- A sizeable refactor pass: extracting reusable hooks and components, removing dead code and de-duplicating the codebase.
+- **Decoupled SPA + REST API** (Next.js ↔ Laravel/Sanctum) rather than a monolith — which meant owning the cross-origin surface: CORS, credentialed requests and cookie behavior.
+- **Auth in an httpOnly cookie instead of a localStorage token**, so the token is never reachable from JavaScript (XSS can't steal it). The trade-off — cookies aren't sent cross-site — is resolved by serving the API from a subdomain, keeping it *same-site* so a `SameSite=Lax` cookie works across Vercel + Railway.
+- **Optimistic drag-and-drop** for tasks and columns: the UI updates immediately and reconciles with the server, rolling back to the pre-drag snapshot if the request fails. Drag targets are stable string ids (`task-<id>` / `column-<id>`), not array positions, so reordering or filtering can't desync the drop target.
+- **React Context + SWR** for state: SWR owns server data and revalidation, Context holds the active-board selection — separating "what the server says" from "what the user is looking at".
+- A substantial **refactor pass**: extracting reusable hooks and components, removing dead code and de-duplicating the codebase.

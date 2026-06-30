@@ -4,6 +4,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
+  DueChip,
   InfoContent,
   InfoItem,
   ProgressContainer,
@@ -19,7 +20,7 @@ import { TaskProps } from '@/@types/task'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { BoardColumnProps } from '@/@types/board-column'
 import { formatDate } from '@/utils/formatDate'
-import { getDueStatus } from '@/utils/getDueStatus'
+import { getDueStatus, getDueLabel } from '@/utils/getDueStatus'
 import { faClock, faListCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -38,6 +39,14 @@ export function CardContent({ task }: { task: TaskProps }) {
     task?.subtasks?.filter((subtask) => subtask?.is_completed)?.length || 0
   const progress =
     totalSubtasks > 0 ? (completedSubtasks / totalSubtasks) * 100 : 0
+
+  const subtasksList = task?.subtasks ?? []
+  const dueStatus = task?.due_date
+    ? getDueStatus(task.due_date, subtasksList)
+    : ''
+  const dueLabel = task?.due_date
+    ? getDueLabel(task.due_date, subtasksList)
+    : ''
 
   return (
     <>
@@ -74,9 +83,12 @@ export function CardContent({ task }: { task: TaskProps }) {
         </InfoItem>
 
         {task?.due_date && (
-          <InfoItem className={`${getDueStatus(task.due_date, task.subtasks)}`}>
+          <InfoItem>
             <FontAwesomeIcon icon={faClock} />
             <p>{formatDate(task.due_date)}</p>
+            {dueLabel ? (
+              <DueChip className={dueStatus}>{dueLabel}</DueChip>
+            ) : null}
           </InfoItem>
         )}
       </InfoContent>

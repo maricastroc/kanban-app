@@ -8,7 +8,11 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-hot-toast'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEnvelope, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
+import {
+  faEnvelope,
+  faRightToBracket,
+  faWandMagicSparkles,
+} from '@fortawesome/free-solid-svg-icons'
 
 import Logo from '@/../public/icon.svg'
 import LogoTextLight from '@/../public/kanban.svg'
@@ -20,6 +24,7 @@ import {
   LayoutContainer,
   LoginCard,
   LogoWrapper,
+  OrDivider,
   Tagline,
   TitleContainer,
 } from './styles'
@@ -50,6 +55,7 @@ export default function Login() {
   const router = useRouter()
 
   const [isLoading, setIsLoading] = useState(false)
+  const [isDemoLoading, setIsDemoLoading] = useState(false)
 
   const {
     register,
@@ -79,6 +85,24 @@ export default function Login() {
       handleApiError(error)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  async function handleDemoLogin() {
+    setIsDemoLoading(true)
+
+    try {
+      // No credentials — the backend signs us into the shared demo account and
+      // reseeds its sample workspace so we always land on a clean, full board.
+      await api.post('demo-login')
+
+      await revalidateAuth()
+      toast.success('Welcome! Explore the demo workspace.')
+      router.push('/')
+    } catch (error) {
+      handleApiError(error)
+    } finally {
+      setIsDemoLoading(false)
     }
   }
 
@@ -131,6 +155,7 @@ export default function Login() {
             <Button
               isBigger
               isLoading={isSubmitting || isLoading}
+              disabled={isDemoLoading}
               type="submit"
             >
               <FontAwesomeIcon
@@ -141,6 +166,24 @@ export default function Login() {
               Login
             </Button>
 
+            <OrDivider>or</OrDivider>
+
+            <Button
+              type="button"
+              variant="secondary"
+              isBigger
+              isLoading={isDemoLoading}
+              disabled={isSubmitting || isLoading}
+              onClick={handleDemoLogin}
+            >
+              <FontAwesomeIcon
+                icon={faWandMagicSparkles}
+                style={{ fontSize: 14 }}
+                aria-hidden="true"
+              />
+              Explore the demo
+            </Button>
+
             <CreateAccountContainer>
               <p>Don&apos;t have an account?</p>
               <Link href="/register">Create account</Link>
@@ -148,7 +191,7 @@ export default function Login() {
           </FormContainer>
         </LoginCard>
 
-        {(isLoading || isRouteLoading) && <LoadingComponent />}
+        {(isLoading || isDemoLoading || isRouteLoading) && <LoadingComponent />}
       </LayoutContainer>
     </>
   )

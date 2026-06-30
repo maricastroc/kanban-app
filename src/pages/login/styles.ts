@@ -31,7 +31,7 @@ export const LoginCard = styled.div`
   background-color: ${(props) => props.theme['bg-color']};
 
   @media (min-width: 480px) {
-    padding: 2.75rem;
+    padding: 2.3rem;
     margin-bottom: 2.5rem;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     background-color: ${(props) => props.theme['cards-color']};
@@ -103,6 +103,25 @@ export const InputsContainer = styled.div`
   width: 100%;
   margin-bottom: 0.5rem;
   gap: 0.75rem;
+`
+
+export const OrDivider = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  color: ${(props) => props.theme['paragraph-color']};
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: ${(props) => props.theme['border-color']};
+  }
 `
 
 export const FormField = styled.div`

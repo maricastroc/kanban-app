@@ -9,7 +9,7 @@ import { DragEndEvent } from '@dnd-kit/core'
 import { api } from '@/lib/axios'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { handleApiError } from '@/utils/handleApiError'
-import { MIN_SUBTASKS, MIN_TITLE_LENGTH } from '@/utils/constants'
+import { MIN_TITLE_LENGTH } from '@/utils/constants'
 import { SubtaskProps } from '@/@types/subtask'
 import { TaskProps } from '@/@types/task'
 import { TaskTagProps } from '@/@types/task-tag'
@@ -22,10 +22,9 @@ interface AddTaskModalProps {
   onClose: () => void
 }
 
-const initialSubtasks: SubtaskProps[] = [
-  { id: uuidv4(), name: '', is_completed: false },
-  { id: uuidv4(), name: '', is_completed: false },
-]
+// Subtasks are optional, so a new task starts with none — the user adds them
+// on demand via "Add subtask".
+const initialSubtasks: SubtaskProps[] = []
 
 const subtaskSchema = z.object({
   id: z.number().or(z.string()),
@@ -61,9 +60,7 @@ export const useTaskForm = ({
       message: 'Title must have at least 3 characters.',
     }),
     description: z.string().optional(),
-    subtasks: z
-      .array(subtaskSchema)
-      .min(MIN_SUBTASKS, { message: 'At least one subtask is required' }),
+    subtasks: z.array(subtaskSchema),
     status: z.string(),
     due_date: z.date().optional(),
   })
@@ -165,10 +162,12 @@ export const useTaskForm = ({
         description: data.description || '',
         due_date: data.due_date,
         column_id: columnId,
-        subtasks: subtasks.map((subtask, index) => ({
-          ...subtask,
-          order: index,
-        })),
+        subtasks: subtasks
+          .filter((subtask) => subtask.name.trim() !== '')
+          .map((subtask, index) => ({
+            ...subtask,
+            order: index,
+          })),
         tags: taskTags.map((tag) => Number(tag.id)),
       }
 

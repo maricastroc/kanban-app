@@ -113,6 +113,26 @@ describe('Login page', () => {
     expect(pushMock).toHaveBeenCalledWith('/')
   })
 
+  it('enters the demo workspace, refreshes the session, notifies and navigates', async () => {
+    postMock.mockResolvedValueOnce({ data: {} })
+    const user = userEvent.setup()
+    renderLogin()
+
+    await user.click(
+      await screen.findByRole('button', { name: /explore the demo/i }),
+    )
+
+    await waitFor(() => {
+      expect(postMock).toHaveBeenCalledWith('demo-login')
+    })
+
+    expect(revalidateAuthMock).toHaveBeenCalled()
+    expect(toastSuccess).toHaveBeenCalledWith(
+      'Welcome! Explore the demo workspace.',
+    )
+    expect(pushMock).toHaveBeenCalledWith('/')
+  })
+
   it('does not navigate when the request fails', async () => {
     postMock.mockRejectedValueOnce(new Error('invalid credentials'))
     const user = userEvent.setup()

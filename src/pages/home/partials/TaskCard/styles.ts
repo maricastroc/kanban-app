@@ -117,25 +117,38 @@ export const InfoItem = styled.div`
     color: ${(props) => props.theme['muted-color']};
     font-size: 0.72rem;
   }
+`
+
+// The due-date status reads as a chip (tinted fill + soft border) sitting next
+// to the date, so it shares the visual language of the tags up top without
+// being mistaken for one — the date stays the primary datum, muted.
+export const DueChip = styled.span`
+  display: inline-flex;
+  align-items: center;
+  height: 17px;
+  padding: 0 0.4rem;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
 
   &.overdue {
-    p,
-    svg {
-      color: ${(props) => props.theme['overdue-color']};
-    }
-  }
-
-  &.completed {
-    p,
-    svg {
-      color: ${(props) => props.theme['completed-color']};
-    }
+    color: ${(props) => props.theme['overdue-color']};
+    background-color: ${(props) => `${props.theme['overdue-color']}1f`};
+    border-color: ${(props) => `${props.theme['overdue-color']}33`};
   }
 
   &.due_soon {
-    p,
-    svg {
-      color: ${(props) => props.theme['due-soon-color']};
-    }
+    color: ${(props) => props.theme['due-soon-color']};
+    background-color: ${(props) => `${props.theme['due-soon-color']}1f`};
+    border-color: ${(props) => `${props.theme['due-soon-color']}33`};
+  }
+
+  &.completed {
+    color: ${(props) => props.theme['completed-color']};
+    background-color: ${(props) => `${props.theme['completed-color']}1f`};
+    border-color: ${(props) => `${props.theme['completed-color']}33`};
   }
 `

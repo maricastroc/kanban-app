@@ -1,6 +1,5 @@
 import { ReactNode, RefObject, useRef, useState } from 'react'
 import DatePicker from 'react-datepicker'
-import toast from 'react-hot-toast'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faPlus,
@@ -159,18 +158,10 @@ export function TaskFormModal({
       <FieldsContainer>
         <Field
           hasError={!!error}
-          isDisabled={subtasks.length <= 1 && isEditing}
           placeholder="e.g. Make coffee"
           defaultValue={subtask.name}
-          btnVariant={subtasks.length > 1 ? '' : 'disabled'}
           onChange={(e) => handleChangeSubtask(index, e.target.value)}
-          onClick={() => {
-            if (subtasks?.length > 1) {
-              handleRemoveSubtask(index)
-            } else {
-              toast.error('Task must have at least one subtask.')
-            }
-          }}
+          onClick={() => handleRemoveSubtask(index)}
         />
         {error && <ErrorMessage message={error} />}
       </FieldsContainer>
