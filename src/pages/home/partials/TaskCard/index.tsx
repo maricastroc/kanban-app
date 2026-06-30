@@ -17,9 +17,10 @@ import {
   TaskTitleRow,
 } from './styles'
 import { TaskDetailsModal } from '@/components/Modals/TaskDetailsModal'
-import { getTagHex } from '@/utils/getTagHex'
+import { getTagStyle } from '@/utils/getTagHex'
 import { TaskProps } from '@/@types/task'
 import { useBoardsContext } from '@/contexts/BoardsContext'
+import { useTheme } from '@/contexts/ThemeContext'
 import { BoardColumnProps } from '@/@types/board-column'
 import { formatDate } from '@/utils/formatDate'
 import { getDueStatus, getDueLabel } from '@/utils/getDueStatus'
@@ -50,6 +51,7 @@ export function CardContent({ task }: { task: TaskProps }) {
     totalSubtasks > 0 ? (completedSubtasks / totalSubtasks) * 100 : 0
 
   const { activeBoardMutate } = useBoardsContext()
+  const { enableDarkMode } = useTheme()
   const [isCompleted, setIsCompleted] = useState(!!task.is_completed)
   const [isToggling, setIsToggling] = useState(false)
 
@@ -84,17 +86,11 @@ export function CardContent({ task }: { task: TaskProps }) {
     <>
       {task?.tags && task?.tags?.length > 0 && (
         <TagsContainer>
-          {task.tags.map((item) => {
-            const hex = getTagHex(item.color)
-            return (
-              <Tag
-                key={item.id}
-                style={{ backgroundColor: `${hex}1a`, color: hex }}
-              >
-                {item.name}
-              </Tag>
-            )
-          })}
+          {task.tags.map((item) => (
+            <Tag key={item.id} style={getTagStyle(item.color, enableDarkMode)}>
+              {item.name}
+            </Tag>
+          ))}
         </TagsContainer>
       )}
 
