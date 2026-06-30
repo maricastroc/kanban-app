@@ -1,8 +1,8 @@
-# Kanban Task Management
+# Cadence
 
 ![banner](https://github.com/user-attachments/assets/6876f831-7719-4f52-bf24-3e84eb236bea)
 
-A fullstack Kanban board for daily task management — organize work across multiple boards, columns and tasks, with drag-and-drop, subtasks, color labels, due dates and light/dark themes.
+**Cadence** is a fullstack Kanban board for daily task management — organize work across multiple boards, columns and tasks, with drag-and-drop, subtasks, color labels, due dates and light/dark themes.
 
 This repository is the **frontend** (Next.js). It talks to a separate **Laravel API** ([kanban-api](https://github.com/maricastroc/kanban-api)) over HTTP, with authentication handled by a secure **httpOnly session cookie**.
 
@@ -160,3 +160,19 @@ The project began as the Frontend Mentor Kanban challenge and was rebuilt into a
 - **Optimistic drag-and-drop** for tasks and columns: the UI updates immediately and reconciles with the server, rolling back to the pre-drag snapshot if the request fails. Drag targets are stable string ids (`task-<id>` / `column-<id>`), not array positions, so reordering or filtering can't desync the drop target.
 - **React Context + SWR** for state: SWR owns server data and revalidation, Context holds the active-board selection — separating "what the server says" from "what the user is looking at".
 - A substantial **refactor pass**: extracting reusable hooks and components, removing dead code and de-duplicating the codebase.
+
+---
+
+## 👤 Author
+
+Built and designed by **Mariana Castro** — [@maricastroc](https://github.com/maricastroc) · [live demo](https://kanban.marianacastro.dev/).
+
+The interface is an **original redesign**: it started from the Frontend Mentor Kanban brief and was rebuilt with its own design system — custom palette, typography and component layer — on top of a decoupled Next.js + Laravel architecture.
+
+---
+
+## 📄 License
+
+Released under the [MIT License](LICENSE). You're free to use, study, fork and build on this code — **as long as the original copyright and license notice are kept**. Reuse it and learn from it; don't strip the attribution and present it as your own.
+
+© 2025–2026 Mariana Castro

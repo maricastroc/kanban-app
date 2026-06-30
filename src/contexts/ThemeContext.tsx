@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
+import { getStorageTheme, saveStorageTheme } from '@/storage/themeConfig'
 
 type ThemeContextType = {
   enableDarkMode: boolean
@@ -20,10 +26,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [enableDarkMode, setEnableDarkMode] = useState(true)
 
+  // Start from the default on the server and first client render (avoids a
+  // hydration mismatch), then restore the saved preference once mounted.
+  useEffect(() => {
+    setEnableDarkMode(getStorageTheme() === 'DARK_THEME')
+  }, [])
+
   const toggleTheme = () => {
     setEnableDarkMode((prev) => {
       const newTheme = !prev
-      localStorage.setItem('theme', newTheme ? 'DARK_THEME' : 'LIGHT_THEME')
+      saveStorageTheme(newTheme ? 'DARK_THEME' : 'LIGHT_THEME')
       return newTheme
     })
   }
