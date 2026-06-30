@@ -110,7 +110,10 @@ export default function Home() {
           onDragEnd={onDragEnd}
         >
           <LayoutContainer>
-            {isLoading && <LoadingComponent />}
+            {/* Only block the screen on the initial load. Once a board is on
+                screen, background revalidations (e.g. after an optimistic
+                drag) refresh it in place instead of flashing this overlay. */}
+            {isLoading && !activeBoard && <LoadingComponent />}
             <BoardContent>
               {!isSmallerThanSm && (
                 <Sidebar
