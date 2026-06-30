@@ -33,7 +33,7 @@ import { BoardFormModal } from '@/components/Modals/BoardFormModal'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useBoardsContext } from '@/contexts/BoardsContext'
 import { handleApiError } from '@/utils/handleApiError'
-import { getBoardColor } from '@/utils/getBoardColor'
+import { getBoardAvatarStyle } from '@/utils/getBoardColor'
 import { api } from '@/lib/axios'
 import { BoardProps } from '@/@types/board'
 
@@ -86,7 +86,6 @@ export function Sidebar({ onClose, className }: SidebarProps) {
           )}
           {boards?.map((board) => {
             const taskCount = getBoardTaskCount(board)
-            const color = getBoardColor(board.name)
             return (
               <BoardButton
                 key={board.name}
@@ -95,7 +94,9 @@ export function Sidebar({ onClose, className }: SidebarProps) {
                   handleActivateBoard(board)
                 }}
               >
-                <BoardIcon style={{ backgroundColor: `${color}22`, color }}>
+                <BoardIcon
+                  style={getBoardAvatarStyle(board.name, enableDarkMode)}
+                >
                   {board.name.charAt(0).toUpperCase()}
                 </BoardIcon>
                 <p>{board.name}</p>

@@ -121,7 +121,7 @@ export const Tag = styled.span`
   height: 16px;
   padding: 0 0.35rem;
   border-radius: 4px;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   font-weight: 500;
   letter-spacing: 0;
   white-space: nowrap;
