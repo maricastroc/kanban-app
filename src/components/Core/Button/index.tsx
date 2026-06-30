@@ -1,7 +1,5 @@
 import { ButtonHTMLAttributes, ReactNode } from 'react'
-import { Container } from './styles'
-import { ThreeDots } from 'react-loading-icons'
-import { useTheme } from 'styled-components'
+import { ButtonSpinner, Container } from './styles'
 
 type Variant = 'primary' | 'secondary' | 'danger' | 'tertiary'
 type Size = 'sm' | 'md' | 'lg'
@@ -27,13 +25,7 @@ export const Button = ({
   disabled,
   ...props
 }: ButtonProps) => {
-  const theme = useTheme()
-
   const resolvedSize: Size = size ?? (isBigger ? 'lg' : 'md')
-
-  let loaderColor = theme['accent-on']
-  if (variant === 'secondary') loaderColor = theme['text-color']
-  if (variant === 'danger' || variant === 'tertiary') loaderColor = '#ffffff'
 
   return (
     <Container
@@ -43,11 +35,8 @@ export const Button = ({
       {...props}
       disabled={isLoading || disabled}
     >
-      {isLoading ? (
-        <ThreeDots height="8px" fill={loaderColor} aria-hidden="true" />
-      ) : (
-        children ?? <p>{title}</p>
-      )}
+      {isLoading && <ButtonSpinner aria-hidden="true" />}
+      {children ?? <p>{title}</p>}
     </Container>
   )
 }

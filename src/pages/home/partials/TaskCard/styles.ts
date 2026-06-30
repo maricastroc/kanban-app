@@ -43,6 +43,14 @@ export const TaskCardContainer = styled.div`
     box-shadow: ${(props) => props.theme['shadow-lg']},
       0 0 0 1px ${(props) => props.theme['accent-color']};
   }
+
+  /* When dragging is off (loading / filtering), the card is only clickable —
+     drop the grab affordance so it doesn't promise a move that won't happen.
+     Declared last so it wins over :active on equal specificity. */
+  &.drag-disabled,
+  &.drag-disabled:active {
+    cursor: default;
+  }
 `
 
 export const TagsContainer = styled.div`

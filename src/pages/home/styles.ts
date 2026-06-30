@@ -55,6 +55,8 @@ export const ColumnsContainer = styled.div`
   padding-bottom: 1.5rem;
   justify-content: initial;
   align-items: flex-start;
+  /* Empty canvas is drag-to-pan (horizontal scroll); columns/cards override
+     this with their own cursor so the grab only shows over the background. */
   cursor: grab;
   height: 100%;
 

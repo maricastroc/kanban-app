@@ -134,7 +134,7 @@ export function TaskCard({
         <TaskCardContainer
           ref={setNodeRef}
           style={style}
-          className="task-card"
+          className={`task-card${dragDisabled ? ' drag-disabled' : ''}`}
           onClick={() => setIsTaskDetailsModalOpen(true)}
           {...attributes}
           {...listeners}

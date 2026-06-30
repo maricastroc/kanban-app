@@ -14,6 +14,9 @@ export const Panel = styled.div`
   border-radius: 12px;
   overflow: hidden;
   transition: border-color 180ms ease;
+  /* The column body isn't draggable (only the grip is) — don't inherit the
+     board's pan grab cursor here. */
+  cursor: default;
 
   .menu {
     transition: color 160ms ease, background-color 160ms ease;

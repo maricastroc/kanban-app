@@ -1,5 +1,27 @@
 import styled from 'styled-components'
 
+// Inline loading spinner — inherits the button's text color via currentColor,
+// so it works on every variant, and scales with the button's font size.
+export const ButtonSpinner = styled.span`
+  display: inline-block;
+  width: 1.05em;
+  height: 1.05em;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  animation: btn-spin 0.6s linear infinite;
+
+  @keyframes btn-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation-duration: 1.4s;
+  }
+`
+
 export const Container = styled.button`
   display: inline-flex;
   align-items: center;
