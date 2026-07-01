@@ -5,6 +5,7 @@ import { faAngleDown } from '@fortawesome/free-solid-svg-icons'
 import {
   BoardName,
   BoardNameContainer,
+  BoardNameRow,
   Eyebrow,
   MetricStrip,
   StatChip,
@@ -42,7 +43,12 @@ export function BoardHeading({ activeBoard, metrics, isSmallerThanSm }: Props) {
         <BoardNameContainer onClick={() => isSmallerThanSm && open()}>
           <TitleBlock>
             <Eyebrow>Boards</Eyebrow>
-            <BoardName>{activeBoard?.name || 'No board selected'}</BoardName>
+            <BoardNameRow>
+              <BoardName>{activeBoard?.name || 'No board selected'}</BoardName>
+              {isSmallerThanSm && (
+                <FontAwesomeIcon className="chevron" icon={faAngleDown} />
+              )}
+            </BoardNameRow>
             {activeBoard && (
               <MetricStrip>
                 <StatChip>
@@ -55,9 +61,6 @@ export function BoardHeading({ activeBoard, metrics, isSmallerThanSm }: Props) {
                   <span className="ring" />
                   <strong>{metrics.progress}%</strong> done
                 </StatChip>
-                {isSmallerThanSm && (
-                  <FontAwesomeIcon className="chevron" icon={faAngleDown} />
-                )}
               </MetricStrip>
             )}
           </TitleBlock>

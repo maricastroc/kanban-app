@@ -63,11 +63,11 @@ export const BoardName = styled.h1`
   }
 `
 
-export const MetricStrip = styled.div`
+export const BoardNameRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-width: 0;
 
   .chevron {
     display: none;
@@ -76,12 +76,18 @@ export const MetricStrip = styled.div`
   @media (max-width: 767px) {
     .chevron {
       display: inline-flex;
-      align-items: center;
+      flex-shrink: 0;
       color: ${(props) => props.theme['accent-color']};
-      margin-left: 0.1rem;
-      font-size: 0.7rem;
+      font-size: 0.9rem;
     }
   }
+`
+
+export const MetricStrip = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
 `
 
 export const StatChip = styled.div`

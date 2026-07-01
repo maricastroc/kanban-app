@@ -1,19 +1,11 @@
 import {
-  BoardButton,
-  BoardIcon,
-  BoardsContainer,
   Brand,
   Container,
   CreateBoardArea,
-  CreateBoardButton,
   CreateDivider,
-  EmptyBoardsHint,
   HideButton,
   OptionsContainer,
   SectionLabel,
-  SwitchRoot,
-  SwitchThumb,
-  ThemeSwitcherContainer,
   Wrapper,
 } from './styles'
 import Image from 'next/image'
@@ -23,47 +15,22 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { useState } from 'react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faPlus,
-  faEyeSlash,
-  faMoon,
-  faSun,
-} from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import { BoardFormModal } from '@/components/Modals/BoardFormModal'
-import { useTheme } from '@/contexts/ThemeContext'
 import { useBoardsContext } from '@/contexts/BoardsContext'
-import { handleApiError } from '@/utils/handleApiError'
-import { getBoardAvatarStyle } from '@/utils/getBoardColor'
-import { api } from '@/lib/axios'
-import { BoardProps } from '@/@types/board'
+import { BoardList } from '@/components/Core/BoardList'
+import { ThemeToggle } from '@/components/Core/ThemeToggle'
+import { CreateBoardButton } from '@/components/Core/BoardList/styles'
 
 interface SidebarProps {
   onClose: () => void
   className?: string
 }
 
-const getBoardTaskCount = (board: BoardProps) =>
-  board.columns?.reduce(
-    (total, column) => total + (column.tasks?.length || 0),
-    0,
-  ) || 0
-
 export function Sidebar({ onClose, className }: SidebarProps) {
-  const { toggleTheme, enableDarkMode } = useTheme()
-
-  const { handleChangeActiveBoard, activeBoard, boards } = useBoardsContext()
+  const { boards } = useBoardsContext()
 
   const [isAddBoardModalOpen, setIsAddBoardModalOpen] = useState(false)
-
-  const handleActivateBoard = async (board: BoardProps) => {
-    try {
-      const response = await api.patch(`boards/${board.id}/activate`)
-
-      await handleChangeActiveBoard(response.data.data.board)
-    } catch (error) {
-      handleApiError(error)
-    }
-  }
 
   return (
     <Container className={className}>
@@ -80,31 +47,7 @@ export function Sidebar({ onClose, className }: SidebarProps) {
           <span>{boards?.length || 0}</span>
         </SectionLabel>
 
-        <BoardsContainer>
-          {!boards?.length && (
-            <EmptyBoardsHint>No boards yet — create one below.</EmptyBoardsHint>
-          )}
-          {boards?.map((board) => {
-            const taskCount = getBoardTaskCount(board)
-            return (
-              <BoardButton
-                key={board.name}
-                className={board.name === activeBoard?.name ? 'active' : ''}
-                onClick={() => {
-                  handleActivateBoard(board)
-                }}
-              >
-                <BoardIcon
-                  style={getBoardAvatarStyle(board.name, enableDarkMode)}
-                >
-                  {board.name.charAt(0).toUpperCase()}
-                </BoardIcon>
-                <p>{board.name}</p>
-                {taskCount > 0 && <span className="count">{taskCount}</span>}
-              </BoardButton>
-            )
-          })}
-        </BoardsContainer>
+        <BoardList />
 
         <CreateBoardArea>
           <CreateDivider />
@@ -136,20 +79,7 @@ export function Sidebar({ onClose, className }: SidebarProps) {
       </Wrapper>
 
       <OptionsContainer>
-        <ThemeSwitcherContainer>
-          <FontAwesomeIcon icon={faMoon} />
-          <SwitchRoot
-            className="SwitchRoot"
-            id="theme-switch"
-            checked={!enableDarkMode}
-            onCheckedChange={() => {
-              toggleTheme()
-            }}
-          >
-            <SwitchThumb className="SwitchThumb" />
-          </SwitchRoot>
-          <FontAwesomeIcon icon={faSun} />
-        </ThemeSwitcherContainer>
+        <ThemeToggle />
         <HideButton onClick={onClose}>
           <FontAwesomeIcon icon={faEyeSlash} />
           <p>Hide sidebar</p>
