@@ -112,8 +112,8 @@ Auth uses a **Sanctum token carried in an httpOnly cookie** — the token is nev
 
 ### 1. Clone & install
 ```bash
-git clone https://github.com/maricastroc/kanban-app
-cd kanban-app
+git clone https://github.com/maricastroc/cadence-app
+cd cadence-app
 npm install
 ```
 
