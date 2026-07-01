@@ -2,9 +2,9 @@
 
 **Cadence** is a fullstack Kanban board for daily task management — organize work across multiple boards, columns and tasks, with drag-and-drop, subtasks, color labels, due dates and light/dark themes.
 
-This repository is the **frontend** (Next.js). It talks to a separate **Laravel API** ([kanban-api](https://github.com/maricastroc/kanban-api)) over HTTP, with authentication handled by a secure **httpOnly session cookie**.
+This repository is the **frontend** (Next.js). It talks to a separate **Laravel API** ([kanban-api](https://github.com/maricastroc/cadence-api)) over HTTP, with authentication handled by a secure **httpOnly session cookie**.
 
-🔗 **Live demo:** [kanban.marianacastro.dev](https://kanban.marianacastro.dev/) — click **"Explore the demo"** on the login page to jump straight in, no sign-up required.
+🔗 **Live demo:** [kanban.marianacastro.dev](https://cadence.marianacastro.dev/) — click **"Explore the demo"** on the login page to jump straight in, no sign-up required.
 
 ---
 
