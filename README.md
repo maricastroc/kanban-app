@@ -169,7 +169,7 @@ npm run test:coverage
 
 ## 📝 Engineering decisions
 
-The project began as the Frontend Mentor Kanban challenge and was rebuilt into a decoupled fullstack app. A few decisions worth calling out:
+A few decisions worth calling out:
 
 - **Decoupled SPA + REST API** (Next.js ↔ Laravel/Sanctum) rather than a monolith — which meant owning the cross-origin surface: CORS, credentialed requests and cookie behavior.
 - **Auth in an httpOnly cookie instead of a localStorage token**, so the token is never reachable from JavaScript (XSS can't steal it). The trade-off — cookies aren't sent cross-site — is resolved by serving the API from a subdomain, keeping it *same-site* so a `SameSite=Lax` cookie works across Vercel + Railway.
