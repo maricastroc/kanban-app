@@ -179,14 +179,6 @@ A few decisions worth calling out:
 
 ---
 
-## 👤 Author
-
-Built and designed by **Mariana Castro** — [@maricastroc](https://github.com/maricastroc) · [live demo](https://kanban.marianacastro.dev/).
-
-The interface is an **original redesign**: it started from the Frontend Mentor Kanban brief and was rebuilt with its own design system — custom palette, typography and component layer — on top of a decoupled Next.js + Laravel architecture.
-
----
-
 ## 📄 License
 
 Released under the [MIT License](LICENSE). You're free to use, study, fork and build on this code — **as long as the original copyright and license notice are kept**. Reuse it and learn from it; don't strip the attribution and present it as your own.
