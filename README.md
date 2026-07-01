@@ -4,7 +4,7 @@
 
 This repository is the **frontend** (Next.js). It talks to a separate **Laravel API** ([kanban-api](https://github.com/maricastroc/cadence-api)) over HTTP, with authentication handled by a secure **httpOnly session cookie**.
 
-🔗 **Live demo:** [kanban.marianacastro.dev](https://cadence.marianacastro.dev/) — click **"Explore the demo"** on the login page to jump straight in, no sign-up required.
+🔗 **Live demo:** [cadence.marianacastro.dev](https://cadence.marianacastro.dev/) — click **"Explore the demo"** on the login page to jump straight in, no sign-up required.
 
 ---
 
