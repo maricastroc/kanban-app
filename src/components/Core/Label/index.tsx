@@ -7,5 +7,9 @@ interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
 }
 
 export const Label = ({ children, hasError, ...rest }: LabelProps) => {
-  return <StyledLabel $hasError={hasError} {...rest}>{children}</StyledLabel>
+  return (
+    <StyledLabel $hasError={hasError} {...rest}>
+      {children}
+    </StyledLabel>
+  )
 }
