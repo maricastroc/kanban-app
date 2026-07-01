@@ -186,7 +186,7 @@ export const InputField = styled.input`
   }
 
   &.error {
-    border: solid 2px ${(props) => props.theme['error-color']};
+    border: solid 2px ${(props) => props.theme['error-border']};
   }
 `
 

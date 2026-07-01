@@ -20,7 +20,7 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
 export const AuthField = forwardRef<HTMLInputElement, Props>(
   ({ id, label, icon, error, ...props }, ref) => (
     <FormField>
-      <Label htmlFor={id}>{label}</Label>
+      <Label htmlFor={id} hasError={!!error}>{label}</Label>
       <InputContainer>
         <IconWrapper aria-hidden="true">
           <FontAwesomeIcon icon={icon} style={{ fontSize: 16 }} />

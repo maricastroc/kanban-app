@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import toast from 'react-hot-toast'
+import axios from 'axios'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faEnvelope,
@@ -26,12 +27,12 @@ import {
   TitleContainer,
 } from '../login/styles'
 import { Button } from '@/components/Core/Button'
+import { ErrorMessage } from '@/components/Shared/ErrorMessage'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { AuthField } from '../login/partials/AuthField'
 import { PasswordField } from '../login/partials/PasswordField'
 import { useLoadingOnRouteChange } from '@/utils/useLoadingOnRouteChange'
 import { useRedirectIfAuthenticated } from '@/hooks/useRedirectIfAuthenticated'
-import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
 
 const signUpFormSchema = z.object({
@@ -55,6 +56,7 @@ export default function Register() {
   const router = useRouter()
 
   const [isLoading, setIsLoading] = useState(false)
+  const [apiError, setApiError] = useState<string | null>(null)
 
   const {
     register,
@@ -63,10 +65,22 @@ export default function Register() {
   } = useForm<SignUpFormData>({
     resolver: zodResolver(signUpFormSchema),
     defaultValues: { email: '', password: '' },
+    mode: 'onTouched',
   })
+
+  function extractApiError(error: unknown): string {
+    if (axios.isAxiosError(error) && error.response) {
+      const { message } = error.response.data
+      if (typeof message === 'string') return message
+      if (message && typeof message === 'object')
+        return Object.values(message).join(', ')
+    }
+    return 'Ooops, something went wrong. Please try again later.'
+  }
 
   async function onSubmit(data: SignUpFormData) {
     setIsLoading(true)
+    setApiError(null)
 
     try {
       const response = await api.post('/register', {
@@ -81,7 +95,7 @@ export default function Register() {
         router.push('/login')
       }
     } catch (error) {
-      handleApiError(error)
+      setApiError(extractApiError(error))
     } finally {
       setIsLoading(false)
     }
@@ -134,6 +148,8 @@ export default function Register() {
                 {...register('password')}
               />
             </InputsContainer>
+
+            <ErrorMessage message={apiError ?? undefined} />
 
             <Button
               isBigger

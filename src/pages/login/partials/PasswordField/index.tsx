@@ -22,7 +22,7 @@ export const PasswordField = forwardRef<HTMLInputElement, Props>(
 
     return (
       <FormField>
-        <Label htmlFor="password">{label}</Label>
+        <Label htmlFor="password" hasError={!!error}>{label}</Label>
         <InputContainer>
           <IconWrapper aria-hidden="true">
             <FontAwesomeIcon icon={faLock} style={{ fontSize: 16 }} />

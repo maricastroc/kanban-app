@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-hot-toast'
+import axios from 'axios'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faEnvelope,
@@ -27,13 +28,13 @@ import {
   TitleContainer,
 } from './styles'
 import { Button } from '@/components/Core/Button'
+import { ErrorMessage } from '@/components/Shared/ErrorMessage'
 import { LoadingComponent } from '@/components/Shared/LoadingComponent'
 import { AuthField } from './partials/AuthField'
 import { PasswordField } from './partials/PasswordField'
 import { useLoadingOnRouteChange } from '@/utils/useLoadingOnRouteChange'
 import { useRedirectIfAuthenticated } from '@/hooks/useRedirectIfAuthenticated'
 import { useAuthUser } from '@/hooks/useAuthUser'
-import { handleApiError } from '@/utils/handleApiError'
 import { api } from '@/lib/axios'
 
 const signInFormSchema = z.object({
@@ -51,6 +52,7 @@ export default function Login() {
 
   const [isLoading, setIsLoading] = useState(false)
   const [isDemoLoading, setIsDemoLoading] = useState(false)
+  const [apiError, setApiError] = useState<string | null>(null)
 
   const {
     register,
@@ -59,10 +61,22 @@ export default function Login() {
   } = useForm<SignInFormData>({
     resolver: zodResolver(signInFormSchema),
     defaultValues: { email: '', password: '' },
+    mode: 'onTouched',
   })
+
+  function extractApiError(error: unknown): string {
+    if (axios.isAxiosError(error) && error.response) {
+      const { message } = error.response.data
+      if (typeof message === 'string') return message
+      if (message && typeof message === 'object')
+        return Object.values(message).join(', ')
+    }
+    return 'Ooops, something went wrong. Please try again later.'
+  }
 
   async function onSubmit(data: SignInFormData) {
     setIsLoading(true)
+    setApiError(null)
 
     try {
       await api.post('login', {
@@ -77,7 +91,7 @@ export default function Login() {
       toast.success('Welcome to Cadence!')
       router.push('/')
     } catch (error) {
-      handleApiError(error)
+      setApiError(extractApiError(error))
     } finally {
       setIsLoading(false)
     }
@@ -85,6 +99,7 @@ export default function Login() {
 
   async function handleDemoLogin() {
     setIsDemoLoading(true)
+    setApiError(null)
 
     try {
       // No credentials — the backend signs us into the shared demo account and
@@ -95,7 +110,7 @@ export default function Login() {
       toast.success('Welcome! Explore the demo workspace.')
       router.push('/')
     } catch (error) {
-      handleApiError(error)
+      setApiError(extractApiError(error))
     } finally {
       setIsDemoLoading(false)
     }
@@ -138,6 +153,8 @@ export default function Login() {
                 {...register('password')}
               />
             </InputsContainer>
+
+            <ErrorMessage message={apiError ?? undefined} />
 
             <Button
               isBigger

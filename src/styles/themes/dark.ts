@@ -24,7 +24,7 @@ export const darkTheme = {
   'error-color': '#E5484D',
   'error-hover': '#FF6166',
   // softened error states for a more premium, less aggressive look
-  'error-text': '#EBA0A2',
+  'error-text': '#D97375',
   'error-border': 'rgba(229, 72, 77, 0.35)',
   'error-soft': 'rgba(229, 72, 77, 0.06)',
 

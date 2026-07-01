@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const Label = styled.label`
+export const Label = styled.label<{ $hasError?: boolean }>`
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -13,6 +13,6 @@ export const Label = styled.label`
 
   svg {
     font-size: 0.72rem;
-    color: ${(props) => props.theme['muted-color']};
+    color: inherit;
   }
 `
