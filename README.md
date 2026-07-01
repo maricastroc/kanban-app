@@ -44,6 +44,24 @@ This repository is the **frontend** (Next.js). It talks to a separate **Laravel 
 
 ---
 
+## 🖼️ Screenshots
+
+<table>
+  <tr>
+    <td align="center" width="62%"><strong>Desktop</strong></td>
+    <td align="center" width="38%"><strong>Mobile</strong></td>
+  </tr>
+  <tr>
+    <td valign="top"><img src="docs/screenshots/home-desktop.png" alt="Home — Desktop" /></td>
+    <td rowspan="2" valign="top"><img src="docs/screenshots/task-mobile.png" alt="Library — Mobile" /></td>
+  </tr>
+  <tr>
+    <td valign="top"><img src="docs/screenshots/home-desktop-light.png" alt="Explore — Desktop" /></td>
+  </tr>
+</table>
+
+---
+
 ## 🧱 Tech Stack
 
 **Frontend (this repo)**
